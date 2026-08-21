@@ -1,0 +1,3 @@
+@use '../abstracts' as *;
+
+.empty-state { color: $color-muted; padding: 3rem 1rem; text-align: center; }

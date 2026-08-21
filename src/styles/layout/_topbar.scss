@@ -1,0 +1,3 @@
+@use '../abstracts' as *;
+
+.topbar { align-items: center; background: $color-navy; color: $color-surface; display: flex; min-height: 4rem; padding: 0 1.5rem; }

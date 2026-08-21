@@ -1,0 +1,8 @@
+@use '../abstracts' as *;
+
+.certificate { background: $color-surface; border: 1px solid $color-border; padding: 3rem; }
+
+@media print {
+  .topbar, .sidebar, button { display: none !important; }
+  .certificate { border: 0; box-shadow: none; padding: 0; }
+}

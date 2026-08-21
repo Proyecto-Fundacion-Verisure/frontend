@@ -1,0 +1,3 @@
+@use '../abstracts' as *;
+
+[role='dialog'] { background: $color-surface; border-radius: $radius-lg; box-shadow: $shadow-md; padding: 1.5rem; }

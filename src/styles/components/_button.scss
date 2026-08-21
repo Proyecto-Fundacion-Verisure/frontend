@@ -1,0 +1,12 @@
+@use '../abstracts' as *;
+
+.button, button {
+  @include focus-ring;
+  border: 0;
+  border-radius: $radius-md;
+  cursor: pointer;
+  padding: .65rem 1rem;
+}
+
+.button--primary { background: $color-coral; color: $color-surface; }
+.button--primary:hover { background: $color-coral-dark; }

@@ -1,0 +1,25 @@
+$color-coral: #ff6b61;
+$color-coral-dark: #d94e46;
+$color-navy: #102a43;
+$color-navy-light: #243b53;
+$color-surface: #ffffff;
+$color-background: #f5f7fa;
+$color-text: #243b53;
+$color-muted: #627d98;
+$color-border: #d9e2ec;
+$color-success: #2f855a;
+$color-danger: #c53030;
+
+$font-sans: 'Inter', 'Segoe UI', sans-serif;
+$radius-sm: .25rem;
+$radius-md: .5rem;
+$radius-lg: 1rem;
+$shadow-sm: 0 1px 2px rgb(16 42 67 / 8%);
+$shadow-md: 0 8px 24px rgb(16 42 67 / 12%);
+
+$breakpoints: (
+  'sm': 36rem,
+  'md': 48rem,
+  'lg': 64rem,
+  'xl': 80rem,
+);

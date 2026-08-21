@@ -1,0 +1,10 @@
+@use '../abstracts' as *;
+
+input, select, textarea {
+  @include focus-ring;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  color: $color-text;
+  padding: .65rem .75rem;
+}

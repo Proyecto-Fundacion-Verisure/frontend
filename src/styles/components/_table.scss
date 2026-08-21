@@ -1,0 +1,5 @@
+@use '../abstracts' as *;
+
+table { border-collapse: collapse; width: 100%; }
+th, td { border-bottom: 1px solid $color-border; padding: .75rem; text-align: left; }
+th { color: $color-navy; }

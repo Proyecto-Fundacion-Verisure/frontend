@@ -1,0 +1,3 @@
+@use '../abstracts' as *;
+
+.sidebar { background: $color-surface; border-right: 1px solid $color-border; padding: 1.5rem; }

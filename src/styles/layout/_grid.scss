@@ -1,0 +1,9 @@
+@use '../abstracts' as *;
+
+.admin-layout, .employee-layout { display: grid; grid-template-columns: 1fr; min-height: 100vh; }
+.admin-layout main, .employee-layout main, .public-layout main { padding: 1.5rem; }
+
+@include respond-to('lg') {
+  .admin-layout, .employee-layout { grid-template-columns: 16rem 1fr; }
+  .admin-layout .topbar, .employee-layout .topbar { grid-column: 1 / -1; }
+}
