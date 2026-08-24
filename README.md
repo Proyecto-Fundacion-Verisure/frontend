@@ -1,6 +1,7 @@
 # Frontend Verisure
 
 Aplicación web para gestionar el catálogo de actividades de voluntariado, las inscripciones, propuestas, reportes y el panel de seguimiento.
+Figma; https://www.figma.com/design/D3nU4lVWHOTVRtTNeMyjol/Fundacion-Verisure-Voluntariado?node-id=0-1&p=f&t=wur2cUt7LYGM0uWr-0
 
 ## Tecnologías
 
