@@ -18,6 +18,20 @@
   }
 }
 
+@mixin disabled-control {
+  &:disabled,
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
+    opacity: .58;
+  }
+}
+
+@mixin reduce-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
 @mixin truncate {
   overflow: hidden;
   text-overflow: ellipsis;

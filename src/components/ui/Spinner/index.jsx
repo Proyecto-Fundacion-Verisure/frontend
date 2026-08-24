@@ -1,3 +1,10 @@
-export default function Spinner({ label = 'Cargando' }) {
-  return <span role="status" aria-label={label}>…</span>;
+export default function Spinner({ className = '', label = 'Cargando', size = 'medium' }) {
+  return (
+    <span
+      className={`spinner spinner--${size} ${className}`.trim()}
+      role={label ? 'status' : undefined}
+      aria-label={label || undefined}
+      aria-hidden={label ? undefined : 'true'}
+    />
+  );
 }

@@ -1,3 +1,3 @@
-export default function Badge({ children, ...props }) {
-  return <span {...props}>{children}</span>;
+export default function Badge({ children, className = '', variant = 'neutral', ...props }) {
+  return <span className={`badge badge--${variant} ${className}`.trim()} {...props}>{children}</span>;
 }
