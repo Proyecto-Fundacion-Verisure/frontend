@@ -1,7 +1,13 @@
 *, *::before, *::after { box-sizing: border-box; }
 
+html { color-scheme: light; }
+
 body, h1, h2, h3, h4, p { margin: 0; }
 
 button, input, select, textarea { font: inherit; }
 
 img { display: block; max-width: 100%; }
+
+button { color: inherit; }
+
+a { color: inherit; }

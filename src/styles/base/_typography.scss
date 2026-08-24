@@ -4,7 +4,16 @@ body {
   background: $color-background;
   color: $color-text;
   font-family: $font-sans;
-  line-height: 1.5;
+  font-size: $font-size-md;
+  line-height: $line-height-normal;
+  min-height: 100vh;
 }
 
-h1, h2, h3 { color: $color-navy; line-height: 1.15; }
+h1, h2, h3, h4 {
+  color: $color-navy;
+  line-height: $line-height-tight;
+}
+
+h1 { font-size: $font-size-2xl; }
+h2 { font-size: $font-size-xl; }
+h3 { font-size: $font-size-lg; }

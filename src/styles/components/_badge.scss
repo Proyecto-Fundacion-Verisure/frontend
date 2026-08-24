@@ -1,3 +1,20 @@
 @use '../abstracts' as *;
 
-.badge { background: $color-navy-light; border-radius: 999px; color: $color-surface; display: inline-block; font-size: .75rem; padding: .2rem .55rem; }
+.badge {
+  align-items: center;
+  background: $color-background;
+  border-radius: $radius-pill;
+  color: $color-navy-light;
+  display: inline-flex;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+  padding: space('2') space('3');
+  width: fit-content;
+
+  &--primary { background: $color-coral-100; color: $color-navy; }
+  &--success { background: $color-success-light; color: $color-success; }
+  &--warning { background: $color-warning-light; color: $color-warning; }
+  &--danger { background: $color-danger-light; color: $color-danger; }
+  &--info { background: $color-info-light; color: $color-info; }
+}

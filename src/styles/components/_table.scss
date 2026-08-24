@@ -1,5 +1,43 @@
 @use '../abstracts' as *;
 
-table { border-collapse: collapse; width: 100%; }
-th, td { border-bottom: 1px solid $color-border; padding: .75rem; text-align: left; }
-th { color: $color-navy; }
+.table-wrapper {
+  @include focus-ring;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  border-collapse: collapse;
+  min-width: 36rem;
+  width: 100%;
+
+  caption {
+    color: $color-navy;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    padding: space('4');
+    text-align: left;
+  }
+
+  th,
+  td {
+    border-bottom: 1px solid $color-border;
+    padding: space('3') space('4');
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    background: $color-background;
+    color: $color-navy;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+  }
+
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: rgb(245 247 250 / 72%); }
+  &__empty { color: $color-muted; padding: space('8') !important; text-align: center !important; }
+}

@@ -1,3 +1,28 @@
 @use '../abstracts' as *;
 
-progress { accent-color: $color-coral; width: 100%; }
+.progress {
+  width: 100%;
+
+  &__header {
+    display: flex;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    justify-content: space-between;
+    margin-bottom: space('2');
+  }
+
+  &__track {
+    background: $color-border;
+    border-radius: $radius-pill;
+    height: .75rem;
+    overflow: hidden;
+  }
+
+  &__bar {
+    background: $color-coral;
+    border-radius: inherit;
+    display: block;
+    height: 100%;
+    transition: width $transition-base;
+  }
+}

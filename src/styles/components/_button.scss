@@ -1,12 +1,59 @@
 @use '../abstracts' as *;
 
-.button, button {
+.button {
   @include focus-ring;
+  @include disabled-control;
+  align-items: center;
+  display: inline-flex;
+  font-weight: $font-weight-semibold;
+  gap: space('2');
+  justify-content: center;
+  min-height: $control-height;
   border: 0;
   border-radius: $radius-md;
   cursor: pointer;
-  padding: .65rem 1rem;
-}
+  text-decoration: none;
+  transition: background-color $transition-fast, border-color $transition-fast, color $transition-fast, transform $transition-fast;
 
-.button--primary { background: $color-coral; color: $color-surface; }
-.button--primary:hover { background: $color-coral-dark; }
+  &:active:not(:disabled) { transform: translateY(1px); }
+
+  &--small { font-size: $font-size-sm; min-height: 2.25rem; padding: space('2') space('3'); }
+  &--medium { padding: space('3') space('4'); }
+  &--large { font-size: $font-size-lg; min-height: 3.25rem; padding: space('3') space('6'); }
+
+  &--primary {
+    background: $color-coral;
+    color: $color-navy;
+
+    &:hover:not(:disabled) { background: #ff8179; }
+  }
+
+  &--secondary {
+    background: $color-navy;
+    color: $color-surface;
+
+    &:hover:not(:disabled) { background: $color-navy-light; }
+  }
+
+  &--outline {
+    background: transparent;
+    border: 1px solid $color-navy;
+    color: $color-navy;
+
+    &:hover:not(:disabled) { background: rgb(16 42 67 / 7%); }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $color-navy;
+
+    &:hover:not(:disabled) { background: rgb(16 42 67 / 7%); }
+  }
+
+  &--danger {
+    background: $color-danger;
+    color: $color-surface;
+
+    &:hover:not(:disabled) { background: #9b2c2c; }
+  }
+}

@@ -1,3 +1,16 @@
 @use '../abstracts' as *;
 
-.empty-state { color: $color-muted; padding: 3rem 1rem; text-align: center; }
+.empty-state {
+  align-items: center;
+  color: $color-muted;
+  display: flex;
+  flex-direction: column;
+  gap: space('3');
+  padding: space('12') space('4');
+  text-align: center;
+
+  &__icon { color: $color-coral-dark; font-size: 2.5rem; line-height: 1; }
+  &__title { font-size: $font-size-xl; }
+  &__description { max-width: 34rem; }
+  &__action { margin-top: space('2'); }
+}

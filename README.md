@@ -92,6 +92,22 @@ El punto de entrada es `src/styles/main.scss` y solo contiene directivas `@use`.
 
 El certificado incluye estilos de impresión en `_certificate.scss`.
 
+### Sistema de componentes UI
+
+Los componentes compartidos se exportan desde `src/components/ui/index.js`. Incluyen variantes, foco visible, estados `disabled`, `loading` y `error`, y atributos accesibles:
+
+```jsx
+import { Button, Input, ProgressBar } from './components/ui';
+
+<Input label="Correo" error={errors.email} required />
+<ProgressBar label="Plazas ocupadas" value={8} max={12} showValue />
+<Button isLoading={isSubmitting}>Guardar</Button>
+```
+
+`UiShowcase` contiene ejemplos visuales reutilizables de Button, Input, Select, Textarea, Modal, Table, Badge, Card, ProgressBar, EmptyState y Spinner. Con `npm run dev`, está disponible en [http://localhost:5173/ui-kit](http://localhost:5173/ui-kit). La ruta solo existe en desarrollo y no se incluye en la navegación de producción.
+
+Los valores de marca y los tokens semánticos viven en `src/styles/abstracts/_variables.scss`; los componentes no deben incorporar colores, espacios o breakpoints nuevos fuera de ese archivo.
+
 ## Pruebas
 
 Vitest está configurado con `jsdom` y React Testing Library. El setup global incorpora los matchers de `@testing-library/jest-dom` y limpia el DOM después de cada prueba.

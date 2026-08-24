@@ -1,0 +1,12 @@
+@use 'sass:map';
+@use 'variables' as *;
+
+@function space($step) {
+  $value: map.get($spacing, $step);
+
+  @if $value == null {
+    @error "Spacing token `#{$step}` no existe.";
+  }
+
+  @return $value;
+}
