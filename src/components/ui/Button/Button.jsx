@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import Spinner from '../Spinner';
+import Spinner from '../Spinner/Spinner';
 
 const Button = forwardRef(function Button(
   {

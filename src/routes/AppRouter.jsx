@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import LandingPage from '../features/landing/LandingPage';
 import LoginPage from '../features/auth/LoginPage';
 import DashboardPage from '../features/dashboard/DashboardPage';
-import UiShowcase from '../components/ui/UiShowcase';
+import UiShowcase from '../components/ui/UiShowcase/UiShowcase';
 import ProtectedRoute from './ProtectedRoute';
 
 export default function AppRouter() {

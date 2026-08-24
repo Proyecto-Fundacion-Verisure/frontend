@@ -1,15 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import Badge from './Badge';
-import Button from './Button';
-import EmptyState from './EmptyState';
-import Input from './Input';
-import Modal from './Modal';
-import ProgressBar from './ProgressBar';
-import Select from './Select';
-import Table from './Table';
-import Textarea from './Textarea';
+import Badge from './Badge/Badge';
+import Button from './Button/Button';
+import EmptyState from './EmptyState/EmptyState';
+import Input from './Input/Input';
+import Modal from './Modal/Modal';
+import ProgressBar from './ProgressBar/ProgressBar';
+import Select from './Select/Select';
+import Table from './Table/Table';
+import Textarea from './Textarea/Textarea';
 
 describe('form controls', () => {
   it('associates labels, help and errors with their controls', () => {
