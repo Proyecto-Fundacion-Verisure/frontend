@@ -1,0 +1,95 @@
+@use '../abstracts/variables' as *;
+
+.public-footer {
+  background-color: $color-navy;
+  border-top: 1px solid $color-navy-light;
+
+  &__container {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: map-get($spacing, '8');
+    max-width: $content-max-width;
+    margin: 0 auto;
+    padding: map-get($spacing, '8') map-get($spacing, '6');
+
+    @media (max-width: map-get($breakpoints, 'md')) {
+      grid-template-columns: 1fr;
+      gap: map-get($spacing, '6');
+    }
+  }
+
+  &__brand-heading {
+    display: flex;
+    align-items: center;
+    gap: map-get($spacing, '3');
+    margin-bottom: map-get($spacing, '3');
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: $radius-md;
+    background-color: $color-coral;
+    color: $color-surface;
+    font-family: $font-sans;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    line-height: 1;
+  }
+
+  &__brand-name {
+    font-family: $font-sans;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-surface;
+    letter-spacing: .02em;
+  }
+
+  &__legal-text {
+    margin: 0;
+    max-width: 32rem;
+    font-family: $font-sans;
+    font-size: $font-size-xs;
+    line-height: $line-height-normal;
+    color: rgb(255 255 255 / 64%);
+  }
+
+  &__col-title {
+    margin: 0 0 map-get($spacing, '3');
+    font-family: $font-sans;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-surface;
+  }
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    gap: map-get($spacing, '2');
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__link {
+    font-family: $font-sans;
+    font-size: $font-size-xs;
+    color: rgb(255 255 255 / 64%);
+    text-decoration: none;
+    transition: color $transition-fast;
+
+    &:hover,
+    &:focus-visible {
+      color: $color-surface;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-coral;
+      outline-offset: 2px;
+    }
+  }
+}
