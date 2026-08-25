@@ -78,6 +78,8 @@ src/
 
 Cada feature se organiza por dominio: `auth`, `landing`, `activities`, `enrollments`, `proposals`, `reports` y `dashboard`. Las peticiones HTTP se centralizan en `src/api`; el token se incorpora desde `localStorage` por el interceptor de Axios.
 
+Cada componente JSX debe repetir el nombre de su carpeta: `NombreComponente/NombreComponente.jsx`. No se usan archivos `index.jsx`. Los archivos `index.js` se reservan para exportaciones agrupadas, como `components/ui/index.js`.
+
 El interceptor de respuesta transforma los fallos en `ApiError`, con `status`, `code`, `fieldErrors`, `isNetworkError` e `isCanceled`. Ante un `401` limpia los datos de sesión y emite el evento `auth:unauthorized`, que permite al contexto de autenticación actualizar la interfaz sin acoplar el cliente HTTP al router.
 
 ## Estilos
