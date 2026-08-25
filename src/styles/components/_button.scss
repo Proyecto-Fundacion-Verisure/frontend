@@ -23,22 +23,15 @@
 
   &--primary {
     background: $color-coral;
-    color: $color-navy;
+    color: $color-surface;
 
     &:hover:not(:disabled) { background: #ff8179; }
   }
 
-  &--secondary {
-    background: $color-navy;
-    color: $color-surface;
-
-    &:hover:not(:disabled) { background: $color-navy-light; }
-  }
-
-  &--outline {
+    &--secondary {
     background: transparent;
-    border: 1px solid $color-navy;
-    color: $color-navy;
+    border: 2px solid $color-coral-dark;
+    color: $color-coral-dark;
 
     &:hover:not(:disabled) { background: rgb(16 42 67 / 7%); }
   }
