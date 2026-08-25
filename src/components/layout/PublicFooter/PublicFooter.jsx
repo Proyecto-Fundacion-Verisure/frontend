@@ -8,7 +8,6 @@ const PublicFooter = () => {
       <div className="public-footer__container">
         <div className="public-footer__brand">
           <div className="public-footer__brand-heading">
-            <span className="public-footer__logo" aria-hidden="true">V</span>
             <span className="public-footer__brand-name">FUNDACIÓN VERISURE</span>
           </div>
           <p className="public-footer__legal-text">

@@ -1,5 +1,12 @@
-import Topbar from '../Topbar/Topbar';
+import PublicHeader from '../PublicHeader/PublicHeader';
+import PublicFooter from '../PublicFooter/PublicFooter';
 
 export default function PublicLayout({ children }) {
-  return <div className="public-layout"><Topbar /><main>{children}</main></div>;
+  return (
+    <div className="public-layout">
+      <PublicHeader />
+      <main>{children}</main>
+      <PublicFooter />
+    </div>
+  );
 }

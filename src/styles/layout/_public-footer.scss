@@ -25,22 +25,6 @@
     margin-bottom: map-get($spacing, '3');
   }
 
-  &__logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: $radius-md;
-    background-color: $color-coral;
-    color: $color-surface;
-    font-family: $font-sans;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-bold;
-    line-height: 1;
-  }
-
   &__brand-name {
     font-family: $font-sans;
     font-size: $font-size-sm;
