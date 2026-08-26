@@ -48,12 +48,12 @@ export default function LandingPage() {
             <Link className="button button--primary button--large" to="/login">
               Soy empleado
             </Link>
-            <a
+            <Link
               className="button button--secondary button--large"
-              href="#colabora"
+              to="/new-proposal"
             >
               Soy una organización social
-            </a>
+            </Link>
           </div>
         </div>
         <div className="landing-hero__art" aria-hidden="true">
