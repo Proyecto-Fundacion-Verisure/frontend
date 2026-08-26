@@ -1,6 +1,6 @@
 # Frontend Verisure
 
-Aplicación web para gestionar el catálogo de actividades de voluntariado, las inscripciones, propuestas, reportes y el panel de seguimiento.
+Aplicación web para gestionar el catálogo de actividades de voluntariado, las inscripciones, propuestas, cierres y el panel de seguimiento.
 Figma; https://www.figma.com/design/D3nU4lVWHOTVRtTNeMyjol/Fundacion-Verisure-Voluntariado?node-id=0-1&p=f&t=wur2cUt7LYGM0uWr-0
 
 ## Tecnologías
@@ -76,7 +76,7 @@ src/
 └── utils/        # Utilidades sin dependencia de React
 ```
 
-Cada feature se organiza por dominio: `auth`, `landing`, `activities`, `enrollments`, `proposals`, `reports` y `dashboard`. Las peticiones HTTP se centralizan en `src/api`; el token se incorpora desde `localStorage` por el interceptor de Axios.
+Cada feature se organiza por dominio: `auth`, `landing`, `activities`, `registrations`, `proposals`, `reports` y `dashboard`. Las peticiones HTTP se centralizan en `src/api`; el token se incorpora desde `localStorage` por el interceptor de Axios.
 
 Cada componente JSX debe repetir el nombre de su carpeta: `NombreComponente/NombreComponente.jsx`. No se usan archivos `index.jsx`. Los archivos `index.js` se reservan para exportaciones agrupadas, como `components/ui/index.js`.
 
