@@ -1,0 +1,172 @@
+@use '../../styles/abstracts/variables' as *;
+
+.login-page {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: left;
+  box-sizing: border-box;
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  &__card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 100%;
+    max-width: $content-max-width * 0.7;
+    min-height: 620px;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    box-shadow: $shadow-lg;
+  }
+
+  &__panel {
+    flex: 1;
+    padding: map-get($spacing, '12') map-get($spacing, '10');
+    display: flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    background: rgba($color-surface, 0.85);
+    backdrop-filter: blur(6px);
+
+    &--left {
+      background: rgba($color-surface, 0.25);
+    }
+
+    &--right {
+      background: rgba($color-surface, 0.95);
+    }
+  }
+
+  &__logo {
+    height: auto;
+    width: auto;
+    margin-bottom: map-get($spacing, '10');
+  }
+
+  &__hero-title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    line-height: $line-height-tight;
+    color: $color-navy;
+    margin: 0 0 map-get($spacing, '4');
+  }
+
+  &__hero-text {
+    font-family: $font-sans;
+    font-size: $font-size-md;
+    line-height: $line-height-normal;
+    color: $color-muted;
+    margin: 0;
+    max-width: 320px;
+  }
+
+  &__form-wrapper {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  &__form-title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-navy;
+    margin: 0 0 map-get($spacing, '2');
+  }
+
+  &__form-subtitle {
+    font-size: $font-size-sm;
+    color: $color-muted;
+    margin: 0 0 map-get($spacing, '8');
+  }
+
+  &__register {
+    margin-top: map-get($spacing, '10');
+    text-align: center;
+    font-size: $font-size-sm;
+    color: $color-muted;
+    line-height: $line-height-normal;
+  }
+
+  &__register-link {
+    color: $color-coral;
+    font-weight: $font-weight-bold;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-coral-dark;
+      text-decoration: underline;
+    }
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: map-get($spacing, '5');
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: $font-size-sm;
+  }
+
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    gap: map-get($spacing, '2');
+    color: $color-text;
+    cursor: pointer;
+
+    input {
+      accent-color: $color-coral;
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  &__link {
+    color: $color-text;
+    text-decoration: none;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-coral;
+      text-decoration: underline;
+    }
+  }
+
+  &__submit {
+    margin-top: map-get($spacing, '2');
+    width: 100%;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    gap: map-get($spacing, '2');
+  }
+}
+
+@media (max-width: map-get($breakpoints, 'md')) {
+  .login-page {
+    &__card {
+      flex-direction: column;
+      min-height: auto;
+    }
+
+    &__panel--left {
+      display: none;
+    }
+
+    &__panel--right {
+      padding: map-get($spacing, '8') map-get($spacing, '6');
+    }
+  }
+}
