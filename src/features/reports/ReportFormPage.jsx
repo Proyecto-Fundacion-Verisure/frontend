@@ -1,1 +1,1 @@
-export default function ReportFormPage() { return <h1>Nuevo reporte</h1>; }
+export default function ReportFormPage() { return <h1>Nuevo cierre</h1>; }
