@@ -50,7 +50,7 @@ export default function LandingPage() {
             </Link>
             <Link
               className="button button--secondary button--large"
-              to="/registro-entidad"
+              to="/register-organization"
             >
               Registra tu entidad
             </Link>

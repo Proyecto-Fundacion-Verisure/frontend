@@ -35,22 +35,22 @@ function isValidCif(value) {
 
 function validate(values) {
   const errors = {};
-  if (!values.organizationName.trim()) errors.organizationName = 'Indica el nombre de la organización.';
+  if (!values.organizationName.trim()) errors.organizationName = 'Enter the organization name.';
   if (!values.cif.trim()) {
-    errors.cif = 'Introduce el CIF.';
+    errors.cif = 'Enter the CIF.';
   } else if (!isValidCif(values.cif)) {
-    errors.cif = 'Introduce un CIF válido (letra + 7 dígitos + dígito de control).';
+    errors.cif = 'Enter a valid CIF (letter + 7 digits + control digit).';
   }
-  if (!values.contactName.trim()) errors.contactName = 'Indica una persona de contacto.';
-  if (!/^\S+@\S+\.\S+$/.test(values.email.trim())) errors.email = 'Introduce un correo electrónico válido.';
-  if (!values.phone.trim()) errors.phone = 'Indica un teléfono de contacto.';
+  if (!values.contactName.trim()) errors.contactName = 'Enter a contact person.';
+  if (!/^\S+@\S+\.\S+$/.test(values.email.trim())) errors.email = 'Enter a valid email address.';
+  if (!values.phone.trim()) errors.phone = 'Enter a contact phone number.';
   if (!values.password) {
-    errors.password = 'Introduce una contraseña.';
+    errors.password = 'Enter a password.';
   } else if (values.password.length < 8) {
-    errors.password = 'La contraseña debe tener al menos 8 caracteres.';
+    errors.password = 'The password must be at least 8 characters.';
   }
-  if (values.password !== values.confirmPassword) errors.confirmPassword = 'Las contraseñas no coinciden.';
-  if (!values.consent) errors.consent = 'Debes aceptar la política de privacidad.';
+  if (values.password !== values.confirmPassword) errors.confirmPassword = 'Passwords do not match.';
+  if (!values.consent) errors.consent = 'You must accept the privacy policy.';
   return errors;
 }
 
@@ -118,32 +118,32 @@ export default function OrgRegisterPage() {
   return (
     <section className="org-register-page" aria-labelledby="org-register-title">
       <div className="org-register-page__intro">
-        <Link to="/" className="org-register-page__back">&larr; Volver a la portada</Link>
-        <p className="org-register-page__eyebrow">Cuenta de entidad</p>
-        <h1 id="org-register-title">Registra tu entidad</h1>
+        <Link to="/" className="org-register-page__back">&larr; Back to home</Link>
+        <p className="org-register-page__eyebrow">Organization account</p>
+        <h1 id="org-register-title">Register your organization</h1>
         <p>
-          Crea una cuenta para publicar actividades de voluntariado y gestionar
-          las inscripciones de la plantilla de Verisure.
+          Create an account to post volunteering activities and manage
+          the enrollments from the Verisure staff.
         </p>
       </div>
 
       <div className="org-register-page__layout">
         <form className="org-register-form" onSubmit={handleSubmit} noValidate>
           <div className="org-register-form__grid">
-            <Input label="Nombre de la entidad" placeholder="Asociación, fundación o entidad" required {...fieldProps('organizationName')} />
+            <Input label="Organization name" placeholder="Association, foundation or entity" required {...fieldProps('organizationName')} />
             <Input label="CIF" placeholder="A12345678" required {...fieldProps('cif')} />
           </div>
           <div className="org-register-form__grid">
-            <Input label="Persona de contacto" placeholder="Nombre y apellidos" required {...fieldProps('contactName')} />
-            <Input type="email" label="Correo electrónico" placeholder="nombre@organizacion.org" required {...fieldProps('email')} />
+            <Input label="Contact person" placeholder="Full name" required {...fieldProps('contactName')} />
+            <Input type="email" label="Email" placeholder="name@organization.org" required {...fieldProps('email')} />
           </div>
           <div className="org-register-form__grid">
-            <Input type="tel" label="Teléfono" placeholder="600 000 000" required {...fieldProps('phone')} />
+            <Input type="tel" label="Phone" placeholder="600 000 000" required {...fieldProps('phone')} />
             <span />
           </div>
           <div className="org-register-form__grid">
-            <Input type="password" label="Contraseña" placeholder="Mínimo 8 caracteres" required {...fieldProps('password')} />
-            <Input type="password" label="Repite la contraseña" placeholder="Confirma tu contraseña" required {...fieldProps('confirmPassword')} />
+            <Input type="password" label="Password" placeholder="Minimum 8 characters" required {...fieldProps('password')} />
+            <Input type="password" label="Confirm password" placeholder="Re-enter your password" required {...fieldProps('confirmPassword')} />
           </div>
 
           <label className={`org-register-form__consent${errors.consent ? ' org-register-form__consent--error' : ''}`}>
@@ -153,9 +153,9 @@ export default function OrgRegisterPage() {
               onChange={(event) => setValues((current) => ({ ...current, consent: event.target.checked }))}
             />{' '}
             <span>
-              He leído y acepto la <strong>política de privacidad</strong>.
-              Autorizo a la Fundación Verisure a tratar estos datos con el único
-              fin de crear mi cuenta y gestionar la plataforma de voluntariado.{' '}
+              I have read and accept the <strong>privacy policy</strong>.
+              I authorize Fundación Verisure to process this data solely for the
+              purpose of creating my account and managing the volunteering platform.{' '}
               <b>*</b>
             </span>
           </label>
@@ -163,27 +163,27 @@ export default function OrgRegisterPage() {
 
           {status === 'error' && (
             <p className="org-register-form__error" role="alert">
-              No hemos podido crear la cuenta. Inténtalo de nuevo.
+              We could not create the account. Please try again.
             </p>
           )}
 
           <div className="org-register-form__footer">
-            <small>Los campos marcados con * son obligatorios.</small>
-            <Button type="submit" size="large" isLoading={status === 'loading'} loadingLabel="Creando cuenta…">
-              Crear cuenta
+            <small>Fields marked with * are required.</small>
+            <Button type="submit" size="large" isLoading={status === 'loading'} loadingLabel="Creating account…">
+              Create account
             </Button>
           </div>
         </form>
 
         <aside className="org-register-aside">
-          <p className="org-register-page__eyebrow">¿Ya tienes cuenta?</p>
+          <p className="org-register-page__eyebrow">Already have an account?</p>
           <p>
-            Si tu entidad ya está registrada, puedes{' '}
-            <Link to="/login">iniciar sesión</Link> directamente.
+            If your organization is already registered, you can{' '}
+            <Link to="/login">log in</Link> directly.
           </p>
           <p className="org-register-aside__alt">
-            ¿No quieres crear cuenta?{' '}
-            <Link to="/new-proposal">Propón una colaboración sin registro</Link>.
+            Don't want to create an account?{' '}
+            <Link to="/new-proposal">Propose a collaboration without signing up</Link>.
           </p>
         </aside>
       </div>
