@@ -1,0 +1,40 @@
+@use '../abstracts' as *;
+
+.org-register-page { margin: 0 auto; max-width: 75rem; padding: space('8') space('6') space('16'); }
+.org-register-page__intro { max-width: 52rem; }
+.org-register-page__back { color: $color-navy; display: inline-block; font-size: $font-size-sm; font-weight: $font-weight-semibold; margin-bottom: space('10'); text-decoration: none; }
+.org-register-page__eyebrow { color: $color-coral-dark; font-size: $font-size-sm; font-weight: $font-weight-bold; letter-spacing: .08em; margin: 0 0 space('4'); text-transform: uppercase; }
+.org-register-page h1 { color: $color-navy; font-size: clamp(2.25rem, 4vw, 3.25rem); letter-spacing: -.045em; line-height: 1.1; margin: 0; }
+.org-register-page__intro > p:last-child { color: $color-muted; font-size: $font-size-lg; line-height: 1.55; margin: space('4') 0 0; }
+.org-register-page__layout { align-items: start; display: grid; gap: clamp(2rem, 5vw, 4rem); grid-template-columns: minmax(0, 1.25fr) minmax(18rem, .75fr); margin-top: space('10'); }
+
+.org-register-form { background: $color-surface; border: 1px solid $color-border; border-radius: $radius-lg; box-shadow: $shadow-md; padding: clamp(space('5'), 4vw, space('8')); }
+.org-register-form__grid { display: grid; gap: space('5') space('4'); grid-template-columns: repeat(2, 1fr); }
+.org-register-form > .field { margin-top: space('5'); }
+.org-register-form__consent { align-items: flex-start; background: $color-background; border: 1px solid $color-border; border-radius: $radius-md; color: $color-muted; display: flex; font-size: $font-size-sm; gap: space('3'); line-height: 1.45; margin-top: space('5'); padding: space('4'); }
+.org-register-form__consent input { accent-color: $color-coral; flex: 0 0 auto; height: 1rem; margin-top: .15rem; width: 1rem; }
+.org-register-form__consent b { color: $color-danger; }
+.org-register-form__consent--error { border-color: $color-danger; }
+.org-register-form__error { color: $color-danger; font-size: $font-size-sm; margin: space('2') 0 0; }
+.org-register-form__footer { align-items: center; border-top: 1px solid $color-border; display: flex; gap: space('4'); justify-content: space-between; margin-top: space('5'); padding-top: space('5'); }
+.org-register-form__footer small { color: $color-muted; }
+
+.org-register-aside { padding-top: space('4'); }
+.org-register-aside > p { color: $color-muted; font-size: $font-size-sm; line-height: 1.55; margin: 0 0 space('4'); }
+.org-register-aside a { color: $color-coral-dark; font-weight: $font-weight-semibold; }
+.org-register-aside__alt { background: $color-coral-50; border-left: 2px solid $color-coral; border-radius: 0 $radius-md $radius-md 0; margin-top: space('6'); padding: space('4'); }
+
+.org-register-page--status { max-width: 42rem; text-align: center; }
+.org-register-page--status > p { color: $color-muted; font-size: $font-size-lg; line-height: 1.55; margin: space('5') 0; }
+.org-register-page--status > .button { margin-top: space('6'); }
+
+@media (max-width: 55rem) {
+  .org-register-page__layout { grid-template-columns: 1fr; }
+  .org-register-aside { padding-top: 0; }
+}
+@media (max-width: 38rem) {
+  .org-register-page { padding-inline: space('4'); }
+  .org-register-form__grid { grid-template-columns: 1fr; }
+  .org-register-form__footer { align-items: stretch; flex-direction: column; }
+  .org-register-form__footer .button { width: 100%; }
+}
