@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { createProposal } from "../../api/proposalsApi";
 import useForm from "../../hooks/useForm";
 import { Button, Input, Select, Textarea } from "../../components/ui";
@@ -87,7 +88,9 @@ export default function ProposalForm() {
         <p className="proposal-page__eyebrow">Propuesta de colaboración</p>
         <h1 id="proposal-title">Contadnos qué necesitáis</h1>
         <p>
-          Este formulario es uno de las canales  con la Fundación. Podéis registraros como entidad y publicar vuestras necesidades en el catálogo de actividades de voluntariado.
+          This form is one of the channels to contact the Foundation. If
+          you prefer to manage your own activities,{' '}
+          <Link to="/register-organization">create an organization account</Link>.
         </p>
       </div>
       <div className="proposal-page__layout">
@@ -255,9 +258,9 @@ export default function ProposalForm() {
           </ol>
           {/* <p className="proposal-steps__note"><strong>No hace falta que tengáis cuenta.</strong> La plataforma solo la usan la Fundación y la plantilla de Verisure.</p> */}
           <div className="proposal-steps__cta">
-            <a className="button button--primary button--large" href="/registro-entidad">
-              Regístrate como entidad
-            </a>
+            <Link className="button button--primary button--large" to="/register-organization">
+              Register as an organization
+            </Link>
           </div>
         </aside>
       </div>
