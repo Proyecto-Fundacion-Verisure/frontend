@@ -1,4 +1,3 @@
-import { useState } from "react";
 import LoginForm from './LoginForm';
 import logo from "../../assets/images/logo-fundacion-verisure.png";
 import backgroundImage from "../../assets/images/login-background.png";

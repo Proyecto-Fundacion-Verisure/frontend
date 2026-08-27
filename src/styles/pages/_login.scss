@@ -152,6 +152,15 @@
     align-items: center;
     gap: map-get($spacing, '2');
   }
+
+  &__error {
+    background: $color-danger-light;
+    color: $color-danger;
+    border: 1px solid rgba($color-danger, 0.3);
+    border-radius: $radius-md;
+    padding: map-get($spacing, '3') map-get($spacing, '4');
+    font-size: $font-size-sm;
+  }
 }
 
 @media (max-width: map-get($breakpoints, 'md')) {

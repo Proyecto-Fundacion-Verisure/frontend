@@ -1,10 +1,8 @@
-// LoginForm.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '../Button/Button';
-import Input from '../Input/Input';
-import { useAuth } from '../../context/useAuth';
-import { getRoleHomeRoute } from './roleRedirect';
+import { Button, Input, Modal } from '../../components/ui';
+import { useAuth } from './AuthContext';
+import { getRoleHomePath } from '../../routes/routeAccess';
 
 function LoginForm() {
   const { login } = useAuth();
@@ -16,6 +14,7 @@ function LoginForm() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [formError, setFormError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgotModal, setShowForgotModal] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +24,7 @@ function LoginForm() {
 
     try {
       const authenticatedUser = await login({ email, password });
-      navigate(getRoleHomeRoute(authenticatedUser.role), { replace: true });
+      navigate(getRoleHomePath(authenticatedUser.role), { replace: true });
     } catch (error) {
       if (error.fieldErrors) {
         setFieldErrors(error.fieldErrors);
@@ -38,6 +37,7 @@ function LoginForm() {
   };
 
   return (
+    <>
     <form className="login-form" onSubmit={handleSubmit} noValidate>
       {formError && (
         <div className="login-form__error" role="alert">
@@ -75,9 +75,13 @@ function LoginForm() {
           <span>Recordar sesión</span>
         </label>
 
-        <a href="/forgot-password" className="login-form__link">
+        <button
+          type="button"
+          className="login-form__link"
+          onClick={() => setShowForgotModal(true)}
+        >
           ¿Olvidaste tu contraseña?
-        </a>
+        </button>
       </div>
 
       <Button
@@ -91,6 +95,16 @@ function LoginForm() {
         Entrar al portal <span aria-hidden="true">→</span>
       </Button>
     </form>
+
+    <Modal
+      isOpen={showForgotModal}
+      onClose={() => setShowForgotModal(false)}
+      title="¿Olvidaste tu contraseña?"
+      size="small"
+    >
+      <p>Contacta con el administrador para restablecer tu contraseña.</p>
+    </Modal>
+    </>
   );
 }
 
