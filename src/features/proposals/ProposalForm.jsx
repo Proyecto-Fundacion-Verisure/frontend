@@ -88,9 +88,9 @@ export default function ProposalForm() {
         <p className="proposal-page__eyebrow">Propuesta de colaboración</p>
         <h1 id="proposal-title">Contadnos qué necesitáis</h1>
         <p>
-          This form is one of the channels to contact the Foundation. If
-          you prefer to manage your own activities,{' '}
-          <Link to="/register-organization">create an organization account</Link>.
+          Este formulario es uno de los canales de contacto con la Fundación. Si
+          prefieres gestionar tus propias actividades,{' '}
+          <Link to="/register-organization">crea una cuenta de entidad</Link>.
         </p>
       </div>
       <div className="proposal-page__layout">
@@ -259,7 +259,7 @@ export default function ProposalForm() {
           {/* <p className="proposal-steps__note"><strong>No hace falta que tengáis cuenta.</strong> La plataforma solo la usan la Fundación y la plantilla de Verisure.</p> */}
           <div className="proposal-steps__cta">
             <Link className="button button--primary button--large" to="/register-organization">
-              Register as an organization
+              Regístrate como entidad
             </Link>
           </div>
         </aside>
