@@ -16,7 +16,7 @@ export default function AppRouter() {
     <Routes>
       <Route path="/" element={<PublicLayout><LandingPage /></PublicLayout>} />
       <Route path="/login" element={<PublicLayout><LoginPage /></PublicLayout>} />
-      <Route path="/propuesta" element={<PublicLayout><ProposalForm /></PublicLayout>} />
+      <Route path="/proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
       <Route path="/new-proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
       <Route path="/register-organization" element={<PublicLayout><OrgRegisterPage /></PublicLayout>} />
       <Route path="/account-status" element={<PublicLayout><AccountStatusPage /></PublicLayout>} />
