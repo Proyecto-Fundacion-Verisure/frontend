@@ -44,7 +44,7 @@ export default function LoginPage() {
             <p className="login-page__register">
               ¿Eres una entidad social y no tienes una cuenta?
               <br />
-              <a href="/register" className="login-page__register-link">
+              <a href="/register-organization" className="login-page__register-link">
                 Regístrate
               </a>
             </p>

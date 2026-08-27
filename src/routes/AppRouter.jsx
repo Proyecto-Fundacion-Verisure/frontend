@@ -1,5 +1,4 @@
 import { Route, Routes } from 'react-router-dom';
-import RoleRoute from './RoleRoute';
 import LandingPage from '../features/landing/LandingPage';
 import LoginPage from '../features/auth/LoginPage';
 import DashboardPage from '../features/dashboard/DashboardPage';
