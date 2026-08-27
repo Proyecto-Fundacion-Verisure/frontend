@@ -3,19 +3,19 @@ import { Link } from 'react-router-dom';
 export default function AccountStatusPage() {
   return (
     <section className="org-register-page org-register-page--status" aria-labelledby="account-status-title">
-      <p className="org-register-page__eyebrow">Account created</p>
-      <h1 id="account-status-title">Check your email</h1>
+      <p className="org-register-page__eyebrow">Cuenta creada</p>
+      <h1 id="account-status-title">Revisa tu correo</h1>
       <p>
-        We have sent a confirmation message to your email address.
-        Open the link to activate your account and start managing
-        volunteering activities.
+        Hemos enviado un mensaje de confirmación a tu dirección de email.
+        Abre el enlace para activar tu cuenta y empezar a gestionar actividades
+        de voluntariado.
       </p>
       <p>
-        If you don't receive it within a few minutes, check your spam folder or
-        contact us at <strong>voluntariado@fundacionverisure.org</strong>.
+        Si no lo recibes en unos minutos, revisa la carpeta de spam o
+        contacta con nosotros en <strong>voluntariado@fundacionverisure.org</strong>.
       </p>
       <Link className="button button--primary button--large" to="/login">
-        Go to log in
+        Ir a iniciar sesión
       </Link>
     </section>
   );
