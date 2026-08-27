@@ -1,3 +1,143 @@
 @use '../abstracts' as *;
 
-.landing-hero { background: $color-navy; color: $color-surface; padding: 4rem 1.5rem; }
+.landing {
+  background: $color-background;
+  color: $color-text;
+  min-height: 100vh;
+
+  &__container { margin: 0 auto; max-width: $content-max-width; padding-inline: space('6'); }
+  &__eyebrow { color: $color-coral-dark; font-size: $font-size-sm; font-weight: $font-weight-bold; letter-spacing: .08em; margin: 0 0 space('4'); text-transform: uppercase; }
+}
+
+.landing-hero {
+  align-items: center;
+  background: $color-coral-50;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, .92fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  margin: 0 auto;
+  max-width: 80rem;
+  padding: clamp(3.5rem, 6vw, 5rem) space('6') space('6');
+
+  &__content { max-width: 38rem; }
+  h1 { color: $color-navy; font-size: clamp(2.5rem, 4.6vw, 4.4rem); letter-spacing: -.05em; line-height: 1.05; margin: 0; }
+  h1 em { color: $color-coral-dark; font-style: normal; }
+  &__lead { font-size: $font-size-lg; line-height: 1.65; margin: space('6') 0 0; max-width: 45rem; }
+  &__actions { display: flex; flex-wrap: wrap; gap: space('3'); margin-top: space('8'); }
+
+  &__art {
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(135deg, #f3f1fa, #eef3fb);
+    border-radius: $radius-lg;
+    box-shadow: $shadow-md;
+    overflow: hidden;
+    position: relative;
+
+    &::before, &::after, span, i, b { border-radius: 50%; content: ''; display: block; position: absolute; }
+    &::before { background: $color-coral-100; height: 68%; left: -11%; top: 29%; width: 68%; }
+    &::after { background: #dbe8fa; height: 47%; right: -8%; top: -11%; width: 47%; }
+    span { background: $color-coral; height: 25%; left: 38%; top: 30%; width: 25%; }
+    i { background: $color-navy; bottom: 14%; height: 15%; left: 47%; width: 15%; }
+    b { background: $color-surface; bottom: 8%; height: 38%; right: 13%; width: 28%; }
+  }
+}
+
+.landing-stats { padding: space('12') 0; }
+.landing-stats__grid { display: grid; gap: space('5'); grid-template-columns: repeat(4, 1fr); }
+.landing-stat {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  display: grid;
+  gap: space('2');
+  margin: 0;
+  padding: space('6');
+  text-align: center;
+  strong { color: $color-navy; font-size: clamp(2rem, 3.2vw, 2.7rem); letter-spacing: -.045em; line-height: 1; }
+  span { color: $color-muted; font-size: $font-size-xs; font-weight: $font-weight-bold; letter-spacing: .08em; text-transform: uppercase; }
+  
+  &__icon { justify-self: center; }
+}
+
+.landing-impact, .landing-access { padding-block: clamp(4rem, 7vw, 6rem); }
+.landing-impact__heading { max-width: 48rem; }
+.landing-impact__heading h2, .landing-access h2, .landing-cta h2 { color: $color-navy; font-size: clamp(2rem, 3.5vw, 3.25rem); letter-spacing: -.04em; line-height: 1.15; margin: 0; }
+.landing-impact__heading > p:last-child { color: $color-muted; font-size: $font-size-lg; margin: space('4') 0 0; }
+.landing-impact__grid { display: grid; gap: space('5'); grid-template-columns: repeat(4, 1fr); margin-top: space('10'); }
+.landing-impact__card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  min-height: 17rem;
+  padding: space('6');
+  transition: box-shadow $transition-base, transform $transition-base;
+  &:hover { box-shadow: $shadow-md; transform: translateY(-.2rem); }
+  h3 { color: $color-navy; font-size: $font-size-xl; margin: 0 0 space('3'); }
+  > p { color: $color-muted; margin: 0; }
+  &__figure { color: $color-coral-dark; font-size: $font-size-sm; font-weight: $font-weight-bold; margin-top: auto !important; padding-top: space('5'); }
+}
+.landing-impact__figure { color: $color-coral-dark !important; font-size: $font-size-sm; font-weight: $font-weight-bold; margin-top: auto !important; padding-top: space('5'); }
+
+.landing-cta { padding-block: space('6'); }
+.landing-cta__content {
+  align-items: center;
+  background: $color-coral-50;
+  border: 1px solid $color-coral-100;
+  border-radius: $radius-lg;
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  grid-template-columns: minmax(0, 1.3fr) minmax(18rem, 1fr);
+  padding: clamp(2rem, 4vw, 3rem);
+  > div > p:not(.landing__eyebrow) { color: $color-muted; margin: space('4') 0 0; max-width: 46rem; }
+  .button { margin-top: space('6'); }
+}
+.landing-cta__steps { display: grid; gap: space('5'); list-style: none; margin: 0; padding: 0; }
+.landing-cta__steps li { display: flex; gap: space('3'); }
+.landing-cta__steps span { align-items: center; background: $color-coral-dark; border-radius: 50%; color: $color-surface; display: inline-flex; flex: 0 0 1.75rem; font-size: $font-size-sm; font-weight: $font-weight-bold; height: 1.75rem; justify-content: center; }
+.landing-cta__steps strong { color: $color-navy; display: block; }
+.landing-cta__steps p { color: $color-muted; font-size: $font-size-sm; margin: space('1') 0 0; }
+
+.landing-access__grid { display: grid; gap: space('5'); grid-template-columns: repeat(2, 1fr); margin-top: space('10'); }
+.landing-access__card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  padding: space('8');
+  text-decoration: none;
+  transition: box-shadow $transition-base, transform $transition-base;
+  &:hover { box-shadow: $shadow-md; transform: translateY(-.2rem); }
+  h3 { color: $color-navy; font-size: $font-size-xl; margin: 0 0 space('3'); }
+  > p:not(.landing__eyebrow) { color: $color-muted; margin: 0 0 space('6'); }
+  .button { margin-top: auto; width: 100%; }
+  img {
+    border-radius: $radius-lg;
+    display: block;
+    width: 100%;
+  }
+}
+
+@media (max-width: 63.99rem) {
+  .landing-hero { grid-template-columns: 1fr; }
+  .landing-hero__art { max-width: 38rem; width: 100%; }
+  .landing-stats__grid, .landing-impact__grid { grid-template-columns: repeat(2, 1fr); }
+  .landing-cta__content { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 47.99rem) {
+  .landing__container { padding-inline: space('4'); }
+  .landing-hero { padding-inline: space('4'); }
+  .landing-stats__grid, .landing-impact__grid, .landing-access__grid { grid-template-columns: 1fr; }
+  .landing-impact__card { min-height: auto; }
+}
+
+@include reduce-motion {
+  .landing-impact__card, .landing-access__card { transition: none; }
+}

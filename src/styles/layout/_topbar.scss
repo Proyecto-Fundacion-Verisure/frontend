@@ -1,3 +1,55 @@
 @use '../abstracts' as *;
 
-.topbar { align-items: center; background: $color-navy; color: $color-surface; display: flex; min-height: 4rem; padding: 0 1.5rem; }
+.topbar {
+  align-items: center;
+  background: $color-navy;
+  color: $color-surface;
+  display: flex;
+  gap: space('4');
+  justify-content: space-between;
+  min-height: 4rem;
+  padding: 0 space('6');
+}
+
+.topbar__content { min-width: 0; }
+
+.topbar__user-menu {
+  align-items: center;
+  display: flex;
+  gap: space('4');
+  margin-left: auto;
+}
+
+.topbar__user-name {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar__logout {
+  @include focus-ring($color-surface);
+
+  align-items: center;
+  background: transparent;
+  border: 1px solid $color-border-strong;
+  border-radius: $radius-md;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  gap: space('2');
+  min-height: $control-height;
+  padding: 0 space('3');
+  transition: background-color $transition-fast;
+
+  &:hover { background: $color-navy-light; }
+}
+
+@media (max-width: 35.99rem) {
+  .topbar { padding-inline: space('4'); }
+  .topbar__user-name,
+  .topbar__logout span { display: none; }
+}

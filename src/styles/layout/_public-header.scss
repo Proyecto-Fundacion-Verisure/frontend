@@ -1,0 +1,82 @@
+@use '../abstracts/variables' as *;
+
+.public-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background-color: $color-surface;
+  border-bottom: 1px solid $color-border;
+
+  &__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: $content-max-width;
+    margin: 0 auto;
+    padding: map-get($spacing, '4') map-get($spacing, '6');
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: map-get($spacing, '3');
+    text-decoration: none;
+  }
+
+  &__logo {
+    height: 2.25rem;
+    width: auto;
+    display: block;
+  }
+
+  &__divider {
+    width: 1px;
+    height: 1.25rem;
+    background-color: $color-border;
+  }
+
+  &__subtitle {
+    font-family: $font-sans;
+    font-size: $font-size-sm;
+    color: $color-muted;
+
+    @media (max-width: map-get($breakpoints, 'sm')) {
+      display: none;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: map-get($spacing, '3');
+  }
+
+  &__login-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    padding: 0 map-get($spacing, '5');
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-md;
+    background-color: $color-surface;
+    color: $color-navy;
+    font-family: $font-sans;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color $transition-fast, border-color $transition-fast;
+
+    &:hover,
+    &:focus-visible {
+      background-color: $color-background;
+      border-color: $color-muted;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-coral;
+      outline-offset: 2px;
+    }
+  }
+}
