@@ -4,6 +4,7 @@ import LoginPage from '../features/auth/LoginPage';
 import DashboardPage from '../features/dashboard/DashboardPage';
 import UiShowcase from '../components/ui/UiShowcase/UiShowcase';
 import ProtectedRoute from './ProtectedRoute';
+import RoleRoute from './RoleRoute';
 
 export default function AppRouter() {
   return (
