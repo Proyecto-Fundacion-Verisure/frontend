@@ -1,17 +1,28 @@
-@use '../abstracts' as *;
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
 
 .topbar {
-  align-items: center;
-  background: $color-navy;
-  color: $color-surface;
+  grid-area: topbar;
   display: flex;
-  gap: space('4');
+  background-color: $color-surface;
+  border-bottom: 1px solid $color-border;
+  align-items: center;
+  color: $color-surface;
+  gap: map-get($spacing, '4');
   justify-content: space-between;
   min-height: 4rem;
-  padding: 0 space('6');
+  padding: 0 map-get($spacing, '6');
 }
 
-.topbar__content { min-width: 0; }
+.topbar__content { 
+  min-width: 0;
+
+  img {
+    height: 3rem;
+    width: auto;
+    display: block;
+  }
+}
 
 .topbar__user-menu {
   align-items: center;
@@ -30,10 +41,10 @@
 }
 
 .topbar__logout {
-  @include focus-ring($color-surface);
+  @include focus-ring($color-coral);
 
   align-items: center;
-  background: transparent;
+  background: $color-coral;
   border: 1px solid $color-border-strong;
   border-radius: $radius-md;
   color: inherit;
