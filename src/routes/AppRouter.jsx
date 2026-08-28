@@ -9,6 +9,7 @@ import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
 import ProposalForm from '../features/proposals/ProposalForm';
 import OrgRegisterPage from '../features/orgs/OrgRegisterPage';
+import OrgActivitiesPage from '../features/orgs/OrgActivitiesPage';
 import AccountStatusPage from '../features/orgs/AccountStatusPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
 
@@ -28,6 +29,9 @@ export default function AppRouter() {
         </Route>
         <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
           <Route path="/activities" element={<CatalogPage />} />
+        </Route>
+        <Route element={<RoleRoute roles={['ORG']} />}>
+          <Route path="/org/activities" element={<OrgActivitiesPage />} />
         </Route>
       </Route>
     </Routes>

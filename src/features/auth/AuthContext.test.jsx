@@ -18,7 +18,7 @@ function SessionHarness() {
   return (
     <div>
       <span>{isAuthenticated ? user.name : 'anonymous'}</span>
-      <button type="button" onClick={() => login({ email: 'ana@example.com', password: 'secret' })}>
+      <button type="button" onClick={() => login({ email: 'ana@example.com', password: 'secret' }).catch(() => {})}>
         Login
       </button>
       <button type="button" onClick={logout}>Logout</button>
@@ -89,5 +89,23 @@ describe('AuthContext', () => {
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Iniciar sesión' })).toBeInTheDocument();
     });
+  });
+
+  it('propagates the error when login fails so the form can show a message', async () => {
+    loginRequest.mockRejectedValue({
+      message: 'Credenciales incorrectas.',
+      status: 401,
+    });
+    const user = userEvent.setup();
+    renderAuth();
+
+    await user.click(screen.getByRole('button', { name: 'Login' }));
+
+    await waitFor(() => {
+      expect(loginRequest).toHaveBeenCalledWith({ email: 'ana@example.com', password: 'secret' });
+    });
+    expect(screen.getByText('anonymous')).toBeInTheDocument();
+    expect(window.localStorage.getItem('accessToken')).toBeNull();
+    expect(window.localStorage.getItem('user')).toBeNull();
   });
 });
