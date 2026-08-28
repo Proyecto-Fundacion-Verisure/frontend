@@ -41,10 +41,10 @@
 }
 
 .topbar__logout {
-  @include focus-ring($color-surface);
+  @include focus-ring($color-coral);
 
   align-items: center;
-  background: transparent;
+  background: $color-coral;
   border: 1px solid $color-border-strong;
   border-radius: $radius-md;
   color: inherit;

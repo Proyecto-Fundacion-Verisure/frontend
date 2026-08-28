@@ -6,7 +6,7 @@ const COUNTS_BY_ROLE = {
   // ej. useQuery(['sidebar-counts'], fetchSidebarCounts) manteniendo
   //  la misma forma de objeto que se devuelve aquí
   ADMIN: { proposals: 3, inscriptions: 5, closes: 2 },
-  ORGANIZATION: { proposals: 1, closes: 4 },
+  ORG: { proposals: 1, closes: 4 },
   EMPLOYEE: { inscriptions: 2 },
   // FIN TEMPORAL
 };

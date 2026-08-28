@@ -24,14 +24,16 @@ export default function AppRouter() {
       <Route path="/account-status" element={<PublicLayout><AccountStatusPage /></PublicLayout>} />
       {import.meta.env.DEV && <Route path="/ui-kit" element={<UiShowcase />} />}
       <Route element={<ProtectedRoute />}>
-        <Route element={<RoleRoute roles={['ADMIN']} />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
-        </Route>
-        <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
-          <Route path="/activities" element={<CatalogPage />} />
-        </Route>
-        <Route element={<RoleRoute roles={['ORG']} />}>
-          <Route path="/org/activities" element={<OrgActivitiesPage />} />
+        <Route element={<AppLayout />}>
+          <Route element={<RoleRoute roles={['ADMIN']} />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+          </Route>
+          <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
+            <Route path="/activities" element={<CatalogPage />} />
+          </Route>
+          <Route element={<RoleRoute roles={['ORG']} />}>
+            <Route path="/org/activities" element={<OrgActivitiesPage />} />
+          </Route>
         </Route>
       </Route>
     </Routes>

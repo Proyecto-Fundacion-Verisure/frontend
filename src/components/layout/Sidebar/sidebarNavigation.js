@@ -65,7 +65,7 @@ export const NAV_SECTIONS_BY_ROLE = {
       ],
     },
   ],
-  ORGANIZATION: [
+  ORG: [
     {
       section: "Análisis",
       items: [
