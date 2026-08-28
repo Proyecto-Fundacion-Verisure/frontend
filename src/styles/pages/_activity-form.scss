@@ -1,0 +1,117 @@
+@use '../abstracts' as *;
+
+.activity-form-page {
+  margin: 0 auto;
+  max-width: $content-max-width;
+  padding: space('8') space('6') space('16');
+}
+
+.activity-form-page__header {
+  max-width: 52rem;
+
+  > a {
+    color: $color-navy;
+    display: inline-block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    margin-bottom: space('10');
+  }
+}
+
+.activity-form-page__eyebrow {
+  color: $color-coral-dark;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  letter-spacing: .08em;
+  margin: 0 0 space('4');
+  text-transform: uppercase;
+}
+
+.activity-form-page h1 {
+  color: $color-navy;
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  letter-spacing: -.045em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.activity-form-page__layout {
+  align-items: start;
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  grid-template-columns: minmax(0, 1.25fr) minmax(18rem, .75fr);
+  margin-top: space('10');
+}
+
+.activity-form {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  padding: clamp(space('5'), 4vw, space('8'));
+}
+
+.activity-form__grid {
+  display: grid;
+  gap: space('5') space('4');
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.activity-form > .field {
+  margin-top: space('5');
+}
+
+.activity-form__footer {
+  align-items: center;
+  border-top: 1px solid $color-border;
+  display: flex;
+  gap: space('4');
+  justify-content: space-between;
+  margin-top: space('5');
+  padding-top: space('5');
+
+  small { color: $color-muted; }
+}
+
+.activity-form__error {
+  color: $color-danger;
+  font-size: $font-size-sm;
+  margin: space('2') 0 0;
+}
+
+.activity-form--success {
+  max-width: 42rem;
+  text-align: center;
+
+  > p:not(.activity-form-page__eyebrow) {
+    color: $color-muted;
+    font-size: $font-size-lg;
+    margin: space('5') 0 space('8');
+  }
+}
+
+.activity-preview {
+  position: sticky;
+  top: space('8');
+}
+
+.activity-preview__label {
+  color: $color-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin: 0 0 space('4');
+}
+
+@media (max-width: 55rem) {
+  .activity-form-page__layout { grid-template-columns: 1fr; }
+  .activity-preview { position: static; }
+}
+
+@media (max-width: 38rem) {
+  .activity-form-page { padding-inline: space('4'); }
+  .activity-form__grid { grid-template-columns: 1fr; }
+  .activity-form__footer { align-items: stretch; flex-direction: column; }
+  .activity-form__footer .button { width: 100%; }
+}
