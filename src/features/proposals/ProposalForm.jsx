@@ -41,10 +41,35 @@ function validate(values) {
   return errors;
 }
 
+function getServerFieldErrors(error) {
+  if (!error?.fieldErrors || Array.isArray(error.fieldErrors)) return null;
+
+  const fieldErrors = Object.entries(error.fieldErrors).reduce(
+    (result, [field, message]) => {
+      const fieldMessage = Array.isArray(message) ? message[0] : message;
+      if (field in initialValues && typeof fieldMessage === "string") {
+        result[field] = fieldMessage;
+      }
+      return result;
+    },
+    {},
+  );
+
+  return Object.keys(fieldErrors).length ? fieldErrors : null;
+}
+
 export default function ProposalForm() {
   const { values, setValues, handleChange, reset } = useForm(initialValues);
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("idle");
+
+  const handleFieldChange = (event) => {
+    const field = event.target.name;
+    handleChange(event);
+    if (errors[field]) {
+      setErrors((current) => ({ ...current, [field]: undefined }));
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -60,8 +85,14 @@ export default function ProposalForm() {
       });
       setStatus("success");
       reset();
-    } catch {
-      setStatus("error");
+    } catch (error) {
+      const serverFieldErrors = getServerFieldErrors(error);
+      if (serverFieldErrors) {
+        setErrors(serverFieldErrors);
+        setStatus("idle");
+      } else {
+        setStatus("error");
+      }
     }
   };
 
@@ -102,7 +133,7 @@ export default function ProposalForm() {
               placeholder="Asociación, fundación o entidad"
               required
               value={values.organizationName}
-              onChange={handleChange}
+              onChange={handleFieldChange}
               error={errors.organizationName}
             />
             <Input
@@ -111,7 +142,7 @@ export default function ProposalForm() {
               placeholder="G12345678"
               required
               value={values.cif}
-              onChange={handleChange}
+              onChange={handleFieldChange}
               error={errors.cif}
             />
             <Input
@@ -120,7 +151,7 @@ export default function ProposalForm() {
               placeholder="Nombre y apellidos"
               required
               value={values.contactName}
-              onChange={handleChange}
+              onChange={handleFieldChange}
               error={errors.contactName}
             />
             <Input
@@ -130,7 +161,7 @@ export default function ProposalForm() {
               placeholder="nombre@organizacion.org"
               required
               value={values.email}
-              onChange={handleChange}
+              onChange={handleFieldChange}
               error={errors.email}
             />
             <Input
@@ -140,7 +171,7 @@ export default function ProposalForm() {
               placeholder="600 000 000"
               required
               value={values.phone}
-              onChange={handleChange}
+              onChange={handleFieldChange}
               error={errors.phone}
             />
             <Input
@@ -149,7 +180,7 @@ export default function ProposalForm() {
               min="1"
               label="Voluntarios estimados"
               value={values.estimatedVolunteers}
-              onChange={handleChange}
+              onChange={handleFieldChange}
               error={errors.estimatedVolunteers}
             />
           </div>
@@ -157,7 +188,7 @@ export default function ProposalForm() {
             name="line"
             label="Línea con la que encaja"
             value={values.line}
-            onChange={handleChange}
+            onChange={handleFieldChange}
           >
             <option value="">No lo tengo claro, ayudadme a ubicarla</option>
             <option value="desoledad">Desoledad</option>
@@ -172,7 +203,7 @@ export default function ProposalForm() {
             required
             rows={4}
             value={values.description}
-            onChange={handleChange}
+            onChange={handleFieldChange}
             error={errors.description}
             hint="Cuanto más concreta sea la dedicación por persona, antes podremos publicarla."
           />
