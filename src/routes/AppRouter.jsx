@@ -10,6 +10,7 @@ import RoleRoute from './RoleRoute';
 import ProposalForm from '../features/proposals/ProposalForm';
 import OrgRegisterPage from '../features/orgs/OrgRegisterPage';
 import AccountStatusPage from '../features/orgs/AccountStatusPage';
+import AppLayout from '../components/layout/AppLayout/AppLayout';
 
 export default function AppRouter() {
   return (
