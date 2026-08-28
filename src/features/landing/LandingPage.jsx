@@ -88,10 +88,10 @@ export default function LandingPage() {
               label="horas de voluntariado dedicadas"
               icon={clockIcon}
             />
-            <StatCounter 
-              value="23" 
+            <StatCounter
+              value="23"
               label="organizaciones sociales aliadas"
-              icon={buildingIcon}  
+              icon={buildingIcon}
             />
           </div>
         </div>
