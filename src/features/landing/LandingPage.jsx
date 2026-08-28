@@ -74,22 +74,22 @@ export default function LandingPage() {
           <p className="landing__eyebrow">El año 2025 en cifras</p>
           <div className="landing-stats__grid">
             <StatCounter
-              value="0"
+              value="12.234"
               label="personas beneficiadas de forma directa"
               icon={handHeartIcon}
             />
             <StatCounter
-              value="0"
+              value="598"
               label="personas voluntarias de la plantilla"
               icon={usersIcon}
             />
             <StatCounter
-              value="0"
+              value="2.655"
               label="horas de voluntariado dedicadas"
               icon={clockIcon}
             />
             <StatCounter
-              value="0"
+              value="23"
               label="organizaciones sociales aliadas"
               icon={buildingIcon}
             />
