@@ -180,14 +180,22 @@ export default function ProposalForm() {
             className={`proposal-form__consent${errors.consent ? " proposal-form__consent--error" : ""}`}
           >
             <input
+              name="consent"
               type="checkbox"
+              required
               checked={values.consent}
-              onChange={(event) =>
+              aria-invalid={Boolean(errors.consent)}
+              aria-describedby={errors.consent ? "proposal-consent-error" : undefined}
+              onChange={(event) => {
+                const isChecked = event.target.checked;
                 setValues((current) => ({
                   ...current,
-                  consent: event.target.checked,
-                }))
-              }
+                  consent: isChecked,
+                }));
+                if (isChecked) {
+                  setErrors((current) => ({ ...current, consent: undefined }));
+                }
+              }}
             />{" "}
             <span>
               He leído y acepto la <strong>política de privacidad</strong>.
@@ -197,7 +205,7 @@ export default function ProposalForm() {
             </span>
           </label>
           {errors.consent && (
-            <p className="proposal-form__error" role="alert">
+            <p id="proposal-consent-error" className="proposal-form__error" role="alert">
               {errors.consent}
             </p>
           )}
