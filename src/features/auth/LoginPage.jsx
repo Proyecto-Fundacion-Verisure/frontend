@@ -1,8 +1,12 @@
+import { useLocation } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import logo from "../../assets/images/logo-fundacion-verisure.png";
 import backgroundImage from "../../assets/images/login-background.png";
 
 export default function LoginPage() {
+  const location = useLocation();
+  const sessionExpired = location.state?.sessionExpired;
+
   return (
     <div
       className="login-page"
@@ -38,6 +42,12 @@ export default function LoginPage() {
             <p className="login-page__form-subtitle">
               Inicia sesión con tus credenciales para continuar.
             </p>
+
+            {sessionExpired && (
+              <div className="login-page__session-expired" role="alert">
+                Tu sesión ha caducado. Vuelve a iniciar sesión.
+              </div>
+            )}
 
             <LoginForm />
 
