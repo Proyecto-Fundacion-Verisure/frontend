@@ -87,6 +87,16 @@
     margin: 0 0 map-get($spacing, '8');
   }
 
+  &__session-expired {
+    background: $color-warning-light;
+    border: 1px solid $color-warning;
+    border-radius: $radius-md;
+    color: $color-warning;
+    font-size: $font-size-sm;
+    margin-bottom: map-get($spacing, '4');
+    padding: map-get($spacing, '3') map-get($spacing, '4');
+  }
+
   &__register {
     margin-top: map-get($spacing, '10');
     text-align: center;

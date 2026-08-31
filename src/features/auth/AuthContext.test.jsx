@@ -26,6 +26,11 @@ function SessionHarness() {
   );
 }
 
+function SessionExpiredHarness() {
+  const { isAuthenticated, user } = useContext(AuthContext);
+  return <span>{isAuthenticated ? user.name : 'anonymous'}</span>;
+}
+
 function renderAuth(initialEntry = '/private') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
@@ -121,5 +126,36 @@ describe('AuthContext', () => {
     expect(screen.getByRole('heading', { name: 'Iniciar sesión' })).toBeInTheDocument();
     expect(window.localStorage.getItem('accessToken')).toBeNull();
     expect(window.localStorage.getItem('user')).toBeNull();
+  });
+
+  it('sets user to anonymous and shows login page on auth:unauthorized event', async () => {
+    window.localStorage.setItem('accessToken', 'expired-jwt');
+    window.localStorage.setItem('user', JSON.stringify({ id: 4, name: 'Ana' }));
+    renderAuth('/private');
+
+    expect(screen.getByText('Ana')).toBeInTheDocument();
+
+    act(() => window.dispatchEvent(new CustomEvent(AUTH_UNAUTHORIZED_EVENT)));
+
+    await waitFor(() => {
+      expect(screen.queryByText('Ana')).not.toBeInTheDocument();
+    });
+    expect(screen.getByRole('heading', { name: 'Iniciar sesión' })).toBeInTheDocument();
+  });
+
+  it('is idempotent when multiple auth:unauthorized events are received', async () => {
+    window.localStorage.setItem('accessToken', 'expired-jwt');
+    window.localStorage.setItem('user', JSON.stringify({ id: 4, name: 'Ana' }));
+    renderAuth('/private');
+
+    act(() => {
+      window.dispatchEvent(new CustomEvent(AUTH_UNAUTHORIZED_EVENT));
+      window.dispatchEvent(new CustomEvent(AUTH_UNAUTHORIZED_EVENT));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Iniciar sesión' })).toBeInTheDocument();
+    });
+    expect(screen.queryByText('Ana')).not.toBeInTheDocument();
   });
 });
