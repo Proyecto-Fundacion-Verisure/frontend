@@ -6,6 +6,7 @@ import {
   UserPlus,
   CheckCircle2,
   CirclePlus,
+  BarChart3,
 } from "lucide-react";
 
 export const NAV_SECTIONS_BY_ROLE = {
@@ -67,41 +68,23 @@ export const NAV_SECTIONS_BY_ROLE = {
   ],
   ORG: [
     {
-      section: "Análisis",
-      items: [
-        { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      ],
-    },
-    {
-      section: "Catálogo",
+      section: "Gestión",
       items: [
         {
-          path: "/create-activity",
-          label: "Crear actividad",
-          icon: CirclePlus,
-          variant: "cta",
-        },
-        {
-          path: "/my-activities",
+          path: "/org/activities",
           label: "Mis actividades",
           icon: ClipboardList,
         },
         {
-          path: "/proposals",
-          label: "Propuestas",
+          path: "/org/reports",
+          label: "Informes",
+          icon: BarChart3,
+        },
+        {
+          path: "/org/proposals",
+          label: "Mis propuestas",
           icon: FileText,
           badgeKey: "proposals",
-        },
-      ],
-    },
-    {
-      section: "Participación",
-      items: [
-        {
-          path: "/closes",
-          label: "Cierres",
-          icon: CheckCircle2,
-          badgeKey: "closes",
         },
       ],
     },
