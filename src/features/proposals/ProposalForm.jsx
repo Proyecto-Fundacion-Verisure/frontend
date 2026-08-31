@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { createProposal } from "../../api/proposalsApi";
 import useForm from "../../hooks/useForm";
 import { Button, Input, Select, Textarea } from "../../components/ui";
+import { ACTIVITY_LINES, getLineByValue } from "../../constants/activityLines";
+import ProposalImagePreview from "./ProposalImagePreview";
 
 const initialValues = {
   organizationName: "",
@@ -62,7 +64,8 @@ export default function ProposalForm() {
   const { values, setValues, handleChange, reset } = useForm(initialValues);
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("idle");
-
+  const selectedLine = getLineByValue(values.line);
+  
   const handleFieldChange = (event) => {
     const field = event.target.name;
     handleChange(event);
@@ -82,6 +85,7 @@ export default function ProposalForm() {
       await createProposal({
         ...values,
         estimatedVolunteers: Number(values.estimatedVolunteers) || null,
+        image: selectedLine?.image ?? null,
       });
       setStatus("success");
       reset();
@@ -191,11 +195,15 @@ export default function ProposalForm() {
             onChange={handleFieldChange}
           >
             <option value="">No lo tengo claro, ayudadme a ubicarla</option>
-            <option value="desoledad">Desoledad</option>
-            <option value="educar">Educar para proteger</option>
-            <option value="acoso">Protegidos ante el acoso</option>
-            <option value="voluntariado">Voluntariado</option>
+            {ACTIVITY_LINES.map((line) => (
+              <option key={line.value} value={line.value}>
+                {line.label}
+              </option>
+            ))}
           </Select>
+
+          <ProposalImagePreview line={selectedLine} />
+          
           <Textarea
             name="description"
             label="Descripción de la necesidad"

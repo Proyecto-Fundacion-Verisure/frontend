@@ -1,40 +1,210 @@
-@use '../abstracts' as *;
+@use "../abstracts" as *;
 
-.proposal-page { margin: 0 auto; max-width: 75rem; padding: space('8') space('6') space('16'); }
-.proposal-page__intro { max-width: 52rem; }
-.proposal-page__intro > a { color: $color-navy; display: inline-block; font-size: $font-size-sm; font-weight: $font-weight-semibold; margin-bottom: space('10'); }
-.proposal-page__eyebrow { color: $color-coral-dark; font-size: $font-size-sm; font-weight: $font-weight-bold; letter-spacing: .08em; margin: 0 0 space('4'); text-transform: uppercase; }
-.proposal-page h1 { color: $color-navy; font-size: clamp(2.25rem, 4vw, 3.25rem); letter-spacing: -.045em; line-height: 1.1; margin: 0; }
-.proposal-page__intro > p:last-child { color: $color-muted; font-size: $font-size-lg; line-height: 1.55; margin: space('4') 0 0; }
-.proposal-page__layout { align-items: start; display: grid; gap: clamp(2rem, 5vw, 4rem); grid-template-columns: minmax(0, 1.25fr) minmax(18rem, .75fr); margin-top: space('10'); }
-.proposal-form { background: $color-surface; border: 1px solid $color-border; border-radius: $radius-lg; box-shadow: $shadow-md; padding: clamp(space('5'), 4vw, space('8')); }
-.proposal-form__grid { display: grid; gap: space('5') space('4'); grid-template-columns: repeat(2, 1fr); }
-.proposal-form > .field { margin-top: space('5'); }
-.proposal-form__consent { align-items: flex-start; background: $color-background; border: 1px solid $color-border; border-radius: $radius-md; color: $color-muted; display: flex; font-size: $font-size-sm; gap: space('3'); line-height: 1.45; margin-top: space('5'); padding: space('4'); }
-.proposal-form__consent input { accent-color: $color-coral; flex: 0 0 auto; height: 1rem; margin-top: .15rem; width: 1rem; }
-.proposal-form__consent b { color: $color-danger; }
-.proposal-form__consent--error { border-color: $color-danger; }
-.proposal-form__error { color: $color-danger; font-size: $font-size-sm; margin: space('2') 0 0; }
-.proposal-form__footer { align-items: center; border-top: 1px solid $color-border; display: flex; gap: space('4'); justify-content: space-between; margin-top: space('5'); padding-top: space('5'); }
-.proposal-form__footer small { color: $color-muted; }
-.proposal-steps { padding-top: space('4'); }
-.proposal-steps ol { display: grid; gap: space('5'); list-style: none; margin: space('5') 0; padding: 0; }
-.proposal-steps li { display: flex; gap: space('3'); }
-.proposal-steps li > span { align-items: center; background: $color-coral; border-radius: 50%; color: $color-surface; display: flex; flex: 0 0 1.75rem; font-size: $font-size-sm; font-weight: $font-weight-bold; height: 1.75rem; justify-content: center; }
-.proposal-steps strong { color: $color-navy; display: block; }
-.proposal-steps p { color: $color-muted; font-size: $font-size-sm; line-height: 1.45; margin: space('1') 0 0; }
-.proposal-steps__note { background: $color-coral-50; border-left: 2px solid $color-coral; border-radius: 0 $radius-md $radius-md 0; padding: space('4'); }
-.proposal-steps__cta {  justify-content: center; margin-top: space('6'); }
-.proposal-page--success { max-width: 42rem; text-align: center; }
-.proposal-page--success > p:not(.proposal-page__eyebrow) { color: $color-muted; font-size: $font-size-lg; margin: space('5') 0 space('8'); }
+.proposal-page {
+  margin: 0 auto;
+  max-width: 75rem;
+  padding: space("8") space("6") space("16");
+}
+.proposal-page__intro {
+  max-width: 52rem;
+}
+.proposal-page__intro > a {
+  color: $color-navy;
+  display: inline-block;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  margin-bottom: space("10");
+}
+.proposal-page__eyebrow {
+  color: $color-coral-dark;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.08em;
+  margin: 0 0 space("4");
+  text-transform: uppercase;
+}
+.proposal-page h1 {
+  color: $color-navy;
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+  margin: 0;
+}
+.proposal-page__intro > p:last-child {
+  color: $color-muted;
+  font-size: $font-size-lg;
+  line-height: 1.55;
+  margin: space("4") 0 0;
+}
+.proposal-page__layout {
+  align-items: start;
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+  margin-top: space("10");
+}
+.proposal-form {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  padding: clamp(space("5"), 4vw, space("8"));
+}
+.proposal-form__grid {
+  display: grid;
+  gap: space("5") space("4");
+  grid-template-columns: repeat(2, 1fr);
+}
+.proposal-form > .field {
+  margin-top: space("5");
+}
+.proposal-form__consent {
+  align-items: flex-start;
+  background: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  color: $color-muted;
+  display: flex;
+  font-size: $font-size-sm;
+  gap: space("3");
+  line-height: 1.45;
+  margin-top: space("5");
+  padding: space("4");
+}
+.proposal-form__consent input {
+  accent-color: $color-coral;
+  flex: 0 0 auto;
+  height: 1rem;
+  margin-top: 0.15rem;
+  width: 1rem;
+}
+.proposal-form__consent b {
+  color: $color-danger;
+}
+.proposal-form__consent--error {
+  border-color: $color-danger;
+}
+.proposal-form__error {
+  color: $color-danger;
+  font-size: $font-size-sm;
+  margin: space("2") 0 0;
+}
+.proposal-form__footer {
+  align-items: center;
+  border-top: 1px solid $color-border;
+  display: flex;
+  gap: space("4");
+  justify-content: space-between;
+  margin-top: space("5");
+  padding-top: space("5");
+}
+.proposal-form__footer small {
+  color: $color-muted;
+}
+.proposal-steps {
+  padding-top: space("4");
+}
+.proposal-steps ol {
+  display: grid;
+  gap: space("5");
+  list-style: none;
+  margin: space("5") 0;
+  padding: 0;
+}
+.proposal-steps li {
+  display: flex;
+  gap: space("3");
+}
+.proposal-steps li > span {
+  align-items: center;
+  background: $color-coral;
+  border-radius: 50%;
+  color: $color-surface;
+  display: flex;
+  flex: 0 0 1.75rem;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  height: 1.75rem;
+  justify-content: center;
+}
+.proposal-steps strong {
+  color: $color-navy;
+  display: block;
+}
+.proposal-steps p {
+  color: $color-muted;
+  font-size: $font-size-sm;
+  line-height: 1.45;
+  margin: space("1") 0 0;
+}
+.proposal-steps__note {
+  background: $color-coral-50;
+  border-left: 2px solid $color-coral;
+  border-radius: 0 $radius-md $radius-md 0;
+  padding: space("4");
+}
+.proposal-steps__cta {
+  justify-content: center;
+  margin-top: space("6");
+}
+.proposal-page--success {
+  max-width: 42rem;
+  text-align: center;
+}
+.proposal-page--success > p:not(.proposal-page__eyebrow) {
+  color: $color-muted;
+  font-size: $font-size-lg;
+  margin: space("5") 0 space("8");
+}
 
 @media (max-width: 55rem) {
-  .proposal-page__layout { grid-template-columns: 1fr; }
-  .proposal-steps { padding-top: 0; }
+  .proposal-page__layout {
+    grid-template-columns: 1fr;
+  }
+  .proposal-steps {
+    padding-top: 0;
+  }
 }
 @media (max-width: 38rem) {
-  .proposal-page { padding-inline: space('4'); }
-  .proposal-form__grid { grid-template-columns: 1fr; }
-  .proposal-form__footer { align-items: stretch; flex-direction: column; }
-  .proposal-form__footer .button { width: 100%; }
+  .proposal-page {
+    padding-inline: space("4");
+  }
+  .proposal-form__grid {
+    grid-template-columns: 1fr;
+  }
+  .proposal-form__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .proposal-form__footer .button {
+    width: 100%;
+  }
+}
+
+.line-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: map-get($spacing, '3');
+  margin: map-get($spacing, '6') 0;
+  padding: map-get($spacing, '6');
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+
+  &__image {
+    width: 100%;
+    max-width: 28rem;
+    height: 14rem;
+    object-fit: cover;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+  }
+
+  &__label {
+    color: $color-text;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+  }
 }
