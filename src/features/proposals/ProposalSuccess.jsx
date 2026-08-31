@@ -17,7 +17,7 @@ export default function ProposalSuccess({ onReset }) {
     >
       <p className="proposal-page__eyebrow">Propuesta recibida</p>
       <h1 id="proposal-success-title" ref={headingRef} tabIndex={-1}>
-        Gracias por contarnos.
+        Gracias por contarnos qué necesitáis.
       </h1>
       <p>
         Hemos recibido vuestra propuesta. El equipo de la Fundación Verisure
