@@ -108,4 +108,18 @@ describe('AuthContext', () => {
     expect(window.localStorage.getItem('accessToken')).toBeNull();
     expect(window.localStorage.getItem('user')).toBeNull();
   });
+
+  it('does not block local cleanup when server logout fails', async () => {
+    window.localStorage.setItem('accessToken', 'signed-jwt');
+    window.localStorage.setItem('user', JSON.stringify({ id: 4, name: 'Ana' }));
+    logoutRequest.mockRejectedValue(new Error('Network error'));
+    const user = userEvent.setup();
+    renderAuth();
+
+    await user.click(screen.getByRole('button', { name: 'Logout' }));
+
+    expect(screen.getByRole('heading', { name: 'Iniciar sesión' })).toBeInTheDocument();
+    expect(window.localStorage.getItem('accessToken')).toBeNull();
+    expect(window.localStorage.getItem('user')).toBeNull();
+  });
 });
