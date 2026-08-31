@@ -27,6 +27,8 @@
 .proposal-steps__cta {  justify-content: center; margin-top: space('6'); }
 .proposal-page--success { max-width: 42rem; text-align: center; }
 .proposal-page--success > p:not(.proposal-page__eyebrow) { color: $color-muted; font-size: $font-size-lg; margin: space('5') 0 space('8'); }
+.proposal-accept-action { align-items: flex-start; display: flex; flex-direction: column; gap: space('2'); }
+.proposal-accept-action__error { color: $color-danger; font-size: $font-size-sm; margin: 0; max-width: 34rem; }
 
 @media (max-width: 55rem) {
   .proposal-page__layout { grid-template-columns: 1fr; }
