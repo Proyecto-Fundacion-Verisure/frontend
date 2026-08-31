@@ -5,6 +5,8 @@ import useForm from "../../hooks/useForm";
 import { Button, Input, Select, Textarea } from "../../components/ui";
 import { ACTIVITY_LINES, getLineByValue } from "../../constants/activityLines";
 import ProposalImagePreview from "./ProposalImagePreview";
+import ProposalSuccess from "./ProposalSuccess";
+import ProposalConsentField from "./ProposalConsentField";
 
 const initialValues = {
   organizationName: "",
@@ -43,6 +45,10 @@ function validate(values) {
   return errors;
 }
 
+function validateField(name, valuesToValidate) {
+  return validate(valuesToValidate)[name];
+}
+
 function getServerFieldErrors(error) {
   if (!error?.fieldErrors || Array.isArray(error.fieldErrors)) return null;
 
@@ -60,25 +66,63 @@ function getServerFieldErrors(error) {
   return Object.keys(fieldErrors).length ? fieldErrors : null;
 }
 
+function focusFirstInvalid() {
+  requestAnimationFrame(() => {
+    document.querySelector('[aria-invalid="true"]')?.focus();
+  });
+}
+
 export default function ProposalForm() {
   const { values, setValues, handleChange, reset } = useForm(initialValues);
   const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
   const [status, setStatus] = useState("idle");
   const selectedLine = getLineByValue(values.line);
-  
+
   const handleFieldChange = (event) => {
-    const field = event.target.name;
-    handleChange(event);
-    if (errors[field]) {
-      setErrors((current) => ({ ...current, [field]: undefined }));
+    const { name, value, type, checked } = event.target;
+    const nextValue = type === "checkbox" ? checked : value;
+
+    if (type === "checkbox") {
+      setValues((current) => ({ ...current, [name]: nextValue }));
+    } else {
+      handleChange(event);
     }
+
+    if (touched[name]) {
+      const nextValues = { ...values, [name]: nextValue };
+      const fieldError = validateField(name, nextValues);
+      setErrors((current) => ({ ...current, [name]: fieldError }));
+    } else if (errors[name]) {
+      setErrors((current) => ({ ...current, [name]: undefined }));
+    }
+  };
+
+  const handleBlur = (event) => {
+    const { name, value, type, checked } = event.target;
+    const nextValue = type === "checkbox" ? checked : value;
+    setTouched((current) => ({ ...current, [name]: true }));
+    const nextValues = { ...values, [name]: nextValue };
+    const fieldError = validateField(name, nextValues);
+    setErrors((current) => ({ ...current, [name]: fieldError }));
+  };
+
+  const handleConsentChange = (event) => {
+    handleFieldChange(event);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const nextErrors = validate(values);
+    const nextTouched = Object.fromEntries(
+      Object.keys(initialValues).map((key) => [key, true]),
+    );
+    setTouched(nextTouched);
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length) return;
+    if (Object.keys(nextErrors).length) {
+      focusFirstInvalid();
+      return;
+    }
 
     setStatus("loading");
     try {
@@ -89,31 +133,34 @@ export default function ProposalForm() {
       });
       setStatus("success");
       reset();
+      setTouched({});
+      setErrors({});
     } catch (error) {
       const serverFieldErrors = getServerFieldErrors(error);
       if (serverFieldErrors) {
         setErrors(serverFieldErrors);
+        setTouched((current) => ({
+          ...current,
+          ...Object.fromEntries(
+            Object.keys(serverFieldErrors).map((key) => [key, true]),
+          ),
+        }));
         setStatus("idle");
+        focusFirstInvalid();
       } else {
         setStatus("error");
       }
     }
   };
 
+  const handleResetSuccess = () => {
+    setStatus("idle");
+    setTouched({});
+    setErrors({});
+  };
+
   if (status === "success") {
-    return (
-      <section className="proposal-page proposal-page--success">
-        <p className="proposal-page__eyebrow">Propuesta recibida</p>
-        <h1>Gracias por contarnos qué necesitáis.</h1>
-        <p>
-          Hemos recibido vuestra propuesta. El equipo de la Fundación Verisure
-          la revisará y os contactará por correo.
-        </p>
-        <Button size="large" onClick={() => setStatus("idle")}>
-          Enviar otra propuesta
-        </Button>
-      </section>
-    );
+    return <ProposalSuccess onReset={handleResetSuccess} />;
   }
 
   return (
@@ -124,7 +171,7 @@ export default function ProposalForm() {
         <h1 id="proposal-title">Contadnos qué necesitáis</h1>
         <p>
           Este formulario es uno de los canales de contacto con la Fundación. Si
-          prefieres gestionar tus propias actividades,{' '}
+          prefieres gestionar tus propias actividades,{" "}
           <Link to="/register-organization">crea una cuenta de entidad</Link>.
         </p>
       </div>
@@ -138,7 +185,8 @@ export default function ProposalForm() {
               required
               value={values.organizationName}
               onChange={handleFieldChange}
-              error={errors.organizationName}
+              onBlur={handleBlur}
+              error={touched.organizationName ? errors.organizationName : undefined}
             />
             <Input
               name="cif"
@@ -147,7 +195,8 @@ export default function ProposalForm() {
               required
               value={values.cif}
               onChange={handleFieldChange}
-              error={errors.cif}
+              onBlur={handleBlur}
+              error={touched.cif ? errors.cif : undefined}
             />
             <Input
               name="contactName"
@@ -156,7 +205,8 @@ export default function ProposalForm() {
               required
               value={values.contactName}
               onChange={handleFieldChange}
-              error={errors.contactName}
+              onBlur={handleBlur}
+              error={touched.contactName ? errors.contactName : undefined}
             />
             <Input
               name="email"
@@ -166,7 +216,8 @@ export default function ProposalForm() {
               required
               value={values.email}
               onChange={handleFieldChange}
-              error={errors.email}
+              onBlur={handleBlur}
+              error={touched.email ? errors.email : undefined}
             />
             <Input
               name="phone"
@@ -176,7 +227,8 @@ export default function ProposalForm() {
               required
               value={values.phone}
               onChange={handleFieldChange}
-              error={errors.phone}
+              onBlur={handleBlur}
+              error={touched.phone ? errors.phone : undefined}
             />
             <Input
               name="estimatedVolunteers"
@@ -185,7 +237,8 @@ export default function ProposalForm() {
               label="Voluntarios estimados"
               value={values.estimatedVolunteers}
               onChange={handleFieldChange}
-              error={errors.estimatedVolunteers}
+              onBlur={handleBlur}
+              error={touched.estimatedVolunteers ? errors.estimatedVolunteers : undefined}
             />
           </div>
           <Select
@@ -193,6 +246,7 @@ export default function ProposalForm() {
             label="Línea con la que encaja"
             value={values.line}
             onChange={handleFieldChange}
+            onBlur={handleBlur}
           >
             <option value="">No lo tengo claro, ayudadme a ubicarla</option>
             {ACTIVITY_LINES.map((line) => (
@@ -203,7 +257,7 @@ export default function ProposalForm() {
           </Select>
 
           <ProposalImagePreview line={selectedLine} />
-          
+
           <Textarea
             name="description"
             label="Descripción de la necesidad"
@@ -212,42 +266,16 @@ export default function ProposalForm() {
             rows={4}
             value={values.description}
             onChange={handleFieldChange}
-            error={errors.description}
+            onBlur={handleBlur}
+            error={touched.description ? errors.description : undefined}
             hint="Cuanto más concreta sea la dedicación por persona, antes podremos publicarla."
           />
-          <label
-            className={`proposal-form__consent${errors.consent ? " proposal-form__consent--error" : ""}`}
-          >
-            <input
-              name="consent"
-              type="checkbox"
-              required
-              checked={values.consent}
-              aria-invalid={Boolean(errors.consent)}
-              aria-describedby={errors.consent ? "proposal-consent-error" : undefined}
-              onChange={(event) => {
-                const isChecked = event.target.checked;
-                setValues((current) => ({
-                  ...current,
-                  consent: isChecked,
-                }));
-                if (isChecked) {
-                  setErrors((current) => ({ ...current, consent: undefined }));
-                }
-              }}
-            />{" "}
-            <span>
-              He leído y acepto la <strong>política de privacidad</strong>.
-              Autorizo a la Fundación Verisure a tratar estos datos con el único
-              fin de valorar esta propuesta y ponerse en contacto conmigo.{" "}
-              <b>*</b>
-            </span>
-          </label>
-          {errors.consent && (
-            <p id="proposal-consent-error" className="proposal-form__error" role="alert">
-              {errors.consent}
-            </p>
-          )}
+          <ProposalConsentField
+            checked={values.consent}
+            error={touched.consent ? errors.consent : undefined}
+            onChange={handleConsentChange}
+            onBlur={handleBlur}
+          />
           {status === "error" && (
             <p className="proposal-form__error" role="alert">
               No hemos podido enviar la propuesta. Inténtalo de nuevo.
@@ -303,7 +331,6 @@ export default function ProposalForm() {
               </div>
             </li>
           </ol>
-          {/* <p className="proposal-steps__note"><strong>No hace falta que tengáis cuenta.</strong> La plataforma solo la usan la Fundación y la plantilla de Verisure.</p> */}
           <div className="proposal-steps__cta">
             <Link className="button button--primary button--large" to="/register-organization">
               Regístrate como entidad

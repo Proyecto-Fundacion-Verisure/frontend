@@ -72,7 +72,8 @@ describe('ProposalForm', () => {
     expect(screen.queryByText(/no hemos podido enviar/i)).not.toBeInTheDocument();
 
     await user.clear(screen.getByLabelText(/correo electrónico/i));
-    expect(serverError).not.toBeInTheDocument();
+    expect(screen.queryByText('Ya existe una propuesta con este correo.')).not.toBeInTheDocument();
+    expect(screen.getByText('Introduce un correo válido.')).toBeInTheDocument();
   });
 
   it('muestra un error general cuando el servidor no identifica un campo', async () => {
@@ -203,5 +204,45 @@ describe('ProposalForm', () => {
     consent.focus();
     await user.keyboard(' ');
     expect(consent).toBeChecked();
+  });
+
+  it('valida por campo al perder el foco y limpia al corregir', async () => {
+    const user = userEvent.setup();
+    renderForm();
+
+    const orgInput = screen.getByLabelText(/nombre de la organización/i);
+    expect(screen.queryByText('Indica el nombre de la organización.')).not.toBeInTheDocument();
+
+    orgInput.focus();
+    await user.tab();
+    expect(screen.getByText('Indica el nombre de la organización.')).toBeInTheDocument();
+    expect(orgInput).toHaveAttribute('aria-invalid', 'true');
+
+    await user.type(orgInput, 'Fundación Prueba');
+    expect(screen.queryByText('Indica el nombre de la organización.')).not.toBeInTheDocument();
+    expect(orgInput).toHaveAttribute('aria-invalid', 'false');
+
+    const emailInput = screen.getByLabelText(/correo electrónico/i);
+    await user.type(emailInput, 'mal');
+    await user.tab();
+    expect(screen.getByText('Introduce un correo válido.')).toBeInTheDocument();
+    await user.clear(emailInput);
+    await user.type(emailInput, 'ok@fundacion.org');
+    expect(screen.queryByText('Introduce un correo válido.')).not.toBeInTheDocument();
+  });
+
+  it('valida el consentimiento por campo al perder el foco', async () => {
+    const user = userEvent.setup();
+    renderForm();
+
+    const consent = screen.getByRole('checkbox', { name: /he leído y acepto/i });
+    expect(screen.queryByText('Debes aceptar la política de privacidad.')).not.toBeInTheDocument();
+
+    consent.focus();
+    await user.tab();
+    expect(screen.getByText('Debes aceptar la política de privacidad.')).toBeInTheDocument();
+
+    await user.click(consent);
+    expect(screen.queryByText('Debes aceptar la política de privacidad.')).not.toBeInTheDocument();
   });
 });

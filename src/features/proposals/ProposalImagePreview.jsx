@@ -6,7 +6,7 @@ export default function ProposalImagePreview({ line }) {
       <img
         className="line-preview__image"
         src={line.image}
-        alt={`Imsgen de la línea ${line.label}: ${line.description}`}
+        alt={`Imagen de la línea ${line.label}: ${line.description}`}
       />
       <p className="line-preview__label">{line.label}</p>
     </div>
