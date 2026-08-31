@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -15,6 +15,16 @@ function renderForm() {
       <ProposalForm />
     </MemoryRouter>,
   );
+}
+
+async function fillValidForm(user) {
+  await user.type(screen.getByLabelText(/nombre de la organización/i), 'Fundación Prueba');
+  await user.type(screen.getByLabelText(/^cif/i), 'G12345678');
+  await user.type(screen.getByLabelText(/persona de contacto/i), 'Ana Pérez');
+  await user.type(screen.getByLabelText(/correo electrónico/i), 'ana@fundacion.org');
+  await user.type(screen.getByLabelText(/teléfono/i), '600000000');
+  await user.type(screen.getByLabelText(/descripción de la necesidad/i), 'Necesitamos apoyo voluntario.');
+  await user.click(screen.getByRole('checkbox', { name: /he leído y acepto/i }));
 }
 
 beforeEach(() => {
@@ -70,15 +80,128 @@ describe('ProposalForm', () => {
     createProposal.mockRejectedValue(new Error('Fallo de red'));
     renderForm();
 
-    await user.type(screen.getByLabelText(/nombre de la organización/i), 'Fundación Prueba');
-    await user.type(screen.getByLabelText(/^cif/i), 'G12345678');
-    await user.type(screen.getByLabelText(/persona de contacto/i), 'Ana Pérez');
-    await user.type(screen.getByLabelText(/correo electrónico/i), 'ana@fundacion.org');
-    await user.type(screen.getByLabelText(/teléfono/i), '600000000');
-    await user.type(screen.getByLabelText(/descripción de la necesidad/i), 'Necesitamos apoyo voluntario.');
-    await user.click(screen.getByRole('checkbox', { name: /he leído y acepto/i }));
+    await fillValidForm(user);
     await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
 
     expect(await screen.findByText(/no hemos podido enviar/i)).toBeInTheDocument();
+  });
+
+  it('valida campos obligatorios y formato de correo antes de enviar', async () => {
+    const user = userEvent.setup();
+    renderForm();
+
+    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+
+    expect(screen.getByText('Indica el nombre de la organización.')).toBeInTheDocument();
+    expect(screen.getByText('Introduce un CIF válido.')).toBeInTheDocument();
+    expect(screen.getByText('Indica una persona de contacto.')).toBeInTheDocument();
+    expect(screen.getByText('Introduce un correo válido.')).toBeInTheDocument();
+    expect(screen.getByText('Indica un teléfono de contacto.')).toBeInTheDocument();
+    expect(screen.getByText('Describe la necesidad de la organización.')).toBeInTheDocument();
+    expect(createProposal).not.toHaveBeenCalled();
+
+    await user.type(screen.getByLabelText(/correo electrónico/i), 'correo-invalido');
+    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+
+    expect(screen.getByText('Introduce un correo válido.')).toBeInTheDocument();
+    expect(screen.getByLabelText(/correo electrónico/i)).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('confirma el envío con 201 y permite enviar otra propuesta', async () => {
+    const user = userEvent.setup();
+    createProposal.mockResolvedValue({ data: { id: 1, status: 'NEW' } });
+    renderForm();
+
+    await fillValidForm(user);
+    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+
+    expect(await screen.findByText(/propuesta recibida/i)).toBeInTheDocument();
+    expect(screen.getByText(/gracias por contarnos/i)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/nombre de la organización/i)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /enviar otra propuesta/i }));
+
+    expect(screen.getByLabelText(/nombre de la organización/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /enviar propuesta/i })).toBeInTheDocument();
+  });
+
+  it('muestra error general con 429 límite de solicitudes', async () => {
+    const user = userEvent.setup();
+    createProposal.mockRejectedValue({ message: 'Demasiadas solicitudes', status: 429 });
+    renderForm();
+
+    await fillValidForm(user);
+    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+
+    expect(await screen.findByText(/no hemos podido enviar/i)).toBeInTheDocument();
+  });
+
+  it('muestra error general con 500 error de servidor', async () => {
+    const user = userEvent.setup();
+    createProposal.mockRejectedValue({ message: 'Error del servidor', status: 500 });
+    renderForm();
+
+    await fillValidForm(user);
+    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+
+    expect(await screen.findByText(/no hemos podido enviar/i)).toBeInTheDocument();
+  });
+
+  it('bloquea el doble envío y muestra estado de carga', async () => {
+    const user = userEvent.setup();
+    let resolve;
+    createProposal.mockReturnValue(new Promise((r) => { resolve = r; }));
+    renderForm();
+
+    await fillValidForm(user);
+
+    const submit = screen.getByRole('button', { name: /enviar propuesta/i });
+    await user.click(submit);
+
+    expect(createProposal).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('button', { name: /enviando/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /enviando/i })).toHaveAttribute('aria-busy', 'true');
+
+    // segundo clic no debe disparar otra petición porque el botón está deshabilitado
+    await user.click(screen.getByRole('button', { name: /enviando/i }));
+    expect(createProposal).toHaveBeenCalledTimes(1);
+
+    resolve({ data: { id: 2, status: 'NEW' } });
+    await waitFor(() => expect(screen.getByText(/propuesta recibida/i)).toBeInTheDocument());
+  });
+
+  it('tiene nombres accesibles y se puede operar con teclado', async () => {
+    const user = userEvent.setup();
+    renderForm();
+
+    // todos los campos tienen label accesible
+    expect(screen.getByLabelText(/nombre de la organización/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^cif/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/persona de contacto/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/correo electrónico/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/teléfono/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/descripción de la necesidad/i)).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /he leído y acepto/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /enviar propuesta/i })).toBeInTheDocument();
+
+    // navegación por teclado: Tab mueve el foco de forma secuencial
+    await user.tab();
+    expect(document.activeElement).not.toBe(document.body);
+
+    // foco visible en el botón de envío
+    const submit = screen.getByRole('button', { name: /enviar propuesta/i });
+    submit.focus();
+    expect(submit).toHaveFocus();
+
+    // cada campo puede recibir foco por teclado
+    const orgInput = screen.getByLabelText(/nombre de la organización/i);
+    orgInput.focus();
+    expect(orgInput).toHaveFocus();
+
+    // marcar consentimiento con teclado (Space)
+    const consent = screen.getByRole('checkbox', { name: /he leído y acepto/i });
+    consent.focus();
+    await user.keyboard(' ');
+    expect(consent).toBeChecked();
   });
 });
