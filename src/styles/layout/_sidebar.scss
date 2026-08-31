@@ -79,3 +79,42 @@
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
 }
+
+@media (max-width: 24.375rem) {
+  .app-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 64px auto 1fr;
+    grid-template-areas:
+      "topbar"
+      "sidebar"
+      "content";
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid $color-border;
+    overflow-y: visible;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .sidebar__nav {
+    display: flex;
+    gap: map-get($spacing, '2');
+    padding: map-get($spacing, '2') map-get($spacing, '4');
+  }
+
+  .sidebar__section {
+    display: flex;
+    gap: map-get($spacing, '2');
+  }
+
+  .sidebar__section-title { display: none; }
+
+  .sidebar__link {
+    white-space: nowrap;
+    padding: map-get($spacing, '2') map-get($spacing, '3');
+  }
+}

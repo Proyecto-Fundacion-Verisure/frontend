@@ -10,6 +10,9 @@ import RoleRoute from './RoleRoute';
 import ProposalForm from '../features/proposals/ProposalForm';
 import OrgRegisterPage from '../features/orgs/OrgRegisterPage';
 import OrgActivitiesPage from '../features/orgs/OrgActivitiesPage';
+import ActivityFormPage from '../features/activities/ActivityFormPage';
+import OrgImpactPage from '../features/orgs/OrgImpactPage';
+import OrgProposalsPage from '../features/orgs/OrgProposalsPage';
 import AccountStatusPage from '../features/orgs/AccountStatusPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
 
@@ -33,6 +36,9 @@ export default function AppRouter() {
           </Route>
           <Route element={<RoleRoute roles={['ORG']} />}>
             <Route path="/org/activities" element={<OrgActivitiesPage />} />
+            <Route path="/org/activities/new" element={<ActivityFormPage />} />
+            <Route path="/org/reports" element={<OrgImpactPage />} />
+            <Route path="/org/proposals" element={<OrgProposalsPage />} />
           </Route>
         </Route>
       </Route>

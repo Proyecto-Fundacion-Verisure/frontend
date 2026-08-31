@@ -28,4 +28,23 @@ describe('Topbar', () => {
     renderTopbar({ user: null, logout: vi.fn() });
     expect(screen.queryByRole('button', { name: 'Cerrar sesión' })).not.toBeInTheDocument();
   });
+
+  it('muestra el nombre de la organización para el rol ORG', () => {
+    renderTopbar({
+      user: { name: 'María García', role: 'ORG', organization: 'Fundación Social' },
+      logout: vi.fn(),
+    });
+
+    expect(screen.getByText('Fundación Social')).toBeInTheDocument();
+    expect(screen.queryByText('María García')).not.toBeInTheDocument();
+  });
+
+  it('muestra el nombre de persona para roles que no son ORG', () => {
+    renderTopbar({
+      user: { name: 'Elena', role: 'EMPLOYEE' },
+      logout: vi.fn(),
+    });
+
+    expect(screen.getByText('Elena')).toBeInTheDocument();
+  });
 });

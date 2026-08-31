@@ -9,7 +9,7 @@ export default function Topbar({ children }) {
       <div className="topbar__content">{children}</div>
       {user && (
         <div className="topbar__user-menu" aria-label="Menú de usuario">
-          <span className="topbar__user-name">{user.name ?? user.email}</span>
+          <span className="topbar__user-name">{user.role === 'ORG' ? (user.organization ?? user.name) : (user.name ?? user.email)}</span>
           <button
             className="topbar__logout"
             type="button"
