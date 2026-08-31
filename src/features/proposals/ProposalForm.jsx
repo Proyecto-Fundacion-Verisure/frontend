@@ -154,6 +154,7 @@ export default function ProposalForm() {
   };
 
   const handleResetSuccess = () => {
+    reset();
     setStatus("idle");
     setTouched({});
     setErrors({});

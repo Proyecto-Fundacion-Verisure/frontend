@@ -117,12 +117,21 @@ describe('ProposalForm', () => {
     await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
 
     expect(await screen.findByText(/propuesta recibida/i)).toBeInTheDocument();
-    expect(screen.getByText(/gracias por contarnos/i)).toBeInTheDocument();
+    const heading = screen.getByRole('heading', { name: /gracias por contarnos qué necesitáis/i });
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveAttribute('id', 'proposal-success-title');
+    expect(screen.getByText(/hemos recibido vuestra propuesta/i)).toBeInTheDocument();
     expect(screen.queryByLabelText(/nombre de la organización/i)).not.toBeInTheDocument();
+    await waitFor(() => expect(heading).toHaveFocus());
+    const successRegion = screen.getByText(/propuesta recibida/i).closest('section');
+    expect(successRegion).toHaveAttribute('aria-labelledby', 'proposal-success-title');
 
     await user.click(screen.getByRole('button', { name: /enviar otra propuesta/i }));
 
     expect(screen.getByLabelText(/nombre de la organización/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/nombre de la organización/i)).toHaveValue('');
+    expect(screen.getByLabelText(/^cif/i)).toHaveValue('');
+    expect(screen.getByRole('checkbox', { name: /he leído y acepto/i })).not.toBeChecked();
     expect(screen.getByRole('button', { name: /enviar propuesta/i })).toBeInTheDocument();
   });
 
