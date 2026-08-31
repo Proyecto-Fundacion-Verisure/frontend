@@ -13,6 +13,7 @@ import OrgActivitiesPage from '../features/orgs/OrgActivitiesPage';
 import ActivityFormPage from '../features/activities/ActivityFormPage';
 import OrgImpactPage from '../features/orgs/OrgImpactPage';
 import OrgProposalsPage from '../features/orgs/OrgProposalsPage';
+import ProposalsInboxPage from '../features/proposals/ProposalsInboxPage';
 import AccountStatusPage from '../features/orgs/AccountStatusPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
 
@@ -30,6 +31,7 @@ export default function AppRouter() {
         <Route element={<AppLayout />}>
           <Route element={<RoleRoute roles={['ADMIN']} />}>
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/proposals" element={<ProposalsInboxPage />} />
           </Route>
           <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
             <Route path="/activities" element={<CatalogPage />} />
