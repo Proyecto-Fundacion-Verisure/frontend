@@ -100,7 +100,15 @@ export default function ProposalsInboxPage() {
   }
 
   const columns = [
-    { key: 'organizationName', label: 'Organización' },
+    {
+      key: 'organizationName',
+      label: 'Organización',
+      render: (row) => (
+        <Link to={`/proposals/${row.id}`} className="proposals-inbox__link">
+          {row.organizationName}
+        </Link>
+      ),
+    },
     {
       key: 'line',
       label: 'Línea',
