@@ -17,6 +17,7 @@ import ProposalsInboxPage from '../features/proposals/ProposalsInboxPage';
 import ProposalDetailPage from '../features/proposals/ProposalDetailPage';
 import AccountStatusPage from '../features/orgs/AccountStatusPage';
 import ActivityDetailPage from '../features/activities/ActivityDetailPage';
+import NotFoundPage from '../features/not-found/NotFoundPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
 
 export default function AppRouter() {
@@ -49,6 +50,7 @@ export default function AppRouter() {
           </Route>
         </Route>
       </Route>
+      <Route path="*" element={<PublicLayout><NotFoundPage /></PublicLayout>} />
     </Routes>
   );
 }
