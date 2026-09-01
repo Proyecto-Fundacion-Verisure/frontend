@@ -1,0 +1,85 @@
+@use '../abstracts' as *;
+
+.catalog {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: space('8') space('6') space('16');
+}
+
+.catalog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: space('4');
+  margin-bottom: space('6');
+}
+
+.catalog__title {
+  color: $color-navy;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  margin: 0;
+}
+
+.catalog__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('4');
+  margin-bottom: space('6');
+}
+
+.catalog__error {
+  background: $color-danger-light;
+  border: 1px solid $color-danger;
+  border-radius: $radius-md;
+  color: $color-danger;
+  padding: space('4');
+  text-align: center;
+  margin-bottom: space('4');
+}
+
+.catalog__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: space('6');
+}
+
+.catalog__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: space('5');
+  font-size: $font-size-sm;
+  color: $color-muted;
+
+  > div {
+    display: flex;
+    gap: map-get($spacing, '5');
+  }
+}
+
+.catalog__pagination-info {
+  font-weight: $font-weight-medium;
+}
+
+@media (max-width: 64rem) {
+  .catalog__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 48rem) {
+  .catalog {
+    padding: space('6') space('4') space('12');
+  }
+
+  .catalog__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
