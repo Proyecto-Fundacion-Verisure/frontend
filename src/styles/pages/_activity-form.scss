@@ -92,6 +92,13 @@
   small { color: $color-muted; }
 }
 
+.activity-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('3');
+  justify-content: flex-end;
+}
+
 .activity-form__error {
   color: $color-danger;
   font-size: $font-size-sm;
@@ -142,6 +149,8 @@
   .activity-form-page { padding-inline: space('4'); }
   .activity-form__grid { grid-template-columns: 1fr; }
   .activity-form__footer { align-items: stretch; flex-direction: column; }
+  .activity-form__actions { flex-direction: column; }
+  .activity-form__actions .button,
   .activity-form__footer .button,
   .activity-form-page__success-actions .button { width: 100%; }
   .activity-form-page__success-actions { flex-direction: column; }
