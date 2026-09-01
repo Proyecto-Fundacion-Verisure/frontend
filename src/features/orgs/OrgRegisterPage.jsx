@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createOrganization, resendOrganizationRegistrationEmail } from '../../api/orgApi';
 import useForm from '../../hooks/useForm';
-import { Button, Input } from '../../components/ui';
-import Modal from '../../components/ui/Modal';
+import { Button, Input, Modal } from '../../components/ui';
 
 const initialValues = {
   organizationName: '',

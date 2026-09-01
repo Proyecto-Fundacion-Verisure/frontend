@@ -19,7 +19,7 @@ export const createOrganization = (data) => {
         console.info('[MOCK] createOrganization', data);
         return simulateRequest({ data: { id: 'mock-org-id', status: 'pending' }, delay: 1200 });
     }
-    client.post('/organizations', data);
+    return client.post('/organizations', data);
 };
 
 export const resendOrganizationRegistrationEmail = (email) => {
@@ -27,5 +27,5 @@ export const resendOrganizationRegistrationEmail = (email) => {
         console.info('[MOCK] resendOrganizationConfirmationEmail', email);
         return simulateRequest({ data: { resent: true }, delay: 1000 });
     }
-    client.post('/organizations/resend-registration', { email });
+    return client.post('/organizations/resend-registration', { email });
 };
