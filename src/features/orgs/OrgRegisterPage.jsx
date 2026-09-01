@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { createOrganization } from '../../api/orgApi';
+import { createOrganization, resendOrganizationRegistrationEmail } from '../../api/orgApi';
 import useForm from '../../hooks/useForm';
 import { Button, Input } from '../../components/ui';
+import Modal from '../../components/ui/Modal';
 
 const initialValues = {
   organizationName: '',
@@ -16,6 +17,8 @@ const initialValues = {
 };
 
 const CIF_LETTERS = /^[ABCDEFGHJKLMNPQRSUVW]$/i;
+
+const RESEND_COOLDOWN_SECONDS = 5;
 
 function isValidCif(value) {
   const cif = value.trim().toUpperCase();
@@ -60,6 +63,17 @@ export default function OrgRegisterPage() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [status, setStatus] = useState('idle');
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [resendStatus, setResendStatus] = useState('idle');
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return undefined;
+    const timer = setInterval(() => {
+      setResendCooldown((seconds) => Math.max(seconds - 1, 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   const validateField = (name) => {
     const fieldErrors = validate(values);
@@ -96,7 +110,10 @@ export default function OrgRegisterPage() {
         phone: values.phone.trim(),
         password: values.password,
       });
-      navigate('/account-status');
+      setStatus('idle');
+      setResendStatus('idle');
+      setResendCooldown(0);
+      setIsSuccessModalOpen(true);
     } catch (err) {
       const apiErrors = err?.fieldErrors;
       if (apiErrors) {
@@ -104,6 +121,23 @@ export default function OrgRegisterPage() {
         setTouched(Object.keys(apiErrors).reduce((acc, k) => ({ ...acc, [k]: true }), {}));
       }
       setStatus('error');
+    }
+  };
+
+  const handleGoHome = () => {
+    setIsSuccessModalOpen(false);
+    navigate('/');
+  };
+
+  const handleResendEmail = async () => {
+    if (resendCooldown > 0 || resendStatus === 'loading') return;
+    setResendStatus('loading');
+    try {
+      await resendOrganizationRegistrationEmail(values.email.trim().toLowerCase());
+      setResendStatus('idle');
+      setResendCooldown(RESEND_COOLDOWN_SECONDS);
+    } catch (err) {
+      setResendStatus('error');
     }
   };
 
@@ -169,7 +203,7 @@ export default function OrgRegisterPage() {
 
           <div className="org-register-form__footer">
             <small>Los campos marcados con * son obligatorios.</small>
-            <Button type="submit" size="large" isLoading={status === 'loading'} loadingLabel="Creando cuenta…">
+            <Button type="submit" size="large" isLoading={status === 'loading'} loadingLabel="Enviando solicitud...">
               Crear cuenta
             </Button>
           </div>
@@ -187,6 +221,36 @@ export default function OrgRegisterPage() {
           </p>
         </aside>
       </div>
+      <Modal
+        isOpen={isSuccessModalOpen}
+        onClose={handleGoHome}
+        title="Solicitud enviada"
+        description="Tu solicitud de registro ha sido enviada a la Fundación Verisure."
+        closeOnBackdrop={false}
+        footer={
+          <>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleResendEmail}
+              isLoading={resendStatus === 'loading'}
+              loadingLabel="Reenviando…"
+              disabled={resendCooldown > 0}
+            >
+              {resendCooldown > 0 ? `Reenviar correo (${resendCooldown}s)` : 'Reenviar correo'}
+            </Button>
+            <Button type="button" size="large" onClick={handleGoHome}>
+              Volver al inicio
+            </Button>
+          </>
+        }
+      >
+        <p>
+          Te hemos enviado un correo a <strong>{values.email.trim()}</strong> para
+          que quede constancia de tu solicitud. Revisa tu bandeja de entrada antes de cerrar esta pestaña. En cuanto la fundación la revise y apruebe,
+          te avisaremos por correo electrónico en un plazo de 24-48 horas.
+        </p>
+      </Modal>
     </section>
   );
 }
