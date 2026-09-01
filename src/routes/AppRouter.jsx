@@ -34,13 +34,14 @@ export default function AppRouter() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/proposals" element={<ProposalsInboxPage />} />
             <Route path="/proposals/:proposalId" element={<ProposalDetailPage />} />
+            <Route path="/activities/new" element={<ActivityFormPage />} />
           </Route>
           <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
             <Route path="/activities" element={<CatalogPage />} />
           </Route>
           <Route element={<RoleRoute roles={['ORG']} />}>
             <Route path="/org/activities" element={<OrgActivitiesPage />} />
-            <Route path="/org/activities/new" element={<ActivityFormPage />} />
+            <Route path="/org/activities/new" element={<ActivityFormPage backPath="/org/activities" />} />
             <Route path="/org/reports" element={<OrgImpactPage />} />
             <Route path="/org/proposals" element={<OrgProposalsPage />} />
           </Route>

@@ -7,7 +7,7 @@ const LINE_LABELS = {
   voluntariado: 'Voluntariado',
 };
 
-export default function ActivityCard({ activity }) {
+export default function ActivityCard({ activity, isEnrolled = false }) {
   if (!activity) return null;
 
   const {
@@ -18,13 +18,23 @@ export default function ActivityCard({ activity }) {
     capacity,
     registeredCount,
     organizationName,
+    location,
+    address,
+    city,
     image,
     favoritedByMe,
+    status,
   } = activity;
+  const displayLocation = location || address || city || null;
 
   const lineLabel = LINE_LABELS[line] || line;
   const occupied = Number(registeredCount) || 0;
   const total = Number(capacity) || 0;
+  const isFull =
+    status === 'FULL' ||
+    status === 'COMPLETA' ||
+    status === 'COMPLETED' ||
+    (total > 0 && occupied >= total);
 
   return (
     <Card className="activity-card activity-card--interactive">
@@ -40,12 +50,12 @@ export default function ActivityCard({ activity }) {
       {!image && <div className="activity-card__image" aria-hidden="true">Sin imagen</div>}
 
       <div className="activity-card__body">
-        {(lineLabel || mode) && (
-          <div className="activity-card__badges">
-            {lineLabel && <Badge variant="info">{lineLabel}</Badge>}
-            {mode && <Badge variant="neutral">{mode}</Badge>}
-          </div>
-        )}
+        <div className="activity-card__badges">
+          {lineLabel && <Badge variant="info">{lineLabel}</Badge>}
+          {mode && <Badge variant="neutral">{mode}</Badge>}
+          {isFull && <Badge variant="danger">Completa</Badge>}
+          {isEnrolled && <Badge variant="success">Ya estás apuntado</Badge>}
+        </div>
 
         {title && <h3 className="activity-card__title">{title}</h3>}
         {description && <p className="activity-card__description">{description}</p>}
@@ -60,9 +70,14 @@ export default function ActivityCard({ activity }) {
           />
         )}
 
-        {organizationName && (
+        {(organizationName || displayLocation) && (
           <div className="activity-card__meta">
-            <span className="activity-card__organization">{organizationName}</span>
+            {organizationName && <span className="activity-card__organization">{organizationName}</span>}
+            {displayLocation && (
+              <span className="activity-card__location" aria-label={`Ubicación: ${displayLocation}`}>
+                📍 {displayLocation}
+              </span>
+            )}
           </div>
         )}
       </div>
