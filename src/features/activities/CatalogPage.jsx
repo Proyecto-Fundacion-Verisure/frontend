@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getPublishedActivities } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { Button, EmptyState, Input, Select, Spinner } from '../../components/ui';
@@ -197,7 +197,14 @@ export default function CatalogPage() {
         <>
           <div className="catalog__grid">
             {activities.map((activity) => (
-              <ActivityCard key={activity.id} activity={activity} isEnrolled={enrolledIds.has(activity.id)} />
+              <Link
+                key={activity.id}
+                to={`/activities/${activity.id}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+                aria-label={`Ver detalle de ${activity.title}`}
+              >
+                <ActivityCard activity={activity} isEnrolled={enrolledIds.has(activity.id)} />
+              </Link>
             ))}
           </div>
 

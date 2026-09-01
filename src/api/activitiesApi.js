@@ -1,4 +1,5 @@
 import client from './axiosClient';
+import { ApiError } from './apiError';
 
 const MOCK_ACTIVITIES = [
   {
@@ -112,13 +113,25 @@ function mockGetPublishedActivities(params = {}) {
   });
 }
 
+function mockGetActivityDetail(id) {
+  const activity = MOCK_ACTIVITIES.find((a) => String(a.id) === String(id));
+  if (!activity) {
+    return Promise.reject(
+      new ApiError({ message: 'No se ha encontrado el recurso solicitado.', status: 404 }),
+    );
+  }
+  return Promise.resolve({ data: activity });
+}
+
 const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'test';
 
 export const getAdminActivities = (params) => client.get('/activities', { params });
 export const getPublishedActivities = (params) =>
   isMockEnabled() ? mockGetPublishedActivities(params) : client.get('/activities/published', { params });
-export const getActivityDetail = (id) => client.get(`/activities/${id}`);
-export const getAdminActivity = (id) => client.get(`/admin/activities/${id}`);
+export const getActivityDetail = (id) =>
+  isMockEnabled() ? mockGetActivityDetail(id) : client.get(`/activities/${id}`);
+export const getAdminActivity = (id) =>
+  isMockEnabled() ? mockGetActivityDetail(id) : client.get(`/admin/activities/${id}`);
 export const createActivity = (data) => client.post('/activities', data);
 export const updateActivity = (id, data) => client.put(`/activities/${id}`, data);
 export const publishActivity = (id) => client.patch(`/activities/${id}/publish`);
