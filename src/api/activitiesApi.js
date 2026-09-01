@@ -10,6 +10,7 @@ const MOCK_ACTIVITIES = [
     capacity: 20,
     registeredCount: 8,
     organizationName: 'Fundación Solitaria',
+    location: 'Madrid',
     image: '/images/01-desoledad-linea-de-accion.png',
     favoritedByMe: true,
   },
@@ -22,6 +23,7 @@ const MOCK_ACTIVITIES = [
     capacity: 10,
     registeredCount: 10,
     organizationName: 'Educamos Juntos',
+    location: 'Online',
     image: '/images/02-educar-linea-de-accion.png',
     favoritedByMe: false,
   },
@@ -34,6 +36,7 @@ const MOCK_ACTIVITIES = [
     capacity: 15,
     registeredCount: 5,
     organizationName: 'Prevención Total',
+    location: 'Barcelona',
     image: '/images/03-acoso-linea-de-accion.png',
     favoritedByMe: false,
   },
@@ -46,6 +49,7 @@ const MOCK_ACTIVITIES = [
     capacity: 30,
     registeredCount: 12,
     organizationName: 'Voluntarios Activos',
+    location: 'Valencia',
     image: '/images/04-voluntariado-linea-de-accion.png',
     favoritedByMe: true,
   },
@@ -58,6 +62,7 @@ const MOCK_ACTIVITIES = [
     capacity: 12,
     registeredCount: 3,
     organizationName: 'Educamos Juntos',
+    location: 'Sevilla',
     image: '/images/02-educar-linea-de-accion.png',
     favoritedByMe: false,
   },
@@ -70,6 +75,7 @@ const MOCK_ACTIVITIES = [
     capacity: 25,
     registeredCount: 18,
     organizationName: 'Fundación Solitaria',
+    location: 'Online',
     image: '/images/01-desoledad-linea-de-accion.png',
     favoritedByMe: false,
   },
@@ -90,7 +96,8 @@ function mockGetPublishedActivities(params = {}) {
       (a) =>
         a.title.toLowerCase().includes(q) ||
         a.description.toLowerCase().includes(q) ||
-        a.organizationName.toLowerCase().includes(q),
+        a.organizationName.toLowerCase().includes(q) ||
+        (a.location && a.location.toLowerCase().includes(q)),
     );
   }
 

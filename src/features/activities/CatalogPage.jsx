@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getPublishedActivities } from '../../api/activitiesApi';
+import { getMyRegistrations } from '../../api/registrationsApi';
 import { Button, EmptyState, Input, Select, Spinner } from '../../components/ui';
 import ActivityCard from './ActivityCard';
 
@@ -30,6 +31,7 @@ export default function CatalogPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
+  const [enrolledIds, setEnrolledIds] = useState(() => new Set());
 
   const rawPage = Number(searchParams.get('page'));
   const page = Number.isInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
@@ -79,6 +81,28 @@ export default function CatalogPage() {
       setLoading(false);
     }
   }, [page, line, mode, q]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await getMyRegistrations();
+        if (cancelled) return;
+        const data = res.data?.content ?? res.data;
+        const list = Array.isArray(data) ? data : [];
+        const activeIds = list
+          .filter((r) => r.status !== 'CANCELLED' && r.status !== 'CANCELADA')
+          .map((r) => r.activityId ?? r.activity?.id)
+          .filter(Boolean);
+        setEnrolledIds(new Set(activeIds));
+      } catch {
+        if (!cancelled) setEnrolledIds(new Set());
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -173,7 +197,7 @@ export default function CatalogPage() {
         <>
           <div className="catalog__grid">
             {activities.map((activity) => (
-              <ActivityCard key={activity.id} activity={activity} />
+              <ActivityCard key={activity.id} activity={activity} isEnrolled={enrolledIds.has(activity.id)} />
             ))}
           </div>
 
