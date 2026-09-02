@@ -6,7 +6,9 @@ import { getActivityRegistrations } from '../../api/registrationsApi';
 import RegistrationsTablePage from './RegistrationsTablePage';
 
 vi.mock('../../api/registrationsApi', () => ({
+  acceptRegistration: vi.fn(),
   getActivityRegistrations: vi.fn(),
+  rejectRegistration: vi.fn(),
 }));
 
 const BOARD = {
