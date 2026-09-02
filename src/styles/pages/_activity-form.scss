@@ -125,6 +125,19 @@
   margin-top: space('6');
 }
 
+.activity-form-page--state {
+  display: grid;
+  justify-items: center;
+  min-height: 20rem;
+  place-content: center;
+  text-align: center;
+
+  > p {
+    color: $color-muted;
+    margin: space('4') 0 0;
+  }
+}
+
 .activity-preview {
   position: sticky;
   top: space('8');
