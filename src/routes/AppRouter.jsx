@@ -40,6 +40,7 @@ export default function AppRouter() {
             <Route path="/proposals" element={<ProposalsInboxPage />} />
             <Route path="/proposals/:proposalId" element={<ProposalDetailPage />} />
             <Route path="/activities/new" element={<ActivityFormPage />} />
+            <Route path="/activities/:activityId/edit" element={<ActivityFormPage backPath="/admin/activities" />} />
             <Route path="/admin/activities" element={<ActivitiesListPage />} />
           </Route>
           <Route element={<RoleRoute roles={['EMPLOYEE']} />}>

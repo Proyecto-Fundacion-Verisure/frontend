@@ -164,6 +164,23 @@ function mockGetActivityDetail(id) {
   return Promise.resolve({ data: activity });
 }
 
+async function mockGetAdminActivity(id) {
+  const { data: activity } = await mockGetActivityDetail(id);
+  return {
+    data: {
+      ...activity,
+      modality: activity.mode,
+      maxParticipants: activity.capacity,
+      hours: 3,
+      startDate: '2026-10-10T09:00:00Z',
+      endDate: '2026-10-10T12:00:00Z',
+      registrationDeadline: '2026-10-08T21:59:00Z',
+      imageUrl: activity.image,
+      status: 'DRAFT',
+    },
+  };
+}
+
 function mockCancelActivity(id) {
   const activity = MOCK_ACTIVITIES.find((item) => String(item.id) === String(id));
   if (!activity) {
@@ -194,7 +211,7 @@ export const getPublishedActivities = (params) =>
 export const getActivityDetail = (id) =>
   isMockEnabled() ? mockGetActivityDetail(id) : client.get(`/activities/${id}`);
 export const getAdminActivity = (id) =>
-  isMockEnabled() ? mockGetActivityDetail(id) : client.get(`/admin/activities/${id}`);
+  isMockEnabled() ? mockGetAdminActivity(id) : client.get(`/admin/activities/${id}`);
 export const createActivity = (data) => client.post('/activities', data);
 export const updateActivity = (id, data) => client.put(`/activities/${id}`, data);
 export const publishActivity = (id) => client.patch(`/activities/${id}/publish`);

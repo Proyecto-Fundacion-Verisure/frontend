@@ -1,8 +1,13 @@
-import { useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { createActivity, publishActivity } from '../../api/activitiesApi';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import {
+  createActivity,
+  getAdminActivity,
+  publishActivity,
+  updateActivity,
+} from '../../api/activitiesApi';
 import useForm from '../../hooks/useForm';
-import { Button, Input, Modal, Select, Textarea } from '../../components/ui';
+import { Button, Input, Modal, Select, Spinner, Textarea } from '../../components/ui';
 
 const initialValues = {
   title: '',
@@ -20,6 +25,31 @@ const initialValues = {
 function toISOString(localValue) {
   if (!localValue) return '';
   return new Date(localValue).toISOString();
+}
+
+function toLocalDateTime(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return localDate.toISOString().slice(0, 16);
+}
+
+function toFormValues(activity) {
+  return {
+    title: activity.title ?? '',
+    description: activity.description ?? '',
+    line: activity.line?.toLowerCase() ?? '',
+    modality: (activity.modality ?? activity.mode)?.toLowerCase() ?? '',
+    maxParticipants: String(
+      activity.maxParticipants ?? activity.spots ?? activity.capacity ?? '',
+    ),
+    hours: String(activity.hours ?? ''),
+    startDate: toLocalDateTime(activity.startDate),
+    endDate: toLocalDateTime(activity.endDate),
+    registrationDeadline: toLocalDateTime(activity.registrationDeadline),
+    imageUrl: activity.imageUrl ?? activity.image ?? '',
+  };
 }
 
 function validate(values) {
@@ -80,14 +110,49 @@ function buildPayload(values) {
 }
 
 export default function ActivityFormPage({ backPath = '/dashboard' }) {
+  const { activityId } = useParams();
+  const isEditMode = Boolean(activityId);
   const requestInProgress = useRef(false);
   const { values, setValues, handleChange } = useForm(initialValues);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [requestStatus, setRequestStatus] = useState('idle');
+  const [requestStatus, setRequestStatus] = useState(isEditMode ? 'loading' : 'idle');
   const [activity, setActivity] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [isPublishConfirmOpen, setIsPublishConfirmOpen] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  useEffect(() => {
+    if (!isEditMode) return undefined;
+    let cancelled = false;
+
+    const loadActivity = async () => {
+      setRequestStatus('loading');
+      setErrorMessage('');
+      try {
+        const { data } = await getAdminActivity(activityId);
+        if (cancelled) return;
+        setActivity(data);
+        setValues(toFormValues(data));
+        setRequestStatus('idle');
+      } catch (error) {
+        if (cancelled) return;
+        setErrorMessage(error?.message || 'No hemos podido cargar la actividad.');
+        setRequestStatus(
+          error?.status === 403
+            ? 'forbidden'
+            : error?.status === 404
+              ? 'not-found'
+              : 'load-error',
+        );
+      }
+    };
+
+    loadActivity();
+    return () => {
+      cancelled = true;
+    };
+  }, [activityId, isEditMode, reloadKey, setValues]);
 
   const validateForm = () => {
     const nextErrors = validate(values);
@@ -119,8 +184,15 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
     setRequestStatus('saving');
     setErrorMessage('');
     try {
-      await createDraft();
-      setRequestStatus('draft');
+      if (isEditMode) {
+        const payload = buildPayload(values);
+        const { data: updatedActivity } = await updateActivity(activityId, payload);
+        setActivity(updatedActivity ?? { ...activity, ...payload });
+        setRequestStatus('updated');
+      } else {
+        await createDraft();
+        setRequestStatus('draft');
+      }
     } catch (error) {
       applyApiError(error);
       setRequestStatus('idle');
@@ -195,31 +267,75 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
   const isPublishing = requestStatus === 'publishing';
   const showsResultPage = requestStatus === 'draft'
     || requestStatus === 'published'
+    || requestStatus === 'updated'
     || (isPublishing && activity);
+
+  if (requestStatus === 'loading') {
+    return (
+      <section className="activity-form-page activity-form-page--state" aria-label="Cargando actividad">
+        <Spinner label="Cargando actividad…" />
+      </section>
+    );
+  }
+
+  if (['forbidden', 'not-found', 'load-error'].includes(requestStatus)) {
+    const title = requestStatus === 'forbidden'
+      ? 'No tienes permiso para editar esta actividad'
+      : requestStatus === 'not-found'
+        ? 'No encontramos la actividad'
+        : 'No hemos podido cargar la actividad';
+    return (
+      <section className="activity-form-page activity-form-page--state">
+        <h1>{title}</h1>
+        <p role="alert">{errorMessage}</p>
+        <div className="activity-form-page__success-actions">
+          {requestStatus === 'load-error' && (
+            <Button onClick={() => setReloadKey((current) => current + 1)}>Reintentar</Button>
+          )}
+          <Link className="button button--secondary button--large" to={backPath}>Volver</Link>
+        </div>
+      </section>
+    );
+  }
 
   if (showsResultPage) {
     const isPublished = requestStatus === 'published';
+    const isUpdated = requestStatus === 'updated';
     return (
       <section className="activity-form-page activity-form-page--success">
         <p className="activity-form-page__eyebrow">
-          {isPublished ? 'Actividad publicada' : 'Borrador guardado'}
+          {isPublished ? 'Actividad publicada' : isUpdated ? 'Cambios guardados' : 'Borrador guardado'}
         </p>
-        <h1>{isPublished ? 'La actividad ya está publicada' : 'Tu borrador está guardado'}</h1>
+        <h1>
+          {isPublished
+            ? 'La actividad ya está publicada'
+            : isUpdated
+              ? 'La actividad se ha actualizado'
+              : 'Tu borrador está guardado'}
+        </h1>
         <p>
           {isPublished
             ? 'La actividad ya está disponible en el catálogo interno.'
+            : isUpdated
+              ? 'Los cambios están guardados y ya puedes volver al listado administrativo.'
             : 'La actividad todavía no es visible en el catálogo. Puedes publicarla cuando esté lista.'}
         </p>
         {errorMessage && <p className="activity-form__error" role="alert">{errorMessage}</p>}
         <div className="activity-form-page__success-actions">
-          {!isPublished && (
+          {!isPublished && !isEditMode && (
             <Button size="large" onClick={handlePublishRequest}>
               Publicar actividad
             </Button>
           )}
-          <Button size="large" variant="secondary" onClick={resetForm}>
-            Crear otra actividad
-          </Button>
+          {isEditMode ? (
+            <Button size="large" variant="secondary" onClick={() => setRequestStatus('idle')}>
+              Seguir editando
+            </Button>
+          ) : (
+            <Button size="large" variant="secondary" onClick={resetForm}>
+              Crear otra actividad
+            </Button>
+          )}
           <Link className="button button--secondary button--large" to={backPath}>
             Volver
           </Link>
@@ -238,10 +354,14 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
     <section className="activity-form-page" aria-labelledby="activity-form-title">
       <div className="activity-form-page__intro">
         <Link to={backPath} className="activity-form-page__back">&larr; Volver</Link>
-        <p className="activity-form-page__eyebrow">Nueva actividad</p>
-        <h1 id="activity-form-title">Crear actividad de voluntariado</h1>
+        <p className="activity-form-page__eyebrow">{isEditMode ? 'Editar actividad' : 'Nueva actividad'}</p>
+        <h1 id="activity-form-title">
+          {isEditMode ? 'Editar actividad de voluntariado' : 'Crear actividad de voluntariado'}
+        </h1>
         <p>
-          Guarda la actividad como borrador o publícala cuando todos los datos estén listos.
+          {isEditMode
+            ? 'Actualiza los datos necesarios y guarda los cambios.'
+            : 'Guarda la actividad como borrador o publícala cuando todos los datos estén listos.'}
         </p>
       </div>
 
@@ -298,11 +418,13 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
               loadingLabel="Guardando…"
               disabled={isPublishing}
             >
-              Guardar borrador
+              {isEditMode ? 'Guardar cambios' : 'Guardar borrador'}
             </Button>
-            <Button type="button" size="large" onClick={handlePublishRequest} disabled={requestStatus === 'saving'}>
-              Publicar actividad
-            </Button>
+            {!isEditMode && (
+              <Button type="button" size="large" onClick={handlePublishRequest} disabled={requestStatus === 'saving'}>
+                Publicar actividad
+              </Button>
+            )}
           </div>
         </div>
       </form>

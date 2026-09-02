@@ -1,13 +1,20 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createActivity, publishActivity } from '../../api/activitiesApi';
+import {
+  createActivity,
+  getAdminActivity,
+  publishActivity,
+  updateActivity,
+} from '../../api/activitiesApi';
 import ActivityFormPage from './ActivityFormPage';
 
 vi.mock('../../api/activitiesApi', () => ({
   createActivity: vi.fn(),
+  getAdminActivity: vi.fn(),
   publishActivity: vi.fn(),
+  updateActivity: vi.fn(),
 }));
 
 function renderForm() {
@@ -17,6 +24,31 @@ function renderForm() {
     </MemoryRouter>,
   );
 }
+
+function renderEditForm() {
+  return render(
+    <MemoryRouter initialEntries={['/activities/12/edit']}>
+      <Routes>
+        <Route path="/activities/:activityId/edit" element={<ActivityFormPage />} />
+      </Routes>
+    </MemoryRouter>,
+  );
+}
+
+const EDIT_ACTIVITY = {
+  id: 12,
+  title: 'Mentoría digital',
+  description: 'Acompañamiento para reducir la brecha digital.',
+  line: 'EDUCAR',
+  modality: 'PRESENCIAL',
+  maxParticipants: 15,
+  hours: 3,
+  startDate: '2026-10-10T09:00:00Z',
+  endDate: '2026-10-10T12:00:00Z',
+  registrationDeadline: '2026-10-08T21:59:00Z',
+  imageUrl: 'https://example.com/activity.jpg',
+  status: 'DRAFT',
+};
 
 async function fillValidForm(user) {
   await user.type(screen.getByLabelText(/título/i), 'Taller de code');
@@ -32,7 +64,9 @@ async function fillValidForm(user) {
 
 beforeEach(() => {
   createActivity.mockReset();
+  getAdminActivity.mockReset();
   publishActivity.mockReset();
+  updateActivity.mockReset();
 });
 
 describe('ActivityFormPage', () => {
@@ -160,5 +194,49 @@ describe('ActivityFormPage', () => {
     expect(await screen.findByText('El título ya existe.')).toBeInTheDocument();
     expect(screen.getByText(/revisa los datos introducidos/i)).toHaveAttribute('role', 'alert');
     expect(screen.getByRole('button', { name: /guardar borrador/i })).toBeEnabled();
+  });
+
+  it('loads every field from the administrative detail in edit mode', async () => {
+    getAdminActivity.mockResolvedValue({ data: EDIT_ACTIVITY });
+    renderEditForm();
+
+    expect(screen.getByRole('status', { name: /cargando actividad/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /editar actividad de voluntariado/i })).toBeInTheDocument();
+    expect(getAdminActivity).toHaveBeenCalledWith('12');
+    expect(screen.getByLabelText(/título/i)).toHaveValue('Mentoría digital');
+    expect(screen.getByLabelText(/línea/i)).toHaveValue('educar');
+    expect(screen.getByLabelText(/modalidad/i)).toHaveValue('presencial');
+    expect(screen.getByLabelText(/máximo de participantes/i)).toHaveValue(15);
+    expect(screen.getByLabelText(/horas estimadas/i)).toHaveValue(3);
+    expect(screen.queryByRole('button', { name: /publicar actividad/i })).not.toBeInTheDocument();
+  });
+
+  it('updates the loaded activity without creating a new one', async () => {
+    getAdminActivity.mockResolvedValue({ data: EDIT_ACTIVITY });
+    updateActivity.mockResolvedValue({ data: { ...EDIT_ACTIVITY, title: 'Mentoría avanzada' } });
+    const user = userEvent.setup();
+    renderEditForm();
+
+    const title = await screen.findByLabelText(/título/i);
+    await user.clear(title);
+    await user.type(title, 'Mentoría avanzada');
+    await user.click(screen.getByRole('button', { name: /guardar cambios/i }));
+
+    await waitFor(() => expect(updateActivity).toHaveBeenCalledWith('12', expect.objectContaining({
+      title: 'Mentoría avanzada',
+      maxParticipants: 15,
+      hours: 3,
+    })));
+    expect(createActivity).not.toHaveBeenCalled();
+    expect(await screen.findByRole('heading', { name: /la actividad se ha actualizado/i })).toBeInTheDocument();
+  });
+
+  it('shows the forbidden state returned by the administrative endpoint', async () => {
+    getAdminActivity.mockRejectedValue({ status: 403, message: 'Acceso denegado.' });
+    renderEditForm();
+
+    expect(await screen.findByRole('heading', { name: /no tienes permiso/i })).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent('Acceso denegado.');
+    expect(screen.queryByRole('form')).not.toBeInTheDocument();
   });
 });
