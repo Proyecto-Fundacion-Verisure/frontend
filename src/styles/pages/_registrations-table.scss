@@ -113,6 +113,19 @@
   margin-top: space('4');
 }
 
+.registration-actions__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('2');
+}
+
+.registration-actions__error {
+  color: $color-danger;
+  font-size: $font-size-sm;
+  margin: space('2') 0 0;
+  max-width: 16rem;
+}
+
 @media (max-width: 38rem) {
   .registrations-page { padding-inline: space('4'); }
   .registrations-page__header { align-items: flex-start; flex-direction: column; }

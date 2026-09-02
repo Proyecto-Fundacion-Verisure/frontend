@@ -2,7 +2,11 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getActivityRegistrations } from '../../api/registrationsApi';
+import {
+  acceptRegistration,
+  getActivityRegistrations,
+  rejectRegistration,
+} from '../../api/registrationsApi';
 import RegistrationsTablePage from './RegistrationsTablePage';
 
 vi.mock('../../api/registrationsApi', () => ({
@@ -32,7 +36,9 @@ function renderPage() {
 }
 
 beforeEach(() => {
+  acceptRegistration.mockReset();
   getActivityRegistrations.mockReset();
+  rejectRegistration.mockReset();
 });
 
 describe('RegistrationsTablePage', () => {
@@ -89,5 +95,70 @@ describe('RegistrationsTablePage', () => {
 
     await waitFor(() => expect(getActivityRegistrations).toHaveBeenCalledTimes(2));
     expect(await screen.findByText('Ana Torres')).toBeInTheDocument();
+  });
+
+  it('moves an accepted registration to confirmed when backend grants a spot', async () => {
+    const confirmed = { ...BOARD.registrations[0], status: 'CONFIRMED', accepted: true };
+    getActivityRegistrations
+      .mockResolvedValueOnce({ data: BOARD })
+      .mockResolvedValueOnce({ data: { ...BOARD, registrations: [confirmed] } });
+    acceptRegistration.mockResolvedValue({ data: confirmed });
+    const user = userEvent.setup();
+    renderPage();
+
+    const row = (await screen.findByText('Ana Torres')).closest('tr');
+    await user.click(within(row).getByRole('button', { name: /^aceptar$/i }));
+
+    expect(await screen.findByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
+    expect(acceptRegistration).toHaveBeenCalledWith(1);
+    expect(screen.queryByRole('heading', { name: /sin revisar 1/i })).not.toBeInTheDocument();
+  });
+
+  it('keeps an accepted registration in the queue when backend reports no spot', async () => {
+    const acceptedInQueue = { ...BOARD.registrations[0], status: 'WAITLISTED', accepted: true, queuePosition: 1 };
+    getActivityRegistrations
+      .mockResolvedValueOnce({ data: BOARD })
+      .mockResolvedValueOnce({ data: { ...BOARD, registrations: [acceptedInQueue] } });
+    acceptRegistration.mockResolvedValue({ data: acceptedInQueue });
+    const user = userEvent.setup();
+    renderPage();
+
+    const row = (await screen.findByText('Ana Torres')).closest('tr');
+    await user.click(within(row).getByRole('button', { name: /^aceptar$/i }));
+
+    expect(await screen.findByRole('heading', { name: /aceptadas en cola 1/i })).toBeInTheDocument();
+    expect(screen.getByText(/aceptada · en cola/i)).toBeInTheDocument();
+  });
+
+  it('rejects without asking for or sending a reason', async () => {
+    const rejected = { ...BOARD.registrations[0], status: 'REJECTED', accepted: false };
+    getActivityRegistrations
+      .mockResolvedValueOnce({ data: BOARD })
+      .mockResolvedValueOnce({ data: { ...BOARD, registrations: [rejected] } });
+    rejectRegistration.mockResolvedValue({ data: rejected });
+    const user = userEvent.setup();
+    renderPage();
+
+    const row = (await screen.findByText('Ana Torres')).closest('tr');
+    await user.click(within(row).getByRole('button', { name: /^rechazar$/i }));
+
+    expect(await screen.findByRole('heading', { name: /rechazadas 1/i })).toBeInTheDocument();
+    expect(rejectRegistration).toHaveBeenCalledWith(1);
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  });
+
+  it('keeps the row actionable after a decision error', async () => {
+    getActivityRegistrations.mockResolvedValue({ data: BOARD });
+    acceptRegistration.mockRejectedValue({ status: 500, message: 'No se pudo aceptar.' });
+    const user = userEvent.setup();
+    renderPage();
+
+    const row = (await screen.findByText('Ana Torres')).closest('tr');
+    await user.click(within(row).getByRole('button', { name: /^aceptar$/i }));
+
+    expect(await within(row).findByRole('alert')).toHaveTextContent('No se pudo aceptar.');
+    expect(within(row).getByRole('button', { name: /^aceptar$/i })).toBeEnabled();
+    await user.click(within(row).getByRole('button', { name: /^aceptar$/i }));
+    expect(acceptRegistration).toHaveBeenCalledTimes(2);
   });
 });
