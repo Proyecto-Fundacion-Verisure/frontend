@@ -22,6 +22,7 @@ import NotFoundPage from '../features/not-found/NotFoundPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
 import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
 import RegistrationsTablePage from '../features/registrations/RegistrationsTablePage';
+import CertificatePage from '../features/reports/CertificatePage';
 
 export default function AppRouter() {
   return (
@@ -44,6 +45,7 @@ export default function AppRouter() {
             <Route path="/admin/activities" element={<ActivitiesListPage />} />
           </Route>
           <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
+            <Route path="/reports/:reportId/certificate" element={<CertificatePage />} />
             <Route
               element={
                 <RegistrationsProvider>

@@ -164,6 +164,27 @@ function mockGetActivityDetail(id) {
   return Promise.resolve({ data: activity });
 }
 
+function mockCancelActivity(id) {
+  const activity = MOCK_ACTIVITIES.find((item) => String(item.id) === String(id));
+  if (!activity) {
+    return Promise.reject(
+      new ApiError({ message: 'No se ha encontrado el recurso solicitado.', status: 404 }),
+    );
+  }
+  if (activity.status === 'FINISHED') {
+    return Promise.reject(
+      new ApiError({
+        message: 'La actividad ya ha finalizado.',
+        status: 409,
+        code: 'ACTIVITY_FINISHED',
+      }),
+    );
+  }
+  activity.status = 'CANCELLED';
+  activity.registeredCount = 0;
+  return Promise.resolve({ status: 204 });
+}
+
 const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'test';
 
 export const getAdminActivities = (params) =>
@@ -177,7 +198,8 @@ export const getAdminActivity = (id) =>
 export const createActivity = (data) => client.post('/activities', data);
 export const updateActivity = (id, data) => client.put(`/activities/${id}`, data);
 export const publishActivity = (id) => client.patch(`/activities/${id}/publish`);
-export const cancelActivity = (id) => client.patch(`/activities/${id}/cancel`);
+export const cancelActivity = (id) =>
+  isMockEnabled() ? mockCancelActivity(id) : client.patch(`/activities/${id}/cancel`);
 
 export const favoriteActivity = (id) => client.post(`/activities/${id}/favorite`);
 export const unfavoriteActivity = (id) => client.delete(`/activities/${id}/favorite`);
