@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getActivityRegistrations } from '../../api/registrationsApi';
 import { Badge, Button, EmptyState, Spinner, Table } from '../../components/ui';
+import RegistrationSummary from './RegistrationSummary';
 
 const SECTIONS = [
   { key: 'unreviewed', title: 'Sin revisar' },
@@ -149,6 +150,8 @@ export default function RegistrationsTablePage() {
         </div>
         <strong>{registrations.length} inscripciones</strong>
       </header>
+
+      <RegistrationSummary board={board} />
 
       {registrations.length === 0 ? (
         <EmptyState

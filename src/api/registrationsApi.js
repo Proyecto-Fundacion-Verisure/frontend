@@ -13,7 +13,7 @@ function mockGetActivityRegistrations(activityId) {
   return Promise.resolve({
     data: {
       activity: { id: Number(activityId), title: 'Acompañamiento a mayores', spots: 12 },
-      counters: { confirmed: 1, waitlisted: 2, unreviewed: 1 },
+      counters: { confirmed: 1, waitlisted: 2, acceptedWaitlisted: 1, unreviewed: 1 },
       registrations: [
         { registrationId: 201, name: 'Ana Torres', department: 'Tecnología', organization: 'VERISURE_ES', yearHours: 12, status: 'WAITLISTED', accepted: false, queuePosition: 2 },
         { registrationId: 202, name: 'Luis Martín', department: 'Personas', organization: 'VERISURE_GROUP', yearHours: 8, status: 'WAITLISTED', accepted: true, queuePosition: 1 },
