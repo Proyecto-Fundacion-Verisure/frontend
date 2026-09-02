@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getActivityDetail } from '../../api/activitiesApi';
 import { createRegistration, getMyRegistrations } from '../../api/registrationsApi';
+import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
 import { Badge, Button, Card, EmptyState, HeartButton, ProgressBar, Spinner } from '../../components/ui';
 import RegistrationInfoModal from '../registrations/RegistrationInfoModal';
 
@@ -17,10 +18,13 @@ export default function ActivityDetailPage() {
   const [activity, setActivity] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentRegistration, setCurrentRegistration] = useState(null);
+  const [localRegistration, setLocalRegistration] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const registrationsCtx = useRegistrationsOptional();
+  const ctxRegistration = registrationsCtx ? registrationsCtx.getForActivity(activityId) : null;
+  const currentRegistration = registrationsCtx ? ctxRegistration : localRegistration;
 
   const fetchActivity = useCallback(async () => {
     setLoading(true);
@@ -54,21 +58,28 @@ export default function ActivityDetailPage() {
     try {
       const response = await createRegistration(Number(activityId) || activityId);
       const data = response?.data ?? response;
-      setCurrentRegistration(data);
+      // Apply exactly the RegistrationResponse received with 201 — do not build ID locally
+      if (registrationsCtx) {
+        registrationsCtx.addRegistration(data);
+      } else {
+        setLocalRegistration(data);
+      }
       setIsModalOpen(false);
     } catch (err) {
+      // revert — keep previous registration state, allow retry
       setSubmitError(err);
     } finally {
       submittingRef.current = false;
       setIsSubmitting(false);
     }
-  }, [activityId]);
+  }, [activityId, registrationsCtx]);
 
   useEffect(() => {
     fetchActivity();
   }, [fetchActivity]);
 
   useEffect(() => {
+    if (registrationsCtx) return;
     let cancelled = false;
     (async () => {
       try {
@@ -82,18 +93,18 @@ export default function ActivityDetailPage() {
         });
         // Only expose active registration; CANCELLED/CANCELADA treated as no registration
         if (found && found.status !== 'CANCELLED' && found.status !== 'CANCELADA') {
-          setCurrentRegistration(found);
+          setLocalRegistration(found);
         } else {
-          setCurrentRegistration(null);
+          setLocalRegistration(null);
         }
       } catch {
-        if (!cancelled) setCurrentRegistration(null);
+        if (!cancelled) setLocalRegistration(null);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [activityId]);
+  }, [activityId, registrationsCtx]);
 
   if (loading) {
     return (
