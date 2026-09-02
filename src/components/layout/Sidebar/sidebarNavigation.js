@@ -26,7 +26,7 @@ export const NAV_SECTIONS_BY_ROLE = {
           icon: CirclePlus,
           variant: "cta",
         },
-        { path: "/activities", label: "Actividades", icon: ClipboardList },
+        { path: "/admin/activities", label: "Actividades", icon: ClipboardList },
         {
           path: "/proposals",
           label: "Propuestas",
