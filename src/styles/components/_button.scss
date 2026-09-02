@@ -38,9 +38,13 @@
 
   &--ghost {
     background: transparent;
-    color: $color-navy;
+    color: $color-muted;
+    text-decoration: underline;
 
-    &:hover:not(:disabled) { background: rgb(16 42 67 / 7%); }
+    &:hover:not(:disabled) {
+      color: $color-coral-dark;
+      background: rgb(16 42 67 / 7%);
+    }
   }
 
   &--danger {
