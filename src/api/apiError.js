@@ -1,3 +1,5 @@
+import { getDomainMessage, translateFieldErrors } from './domainMessages';
+
 const STATUS_MESSAGES = {
   400: 'La solicitud no es válida.',
   401: 'Tu sesión ha caducado. Vuelve a iniciar sesión.',
@@ -11,18 +13,20 @@ const STATUS_MESSAGES = {
 
 export class ApiError extends Error {
   constructor({ message, status = null, code = null, details = null, fieldErrors = null, cause }) {
-    super(message, { cause });
+    super(getDomainMessage(code, message), { cause });
     this.name = 'ApiError';
     this.status = status;
     this.code = code;
     this.details = details;
-    this.fieldErrors = fieldErrors;
+    this.fieldErrors = translateFieldErrors(fieldErrors);
     this.isNetworkError = status === null && code !== 'ERR_CANCELED';
     this.isCanceled = code === 'ERR_CANCELED';
   }
 }
 
 function getResponseMessage(data, status) {
+  const domainMessage = getDomainMessage(data?.code);
+  if (domainMessage) return domainMessage;
   if (typeof data?.message === 'string' && data.message.trim()) return data.message;
   if (typeof data?.error === 'string' && data.error.trim()) return data.error;
   return STATUS_MESSAGES[status] ?? 'No se ha podido completar la solicitud.';

@@ -14,6 +14,8 @@ const MOCK_ACTIVITIES = [
     location: 'Madrid',
     image: '/images/01-desoledad-linea-de-accion.png',
     favoritedByMe: true,
+    favoriteCount: 14,
+    status: 'PUBLISHED',
   },
   {
     id: 2,
@@ -27,6 +29,8 @@ const MOCK_ACTIVITIES = [
     location: 'Online',
     image: '/images/02-educar-linea-de-accion.png',
     favoritedByMe: false,
+    favoriteCount: 8,
+    status: 'FULL',
   },
   {
     id: 3,
@@ -40,6 +44,8 @@ const MOCK_ACTIVITIES = [
     location: 'Barcelona',
     image: '/images/03-acoso-linea-de-accion.png',
     favoritedByMe: false,
+    favoriteCount: 5,
+    status: 'IN_PROGRESS',
   },
   {
     id: 4,
@@ -53,6 +59,8 @@ const MOCK_ACTIVITIES = [
     location: 'Valencia',
     image: '/images/04-voluntariado-linea-de-accion.png',
     favoritedByMe: true,
+    favoriteCount: 21,
+    status: 'FINISHED',
   },
   {
     id: 5,
@@ -66,6 +74,8 @@ const MOCK_ACTIVITIES = [
     location: 'Sevilla',
     image: '/images/02-educar-linea-de-accion.png',
     favoritedByMe: false,
+    favoriteCount: 3,
+    status: 'DRAFT',
   },
   {
     id: 6,
@@ -79,6 +89,8 @@ const MOCK_ACTIVITIES = [
     location: 'Online',
     image: '/images/01-desoledad-linea-de-accion.png',
     favoritedByMe: false,
+    favoriteCount: 2,
+    status: 'CANCELLED',
   },
 ];
 
@@ -113,6 +125,35 @@ function mockGetPublishedActivities(params = {}) {
   });
 }
 
+function mockGetAdminActivities(params = {}) {
+  let results = [...MOCK_ACTIVITIES];
+
+  if (params.status) {
+    results = results.filter((activity) => activity.status === params.status);
+  }
+  if (params.q) {
+    const query = params.q.toLowerCase();
+    results = results.filter((activity) =>
+      activity.title.toLowerCase().includes(query)
+      || activity.organizationName.toLowerCase().includes(query));
+  }
+
+  const page = Number(params.page) || 1;
+  const limit = Number(params.limit) || 10;
+  const start = (page - 1) * limit;
+  const content = results.slice(start, start + limit);
+
+  return Promise.resolve({
+    data: {
+      content,
+      number: page - 1,
+      size: limit,
+      totalElements: results.length,
+      totalPages: Math.ceil(results.length / limit),
+    },
+  });
+}
+
 function mockGetActivityDetail(id) {
   const activity = MOCK_ACTIVITIES.find((a) => String(a.id) === String(id));
   if (!activity) {
@@ -125,7 +166,8 @@ function mockGetActivityDetail(id) {
 
 const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'test';
 
-export const getAdminActivities = (params) => client.get('/activities', { params });
+export const getAdminActivities = (params) =>
+  isMockEnabled() ? mockGetAdminActivities(params) : client.get('/activities', { params });
 export const getPublishedActivities = (params) =>
   isMockEnabled() ? mockGetPublishedActivities(params) : client.get('/activities/published', { params });
 export const getActivityDetail = (id) =>

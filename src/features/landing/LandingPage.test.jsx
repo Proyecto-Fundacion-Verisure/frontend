@@ -27,24 +27,18 @@ describe('LandingPage', () => {
     expect(screen.queryByRole('button', { name: /enviar propuesta/i })).not.toBeInTheDocument();
   });
 
-  it('el CTA "Proponer una colaboración" navega a /new-proposal', async () => {
-    const user = userEvent.setup();
+  it('el CTA del hero lleva a la sección de propuesta', () => {
     renderAt('/');
 
-    const cta = screen.getByRole('link', { name: /proponer una colaboración/i });
-    expect(cta).toHaveAttribute('href', '/new-proposal');
-
-    await user.click(cta);
-
-    expect(await screen.findByRole('heading', { name: /contadnos qué necesitáis/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/nombre de la organización/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /quieres proponer un voluntariado/i }))
+      .toHaveAttribute('href', '/#propuesta');
   });
 
-  it('el CTA "Propón sin cuenta" navega a /new-proposal', async () => {
+  it('el CTA "Enviar propuesta" navega a /new-proposal', async () => {
     const user = userEvent.setup();
     renderAt('/');
 
-    const cta = screen.getByRole('link', { name: /propón sin cuenta/i });
+    const cta = screen.getByRole('link', { name: /enviar propuesta/i });
     expect(cta).toHaveAttribute('href', '/new-proposal');
 
     await user.click(cta);

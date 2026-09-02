@@ -3,6 +3,7 @@ import LandingPage from '../features/landing/LandingPage';
 import LoginPage from '../features/auth/LoginPage';
 import DashboardPage from '../features/dashboard/DashboardPage';
 import CatalogPage from '../features/activities/CatalogPage';
+import ActivitiesListPage from '../features/activities/ActivitiesListPage';
 import UiShowcase from '../components/ui/UiShowcase/UiShowcase';
 import PublicLayout from '../components/layout/PublicLayout/PublicLayout';
 import ProtectedRoute from './ProtectedRoute';
@@ -40,6 +41,7 @@ export default function AppRouter() {
             <Route path="/proposals/:proposalId" element={<ProposalDetailPage />} />
             <Route path="/activities/new" element={<ActivityFormPage />} />
             <Route path="/activities/:activityId/registrations" element={<RegistrationsTablePage />} />
+            <Route path="/admin/activities" element={<ActivitiesListPage />} />
           </Route>
           <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
             <Route

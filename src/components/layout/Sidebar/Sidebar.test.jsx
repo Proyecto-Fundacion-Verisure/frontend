@@ -29,3 +29,14 @@ describe('Sidebar ORG navigation', () => {
     expect(screen.queryByText('Cierres')).not.toBeInTheDocument();
   });
 });
+
+describe('Sidebar ADMIN navigation', () => {
+  it('links Crear actividad to the registered admin route', () => {
+    renderSidebar('ADMIN');
+
+    expect(screen.getByRole('link', { name: /crear actividad/i })).toHaveAttribute(
+      'href',
+      '/activities/new',
+    );
+  });
+});
