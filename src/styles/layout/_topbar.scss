@@ -7,7 +7,7 @@
   background-color: $color-surface;
   border-bottom: 1px solid $color-border;
   align-items: center;
-  color: $color-surface;
+  color: $color-navy-light;
   gap: map-get($spacing, '4');
   justify-content: space-between;
   min-height: 4rem;
@@ -27,14 +27,45 @@
 .topbar__user-menu {
   align-items: center;
   display: flex;
-  gap: space('4');
+  gap: map-get($spacing, '4');
   margin-left: auto;
 }
 
-.topbar__user-name {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+.topbar__user-avatar {
+  align-items: center;
+  border: 2px solid $color-coral;
+  border-radius: $radius-pill;
+  color: $color-coral;
+  display: flex;
+  flex-shrink: 0;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  height: 2.25rem;
+  justify-content: center;
+  letter-spacing: .02em;
+  width: 2.25rem;
+}
+
+.topbar__user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: $line-height-tight;
   max-width: 14rem;
+  min-width: 0;
+}
+
+.topbar__user-name {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar__user-role {
+  color: $color-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-regular;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -47,20 +78,20 @@
   background: $color-coral;
   border: 1px solid $color-border-strong;
   border-radius: $radius-md;
-  color: inherit;
+  color: $color-surface;
   cursor: pointer;
   display: inline-flex;
   font: inherit;
-  gap: space('2');
+  gap: map-get($spacing, '2');
   min-height: $control-height;
-  padding: 0 space('3');
+  padding: 0 map-get($spacing, '3');
   transition: background-color $transition-fast;
 
   &:hover { background: $color-navy-light; }
 }
 
 @media (max-width: 35.99rem) {
-  .topbar { padding-inline: space('4'); }
-  .topbar__user-name,
+  .topbar { padding-inline: map-get($spacing, '4'); }
+  .topbar__user-info,
   .topbar__logout span { display: none; }
 }
