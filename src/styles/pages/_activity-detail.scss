@@ -1,0 +1,115 @@
+@use '../abstracts' as *;
+
+.activity-detail {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: space('8') space('6') space('16');
+}
+
+.activity-detail__back {
+  color: $color-navy;
+  display: inline-block;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  margin-bottom: space('6');
+  text-decoration: none;
+}
+
+.activity-detail__layout {
+  align-items: start;
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 0.9fr);
+  margin-top: space('6');
+}
+
+.activity-detail__main {
+  min-width: 0;
+}
+
+.activity-detail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: space('4');
+  margin-bottom: space('6');
+}
+
+.activity-detail__title {
+  color: $color-navy;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  margin: 0;
+}
+
+.activity-detail__card {
+  display: flex;
+  flex-direction: column;
+  gap: space('4');
+}
+
+.activity-detail__image {
+  border-radius: $radius-lg;
+  object-fit: cover;
+  width: 100%;
+  max-height: 20rem;
+}
+
+.activity-detail__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('2');
+}
+
+.activity-detail__description {
+  color: $color-text;
+  line-height: $line-height-normal;
+  margin: 0;
+}
+
+.activity-detail__meta {
+  color: $color-muted;
+  font-size: $font-size-sm;
+  margin: 0;
+}
+
+.activity-detail__side {
+  position: sticky;
+  top: space('8');
+}
+
+.activity-detail__panel {
+  display: flex;
+  flex-direction: column;
+  gap: space('4');
+}
+
+.activity-detail__panel-title {
+  color: $color-navy;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  margin: 0;
+}
+
+.activity-detail__panel-meta {
+  color: $color-muted;
+  font-size: $font-size-sm;
+  margin: 0;
+}
+
+@media (max-width: 55rem) {
+  .activity-detail__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-detail__side {
+    position: static;
+  }
+}
+
+@media (max-width: 48rem) {
+  .activity-detail {
+    padding: space('6') space('4') space('12');
+  }
+}
