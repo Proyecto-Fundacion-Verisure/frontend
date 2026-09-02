@@ -9,6 +9,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.js'],
     css: true,
+    restoreMocks: true,
+    include: ['src/**/*.{test,spec}.{js,jsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],

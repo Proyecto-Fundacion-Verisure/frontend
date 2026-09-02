@@ -19,7 +19,9 @@ export default function Topbar({ children }) {
   const { user, logout } = useAuth();
 
   const displayName =
-    user?.role === 'ORGANIZATION' ? (user.organization ?? user.name) : (user.name ?? user.email);
+    user?.role === 'ORG' || user?.role === 'ORGANIZATION'
+      ? (user?.organization ?? user?.name ?? user?.email ?? '')
+      : (user?.name ?? user?.email ?? '');
   const roleLabel = ROLE_LABELS[user?.role] ?? user?.role;
   const initials = getInitials(displayName);
 
