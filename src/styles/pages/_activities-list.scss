@@ -57,6 +57,21 @@
 
 .activities-list__activity-title { color: $color-navy; }
 
+.activities-list__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('2');
+}
+
+.activities-list__notice {
+  background: $color-success-light;
+  border: 1px solid $color-success;
+  border-radius: $radius-md;
+  color: $color-success;
+  margin: 0 0 space('4');
+  padding: space('4');
+}
+
 .activities-list__loading {
   display: grid;
   min-height: 14rem;

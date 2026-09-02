@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAdminActivities } from '../../api/activitiesApi';
 import { Badge, Button, EmptyState, Input, Select, Spinner, Table } from '../../components/ui';
+import CancelActivityButton from './CancelActivityButton';
 
 const PAGE_SIZE = 10;
 
@@ -60,6 +61,7 @@ export default function ActivitiesListPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [requestState, setRequestState] = useState({ status: 'loading', error: null });
   const [reloadKey, setReloadKey] = useState(0);
+  const [notice, setNotice] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -148,12 +150,21 @@ export default function ActivitiesListPage() {
       key: 'actions',
       label: 'Acciones',
       render: (activity) => (
-        <Link
-          className="button button--secondary button--small"
-          to={`/activities/${activity.id}/edit`}
-        >
-          Editar
-        </Link>
+        <div className="activities-list__actions">
+          <Link
+            className="button button--secondary button--small"
+            to={`/activities/${activity.id}/edit`}
+          >
+            Editar
+          </Link>
+          <CancelActivityButton
+            activity={activity}
+            onCancelled={() => {
+              setNotice('La actividad se ha cancelado correctamente.');
+              setReloadKey((current) => current + 1);
+            }}
+          />
+        </div>
       ),
     },
   ];
@@ -188,6 +199,8 @@ export default function ActivitiesListPage() {
           ))}
         </Select>
       </div>
+
+      {notice && <p className="activities-list__notice" role="status">{notice}</p>}
 
       {requestState.status === 'loading' && (
         <div className="activities-list__loading" aria-label="Cargando actividades">
