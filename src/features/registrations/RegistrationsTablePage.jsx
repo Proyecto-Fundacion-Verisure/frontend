@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
 import { Badge, Button, EmptyState, Spinner, Table } from '../../components/ui';
 import RegistrationSummary from './RegistrationSummary';
+import RegistrationDecisionActions from './RegistrationDecisionActions';
+import CancelRegistrationAction from './CancelRegistrationAction';
 import useRegistrations from './useRegistrations';
 
 const SECTIONS = [
@@ -53,7 +55,7 @@ function getPersonName(registration) {
     ?? '—';
 }
 
-const COLUMNS = [
+const BASE_COLUMNS = [
   { key: 'person', label: 'Persona', render: getPersonName },
   {
     key: 'department',
@@ -91,7 +93,16 @@ const COLUMNS = [
 
 export default function RegistrationsTablePage() {
   const { activityId } = useParams();
-  const { board, loading, error, reload } = useRegistrations(activityId);
+  const {
+    board,
+    loading,
+    error,
+    decision,
+    reload,
+    acceptRegistration,
+    rejectRegistration,
+    cancelRegistration,
+  } = useRegistrations(activityId);
 
   if (loading) {
     return (
@@ -121,6 +132,35 @@ export default function RegistrationsTablePage() {
     result[key] = [...(result[key] ?? []), registration];
     return result;
   }, {});
+  const unreviewedColumns = [
+    ...BASE_COLUMNS,
+    {
+      key: 'actions',
+      label: 'Acciones',
+      render: (registration) => (
+        <RegistrationDecisionActions
+          registration={registration}
+          decision={decision}
+          onAccept={acceptRegistration}
+          onReject={rejectRegistration}
+        />
+      ),
+    },
+  ];
+  const cancellableColumns = [
+    ...BASE_COLUMNS,
+    {
+      key: 'actions',
+      label: 'Acciones',
+      render: (registration) => (
+        <CancelRegistrationAction
+          registration={registration}
+          decision={decision}
+          onCancel={cancelRegistration}
+        />
+      ),
+    },
+  ];
 
   return (
     <section className="registrations-page" aria-labelledby="registrations-title">
@@ -151,7 +191,11 @@ export default function RegistrationsTablePage() {
                 <h2>{section.title} <span>{rows.length}</span></h2>
                 <Table
                   caption={`${section.title} de la actividad`}
-                  columns={COLUMNS}
+                  columns={section.key === 'unreviewed'
+                    ? unreviewedColumns
+                    : ['accepted-waitlist', 'confirmed', 'pending-report'].includes(section.key)
+                      ? cancellableColumns
+                      : BASE_COLUMNS}
                   data={rows}
                   rowKey="registrationId"
                 />
