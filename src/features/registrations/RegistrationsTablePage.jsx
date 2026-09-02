@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Badge, Button, EmptyState, Spinner, Table } from '../../components/ui';
 import RegistrationSummary from './RegistrationSummary';
 import RegistrationDecisionActions from './RegistrationDecisionActions';
+import CancelRegistrationAction from './CancelRegistrationAction';
 import useRegistrations from './useRegistrations';
 
 const SECTIONS = [
@@ -100,6 +101,7 @@ export default function RegistrationsTablePage() {
     reload,
     acceptRegistration,
     rejectRegistration,
+    cancelRegistration,
   } = useRegistrations(activityId);
 
   if (loading) {
@@ -145,6 +147,20 @@ export default function RegistrationsTablePage() {
       ),
     },
   ];
+  const cancellableColumns = [
+    ...BASE_COLUMNS,
+    {
+      key: 'actions',
+      label: 'Acciones',
+      render: (registration) => (
+        <CancelRegistrationAction
+          registration={registration}
+          decision={decision}
+          onCancel={cancelRegistration}
+        />
+      ),
+    },
+  ];
 
   return (
     <section className="registrations-page" aria-labelledby="registrations-title">
@@ -175,7 +191,11 @@ export default function RegistrationsTablePage() {
                 <h2>{section.title} <span>{rows.length}</span></h2>
                 <Table
                   caption={`${section.title} de la actividad`}
-                  columns={section.key === 'unreviewed' ? unreviewedColumns : BASE_COLUMNS}
+                  columns={section.key === 'unreviewed'
+                    ? unreviewedColumns
+                    : ['accepted-waitlist', 'confirmed', 'pending-report'].includes(section.key)
+                      ? cancellableColumns
+                      : BASE_COLUMNS}
                   data={rows}
                   rowKey="registrationId"
                 />

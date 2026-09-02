@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   acceptRegistration,
+  cancelRegistration,
   getActivityRegistrations,
   rejectRegistration,
 } from '../../api/registrationsApi';
@@ -11,6 +12,7 @@ import RegistrationsTablePage from './RegistrationsTablePage';
 
 vi.mock('../../api/registrationsApi', () => ({
   acceptRegistration: vi.fn(),
+  cancelRegistration: vi.fn(),
   getActivityRegistrations: vi.fn(),
   rejectRegistration: vi.fn(),
 }));
@@ -37,6 +39,7 @@ function renderPage() {
 
 beforeEach(() => {
   acceptRegistration.mockReset();
+  cancelRegistration.mockReset();
   getActivityRegistrations.mockReset();
   rejectRegistration.mockReset();
 });
@@ -160,5 +163,55 @@ describe('RegistrationsTablePage', () => {
     expect(within(row).getByRole('button', { name: /^aceptar$/i })).toBeEnabled();
     await user.click(within(row).getByRole('button', { name: /^aceptar$/i }));
     expect(acceptRegistration).toHaveBeenCalledTimes(2);
+  });
+
+  it('shows the candidate promoted by the refreshed backend board after cancellation', async () => {
+    const confirmed = BOARD.registrations[2];
+    const acceptedInQueue = BOARD.registrations[1];
+    const unreviewed = BOARD.registrations[0];
+    const refreshedBoard = {
+      ...BOARD,
+      registrations: [
+        { ...confirmed, status: 'CANCELLED' },
+        { ...acceptedInQueue, status: 'CONFIRMED', queuePosition: null },
+        unreviewed,
+      ],
+    };
+    getActivityRegistrations
+      .mockResolvedValueOnce({ data: { ...BOARD, registrations: [confirmed, acceptedInQueue, unreviewed] } })
+      .mockResolvedValueOnce({ data: refreshedBoard });
+    cancelRegistration.mockResolvedValue({ data: { ...confirmed, status: 'CANCELLED' } });
+    const user = userEvent.setup();
+    renderPage();
+
+    const confirmedRow = (await screen.findByText('Marta Ruiz')).closest('tr');
+    await user.click(within(confirmedRow).getByRole('button', { name: /dar de baja/i }));
+    await user.click(screen.getByRole('button', { name: /confirmar baja/i }));
+
+    const refreshedPerson = await screen.findByText('Luis Martín');
+    expect(within(refreshedPerson.closest('tr')).getByText('Confirmada')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /sin revisar 1/i })).toBeInTheDocument();
+    expect(cancelRegistration).toHaveBeenCalledWith(3, undefined);
+  });
+
+  it('does not promote an unreviewed registration when backend returns no candidate', async () => {
+    const confirmed = BOARD.registrations[2];
+    const unreviewed = BOARD.registrations[0];
+    getActivityRegistrations
+      .mockResolvedValueOnce({ data: { ...BOARD, registrations: [confirmed, unreviewed] } })
+      .mockResolvedValueOnce({
+        data: { ...BOARD, registrations: [{ ...confirmed, status: 'CANCELLED' }, unreviewed] },
+      });
+    cancelRegistration.mockResolvedValue({ data: { ...confirmed, status: 'CANCELLED' } });
+    const user = userEvent.setup();
+    renderPage();
+
+    const confirmedRow = (await screen.findByText('Marta Ruiz')).closest('tr');
+    await user.click(within(confirmedRow).getByRole('button', { name: /dar de baja/i }));
+    await user.click(screen.getByRole('button', { name: /confirmar baja/i }));
+
+    const remainingPerson = await screen.findByText('Ana Torres');
+    expect(within(remainingPerson.closest('tr')).getByText('Sin revisar')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /confirmadas 1/i })).not.toBeInTheDocument();
   });
 });
