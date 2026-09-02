@@ -23,6 +23,8 @@ export const MENSAJES = Object.freeze({
   ACTIVITY_NOT_EDITABLE: 'La actividad no se puede editar en su estado actual.',
   ACTIVITY_FINISHED: 'La actividad ya ha finalizado y no admite esta acción.',
   PROPOSAL_ALREADY_DECIDED: 'La propuesta ya ha sido aceptada o rechazada.',
+  NOT_OWNER: 'No tienes permiso para consultar este certificado.',
+  REPORT_NOT_VALIDATED: 'El informe debe estar validado antes de emitir el certificado.',
 });
 
 export function getDomainMessage(code, fallback = null) {
