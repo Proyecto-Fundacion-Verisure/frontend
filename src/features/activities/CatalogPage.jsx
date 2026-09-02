@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { getPublishedActivities } from '../../api/activitiesApi';
+import { favoriteActivity, getPublishedActivities, unfavoriteActivity } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
+import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
+import { useFavoritesOptional } from '../favorites/FavoritesContext';
 import { Button, EmptyState, Input, Select, Spinner } from '../../components/ui';
 import ActivityCard from './ActivityCard';
 
@@ -31,7 +33,12 @@ export default function CatalogPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
-  const [enrolledIds, setEnrolledIds] = useState(() => new Set());
+  const [localEnrolledIds, setLocalEnrolledIds] = useState(() => new Set());
+  const [localFavOverrides, setLocalFavOverrides] = useState({});
+  const [localFavPending, setLocalFavPending] = useState(() => new Set());
+  const registrationsCtx = useRegistrationsOptional();
+  const favoritesCtx = useFavoritesOptional();
+  const enrolledIds = registrationsCtx ? registrationsCtx.enrolledIds : localEnrolledIds;
 
   const rawPage = Number(searchParams.get('page'));
   const page = Number.isInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
@@ -83,6 +90,7 @@ export default function CatalogPage() {
   }, [page, line, mode, q]);
 
   useEffect(() => {
+    if (registrationsCtx) return;
     let cancelled = false;
     (async () => {
       try {
@@ -94,15 +102,15 @@ export default function CatalogPage() {
           .filter((r) => r.status !== 'CANCELLED' && r.status !== 'CANCELADA')
           .map((r) => r.activityId ?? r.activity?.id)
           .filter(Boolean);
-        setEnrolledIds(new Set(activeIds));
+        setLocalEnrolledIds(new Set(activeIds));
       } catch {
-        if (!cancelled) setEnrolledIds(new Set());
+        if (!cancelled) setLocalEnrolledIds(new Set());
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [registrationsCtx]);
 
   useEffect(() => {
     let cancelled = false;
@@ -196,16 +204,62 @@ export default function CatalogPage() {
       ) : (
         <>
           <div className="catalog__grid">
-            {activities.map((activity) => (
-              <Link
-                key={activity.id}
-                to={`/activities/${activity.id}`}
-                style={{ textDecoration: 'none', color: 'inherit' }}
-                aria-label={`Ver detalle de ${activity.title}`}
-              >
-                <ActivityCard activity={activity} isEnrolled={enrolledIds.has(activity.id)} />
-              </Link>
-            ))}
+            {activities.map((activity) => {
+              const fallbackFav = activity.favoritedByMe;
+              const favorited = favoritesCtx
+                ? favoritesCtx.getFavorite(activity.id, fallbackFav)
+                : (String(activity.id) in localFavOverrides ? localFavOverrides[String(activity.id)] : fallbackFav);
+              const isFavPending = favoritesCtx ? favoritesCtx.isPending(activity.id) : localFavPending.has(String(activity.id));
+              const enriched = { ...activity, favoritedByMe: favorited };
+              const handleToggleFavorite = async (e) => {
+                if (e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+                if (favoritesCtx) {
+                  if (isFavPending) return;
+                  try {
+                    await favoritesCtx.toggleFavorite(activity.id, favorited);
+                  } catch {
+                    // revert handled inside context
+                  }
+                  return;
+                }
+                // fallback when no provider (e.g., isolated tests)
+                const key = String(activity.id);
+                if (localFavPending.has(key)) return;
+                const next = !favorited;
+                setLocalFavOverrides((prev) => ({ ...prev, [key]: next }));
+                setLocalFavPending((prev) => new Set(prev).add(key));
+                try {
+                  if (next) await favoriteActivity(activity.id);
+                  else await unfavoriteActivity(activity.id);
+                } catch {
+                  setLocalFavOverrides((prev) => ({ ...prev, [key]: favorited }));
+                } finally {
+                  setLocalFavPending((prev) => {
+                    const n = new Set(prev);
+                    n.delete(key);
+                    return n;
+                  });
+                }
+              };
+              return (
+                <Link
+                  key={activity.id}
+                  to={`/activities/${activity.id}`}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  aria-label={`Ver detalle de ${activity.title}`}
+                >
+                  <ActivityCard
+                    activity={enriched}
+                    isEnrolled={enrolledIds.has(activity.id)}
+                    onToggleFavorite={handleToggleFavorite}
+                    isFavoritePending={isFavPending}
+                  />
+                </Link>
+              );
+            })}
           </div>
 
           <div className="catalog__pagination">

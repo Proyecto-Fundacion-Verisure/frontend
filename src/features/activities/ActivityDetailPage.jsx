@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getActivityDetail } from '../../api/activitiesApi';
+import { favoriteActivity, getActivityDetail, unfavoriteActivity } from '../../api/activitiesApi';
 import { createRegistration, getMyRegistrations } from '../../api/registrationsApi';
+import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
+import { useFavoritesOptional } from '../favorites/FavoritesContext';
 import { Badge, Button, Card, EmptyState, HeartButton, ProgressBar, Spinner } from '../../components/ui';
 import RegistrationInfoModal from '../registrations/RegistrationInfoModal';
 
@@ -17,10 +19,16 @@ export default function ActivityDetailPage() {
   const [activity, setActivity] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentRegistration, setCurrentRegistration] = useState(null);
+  const [localRegistration, setLocalRegistration] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [localFavOverride, setLocalFavOverride] = useState(null);
+  const [localFavPending, setLocalFavPending] = useState(false);
+  const registrationsCtx = useRegistrationsOptional();
+  const favoritesCtx = useFavoritesOptional();
+  const ctxRegistration = registrationsCtx ? registrationsCtx.getForActivity(activityId) : null;
+  const currentRegistration = registrationsCtx ? ctxRegistration : localRegistration;
 
   const fetchActivity = useCallback(async () => {
     setLoading(true);
@@ -54,7 +62,11 @@ export default function ActivityDetailPage() {
     try {
       const response = await createRegistration(Number(activityId) || activityId);
       const data = response?.data ?? response;
-      setCurrentRegistration(data);
+      if (registrationsCtx) {
+        registrationsCtx.addRegistration(data);
+      } else {
+        setLocalRegistration(data);
+      }
       setIsModalOpen(false);
     } catch (err) {
       setSubmitError(err);
@@ -62,13 +74,14 @@ export default function ActivityDetailPage() {
       submittingRef.current = false;
       setIsSubmitting(false);
     }
-  }, [activityId]);
+  }, [activityId, registrationsCtx]);
 
   useEffect(() => {
     fetchActivity();
   }, [fetchActivity]);
 
   useEffect(() => {
+    if (registrationsCtx) return;
     let cancelled = false;
     (async () => {
       try {
@@ -80,20 +93,19 @@ export default function ActivityDetailPage() {
           const rid = r.activityId ?? r.activity?.id;
           return String(rid) === String(activityId);
         });
-        // Only expose active registration; CANCELLED/CANCELADA treated as no registration
         if (found && found.status !== 'CANCELLED' && found.status !== 'CANCELADA') {
-          setCurrentRegistration(found);
+          setLocalRegistration(found);
         } else {
-          setCurrentRegistration(null);
+          setLocalRegistration(null);
         }
       } catch {
-        if (!cancelled) setCurrentRegistration(null);
+        if (!cancelled) setLocalRegistration(null);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [activityId]);
+  }, [activityId, registrationsCtx]);
 
   if (loading) {
     return (
@@ -137,8 +149,37 @@ export default function ActivityDetailPage() {
   const lineLabel = LINE_LABELS[activity.line] || activity.line;
   const displayLocation = activity.location || activity.address || activity.city || null;
   const isFull = activity.status === 'FULL' || activity.status === 'COMPLETA' || (total > 0 && occupied >= total);
-  const favoritedByMe = Boolean(activity.favoritedByMe);
+  const rawFavorited = Boolean(activity.favoritedByMe);
+  const favoritedByMe = favoritesCtx
+    ? favoritesCtx.getFavorite(activityId, rawFavorited)
+    : (localFavOverride !== null ? localFavOverride : rawFavorited);
+  const isFavPending = favoritesCtx ? favoritesCtx.isPending(activityId) : localFavPending;
   const isEnrolled = Boolean(currentRegistration);
+
+  const handleToggleFavorite = async () => {
+    if (favoritesCtx) {
+      if (favoritesCtx.isPending(activityId)) return;
+      try {
+        await favoritesCtx.toggleFavorite(activityId, favoritedByMe);
+      } catch {
+        // revert handled inside context
+      }
+      return;
+    }
+    if (localFavPending) return;
+    const next = !favoritedByMe;
+    setLocalFavOverride(next);
+    setLocalFavPending(true);
+    try {
+      if (next) await favoriteActivity(activityId);
+      else await unfavoriteActivity(activityId);
+      setActivity((prev) => (prev ? { ...prev, favoritedByMe: next } : prev));
+    } catch {
+      setLocalFavOverride(favoritedByMe);
+    } finally {
+      setLocalFavPending(false);
+    }
+  };
 
   return (
     <section className="activity-detail" aria-labelledby="activity-detail-title">
@@ -155,6 +196,9 @@ export default function ActivityDetailPage() {
             <HeartButton
               active={favoritedByMe}
               aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+              onClick={handleToggleFavorite}
+              disabled={isFavPending}
+              aria-busy={isFavPending || undefined}
             />
           </div>
 
@@ -213,6 +257,9 @@ export default function ActivityDetailPage() {
             <HeartButton
               active={favoritedByMe}
               aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+              onClick={handleToggleFavorite}
+              disabled={isFavPending}
+              aria-busy={isFavPending || undefined}
             />
           </Card>
         </aside>

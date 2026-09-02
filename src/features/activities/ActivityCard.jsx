@@ -7,7 +7,7 @@ const LINE_LABELS = {
   voluntariado: 'Voluntariado',
 };
 
-export default function ActivityCard({ activity, isEnrolled = false }) {
+export default function ActivityCard({ activity, isEnrolled = false, onToggleFavorite, isFavoritePending = false }) {
   if (!activity) return null;
 
   const {
@@ -84,7 +84,13 @@ export default function ActivityCard({ activity, isEnrolled = false }) {
 
       <div className="activity-card__footer">
         <span className="activity-card__organization">{total > 0 ? `${occupied} de ${total} plazas` : ''}</span>
-        <HeartButton active={Boolean(favoritedByMe)} aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'} />
+        <HeartButton
+          active={Boolean(favoritedByMe)}
+          aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+          onClick={onToggleFavorite}
+          disabled={isFavoritePending}
+          aria-busy={isFavoritePending || undefined}
+        />
       </div>
     </Card>
   );
