@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   acceptRegistration as acceptRegistrationRequest,
+  cancelRegistration as cancelRegistrationRequest,
   getActivityRegistrations,
   rejectRegistration as rejectRegistrationRequest,
 } from '../../api/registrationsApi';
@@ -63,6 +64,15 @@ export default function useRegistrations(activityId) {
     [decide],
   );
 
+  const cancelRegistration = useCallback(
+    (registrationId, reason) => decide(
+      registrationId,
+      'cancel',
+      (id) => cancelRegistrationRequest(id, reason),
+    ),
+    [decide],
+  );
+
   return {
     board,
     loading,
@@ -72,5 +82,6 @@ export default function useRegistrations(activityId) {
     reload: load,
     acceptRegistration,
     rejectRegistration,
+    cancelRegistration,
   };
 }

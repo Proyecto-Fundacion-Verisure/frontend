@@ -2,6 +2,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   acceptRegistration,
+  cancelRegistration,
   getActivityRegistrations,
   rejectRegistration,
 } from '../../api/registrationsApi';
@@ -9,6 +10,7 @@ import useRegistrations from './useRegistrations';
 
 vi.mock('../../api/registrationsApi', () => ({
   acceptRegistration: vi.fn(),
+  cancelRegistration: vi.fn(),
   getActivityRegistrations: vi.fn(),
   rejectRegistration: vi.fn(),
 }));
@@ -20,6 +22,7 @@ const INITIAL_BOARD = {
 
 beforeEach(() => {
   acceptRegistration.mockReset();
+  cancelRegistration.mockReset();
   getActivityRegistrations.mockReset();
   rejectRegistration.mockReset();
 });
@@ -89,5 +92,26 @@ describe('useRegistrations', () => {
     expect(result.current.board).toEqual(INITIAL_BOARD);
     expect(result.current.decision).toMatchObject({ status: 'error', error: apiError });
     expect(getActivityRegistrations).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ['con motivo', 'Cambio de disponibilidad'],
+    ['sin motivo', undefined],
+  ])('cancels %s and reloads the board', async (_label, reason) => {
+    const cancelled = { registrationId: 10, activityId: 8, status: 'CANCELLED', accepted: true };
+    getActivityRegistrations
+      .mockResolvedValueOnce({ data: INITIAL_BOARD })
+      .mockResolvedValueOnce({ data: { registrations: [cancelled] } });
+    cancelRegistration.mockResolvedValue({ data: cancelled });
+    const { result } = renderHook(() => useRegistrations(8));
+    await waitFor(() => expect(result.current.board).toEqual(INITIAL_BOARD));
+
+    await act(async () => {
+      await result.current.cancelRegistration(10, reason);
+    });
+
+    expect(cancelRegistration).toHaveBeenCalledWith(10, reason);
+    expect(getActivityRegistrations).toHaveBeenCalledTimes(2);
+    expect(result.current.board.registrations[0].status).toBe('CANCELLED');
   });
 });
