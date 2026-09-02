@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getPublishedActivities } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
+import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
 import { Button, EmptyState, Input, Select, Spinner } from '../../components/ui';
 import ActivityCard from './ActivityCard';
 
@@ -31,7 +32,9 @@ export default function CatalogPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
-  const [enrolledIds, setEnrolledIds] = useState(() => new Set());
+  const [localEnrolledIds, setLocalEnrolledIds] = useState(() => new Set());
+  const registrationsCtx = useRegistrationsOptional();
+  const enrolledIds = registrationsCtx ? registrationsCtx.enrolledIds : localEnrolledIds;
 
   const rawPage = Number(searchParams.get('page'));
   const page = Number.isInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
@@ -83,6 +86,7 @@ export default function CatalogPage() {
   }, [page, line, mode, q]);
 
   useEffect(() => {
+    if (registrationsCtx) return;
     let cancelled = false;
     (async () => {
       try {
@@ -94,15 +98,15 @@ export default function CatalogPage() {
           .filter((r) => r.status !== 'CANCELLED' && r.status !== 'CANCELADA')
           .map((r) => r.activityId ?? r.activity?.id)
           .filter(Boolean);
-        setEnrolledIds(new Set(activeIds));
+        setLocalEnrolledIds(new Set(activeIds));
       } catch {
-        if (!cancelled) setEnrolledIds(new Set());
+        if (!cancelled) setLocalEnrolledIds(new Set());
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [registrationsCtx]);
 
   useEffect(() => {
     let cancelled = false;

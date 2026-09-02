@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Outlet, Route, Routes } from 'react-router-dom';
 import LandingPage from '../features/landing/LandingPage';
 import LoginPage from '../features/auth/LoginPage';
 import DashboardPage from '../features/dashboard/DashboardPage';
@@ -19,6 +19,7 @@ import AccountStatusPage from '../features/orgs/AccountStatusPage';
 import ActivityDetailPage from '../features/activities/ActivityDetailPage';
 import NotFoundPage from '../features/not-found/NotFoundPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
+import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
 
 export default function AppRouter() {
   return (
@@ -39,8 +40,16 @@ export default function AppRouter() {
             <Route path="/activities/new" element={<ActivityFormPage />} />
           </Route>
           <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
-            <Route path="/activities" element={<CatalogPage />} />
-            <Route path="/activities/:activityId" element={<ActivityDetailPage />} />
+            <Route
+              element={
+                <RegistrationsProvider>
+                  <Outlet />
+                </RegistrationsProvider>
+              }
+            >
+              <Route path="/activities" element={<CatalogPage />} />
+              <Route path="/activities/:activityId" element={<ActivityDetailPage />} />
+            </Route>
           </Route>
           <Route element={<RoleRoute roles={['ORG']} />}>
             <Route path="/org/activities" element={<OrgActivitiesPage />} />

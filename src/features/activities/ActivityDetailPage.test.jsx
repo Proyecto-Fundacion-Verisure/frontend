@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getActivityDetail } from '../../api/activitiesApi';
-import { getMyRegistrations } from '../../api/registrationsApi';
+import { createRegistration, getMyRegistrations } from '../../api/registrationsApi';
 import ActivityDetailPage from './ActivityDetailPage';
 
 vi.mock('../../api/activitiesApi', () => ({
@@ -34,6 +35,7 @@ function renderDetail(id = '1') {
 beforeEach(() => {
   getActivityDetail.mockReset();
   getMyRegistrations.mockReset();
+  createRegistration.mockReset();
   getMyRegistrations.mockResolvedValue({ data: [] });
 });
 
@@ -209,5 +211,84 @@ describe('ActivityDetailPage', () => {
     // ensure no numeric favorite count rendered
     const text = document.body.textContent || '';
     expect(text).not.toMatch(/favoritos.*\d+/i);
+  });
+
+  // H12 — Modal explicativo antes de confirmar
+  it('muestra modal con explicación WAITLISTED y accepted antes de confirmar', async () => {
+    getActivityDetail.mockResolvedValue({
+      data: { id: 1, title: 'Actividad', description: 'Desc', capacity: 10, registeredCount: 2 },
+    });
+    renderDetail('1');
+    await screen.findByRole('heading', { name: /actividad/i });
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId('open-registration-modal'));
+
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText(/Antes de solicitar tu inscripción/i)).toBeInTheDocument();
+    expect(screen.getByText(/lista de espera.*WAITLISTED/i)).toBeInTheDocument();
+    expect(screen.getByText(/revisada por la administración/i)).toBeInTheDocument();
+    expect(screen.getByText(/accepted=true/i)).toBeInTheDocument();
+    expect(screen.getByText(/Aceptada/i)).toBeInTheDocument();
+    expect(screen.getByText(/Si hay plaza disponible/i)).toBeInTheDocument();
+    expect(screen.getByText('CONFIRMED')).toBeInTheDocument();
+    expect(screen.getByText(/continuarás en cola/i)).toBeInTheDocument();
+    expect(screen.getByText(/no se confirma automáticamente/i)).toBeInTheDocument();
+  });
+
+  it('confirmar envía una sola solicitud', async () => {
+    getActivityDetail.mockResolvedValue({
+      data: { id: 1, title: 'Actividad', description: 'Desc', capacity: 10, registeredCount: 2 },
+    });
+    createRegistration.mockResolvedValue({ data: { registrationId: 200, activityId: 1, status: 'WAITLISTED', accepted: false, queuePosition: 3 } });
+    renderDetail('1');
+    await screen.findByRole('heading', { name: /actividad/i });
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId('open-registration-modal'));
+    await screen.findByRole('dialog');
+    const confirmBtn = screen.getByTestId('confirm-registration');
+    // click twice quickly - guard should prevent second call while isSubmitting
+    await user.click(confirmBtn);
+    await user.click(confirmBtn);
+    await waitFor(() => expect(createRegistration).toHaveBeenCalledTimes(1));
+    expect(createRegistration).toHaveBeenCalledWith(1);
+  });
+
+  it('cancelar no llama a la API', async () => {
+    getActivityDetail.mockResolvedValue({
+      data: { id: 1, title: 'Actividad', description: 'Desc', capacity: 10, registeredCount: 2 },
+    });
+    renderDetail('1');
+    await screen.findByRole('heading', { name: /actividad/i });
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId('open-registration-modal'));
+    await screen.findByRole('dialog');
+    await user.click(screen.getByTestId('cancel-registration'));
+    expect(createRegistration).not.toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('gestiona foco del modal y confirma', async () => {
+    getActivityDetail.mockResolvedValue({
+      data: { id: 1, title: 'Actividad', description: 'Desc', capacity: 10, registeredCount: 2 },
+    });
+    createRegistration.mockResolvedValue({ data: { registrationId: 201, activityId: 1, status: 'WAITLISTED', accepted: false } });
+    renderDetail('1');
+    await screen.findByRole('heading', { name: /actividad/i });
+    const user = userEvent.setup();
+    const openBtn = screen.getByTestId('open-registration-modal');
+    await user.click(openBtn);
+    const dialog = await screen.findByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+    // foco debe estar dentro del diálogo (Modal enfoca primer elemento focusable)
+    await waitFor(() => expect(dialog.contains(document.activeElement)).toBe(true));
+    // Escape cierra y no envía
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(createRegistration).not.toHaveBeenCalled();
+    // reabrir y confirmar
+    await user.click(openBtn);
+    await screen.findByRole('dialog');
+    await user.click(screen.getByTestId('confirm-registration'));
+    await waitFor(() => expect(createRegistration).toHaveBeenCalledTimes(1));
   });
 });
