@@ -157,6 +157,12 @@ export default function ActivitiesListPage() {
           >
             Editar
           </Link>
+          <Link
+            className="button button--secondary button--small"
+            to={`/activities/${activity.id}/registrations`}
+          >
+            Inscripciones
+          </Link>
           <CancelActivityButton
             activity={activity}
             onCancelled={() => {

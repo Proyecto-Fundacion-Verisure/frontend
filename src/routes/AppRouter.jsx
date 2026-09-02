@@ -21,6 +21,7 @@ import ActivityDetailPage from '../features/activities/ActivityDetailPage';
 import NotFoundPage from '../features/not-found/NotFoundPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
 import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
+import RegistrationsTablePage from '../features/registrations/RegistrationsTablePage';
 import CertificatePage from '../features/reports/CertificatePage';
 
 export default function AppRouter() {
@@ -40,6 +41,7 @@ export default function AppRouter() {
             <Route path="/proposals" element={<ProposalsInboxPage />} />
             <Route path="/proposals/:proposalId" element={<ProposalDetailPage />} />
             <Route path="/activities/new" element={<ActivityFormPage />} />
+            <Route path="/activities/:activityId/registrations" element={<RegistrationsTablePage />} />
             <Route path="/activities/:activityId/edit" element={<ActivityFormPage backPath="/admin/activities" />} />
             <Route path="/admin/activities" element={<ActivitiesListPage />} />
           </Route>

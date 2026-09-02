@@ -75,6 +75,10 @@ describe('ActivitiesListPage', () => {
       'href',
       '/activities/12/edit',
     );
+    expect(within(row).getByRole('link', { name: /inscripciones/i })).toHaveAttribute(
+      'href',
+      '/activities/12/registrations',
+    );
     expect(getAdminActivities).toHaveBeenCalledWith({ page: 1, limit: 10 });
   });
 
