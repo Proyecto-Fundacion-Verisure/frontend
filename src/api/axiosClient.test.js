@@ -57,10 +57,25 @@ describe('axiosClient', () => {
 
     await expect(request).rejects.toMatchObject({
       name: 'ApiError',
-      message: 'Hay campos incorrectos.',
+      message: 'Revisa los datos introducidos.',
       status: 422,
       code: 'VALIDATION_ERROR',
       fieldErrors: { email: 'El correo no es válido.' },
+    });
+  });
+
+  it('replaces a backend domain code with its accessible Spanish message', async () => {
+    const request = axiosClient.post('/registrations', {}, {
+      adapter: failingAdapter(409, {
+        message: 'ACTIVITY_FULL',
+        code: 'ACTIVITY_FULL',
+      }),
+    });
+
+    await expect(request).rejects.toMatchObject({
+      message: 'No quedan plazas disponibles para esta actividad.',
+      status: 409,
+      code: 'ACTIVITY_FULL',
     });
   });
 
