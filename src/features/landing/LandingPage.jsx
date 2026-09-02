@@ -35,9 +35,7 @@ export default function LandingPage() {
       <section className="landing-hero" aria-labelledby="landing-title">
         <div className="landing__container landing-hero__content">
           <h1 id="landing-title">
-            El cambio empieza
-            <br />
-            <em>contigo</em>
+            El cambio empieza<em> contigo</em>
           </h1>
           <p className="landing-hero__lead">
             Una de cada tres personas mayores se siente sola. Únete a la red de
@@ -54,12 +52,12 @@ export default function LandingPage() {
             >
               Registra tu entidad
             </Link>
-            <Link
+            <a
               className="button button--ghost button--large"
-              to="/new-proposal"
+              href="/#propuesta"
             >
-              Propón sin cuenta
-            </Link>
+              ¿Quieres proponer un voluntariado?
+            </a>
           </div>
         </div>
         <div className="landing-hero__art" aria-hidden="true">
@@ -136,7 +134,6 @@ export default function LandingPage() {
               Creemos que las mejores iniciativas nacen cuando organizaciones y
               empresas unen sus capacidades para generar un{" "}
               <strong>impacto real.</strong>
-              <br />
               Por eso, queremos colaborar con entidades sociales que compartan
               nuestro compromiso con las personas, la comunidad y la
               construcción de una sociedad más solidaria.
@@ -150,78 +147,49 @@ export default function LandingPage() {
                 Queremos que las entidades sociales tengan un papel protagonista. Cuéntanos qué necesidades detectáis y qué iniciativas de voluntariado podrían marcar la diferencia, y trabajaremos juntos para convertir esas ideas en proyectos reales.
               </p>
               <img src={colabImage} alt="imagen de personas haciendo un voluntariado" />
+              <Link className="button button--primary button--medium" to="/register-organization">
+                Registra tu entidad
+              </Link>
             </div>
-            <a className="landing-access__card" href="#colabora">
+            <div className="landing-access__card">
               <p className="landing__eyebrow">Iniciativas</p>
               <h3>¿Qué podemos hacer juntos?</h3>
-              <p>
-                <ul>
-                  <li>Actividades de voluntariado con nuestros equipos.</li>
-                  <li>Campañas solidarias y de sensibilización.</li> 
-                  <li>Recogidas de alimentos, material u otros recursos.</li>
-                  <li>Recogidas de alimentos, material u otros recursos.</li>
-                  <li>Acompañamiento y apoyo a colectivos en situación de vulnerabilidad.</li>
-                  <li>Actividades educativas, ambientales, culturales o comunitarias.</li>
-                  <li>Proyectos de voluntariado adaptados a las necesidades específicas de vuestra entidad.</li><br />
-                  <p>... y mucho más.</p>
-                </ul>
-              </p>
-              <a className="button button--primary button--medium" href="#colabora">
-                Quiero contactar
-              </a>
-            </a>
+              <ul className="landing-access__list">
+                <li>Proyectos de voluntariado adaptados a las necesidades específicas de vuestra entidad.</li>
+                <li>Campañas solidarias y de sensibilización.</li> 
+                <li>Recogidas de alimentos, material u otros recursos.</li>
+                <li>Acompañamiento y apoyo a colectivos en situación de vulnerabilidad.</li>
+                <li>Actividades educativas, ambientales, culturales o comunitarias.</li>
+              </ul>
+              <p><strong>¿Cómo funciona?</strong></p>
+              <ol className="landing-access__steps">
+                <li>
+                  <span>1</span>
+                  <div>
+                    <strong>Recibimos tu propuesta</strong>
+                    <p>Te llega un correo de acuse al instante</p>
+                  </div>
+                </li>
+                <li>
+                  <span>2</span>
+                  <div>
+                    <strong>La revisamos</strong>
+                    <p>Te llamamos para concretar fechas, plazas y dedicación.</p>
+                  </div>
+                </li>
+                <li>
+                  <span>3</span>
+                  <div>
+                    <strong>La publicamos</strong>
+                    <p>Se convierte en una actividad para la plantilla.</p>
+                  </div>
+                </li>
+              </ol>
+              <Link className="button button--primary button--medium" to="/new-proposal">
+                Enviar propuesta
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <section
-        className="landing-cta"
-        id="colabora"
-        aria-labelledby="cta-title"
-      >
-        <div className="landing__container landing-cta__content">
-          <div>
-            <p className="landing__eyebrow">Colabora con nosotros</p>
-            <h2 id="cta-title">
-              Tú conoces las necesidades. Nosotros queremos ayudarte a hacerlas
-              realidad.
-            </h2>
-            <p>
-              Si tenéis una iniciativa en mente, una necesidad concreta o
-              simplemente una idea que os gustaría explorar, queremos conocerla.
-              Proponnos una iniciativa de voluntariado y descubramos juntos cómo
-              podemos hacerla realidad.
-            </p>
-            <Link to="/new-proposal"
-              className="button button--primary button--large"
-              href="#propuesta"
-            >
-              Proponer una colaboración
-            </Link>
-          </div>
-          <ol className="landing-cta__steps">
-            <li>
-              <span>1</span>
-              <div>
-                <strong>Recibimos tu propuesta</strong>
-                <p>Te llega un correo de acuse al instante</p>
-              </div>
-            </li>
-            <li>
-              <span>2</span>
-              <div>
-                <strong>La revisamos</strong>
-                <p>Te llamamos para concretar fechas, plazas y dedicación.</p>
-              </div>
-            </li>
-            <li>
-              <span>3</span>
-              <div>
-                <strong>La publicamos</strong>
-                <p>Se convierte en una actividad para la plantilla.</p>
-              </div>
-            </li>
-          </ol>
         </div>
       </section>
     </div>
