@@ -43,6 +43,44 @@
 
 .registrations-page__sections { display: grid; gap: space('8'); }
 
+.registration-summary {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  display: grid;
+  gap: space('6');
+  grid-template-columns: minmax(0, 1.4fr) minmax(16rem, .6fr);
+  margin-bottom: space('8');
+  padding: space('5');
+}
+
+.registration-summary__cards {
+  display: grid;
+  gap: space('3');
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+}
+
+.registration-summary__card {
+  background: $color-background;
+  border-radius: $radius-md;
+  padding: space('4');
+
+  dt { color: $color-muted; font-size: $font-size-sm; }
+  dd {
+    color: $color-navy;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    margin: space('1') 0 0;
+  }
+}
+
+.registration-summary__capacity {
+  align-self: center;
+
+  p { color: $color-muted; font-size: $font-size-sm; margin: space('2') 0 0; }
+}
+
 .registrations-page__section h2 {
   align-items: center;
   color: $color-navy;
@@ -75,8 +113,29 @@
   margin-top: space('4');
 }
 
+.registration-actions__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('2');
+}
+
+.registration-actions__error {
+  color: $color-danger;
+  font-size: $font-size-sm;
+  margin: space('2') 0 0;
+  max-width: 16rem;
+}
+
 @media (max-width: 38rem) {
   .registrations-page { padding-inline: space('4'); }
   .registrations-page__header { align-items: flex-start; flex-direction: column; }
   .registrations-page__state-actions { align-items: stretch; flex-direction: column; }
+}
+
+@media (max-width: 62rem) {
+  .registration-summary { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 45rem) {
+  .registration-summary__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

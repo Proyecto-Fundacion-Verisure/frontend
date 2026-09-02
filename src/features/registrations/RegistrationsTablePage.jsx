@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getActivityRegistrations } from '../../api/registrationsApi';
 import { Badge, Button, EmptyState, Spinner, Table } from '../../components/ui';
+import RegistrationSummary from './RegistrationSummary';
+import RegistrationDecisionActions from './RegistrationDecisionActions';
+import CancelRegistrationAction from './CancelRegistrationAction';
+import useRegistrations from './useRegistrations';
 
 const SECTIONS = [
   { key: 'unreviewed', title: 'Sin revisar' },
@@ -53,7 +55,7 @@ function getPersonName(registration) {
     ?? '—';
 }
 
-const COLUMNS = [
+const BASE_COLUMNS = [
   { key: 'person', label: 'Persona', render: getPersonName },
   {
     key: 'department',
@@ -91,25 +93,18 @@ const COLUMNS = [
 
 export default function RegistrationsTablePage() {
   const { activityId } = useParams();
-  const [board, setBoard] = useState(null);
-  const [requestState, setRequestState] = useState({ status: 'loading', error: null });
+  const {
+    board,
+    loading,
+    error,
+    decision,
+    reload,
+    acceptRegistration,
+    rejectRegistration,
+    cancelRegistration,
+  } = useRegistrations(activityId);
 
-  const loadRegistrations = useCallback(async () => {
-    setRequestState({ status: 'loading', error: null });
-    try {
-      const { data } = await getActivityRegistrations(activityId);
-      setBoard(data);
-      setRequestState({ status: 'success', error: null });
-    } catch (error) {
-      setRequestState({ status: 'error', error });
-    }
-  }, [activityId]);
-
-  useEffect(() => {
-    loadRegistrations();
-  }, [loadRegistrations]);
-
-  if (requestState.status === 'loading') {
+  if (loading) {
     return (
       <section className="registrations-page registrations-page--state" aria-label="Cargando inscripciones">
         <Spinner label="Cargando inscripciones…" />
@@ -117,14 +112,14 @@ export default function RegistrationsTablePage() {
     );
   }
 
-  if (requestState.status === 'error') {
-    const isForbidden = requestState.error?.status === 403;
+  if (error) {
+    const isForbidden = error.status === 403;
     return (
       <section className="registrations-page registrations-page--state">
         <h1>{isForbidden ? 'No tienes permiso para consultar las inscripciones' : 'No hemos podido cargar las inscripciones'}</h1>
-        <p role="alert">{requestState.error?.message || 'Inténtalo de nuevo.'}</p>
+        <p role="alert">{error.message || 'Inténtalo de nuevo.'}</p>
         <div className="registrations-page__state-actions">
-          {!isForbidden && <Button onClick={loadRegistrations}>Reintentar</Button>}
+          {!isForbidden && <Button onClick={() => reload().catch(() => undefined)}>Reintentar</Button>}
           <Link className="button button--secondary button--medium" to="/admin/activities">Volver a actividades</Link>
         </div>
       </section>
@@ -137,6 +132,35 @@ export default function RegistrationsTablePage() {
     result[key] = [...(result[key] ?? []), registration];
     return result;
   }, {});
+  const unreviewedColumns = [
+    ...BASE_COLUMNS,
+    {
+      key: 'actions',
+      label: 'Acciones',
+      render: (registration) => (
+        <RegistrationDecisionActions
+          registration={registration}
+          decision={decision}
+          onAccept={acceptRegistration}
+          onReject={rejectRegistration}
+        />
+      ),
+    },
+  ];
+  const cancellableColumns = [
+    ...BASE_COLUMNS,
+    {
+      key: 'actions',
+      label: 'Acciones',
+      render: (registration) => (
+        <CancelRegistrationAction
+          registration={registration}
+          decision={decision}
+          onCancel={cancelRegistration}
+        />
+      ),
+    },
+  ];
 
   return (
     <section className="registrations-page" aria-labelledby="registrations-title">
@@ -149,6 +173,8 @@ export default function RegistrationsTablePage() {
         </div>
         <strong>{registrations.length} inscripciones</strong>
       </header>
+
+      <RegistrationSummary board={board} />
 
       {registrations.length === 0 ? (
         <EmptyState
@@ -165,7 +191,11 @@ export default function RegistrationsTablePage() {
                 <h2>{section.title} <span>{rows.length}</span></h2>
                 <Table
                   caption={`${section.title} de la actividad`}
-                  columns={COLUMNS}
+                  columns={section.key === 'unreviewed'
+                    ? unreviewedColumns
+                    : ['accepted-waitlist', 'confirmed', 'pending-report'].includes(section.key)
+                      ? cancellableColumns
+                      : BASE_COLUMNS}
                   data={rows}
                   rowKey="registrationId"
                 />
