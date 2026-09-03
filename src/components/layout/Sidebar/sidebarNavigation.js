@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   CirclePlus,
   BarChart3,
+  Building2,
 } from "lucide-react";
 
 export const NAV_SECTIONS_BY_ROLE = {
@@ -49,6 +50,17 @@ export const NAV_SECTIONS_BY_ROLE = {
           label: "Cierres",
           icon: CheckCircle2,
           badgeKey: "closes",
+        },
+      ],
+    },
+    {
+      section: "Entidades",
+      items: [
+        {
+          path: "/admin/account-status",
+          label: "Cuentas pendientes",
+          icon: Building2,
+          badgeKey: "pendingAccounts",
         },
       ],
     },
