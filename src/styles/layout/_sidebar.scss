@@ -95,14 +95,21 @@
     border-bottom: 1px solid $color-border;
     overflow-y: visible;
     overflow-x: auto;
+    padding: 0;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     &::-webkit-scrollbar { display: none; }
   }
 
+  .app-layout__content {
+    min-width: 0;
+    padding: 0;
+  }
+
   .sidebar__nav {
     display: flex;
     gap: map-get($spacing, '2');
+    min-width: max-content;
     padding: map-get($spacing, '2') map-get($spacing, '4');
   }
 
@@ -114,6 +121,7 @@
   .sidebar__section-title { display: none; }
 
   .sidebar__link {
+    min-height: 2.75rem;
     white-space: nowrap;
     padding: map-get($spacing, '2') map-get($spacing, '3');
   }

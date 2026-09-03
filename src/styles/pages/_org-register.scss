@@ -34,7 +34,9 @@
 }
 @media (max-width: 38rem) {
   .org-register-page { padding-inline: space('4'); }
+  .org-register-page__back { align-items: center; display: inline-flex; min-height: 2.75rem; }
   .org-register-form__grid { grid-template-columns: 1fr; }
   .org-register-form__footer { align-items: stretch; flex-direction: column; }
   .org-register-form__footer .button { width: 100%; }
+  .org-register-aside a { align-items: center; display: inline-flex; min-height: 2.75rem; }
 }
