@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import Topbar from "../Topbar/Topbar";
 import Logo from "../../../assets/images/logo-fundacion-verisure.png"
@@ -14,7 +14,9 @@ export default function AppLayout() {
   return (
     <div className="app-layout">
       <Topbar>
-        <img src={Logo} alt="Fundación Verisure" />
+        <Link to="/" className="topbar__brand">
+          <img src={Logo} alt="Fundación Verisure" />
+        </Link>
       </Topbar>
       <Sidebar sections={sections} counts={counts} />
       <main className="app-layout__content">
