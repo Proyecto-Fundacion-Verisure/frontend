@@ -160,6 +160,8 @@
 
 @media (max-width: 38rem) {
   .activity-form-page { padding-inline: space('4'); }
+  .activity-form-page__header > a,
+  .activity-form-page__back { align-items: center; display: inline-flex; min-height: 2.75rem; }
   .activity-form__grid { grid-template-columns: 1fr; }
   .activity-form__footer { align-items: stretch; flex-direction: column; }
   .activity-form__actions { flex-direction: column; }
