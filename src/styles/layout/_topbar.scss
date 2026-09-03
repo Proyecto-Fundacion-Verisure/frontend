@@ -24,6 +24,12 @@
   }
 }
 
+.topbar__brand {
+  @include focus-ring($color-coral);
+
+  display: inline-flex;
+}
+
 .topbar__user-menu {
   align-items: center;
   display: flex;
