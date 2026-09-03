@@ -71,7 +71,84 @@
   font-weight: $font-weight-medium;
 }
 
+.proposal-detail {
+  margin: 0 auto;
+  max-width: $content-max-width;
+  padding: space('8') space('6') space('16');
+}
+
+.proposal-detail__back {
+  align-items: center;
+  color: $color-navy;
+  display: inline-flex;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  min-height: 2.75rem;
+  text-decoration: none;
+}
+
+.proposal-detail__header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('3');
+  justify-content: space-between;
+  margin: space('4') 0 space('6');
+}
+
+.proposal-detail__header h1 {
+  font-size: $font-size-2xl;
+  overflow-wrap: anywhere;
+}
+
+.proposal-detail__meta {
+  display: grid;
+  gap: space('5');
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.proposal-detail__meta div { min-width: 0; }
+.proposal-detail__meta dt { color: $color-muted; font-size: $font-size-sm; font-weight: $font-weight-semibold; }
+.proposal-detail__meta dd { margin: space('1') 0 0; overflow-wrap: anywhere; }
+
+.proposal-detail__description {
+  border-top: 1px solid $color-border;
+  margin-top: space('6');
+  padding-top: space('6');
+}
+
+.proposal-detail__description p {
+  line-height: 1.6;
+  margin-top: space('3');
+  overflow-wrap: anywhere;
+}
+
+.proposal-detail__actions {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('3');
+  margin-top: space('5');
+}
+
+.proposal-detail__error {
+  color: $color-danger;
+  flex-basis: 100%;
+  font-size: $font-size-sm;
+}
+
 @media (max-width: 38rem) {
   .proposals-inbox { padding-inline: space('4'); }
   .proposals-inbox__header { flex-direction: column; align-items: flex-start; }
+  .proposals-inbox__filters { align-items: stretch; width: 100%; }
+  .proposals-inbox__link { align-items: center; display: inline-flex; min-height: 2.75rem; }
+  .proposals-inbox__pagination { align-items: stretch; flex-direction: column; gap: space('3'); }
+  .proposals-inbox__pagination > div { display: grid; gap: space('3'); grid-template-columns: 1fr 1fr; }
+  .proposal-detail { padding: space('6') space('4') space('12'); }
+  .proposal-detail__header { align-items: flex-start; flex-direction: column; }
+  .proposal-detail__meta { grid-template-columns: 1fr; }
+  .proposal-detail__actions { align-items: stretch; flex-direction: column; }
+  .proposal-detail__actions .button,
+  .proposal-accept-action { width: 100%; }
 }

@@ -54,3 +54,7 @@
     &:hover:not(:disabled) { background: #9b2c2c; }
   }
 }
+
+@media (max-width: 38rem) {
+  .button--small { min-height: 2.75rem; }
+}

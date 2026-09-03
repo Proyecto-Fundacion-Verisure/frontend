@@ -76,4 +76,10 @@
       outline-offset: 2px;
     }
   }
+
+  @media (max-width: 38rem) {
+    &__container { padding-inline: map-get($spacing, '4'); }
+    &__links { gap: 0; }
+    &__link { align-items: center; display: inline-flex; min-height: 2.75rem; }
+  }
 }

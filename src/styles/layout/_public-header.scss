@@ -79,4 +79,10 @@
       outline-offset: 2px;
     }
   }
+
+  @media (max-width: 38rem) {
+    &__container { padding-inline: map-get($spacing, '4'); }
+    &__brand,
+    &__login-btn { min-height: 2.75rem; }
+  }
 }
