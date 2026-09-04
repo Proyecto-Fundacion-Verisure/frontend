@@ -18,6 +18,7 @@ import ProposalsInboxPage from '../features/proposals/ProposalsInboxPage';
 import ProposalDetailPage from '../features/proposals/ProposalDetailPage';
 import AccountStatusPage from '../features/orgs/AccountStatusPage';
 import ActivityDetailPage from '../features/activities/ActivityDetailPage';
+import MyVolunteeringPage from '../features/registrations/MyVolunteeringPage';
 import NotFoundPage from '../features/not-found/NotFoundPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
 import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
@@ -56,6 +57,8 @@ export default function AppRouter() {
             >
               <Route path="/activities" element={<CatalogPage />} />
               <Route path="/activities/:activityId" element={<ActivityDetailPage />} />
+              <Route path="/my-activities" element={<MyVolunteeringPage />} />
+              <Route path="/my-volunteering" element={<MyVolunteeringPage />} />
             </Route>
           </Route>
           <Route element={<RoleRoute roles={['ORG']} />}>
