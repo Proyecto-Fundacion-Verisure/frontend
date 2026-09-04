@@ -13,7 +13,7 @@ const LINE_OPTIONS = [
   { value: 'desoledad', label: 'Desoledad' },
   { value: 'educar', label: 'Educar para proteger' },
   { value: 'acoso', label: 'Protegidos ante el acoso' },
-  { value: 'voluntariado', label: 'Voluntariado' },
+  { value: 'medio_ambiente', label: 'Medio ambiente' },
 ];
 
 const MODE_OPTIONS = [
