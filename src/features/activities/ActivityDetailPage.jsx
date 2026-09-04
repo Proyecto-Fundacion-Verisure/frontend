@@ -210,6 +210,14 @@ export default function ActivityDetailPage() {
                 Ya estás apuntado{currentRegistration?.status ? ` — ${currentRegistration.status}` : ''}.
               </p>
             )}
+            {isEnrolled && currentRegistration?.queuePosition != null && (
+              <p className="activity-detail__panel-meta">Posición en cola: {currentRegistration.queuePosition}</p>
+            )}
+            {isEnrolled && currentRegistration?.status === 'WAITLISTED' && (
+              <p className="activity-detail__panel-meta" data-testid="accepted-status">
+                {currentRegistration.accepted ? 'Aceptada' : 'Pendiente de revisión'}
+              </p>
+            )}
             {!isEnrolled && !isFull && <p className="activity-detail__panel-meta">Plazas disponibles.</p>}
             {!isEnrolled && (
               <Button onClick={handleOpenModal} data-testid="open-registration-modal">
