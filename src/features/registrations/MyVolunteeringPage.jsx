@@ -26,11 +26,13 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
   const showAccepted = item.status === 'WAITLISTED';
   const acceptedLabel = item.accepted ? 'Aceptada' : 'Pendiente de revisión';
 
+  const statusLabel = item.status === 'WAITLISTED' ? 'En lista de espera' : item.status;
+
   return (
     <Card className="my-volunteering__card" data-testid={`registration-${item.registrationId}`}>
       <div className="my-volunteering__card-header">
         <h3 className="my-volunteering__card-title">{title}</h3>
-        <Badge variant="neutral">{item.status}</Badge>
+        <Badge variant="neutral">{statusLabel}</Badge>
       </div>
       {partner && <p className="my-volunteering__meta">Entidad: {partner}</p>}
       <p className="my-volunteering__meta">
@@ -194,7 +196,15 @@ export default function MyVolunteeringPage() {
         <h1 id="my-volunteering-title" className="my-volunteering__title">
           Mi voluntariado
         </h1>
-        <EmptyState title="No tienes inscripciones" description="Aún no te has inscrito en ninguna actividad." />
+        <EmptyState
+          title="No tienes inscripciones"
+          description="Aún no te has inscrito en ninguna actividad."
+          action={
+            <Link to="/activities" className="button button--primary">
+              Explorar actividades
+            </Link>
+          }
+        />
       </section>
     );
   }
@@ -215,7 +225,15 @@ export default function MyVolunteeringPage() {
           Activas
         </h2>
         {activeList.length === 0 ? (
-          <EmptyState title="Sin inscripciones activas" description="No tienes inscripciones activas." />
+          <EmptyState
+            title="Sin inscripciones activas"
+            description="No tienes inscripciones activas."
+            action={
+              <Link to="/activities" className="button button--primary">
+                Explorar actividades
+              </Link>
+            }
+          />
         ) : (
           <div className="my-volunteering__grid">
             {activeList.map((item) => (

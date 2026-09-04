@@ -74,12 +74,12 @@ describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
     await screen.findByRole('dialog');
     await user.click(screen.getByTestId('confirm-registration'));
     await waitFor(() => expect(createRegistration).toHaveBeenCalledWith(1));
-    // ficha shows WAITLISTED immediately via context, not CONFIRMED nor Aceptada
-    expect(await screen.findByText(/WAITLISTED/)).toBeInTheDocument();
+    // ficha shows En lista de espera immediately via context, not CONFIRMED nor Aceptada
+    expect(await screen.findByText(/En lista de espera/)).toBeInTheDocument();
     expect(screen.queryByText('CONFIRMED')).not.toBeInTheDocument();
     expect(screen.queryByText('Aceptada')).not.toBeInTheDocument();
     // verify we applied exactly the response (registrationId preserved)
-    expect(screen.getByText(/Ya estás apuntado.*WAITLISTED/)).toBeInTheDocument();
+    expect(screen.getByText(/Ya estás apuntado.*En lista de espera/)).toBeInTheDocument();
   });
 
   it('ambas vistas muestran la misma inscripción sin recargar', async () => {
@@ -101,7 +101,7 @@ describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
     await user.click(screen.getByTestId('open-registration-modal'));
     await screen.findByRole('dialog');
     await user.click(screen.getByTestId('confirm-registration'));
-    await waitFor(() => expect(screen.getByText(/Ya estás apuntado.*WAITLISTED/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/Ya estás apuntado.*En lista de espera/)).toBeInTheDocument());
     expect(screen.getAllByText(/Ya estás apuntado/).length).toBeGreaterThan(0);
     unmount();
     getMyRegistrations.mockResolvedValue({ data: [waitlisted] });
@@ -124,7 +124,7 @@ describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
     await user.click(screen.getByTestId('open-registration-modal'));
     await screen.findByRole('dialog');
     await user.click(screen.getByTestId('confirm-registration'));
-    await screen.findByText(/WAITLISTED/);
+    await screen.findByText(/En lista de espera/);
     expect(screen.queryByText('CONFIRMED')).not.toBeInTheDocument();
     // accepted false should not render "Aceptada" in card/detail initial state
     // Our UI only shows status, not accepted label, so ensure no false positive
@@ -148,7 +148,7 @@ describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     // retry — second confirm should succeed
     await user.click(screen.getByTestId('confirm-registration'));
-    await waitFor(() => expect(screen.getByText(/Ya estás apuntado.*WAITLISTED/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/Ya estás apuntado.*En lista de espera/)).toBeInTheDocument());
     expect(createRegistration).toHaveBeenCalledTimes(2);
   });
 
@@ -161,7 +161,7 @@ describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
     await user.click(screen.getByTestId('open-registration-modal'));
     await screen.findByRole('dialog');
     await user.click(screen.getByTestId('confirm-registration'));
-    await screen.findByText(/Ya estás apuntado.*WAITLISTED/);
+    await screen.findByText(/Ya estás apuntado.*En lista de espera/);
     expect(createRegistration).toHaveBeenCalledWith(1);
     expect(serverResponse.registrationId).toBe(7777);
     expect(serverResponse.queuePosition).toBe(5);

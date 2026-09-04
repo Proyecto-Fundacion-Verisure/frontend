@@ -169,7 +169,13 @@ export default function ActivityDetailPage() {
             {isFull && !isEnrolled && <p className="activity-detail__panel-meta">Actividad completa — puedes solicitar entrar en lista de espera.</p>}
             {isEnrolled && (
               <p className="activity-detail__panel-meta">
-                Ya estás apuntado{currentRegistration?.status ? ` — ${currentRegistration.status}` : ''}.
+                Ya estás apuntado
+                {currentRegistration?.status === 'WAITLISTED'
+                  ? ' — En lista de espera'
+                  : currentRegistration?.status
+                    ? ` — ${currentRegistration.status}`
+                    : ''}
+                .
               </p>
             )}
             {isEnrolled && currentRegistration?.queuePosition != null && (
