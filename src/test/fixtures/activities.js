@@ -80,7 +80,7 @@ export const MOCK_ACTIVITIES_V2 = [
     id: 4,
     title: 'Jornada de voluntariado ambiental',
     description: 'Jornadas de voluntariado corporativo en entornos naturales.',
-    line: 'voluntariado',
+    line: 'medio_ambiente',
     mode: 'MIXTO',
     capacity: 30,
     registeredCount: 12,

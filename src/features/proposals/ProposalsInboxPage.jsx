@@ -21,7 +21,7 @@ const LINE_LABELS = {
   desoledad: 'Desoledad',
   educar: 'Educar para proteger',
   acoso: 'Protegidos ante el acoso',
-  voluntariado: 'Voluntariado',
+  medio_ambiente: 'Medio ambiente',
 };
 
 function formatDate(dateStr) {

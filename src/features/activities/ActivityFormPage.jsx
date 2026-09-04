@@ -373,7 +373,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
             <option value="desoledad">Desoledad</option>
             <option value="educar">Educar para proteger</option>
             <option value="acoso">Protegidos ante el acoso</option>
-            <option value="voluntariado">Voluntariado</option>
+            <option value="medio_ambiente">Medio ambiente</option>
           </Select>
         </div>
 
