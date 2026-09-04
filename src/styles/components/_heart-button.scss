@@ -1,3 +1,43 @@
 @use '../abstracts' as *;
 
-.heart-button { background: transparent; color: $color-coral; font-size: 1.5rem; padding: .25rem; }
+.heart-button {
+  @include focus-ring;
+  @include disabled-control;
+
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: $radius-pill;
+  color: $color-coral;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  padding: space('1');
+  transition: color $transition-fast, transform $transition-fast, background-color $transition-fast;
+
+  &:hover:not(:disabled) {
+    background: $color-coral-50;
+    color: $color-coral-dark;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.92);
+  }
+
+  &--active {
+    color: $color-coral;
+  }
+
+  &__icon {
+    display: block;
+    transition: fill $transition-fast, stroke $transition-fast, transform $transition-fast;
+  }
+
+  &--active &__icon {
+    fill: currentColor;
+  }
+
+  &:disabled {
+    color: $color-muted;
+  }
+}
