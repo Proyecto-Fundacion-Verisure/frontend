@@ -1,0 +1,84 @@
+@use '../abstracts' as *;
+
+.my-volunteering {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: space('8') space('6') space('16');
+}
+
+.my-volunteering__title {
+  color: $color-navy;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  margin: 0 0 space('6');
+}
+
+.my-volunteering__block {
+  margin-top: space('8');
+}
+
+.my-volunteering__block-title {
+  color: $color-navy;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  margin: 0 0 space('4');
+}
+
+.my-volunteering__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: space('4');
+}
+
+.my-volunteering__card {
+  display: flex;
+  flex-direction: column;
+  gap: space('3');
+}
+
+.my-volunteering__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: space('3');
+}
+
+.my-volunteering__card-title {
+  color: $color-navy;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  margin: 0;
+}
+
+.my-volunteering__meta {
+  color: $color-muted;
+  font-size: $font-size-sm;
+  margin: 0;
+}
+
+.my-volunteering__queue {
+  color: $color-navy;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  margin: 0;
+}
+
+.my-volunteering__error {
+  background: $color-danger-light;
+  border: 1px solid $color-danger;
+  border-radius: $radius-md;
+  color: $color-danger;
+  padding: space('4');
+  text-align: center;
+  margin-bottom: space('4');
+}
+
+@media (max-width: 48rem) {
+  .my-volunteering {
+    padding: space('6') space('4') space('12');
+  }
+
+  .my-volunteering__grid {
+    grid-template-columns: 1fr;
+  }
+}
