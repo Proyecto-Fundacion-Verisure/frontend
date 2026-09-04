@@ -7,7 +7,3 @@ export const ROLE_HOME_PATHS = {
 export function getRoleHomePath(role) {
   return ROLE_HOME_PATHS[role] ?? '/';
 }
-
-export function requiresAccountStatus(user) {
-  return user?.role === 'ORG' && user.status !== 'ACTIVE';
-}

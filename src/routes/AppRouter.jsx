@@ -32,7 +32,6 @@ export default function AppRouter() {
       <Route path="/proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
       <Route path="/new-proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
       <Route path="/register-organization" element={<PublicLayout><OrgRegisterPage /></PublicLayout>} />
-      <Route path="/account-status" element={<PublicLayout><AccountStatusPage /></PublicLayout>} />
       {import.meta.env.DEV && <Route path="/ui-kit" element={<UiShowcase />} />}
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
@@ -44,6 +43,7 @@ export default function AppRouter() {
             <Route path="/activities/:activityId/registrations" element={<RegistrationsTablePage />} />
             <Route path="/activities/:activityId/edit" element={<ActivityFormPage backPath="/admin/activities" />} />
             <Route path="/admin/activities" element={<ActivitiesListPage />} />
+            <Route path="/admin/account-status" element={<AccountStatusPage />} />
           </Route>
           <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
             <Route path="/reports/:reportId/certificate" element={<CertificatePage />} />

@@ -1,0 +1,124 @@
+@use '../abstracts' as *;
+
+.account-status {
+  display: flex;
+  flex-direction: column;
+  gap: space('4');
+
+  &__center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 20rem;
+  }
+
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $color-navy;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: $font-size-md;
+    color: $color-muted;
+    margin: 0;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: space('4');
+  }
+
+  &__card {
+    width: 90%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  &__card-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: space('3');
+  }
+
+  &__card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: space('3');
+  }
+
+  &__org-name {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-navy;
+    margin: 0;
+  }
+
+  &__badge {
+    flex-shrink: 0;
+  }
+
+  &__card-info {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: space('2') space('4');
+
+    @include respond-to('sm') {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond-to('md') {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: space('1');
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: $color-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__value {
+    font-size: $font-size-md;
+    color: $color-text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__card-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    gap: space('2');
+    padding-left: space('4');
+    border-left: 1px solid $color-border;
+    min-width: 8rem;
+    flex-shrink: 0;
+
+    @include respond-to('sm') {
+      flex-direction: row;
+      min-width: auto;
+      padding-left: space('6');
+      gap: space('3');
+    }
+  }
+}
