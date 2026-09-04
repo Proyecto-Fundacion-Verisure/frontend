@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getMyRegistrations } from '../../api/registrationsApi';
+import { cancelRegistration, getMyRegistrations } from '../../api/registrationsApi';
 import { Badge, Button, Card, EmptyState, Spinner } from '../../components/ui';
 
 function formatDate(value) {
@@ -12,7 +12,7 @@ function formatDate(value) {
   }
 }
 
-function RegistrationCard({ item }) {
+function RegistrationCard({ item, onCancel, isCancelling }) {
   const activity = item.activity ?? {};
   const title = activity.title ?? `Actividad ${activity.id ?? ''}`;
   const partner = activity.partner ?? activity.organizationName ?? '';
@@ -23,6 +23,8 @@ function RegistrationCard({ item }) {
   const showQueue = item.queuePosition !== null && item.queuePosition !== undefined;
   const hasReport = Boolean(item.reportId);
   const isReturned = item.reportStatus === 'RETURNED';
+  const showAccepted = item.status === 'WAITLISTED';
+  const acceptedLabel = item.accepted ? 'Aceptada' : 'Pendiente de revisión';
 
   return (
     <Card className="my-volunteering__card" data-testid={`registration-${item.registrationId}`}>
@@ -35,6 +37,7 @@ function RegistrationCard({ item }) {
         {formatDate(startDate)} — {formatDate(endDate)} {hours ? `· ${hours} h` : ''}
       </p>
       {showQueue && <p className="my-volunteering__queue">Posición en cola: {item.queuePosition}</p>}
+      {showAccepted && <p className="my-volunteering__accepted" data-testid={`accepted-${item.registrationId}`}>{acceptedLabel}</p>}
       {!hasReport && (
         <Link
           to={`/reports/new?registrationId=${item.registrationId}`}
@@ -62,6 +65,18 @@ function RegistrationCard({ item }) {
           Ver cierre
         </Link>
       )}
+      {onCancel && (item.status === 'WAITLISTED' || item.status === 'CONFIRMED') && (
+        <Button
+          variant="secondary"
+          size="small"
+          onClick={() => onCancel(item.registrationId)}
+          data-testid={`cancel-${item.registrationId}`}
+          isLoading={isCancelling}
+          disabled={isCancelling}
+        >
+          Cancelar inscripción
+        </Button>
+      )}
     </Card>
   );
 }
@@ -71,6 +86,8 @@ export default function MyVolunteeringPage() {
   const [closed, setClosed] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cancelError, setCancelError] = useState(null);
+  const [cancellingId, setCancellingId] = useState(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -117,6 +134,19 @@ export default function MyVolunteeringPage() {
       setLoading(false);
     }
   }, []);
+
+  const handleCancel = useCallback(async (registrationId) => {
+    setCancelError(null);
+    setCancellingId(registrationId);
+    try {
+      await cancelRegistration(registrationId);
+      await fetchData();
+    } catch (err) {
+      setCancelError(err.message || 'No se pudo cancelar la inscripción.');
+    } finally {
+      setCancellingId(null);
+    }
+  }, [fetchData]);
 
   useEffect(() => {
     fetchData();
@@ -174,6 +204,11 @@ export default function MyVolunteeringPage() {
       <h1 id="my-volunteering-title" className="my-volunteering__title">
         Mi voluntariado
       </h1>
+      {cancelError && (
+        <div className="my-volunteering__error" role="alert">
+          {cancelError}
+        </div>
+      )}
 
       <section className="my-volunteering__block" aria-labelledby="active-title">
         <h2 id="active-title" className="my-volunteering__block-title">
@@ -184,7 +219,12 @@ export default function MyVolunteeringPage() {
         ) : (
           <div className="my-volunteering__grid">
             {activeList.map((item) => (
-              <RegistrationCard key={item.registrationId} item={item} />
+              <RegistrationCard
+                key={item.registrationId}
+                item={item}
+                onCancel={handleCancel}
+                isCancelling={cancellingId === item.registrationId}
+              />
             ))}
           </div>
         )}

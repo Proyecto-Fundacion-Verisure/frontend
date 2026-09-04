@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import MyVolunteeringPage from './MyVolunteeringPage';
-import { getMyRegistrations } from '../../api/registrationsApi';
+import { cancelRegistration, getMyRegistrations } from '../../api/registrationsApi';
 
 vi.mock('../../api/registrationsApi', () => ({
   getMyRegistrations: vi.fn(),
@@ -28,6 +28,7 @@ const activeItems = [
     activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: '2026-09-10', endDate: '2026-09-17', hours: 8 },
     status: 'WAITLISTED',
     queuePosition: 3,
+    accepted: false,
     reportId: null,
     reportStatus: null,
   },
@@ -36,6 +37,7 @@ const activeItems = [
     activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
     status: 'WAITLISTED',
     queuePosition: 1,
+    accepted: true,
     reportId: 502,
     reportStatus: 'RETURNED',
   },
@@ -128,5 +130,34 @@ describe('MyVolunteeringPage', () => {
     // ensure active item not in closed and vice versa
     expect(activeSection).not.toHaveTextContent('Ver cierre');
     expect(closedSection).toHaveTextContent('Ver cierre');
+  });
+
+  it('diferencia aceptada de todavía sin revisar via accepted', async () => {
+    getMyRegistrations.mockResolvedValue({ data: { active: activeItems, closed: [] } });
+    renderPage();
+    await screen.findByText('Acompañamiento a mayores');
+    // 101 accepted false -> Pendiente de revisión
+    expect(screen.getByTestId('accepted-101')).toHaveTextContent('Pendiente de revisión');
+    // 103 accepted true -> Aceptada
+    expect(screen.getByTestId('accepted-103')).toHaveTextContent('Aceptada');
+    // queuePosition lee directamente de backend, no calculada
+    expect(screen.getByText('Posición en cola: 3')).toBeInTheDocument();
+    expect(screen.getByText('Posición en cola: 1')).toBeInTheDocument();
+  });
+
+  it('actualiza posición tras promoción o cancelación', async () => {
+    const first = { ...activeItems[0], queuePosition: 3, accepted: false };
+    const promoted = { ...activeItems[0], queuePosition: 2, accepted: true };
+    getMyRegistrations.mockResolvedValueOnce({ data: { active: [first], closed: [] } });
+    getMyRegistrations.mockResolvedValueOnce({ data: { active: [promoted], closed: [] } });
+    cancelRegistration.mockResolvedValue({ data: { registrationId: 999, status: 'CANCELLED' } });
+    renderPage();
+    expect(await screen.findByText('Posición en cola: 3')).toBeInTheDocument();
+    expect(screen.getByTestId('accepted-101')).toHaveTextContent('Pendiente de revisión');
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId('cancel-101'));
+    await waitFor(() => expect(screen.getByText('Posición en cola: 2')).toBeInTheDocument());
+    expect(screen.getByTestId('accepted-101')).toHaveTextContent('Aceptada');
+    expect(cancelRegistration).toHaveBeenCalledWith(101);
   });
 });
