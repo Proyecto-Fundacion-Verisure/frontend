@@ -126,7 +126,7 @@ describe('MyVolunteeringPage', () => {
     const activeSection = screen.getByRole('heading', { name: /^activas$/i }).closest('section');
     const closedSection = screen.getByRole('heading', { name: /^cerradas$/i }).closest('section');
     expect(activeSection).toHaveTextContent('Acompañamiento a mayores');
-    expect(closedSection).toHaveTextContent('CLOSED');
+    expect(closedSection).toHaveTextContent(/cerrado/i);
     // ensure active item not in closed and vice versa
     expect(activeSection).not.toHaveTextContent('Ver cierre');
     expect(closedSection).toHaveTextContent('Ver cierre');
@@ -156,8 +156,67 @@ describe('MyVolunteeringPage', () => {
     expect(screen.getByTestId('accepted-101')).toHaveTextContent('Pendiente de revisión');
     const user = userEvent.setup();
     await user.click(screen.getByTestId('cancel-101'));
+    expect(await screen.findByText(/¿Seguro que quieres cancelar/)).toBeInTheDocument();
+    await user.click(screen.getByTestId('confirm-cancel-101'));
     await waitFor(() => expect(screen.getByText('Posición en cola: 2')).toBeInTheDocument());
     expect(screen.getByTestId('accepted-101')).toHaveTextContent('Aceptada');
+    expect(cancelRegistration).toHaveBeenCalledWith(101);
+    expect(cancelRegistration).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancelar modal no modifica datos', async () => {
+    getMyRegistrations.mockResolvedValue({ data: { active: [activeItems[0]], closed: [] } });
+    renderPage();
+    await screen.findByText('Acompañamiento a mayores');
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId('cancel-101'));
+    expect(await screen.findByText(/¿Seguro que quieres cancelar/)).toBeInTheDocument();
+    await user.click(screen.getByTestId('modal-cancel-101'));
+    expect(cancelRegistration).not.toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByText('Posición en cola: 3')).toBeInTheDocument();
+  });
+
+  it('ejecuta un solo PATCH al confirmar y oculta acción tras fecha de inicio', async () => {
+    const future = { registrationId: 201, activity: { id: 10, title: 'Futura', partner: 'P', startDate: '2099-01-01', endDate: '2099-01-02', hours: 2 }, status: 'WAITLISTED', queuePosition: 2, accepted: false };
+    const past = { registrationId: 202, activity: { id: 11, title: 'Pasada', partner: 'P', startDate: '2020-01-01', endDate: '2020-01-02', hours: 2 }, status: 'WAITLISTED', queuePosition: 2, accepted: false };
+    getMyRegistrations.mockResolvedValue({ data: { active: [future, past], closed: [] } });
+    let resolveCancel;
+    cancelRegistration.mockImplementation(() => new Promise((res) => { resolveCancel = res; }));
+    renderPage();
+    await screen.findByText('Futura');
+    expect(screen.getByTestId('cancel-201')).toBeInTheDocument();
+    expect(screen.queryByTestId('cancel-202')).not.toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId('cancel-201'));
+    await screen.findByText(/¿Seguro que quieres cancelar/);
+    await user.click(screen.getByTestId('confirm-cancel-201'));
+    await user.click(screen.getByTestId('confirm-cancel-201'));
+    expect(cancelRegistration).toHaveBeenCalledTimes(1);
+    resolveCancel({ data: { registrationId: 201, status: 'CANCELLED' } });
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+  });
+
+  it('trata DEADLINE_PASSED y NOT_OWNER sin cambiar interfaz', async () => {
+    getMyRegistrations.mockResolvedValue({ data: { active: [activeItems[0]], closed: [] } });
+    renderPage();
+    await screen.findByText('Acompañamiento a mayores');
+    const user = userEvent.setup();
+    // DEADLINE_PASSED 409
+    cancelRegistration.mockRejectedValueOnce({ status: 409, code: 'DEADLINE_PASSED', message: 'Plazo cerrado' });
+    await user.click(screen.getByTestId('cancel-101'));
+    await screen.findByText(/¿Seguro que quieres cancelar/);
+    await user.click(screen.getByTestId('confirm-cancel-101'));
+    expect(await screen.findByText(/Plazo cerrado/)).toBeInTheDocument();
+    expect(screen.getByText('Posición en cola: 3')).toBeInTheDocument();
+    // NOT_OWNER 403
+    cancelRegistration.mockRejectedValueOnce({ status: 403, code: 'NOT_OWNER', message: 'No tienes permiso' });
+    await user.click(screen.getByTestId('cancel-101'));
+    await screen.findByText(/¿Seguro que quieres cancelar/);
+    await user.click(screen.getByTestId('confirm-cancel-101'));
+    expect(await screen.findByText(/No tienes permiso/)).toBeInTheDocument();
+    expect(cancelRegistration).toHaveBeenCalledTimes(2);
+    // No DELETE, solo PATCH
     expect(cancelRegistration).toHaveBeenCalledWith(101);
   });
 });
