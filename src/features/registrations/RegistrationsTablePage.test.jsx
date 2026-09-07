@@ -18,13 +18,16 @@ vi.mock('../../api/registrationsApi', () => ({
 }));
 
 const BOARD = {
-  activity: { id: 8, title: 'Mentoría digital' },
-  registrations: [
+  content: [
     { registrationId: 1, name: 'Ana Torres', department: 'Tecnología', organization: 'VERISURE_ES', yearHours: 12, status: 'WAITLISTED', accepted: false },
     { registrationId: 2, person: { name: 'Luis Martín', department: 'Personas', organization: 'VERISURE_GROUP' }, hoursThisYear: 8, status: 'WAITLISTED', accepted: true },
     { registrationId: 3, name: 'Marta Ruiz', department: 'Operaciones', organization: 'VERISURE_ES', annualHours: 16, status: 'CONFIRMED', accepted: true },
     { registrationId: 4, name: 'Sara Gil', status: 'REJECTED', accepted: false, rejectionReason: 'No mostrar' },
   ],
+  number: 0,
+  size: 10,
+  totalElements: 4,
+  totalPages: 1,
 };
 
 function renderPage() {
@@ -51,7 +54,7 @@ describe('RegistrationsTablePage', () => {
 
     expect(screen.getByRole('status', { name: /cargando inscripciones/i })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: /inscripciones/i, level: 1 })).toBeInTheDocument();
-    expect(getActivityRegistrations).toHaveBeenCalledWith('8');
+    expect(getActivityRegistrations).toHaveBeenCalledWith('8', { page: 0 });
 
     const unreviewed = screen.getByRole('region', { name: /sin revisar de la actividad/i });
     expect(within(unreviewed).getByText('Ana Torres')).toBeInTheDocument();
@@ -69,7 +72,7 @@ describe('RegistrationsTablePage', () => {
 
   it('shows a clear empty state', async () => {
     getActivityRegistrations.mockResolvedValue({
-      data: { activity: { id: 8, title: 'Mentoría digital' }, registrations: [] },
+      data: { content: [], number: 0, size: 10, totalElements: 0, totalPages: 0 },
     });
     renderPage();
 
@@ -101,10 +104,10 @@ describe('RegistrationsTablePage', () => {
   });
 
   it('moves an accepted registration to confirmed when backend grants a spot', async () => {
-    const confirmed = { ...BOARD.registrations[0], status: 'CONFIRMED', accepted: true };
+    const confirmed = { ...BOARD.content[0], status: 'CONFIRMED', accepted: true };
     getActivityRegistrations
       .mockResolvedValueOnce({ data: BOARD })
-      .mockResolvedValueOnce({ data: { ...BOARD, registrations: [confirmed] } });
+      .mockResolvedValueOnce({ data: { ...BOARD, content: [confirmed], totalElements: 1 } });
     acceptRegistration.mockResolvedValue({ data: confirmed });
     const user = userEvent.setup();
     renderPage();
@@ -118,10 +121,10 @@ describe('RegistrationsTablePage', () => {
   });
 
   it('keeps an accepted registration in the queue when backend reports no spot', async () => {
-    const acceptedInQueue = { ...BOARD.registrations[0], status: 'WAITLISTED', accepted: true, queuePosition: 1 };
+    const acceptedInQueue = { ...BOARD.content[0], status: 'WAITLISTED', accepted: true, queuePosition: 1 };
     getActivityRegistrations
       .mockResolvedValueOnce({ data: BOARD })
-      .mockResolvedValueOnce({ data: { ...BOARD, registrations: [acceptedInQueue] } });
+      .mockResolvedValueOnce({ data: { ...BOARD, content: [acceptedInQueue], totalElements: 1 } });
     acceptRegistration.mockResolvedValue({ data: acceptedInQueue });
     const user = userEvent.setup();
     renderPage();
@@ -134,10 +137,10 @@ describe('RegistrationsTablePage', () => {
   });
 
   it('rejects without asking for or sending a reason', async () => {
-    const rejected = { ...BOARD.registrations[0], status: 'REJECTED', accepted: false };
+    const rejected = { ...BOARD.content[0], status: 'REJECTED', accepted: false };
     getActivityRegistrations
       .mockResolvedValueOnce({ data: BOARD })
-      .mockResolvedValueOnce({ data: { ...BOARD, registrations: [rejected] } });
+      .mockResolvedValueOnce({ data: { ...BOARD, content: [rejected], totalElements: 1 } });
     rejectRegistration.mockResolvedValue({ data: rejected });
     const user = userEvent.setup();
     renderPage();
@@ -166,19 +169,19 @@ describe('RegistrationsTablePage', () => {
   });
 
   it('shows the candidate promoted by the refreshed backend board after cancellation', async () => {
-    const confirmed = BOARD.registrations[2];
-    const acceptedInQueue = BOARD.registrations[1];
-    const unreviewed = BOARD.registrations[0];
+    const confirmed = BOARD.content[2];
+    const acceptedInQueue = BOARD.content[1];
+    const unreviewed = BOARD.content[0];
     const refreshedBoard = {
       ...BOARD,
-      registrations: [
+      content: [
         { ...confirmed, status: 'CANCELLED' },
         { ...acceptedInQueue, status: 'CONFIRMED', queuePosition: null },
         unreviewed,
       ],
     };
     getActivityRegistrations
-      .mockResolvedValueOnce({ data: { ...BOARD, registrations: [confirmed, acceptedInQueue, unreviewed] } })
+      .mockResolvedValueOnce({ data: { ...BOARD, content: [confirmed, acceptedInQueue, unreviewed], totalElements: 3 } })
       .mockResolvedValueOnce({ data: refreshedBoard });
     cancelRegistration.mockResolvedValue({ data: { ...confirmed, status: 'CANCELLED' } });
     const user = userEvent.setup();
@@ -195,12 +198,12 @@ describe('RegistrationsTablePage', () => {
   });
 
   it('does not promote an unreviewed registration when backend returns no candidate', async () => {
-    const confirmed = BOARD.registrations[2];
-    const unreviewed = BOARD.registrations[0];
+    const confirmed = BOARD.content[2];
+    const unreviewed = BOARD.content[0];
     getActivityRegistrations
-      .mockResolvedValueOnce({ data: { ...BOARD, registrations: [confirmed, unreviewed] } })
+      .mockResolvedValueOnce({ data: { ...BOARD, content: [confirmed, unreviewed], totalElements: 2 } })
       .mockResolvedValueOnce({
-        data: { ...BOARD, registrations: [{ ...confirmed, status: 'CANCELLED' }, unreviewed] },
+        data: { ...BOARD, content: [{ ...confirmed, status: 'CANCELLED' }, unreviewed], totalElements: 2 },
       });
     cancelRegistration.mockResolvedValue({ data: { ...confirmed, status: 'CANCELLED' } });
     const user = userEvent.setup();

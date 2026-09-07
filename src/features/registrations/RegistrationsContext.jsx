@@ -14,22 +14,7 @@ export function RegistrationsProvider({ children }) {
     try {
       const res = await getMyRegistrations();
       const payload = res.data ?? res;
-      let list = [];
-      if (Array.isArray(payload)) {
-        list = payload;
-      } else if (payload && Array.isArray(payload.content)) {
-        list = payload.content;
-      } else if (payload && (Array.isArray(payload.active) || Array.isArray(payload.closed))) {
-        list = [...(payload.active ?? []), ...(payload.closed ?? [])];
-      } else if (payload && (Array.isArray(payload.activeRegistrations) || Array.isArray(payload.closedRegistrations))) {
-        list = [...(payload.activeRegistrations ?? []), ...(payload.closedRegistrations ?? [])];
-      } else if (payload && payload.data && (Array.isArray(payload.data.active) || Array.isArray(payload.data.closed))) {
-        list = [...(payload.data.active ?? []), ...(payload.data.closed ?? [])];
-      } else {
-        const data = payload?.content ?? payload;
-        list = Array.isArray(data) ? data : [];
-      }
-      setRegistrations(list);
+      setRegistrations(Array.isArray(payload) ? payload : []);
     } catch (err) {
       setError(err);
       setRegistrations([]);

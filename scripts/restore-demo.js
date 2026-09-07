@@ -19,29 +19,25 @@ const definitiveData = {
     { id: 1, title: 'Acompañamiento a mayores', line: 'desoledad', mode: 'PRESENCIAL', capacity: 20, registeredCount: 8, status: 'PUBLISHED', favoritedByMe: true },
     { id: 2, title: 'Taller educativo para jóvenes', line: 'educar', mode: 'ONLINE', capacity: 10, registeredCount: 10, status: 'FULL', favoritedByMe: false },
     { id: 3, title: 'Prevención del acoso escolar', line: 'acoso', mode: 'PRESENCIAL', capacity: 15, registeredCount: 5, status: 'IN_PROGRESS', favoritedByMe: false },
-    { id: 4, title: 'Jornada de voluntariado ambiental', line: 'voluntariado', mode: 'MIXTO', capacity: 30, registeredCount: 12, status: 'FINISHED', favoritedByMe: true },
+    { id: 4, title: 'Jornada de voluntariado ambiental', line: 'medio_ambiente', mode: 'MIXTO', capacity: 30, registeredCount: 12, status: 'FINISHED', favoritedByMe: true },
   ],
-  registrations: {
-    active: [
-      { registrationId: 101, activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: '2026-09-10', endDate: '2026-09-17', hours: 8 }, status: 'WAITLISTED', queuePosition: 3, accepted: false },
-      { registrationId: 103, activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 }, status: 'WAITLISTED', queuePosition: 1, accepted: true, reportId: 502, reportStatus: 'RETURNED' },
-    ],
-    closed: [
-      { registrationId: 104, activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 }, status: 'CLOSED', reportId: 501, reportStatus: 'VALIDATED' },
-    ],
-  },
+  registrations: [
+    { registrationId: 101, activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: '2026-09-10', endDate: '2026-09-17', hours: 8 }, status: 'WAITLISTED', queuePosition: 3, accepted: false, closureId: null, activityClosed: false },
+    { registrationId: 103, activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 }, status: 'PENDING_CLOSURE', accepted: true, closureId: 502, activityClosed: false },
+    { registrationId: 104, activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 }, status: 'CLOSED', accepted: true, closureId: 501, activityClosed: true },
+  ],
   proposals: [
     { id: 1, organizationName: 'Fundación Solitaria', status: 'NEW', line: 'desoledad' },
     { id: 2, organizationName: 'Educamos Juntos', status: 'ACCEPTED', line: 'educar' },
   ],
   organizations: [
-    { id: 'org-1', organizationName: 'Cruz Roja Barcelona', status: 'pending' },
-    { id: 'org-2', organizationName: 'Banc dels Aliments', status: 'pending' },
+    { id: 'org-1', organizationName: 'Cruz Roja Barcelona', status: 'PENDING' },
+    { id: 'org-2', organizationName: 'Banc dels Aliments', status: 'PENDING' },
   ],
   users: {
     admin: { email: 'admin@verisure.com', role: 'ADMIN' },
     employee: { email: 'empleado@verisure.com', role: 'EMPLOYEE' },
-    org: { email: 'ong@fundacion.org', role: 'ORG', status: 'ACTIVE' },
+    partner: { email: 'ong@fundacion.org', role: 'PARTNER', status: 'ACTIVE' },
   },
 };
 
@@ -67,7 +63,7 @@ Para entorno limpio desde terminal:
   npm ci && npm run test:run && npm run build
   `);
 
-  console.log('✅ Datos coherentes: 4 actividades (PUBLISHED/FULL/IN_PROGRESS/FINISHED), 2+1 inscripciones, 2 propuestas, 2 orgs pendientes.');
+  console.log('✅ Datos coherentes: 4 actividades, 3 inscripciones, 2 propuestas y 2 entidades pendientes.');
   console.log('✅ Procedimiento idempotente: puede ejecutarse N veces sin duplicar ni corromper.');
 }
 

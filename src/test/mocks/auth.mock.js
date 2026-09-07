@@ -8,7 +8,7 @@ export function mockLogin({ email, password } = {}) {
     return Promise.reject(createApiError({ status: 401, message: 'Credenciales inválidas.' }));
   }
   const user = MOCK_USERS_V2[key];
-  // Map org statuses to 403 variants per contract
+  // Map partner statuses to the three 403 variants from the contract.
   if (user.status === 'PENDING_VERIFICATION') {
     return Promise.reject(createApiError({ status: 403, code: 'ACCOUNT_NOT_VERIFIED', message: 'Cuenta pendiente de verificación.' }));
   }
@@ -46,5 +46,5 @@ export function mockUploadEvidence({ request, evidence }) {
     if (evidence.size > MAX_EVIDENCE_BYTES) return Promise.reject(createApiError({ status: 413, message: 'El archivo excede el tamaño máximo permitido.' }));
     if (!request.evidenceConsent) return Promise.reject(createApiError({ status: 400, code: 'VALIDATION_ERROR', message: 'La solicitud no es válida.', fieldErrors: { evidenceConsent: 'Requerido' } }));
   }
-  return Promise.resolve({ data: { reportId: 501 }, status: 201 });
+  return Promise.resolve({ data: { closureId: 501 }, status: 201 });
 }

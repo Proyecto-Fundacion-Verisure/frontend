@@ -4,7 +4,7 @@ import { getPendingOrganizations } from '../../../api/orgApi';
 
 const COUNTS_BY_ROLE = {
   ADMIN: { proposals: 3, inscriptions: 5, closes: 2 },
-  ORG: { proposals: 1, closes: 4 },
+  PARTNER: { proposals: 1, closes: 4 },
   EMPLOYEE: { inscriptions: 2 },
 };
 

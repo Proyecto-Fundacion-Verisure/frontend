@@ -37,17 +37,21 @@ export default function ProposalsInboxPage() {
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   const fetchProposals = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const params = { page };
+      const params = { page: page - 1 };
       if (statusFilter) params.status = statusFilter;
       const response = await getProposals(params);
-      setProposals(response.data);
-      setTotalCount(Number(response.headers?.['x-total-count'] ?? response.data.length));
+      const content = response.data?.content ?? response.data;
+      setProposals(Array.isArray(content) ? content : []);
+      const totalElements = Number(
+        response.data?.totalElements ?? response.headers?.['x-total-count'] ?? content?.length ?? 0,
+      );
+      setTotalPages(Number(response.data?.totalPages) || Math.max(1, Math.ceil(totalElements / 10)));
     } catch (err) {
       setError(err);
     } finally {
@@ -67,8 +71,6 @@ export default function ProposalsInboxPage() {
       // error silently — the user can retry
     }
   };
-
-  const totalPages = Math.max(1, Math.ceil(totalCount / 10));
 
   if (loading) {
     return (
@@ -152,17 +154,17 @@ export default function ProposalsInboxPage() {
               </Button>
               <Link
                 className="button button--primary button--small"
-                to={getActivityDraftPath(row.id)}
-                aria-label={`Aceptar propuesta de ${row.organizationName}`}
+                to={`/proposals/${row.id}`}
+                aria-label={`Revisar propuesta de ${row.organizationName}`}
               >
-                Aceptar
+                Revisar
               </Link>
             </>
           )}
           {row.status === 'ACCEPTED' && (
             <Link
               className="button button--secondary button--small"
-              to={getActivityDraftPath(row.id)}
+              to={row.activityId ? getActivityDraftPath(row.activityId) : `/proposals/${row.id}`}
             >
               Ver actividad
             </Link>

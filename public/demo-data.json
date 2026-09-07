@@ -33,7 +33,7 @@
     {
       "id": 4,
       "title": "Jornada de voluntariado ambiental",
-      "line": "voluntariado",
+      "line": "medio_ambiente",
       "mode": "MIXTO",
       "capacity": 30,
       "registeredCount": 12,
@@ -41,8 +41,7 @@
       "favoritedByMe": true
     }
   ],
-  "registrations": {
-    "active": [
+  "registrations": [
       {
         "registrationId": 101,
         "activity": {
@@ -55,7 +54,9 @@
         },
         "status": "WAITLISTED",
         "queuePosition": 3,
-        "accepted": false
+        "accepted": false,
+        "closureId": null,
+        "activityClosed": false
       },
       {
         "registrationId": 103,
@@ -67,14 +68,11 @@
           "endDate": "2026-07-02",
           "hours": 8
         },
-        "status": "WAITLISTED",
-        "queuePosition": 1,
+        "status": "PENDING_CLOSURE",
         "accepted": true,
-        "reportId": 502,
-        "reportStatus": "RETURNED"
-      }
-    ],
-    "closed": [
+        "closureId": 502,
+        "activityClosed": false
+      },
       {
         "registrationId": 104,
         "activity": {
@@ -86,11 +84,11 @@
           "hours": 8
         },
         "status": "CLOSED",
-        "reportId": 501,
-        "reportStatus": "VALIDATED"
+        "accepted": true,
+        "closureId": 501,
+        "activityClosed": true
       }
-    ]
-  },
+  ],
   "proposals": [
     {
       "id": 1,
@@ -109,12 +107,12 @@
     {
       "id": "org-1",
       "organizationName": "Cruz Roja Barcelona",
-      "status": "pending"
+      "status": "PENDING"
     },
     {
       "id": "org-2",
       "organizationName": "Banc dels Aliments",
-      "status": "pending"
+      "status": "PENDING"
     }
   ],
   "users": {
@@ -126,9 +124,9 @@
       "email": "empleado@verisure.com",
       "role": "EMPLOYEE"
     },
-    "org": {
+    "partner": {
       "email": "ong@fundacion.org",
-      "role": "ORG",
+      "role": "PARTNER",
       "status": "ACTIVE"
     }
   }

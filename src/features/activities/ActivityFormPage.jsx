@@ -5,7 +5,14 @@ import {
   getAdminActivity,
   publishActivity,
   updateActivity,
+  uploadActivityImage,
 } from '../../api/activitiesApi';
+import {
+  createOrgActivity,
+  submitOrgActivity,
+  updateOrgActivity,
+} from '../../api/orgApi';
+import { useAuth } from '../auth/AuthContext';
 import useForm from '../../hooks/useForm';
 import { Button, Input, Modal, Select, Spinner, Textarea } from '../../components/ui';
 
@@ -21,6 +28,9 @@ const initialValues = {
   registrationDeadline: '',
   imageUrl: '',
 };
+
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png']);
 
 function toISOString(localValue) {
   if (!localValue) return '';
@@ -94,6 +104,13 @@ function validate(values) {
   return errors;
 }
 
+function validateImage(imageFile) {
+  if (!imageFile) return null;
+  if (!ALLOWED_IMAGE_TYPES.has(imageFile.type)) return 'La imagen debe ser JPG o PNG.';
+  if (imageFile.size > MAX_IMAGE_SIZE) return 'La imagen no puede superar los 5 MB.';
+  return null;
+}
+
 function buildPayload(values) {
   return {
     title: values.title.trim(),
@@ -111,10 +128,14 @@ function buildPayload(values) {
 
 export default function ActivityFormPage({ backPath = '/dashboard' }) {
   const { activityId } = useParams();
+  const auth = useAuth();
+  const isPartner = auth?.user?.role === 'PARTNER'
+    || backPath.startsWith('/org/');
   const isEditMode = Boolean(activityId);
   const requestInProgress = useRef(false);
   const { values, setValues, handleChange } = useForm(initialValues);
   const [errors, setErrors] = useState({});
+  const [imageFile, setImageFile] = useState(null);
   const [touched, setTouched] = useState({});
   const [requestStatus, setRequestStatus] = useState(isEditMode ? 'loading' : 'idle');
   const [activity, setActivity] = useState(null);
@@ -156,6 +177,8 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
 
   const validateForm = () => {
     const nextErrors = validate(values);
+    const imageError = validateImage(imageFile);
+    if (imageError) nextErrors.image = imageError;
     setErrors(nextErrors);
     setTouched(Object.keys(initialValues).reduce((acc, key) => ({ ...acc, [key]: true }), {}));
     return Object.keys(nextErrors).length === 0;
@@ -169,8 +192,20 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
     setErrorMessage(error?.message || 'No hemos podido completar la operación. Inténtalo de nuevo.');
   };
 
+  const buildRequestPayload = async () => {
+    const payload = buildPayload(values);
+    if (imageFile && !isPartner) {
+      const { data } = await uploadActivityImage(imageFile);
+      if (!data?.url) throw new Error('La respuesta de subida no incluye la URL de la imagen.');
+      payload.imageUrl = data.url;
+      setValues((current) => ({ ...current, imageUrl: data.url }));
+    }
+    return payload;
+  };
+
   const createDraft = async () => {
-    const { data: createdActivity } = await createActivity(buildPayload(values));
+    const createRequest = isPartner ? createOrgActivity : createActivity;
+    const { data: createdActivity } = await createRequest(await buildRequestPayload());
     if (!createdActivity?.id) throw new Error('La respuesta no incluye el identificador de la actividad.');
     setActivity(createdActivity);
     return createdActivity;
@@ -185,8 +220,9 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
     setErrorMessage('');
     try {
       if (isEditMode) {
-        const payload = buildPayload(values);
-        const { data: updatedActivity } = await updateActivity(activityId, payload);
+        const payload = await buildRequestPayload();
+        const updateRequest = isPartner ? updateOrgActivity : updateActivity;
+        const { data: updatedActivity } = await updateRequest(activityId, payload);
         setActivity(updatedActivity ?? { ...activity, ...payload });
         setRequestStatus('updated');
       } else {
@@ -216,7 +252,8 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
     let persistedActivity = activity;
     try {
       persistedActivity ??= await createDraft();
-      const { data: publishedActivity } = await publishActivity(persistedActivity.id);
+      const publishRequest = isPartner ? submitOrgActivity : publishActivity;
+      const { data: publishedActivity } = await publishRequest(persistedActivity.id);
       setActivity(publishedActivity ?? { ...persistedActivity, status: 'PUBLISHED' });
       setRequestStatus('published');
       setIsPublishConfirmOpen(false);
@@ -231,6 +268,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
 
   const resetForm = () => {
     setValues(initialValues);
+    setImageFile(null);
     setErrors({});
     setTouched({});
     setActivity(null);
@@ -304,18 +342,22 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
     return (
       <section className="activity-form-page activity-form-page--success">
         <p className="activity-form-page__eyebrow">
-          {isPublished ? 'Actividad publicada' : isUpdated ? 'Cambios guardados' : 'Borrador guardado'}
+          {isPublished
+            ? isPartner ? 'Actividad enviada a revisión' : 'Actividad publicada'
+            : isUpdated ? 'Cambios guardados' : 'Borrador guardado'}
         </p>
         <h1>
           {isPublished
-            ? 'La actividad ya está publicada'
+            ? isPartner ? 'La actividad está pendiente de aprobación' : 'La actividad ya está publicada'
             : isUpdated
               ? 'La actividad se ha actualizado'
               : 'Tu borrador está guardado'}
         </h1>
         <p>
           {isPublished
-            ? 'La actividad ya está disponible en el catálogo interno.'
+            ? isPartner
+              ? 'La Fundación revisará la actividad antes de publicarla en el catálogo.'
+              : 'La actividad ya está disponible en el catálogo interno.'
             : isUpdated
               ? 'Los cambios están guardados y ya puedes volver al listado administrativo.'
             : 'La actividad todavía no es visible en el catálogo. Puedes publicarla cuando esté lista.'}
@@ -324,7 +366,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
         <div className="activity-form-page__success-actions">
           {!isPublished && !isEditMode && (
             <Button size="large" onClick={handlePublishRequest}>
-              Publicar actividad
+              {isPartner ? 'Enviar a revisión' : 'Publicar actividad'}
             </Button>
           )}
           {isEditMode ? (
@@ -345,6 +387,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
           isPublishing={isPublishing}
           onClose={() => !isPublishing && setIsPublishConfirmOpen(false)}
           onConfirm={handlePublish}
+          isPartner={isPartner}
         />
       </section>
     );
@@ -361,7 +404,9 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
         <p>
           {isEditMode
             ? 'Actualiza los datos necesarios y guarda los cambios.'
-            : 'Guarda la actividad como borrador o publícala cuando todos los datos estén listos.'}
+            : isPartner
+              ? 'Guarda la actividad como borrador o envíala a revisión cuando esté lista.'
+              : 'Guarda la actividad como borrador o publícala cuando todos los datos estén listos.'}
         </p>
       </div>
 
@@ -396,7 +441,35 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
 
         <div className="activity-form__grid">
           <Input type="number" min="1" label="Horas estimadas por persona" required {...fieldProps('hours')} />
-          <Input label="URL de imagen de portada" placeholder="https://..." hint="Sube la imagen previamente desde el panel de administración." {...fieldProps('imageUrl')} />
+          {isPartner ? (
+            <Input label="URL de imagen de portada" placeholder="https://..." {...fieldProps('imageUrl')} />
+          ) : (
+            <div className={errors.image ? 'field field--error' : 'field'}>
+              <label className="field__label" htmlFor="activity-image">Imagen de portada</label>
+              <input
+                id="activity-image"
+                className="field__control"
+                type="file"
+                accept="image/jpeg,image/png"
+                onChange={(event) => {
+                  const file = event.target.files?.[0] ?? null;
+                  setImageFile(file);
+                  const imageError = validateImage(file);
+                  setErrors((current) => {
+                    const next = { ...current };
+                    if (imageError) next.image = imageError;
+                    else delete next.image;
+                    return next;
+                  });
+                }}
+                aria-describedby={errors.image ? 'activity-image-error' : undefined}
+                aria-invalid={Boolean(errors.image)}
+              />
+              <small>JPG o PNG, máximo 5 MB.</small>
+              {values.imageUrl && <small>Imagen actual: {values.imageUrl}</small>}
+              {errors.image && <span id="activity-image-error" className="field__error" role="alert">{errors.image}</span>}
+            </div>
+          )}
         </div>
 
         <div className="activity-form__grid activity-form__grid--dates">
@@ -422,7 +495,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
             </Button>
             {!isEditMode && (
               <Button type="button" size="large" onClick={handlePublishRequest} disabled={requestStatus === 'saving'}>
-                Publicar actividad
+                {isPartner ? 'Enviar a revisión' : 'Publicar actividad'}
               </Button>
             )}
           </div>
@@ -434,31 +507,38 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
         isPublishing={isPublishing}
         onClose={() => !isPublishing && setIsPublishConfirmOpen(false)}
         onConfirm={handlePublish}
+        isPartner={isPartner}
       />
     </section>
   );
 }
 
-function PublishConfirmation({ isOpen, isPublishing, onClose, onConfirm }) {
+function PublishConfirmation({ isOpen, isPublishing, onClose, onConfirm, isPartner = false }) {
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       closeOnBackdrop={!isPublishing}
-      title="Publicar actividad"
-      description="La actividad será visible para toda la plantilla. Confirma que los datos son correctos antes de continuar."
+      title={isPartner ? 'Enviar actividad a revisión' : 'Publicar actividad'}
+      description={isPartner
+        ? 'La Fundación revisará la actividad antes de publicarla. Confirma que los datos son correctos.'
+        : 'La actividad será visible para toda la plantilla. Confirma que los datos son correctos antes de continuar.'}
       footer={(
         <>
           <Button variant="secondary" onClick={onClose} disabled={isPublishing}>
             Cancelar
           </Button>
-          <Button onClick={onConfirm} isLoading={isPublishing} loadingLabel="Publicando…">
-            Confirmar publicación
+          <Button onClick={onConfirm} isLoading={isPublishing} loadingLabel={isPartner ? 'Enviando…' : 'Publicando…'}>
+            {isPartner ? 'Confirmar envío' : 'Confirmar publicación'}
           </Button>
         </>
       )}
     >
-      <p>Esta acción publica el borrador persistido y actualiza su estado en el catálogo.</p>
+      <p>
+        {isPartner
+          ? 'Esta acción envía el borrador a la cola de aprobación de la Fundación.'
+          : 'Esta acción publica el borrador persistido y actualiza su estado en el catálogo.'}
+      </p>
     </Modal>
   );
 }

@@ -103,25 +103,19 @@ function mockGetPublishedActivities(params = {}) {
   if (params.mode) {
     results = results.filter((a) => a.mode === params.mode);
   }
-  if (params.q) {
-    const q = params.q.toLowerCase();
-    results = results.filter(
-      (a) =>
-        a.title.toLowerCase().includes(q) ||
-        a.description.toLowerCase().includes(q) ||
-        a.organizationName.toLowerCase().includes(q) ||
-        (a.location && a.location.toLowerCase().includes(q)),
-    );
-  }
-
-  const page = Number(params.page) || 1;
-  const limit = Number(params.limit) || 12;
-  const start = (page - 1) * limit;
-  const paged = results.slice(start, start + limit);
+  const page = Math.max(0, Number(params.page) || 0);
+  const size = Number(params.size) || 12;
+  const start = page * size;
+  const paged = results.slice(start, start + size);
 
   return Promise.resolve({
-    data: paged,
-    headers: { 'x-total-count': String(results.length) },
+    data: {
+      content: paged,
+      number: page,
+      size,
+      totalElements: results.length,
+      totalPages: Math.ceil(results.length / size),
+    },
   });
 }
 
@@ -131,25 +125,18 @@ function mockGetAdminActivities(params = {}) {
   if (params.status) {
     results = results.filter((activity) => activity.status === params.status);
   }
-  if (params.q) {
-    const query = params.q.toLowerCase();
-    results = results.filter((activity) =>
-      activity.title.toLowerCase().includes(query)
-      || activity.organizationName.toLowerCase().includes(query));
-  }
-
-  const page = Number(params.page) || 1;
-  const limit = Number(params.limit) || 10;
-  const start = (page - 1) * limit;
-  const content = results.slice(start, start + limit);
+  const page = Math.max(0, Number(params.page) || 0);
+  const size = Number(params.size) || 10;
+  const start = page * size;
+  const content = results.slice(start, start + size);
 
   return Promise.resolve({
     data: {
       content,
-      number: page - 1,
-      size: limit,
+      number: page,
+      size,
       totalElements: results.length,
-      totalPages: Math.ceil(results.length / limit),
+      totalPages: Math.ceil(results.length / size),
     },
   });
 }
@@ -204,31 +191,46 @@ function mockCancelActivity(id) {
 
 const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'test';
 
+const pickParams = (params = {}, allowed = []) => Object.fromEntries(
+  Object.entries(params).filter(([key, value]) => (
+    allowed.includes(key) && value !== undefined && value !== null && value !== ''
+  )),
+);
+
 export const getAdminActivities = (params) =>
-  isMockEnabled() ? mockGetAdminActivities(params) : client.get('/admin/activities', { params });
-export const getActivities = (params) => {
-  // Nuevo contrato: GET /api/activities?line,mode,from,to,page,size -> Page<ActivityCardResponse>
-  // Mantener compat: limit -> size, q -> search
-  const mapped = { ...params };
-  if (mapped.limit !== undefined && mapped.size === undefined) {
-    mapped.size = mapped.limit;
-    delete mapped.limit;
-  }
-  if (mapped.q !== undefined && mapped.query === undefined) {
-    mapped.query = mapped.q;
-  }
-  return isMockEnabled() ? mockGetPublishedActivities(params) : client.get('/activities', { params: mapped });
-};
+  isMockEnabled()
+    ? mockGetAdminActivities(params)
+    : client.get('/admin/activities', { params: pickParams(params, ['status', 'page']) });
+export const getActivities = (params = {}) => (
+  isMockEnabled()
+    ? mockGetPublishedActivities(params)
+    : client.get('/activities', {
+      params: pickParams(params, ['line', 'mode', 'from', 'to', 'page', 'size']),
+    })
+);
 export const getPublishedActivities = getActivities;
 export const getActivityDetail = (id) =>
   isMockEnabled() ? mockGetActivityDetail(id) : client.get(`/activities/${id}`);
 export const getAdminActivity = (id) =>
   isMockEnabled() ? mockGetAdminActivity(id) : client.get(`/admin/activities/${id}`);
-export const createActivity = (data) => client.post('/activities', data);
-export const updateActivity = (id, data) => client.put(`/activities/${id}`, data);
-export const publishActivity = (id) => client.patch(`/activities/${id}/publish`);
+export const createActivity = (data) => client.post('/admin/activities', data);
+export const updateActivity = (id, data) => client.put(`/admin/activities/${id}`, data);
+export const publishActivity = (id) => client.patch(`/admin/activities/${id}/publish`);
 export const cancelActivity = (id) =>
-  isMockEnabled() ? mockCancelActivity(id) : client.patch(`/activities/${id}/cancel`);
+  isMockEnabled() ? mockCancelActivity(id) : client.patch(`/admin/activities/${id}/cancel`);
 
-export const favoriteActivity = (id) => client.post(`/activities/${id}/favorite`);
-export const unfavoriteActivity = (id) => client.delete(`/activities/${id}/favorite`);
+export const uploadActivityImage = (image) => {
+  const body = new FormData();
+  body.append('image', image);
+  return client.post('/admin/activity-images', body, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
+
+export const getPendingActivities = (params = {}) => (
+  client.get('/admin/activities/pending', { params: pickParams(params, ['page']) })
+);
+export const approveActivity = (id) => client.patch(`/admin/activities/${id}/approve`);
+export const returnActivity = (id, note) => (
+  client.patch(`/admin/activities/${id}/return`, { note })
+);

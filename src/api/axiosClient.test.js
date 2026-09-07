@@ -48,17 +48,17 @@ describe('axiosClient', () => {
 
   it('normalizes validation errors so fields can display them', async () => {
     const request = axiosClient.post('/auth/login', {}, {
-      adapter: failingAdapter(422, {
+      adapter: failingAdapter(400, {
         message: 'Hay campos incorrectos.',
         code: 'VALIDATION_ERROR',
-        fieldErrors: { email: 'El correo no es válido.' },
+        fields: { email: ['El correo no es válido.'] },
       }),
     });
 
     await expect(request).rejects.toMatchObject({
       name: 'ApiError',
       message: 'Revisa los datos introducidos.',
-      status: 422,
+      status: 400,
       code: 'VALIDATION_ERROR',
       fieldErrors: { email: 'El correo no es válido.' },
     });
@@ -67,15 +67,15 @@ describe('axiosClient', () => {
   it('replaces a backend domain code with its accessible Spanish message', async () => {
     const request = axiosClient.post('/registrations', {}, {
       adapter: failingAdapter(409, {
-        message: 'ACTIVITY_FULL',
-        code: 'ACTIVITY_FULL',
+        message: 'ALREADY_REGISTERED',
+        code: 'ALREADY_REGISTERED',
       }),
     });
 
     await expect(request).rejects.toMatchObject({
-      message: 'No quedan plazas disponibles para esta actividad.',
+      message: 'Ya tienes una inscripción activa para esta actividad.',
       status: 409,
-      code: 'ACTIVITY_FULL',
+      code: 'ALREADY_REGISTERED',
     });
   });
 
