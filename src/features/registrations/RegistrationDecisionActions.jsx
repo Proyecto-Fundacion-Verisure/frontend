@@ -21,6 +21,8 @@ export default function RegistrationDecisionActions({
     }
   };
 
+  const personName = registration.person?.name ?? registration.employee?.name ?? registration.user?.name ?? registration.name ?? '';
+
   return (
     <div className="registration-actions">
       <div className="registration-actions__buttons">
@@ -30,6 +32,7 @@ export default function RegistrationDecisionActions({
           loadingLabel="Aceptando…"
           disabled={isSubmitting}
           onClick={() => run(onAccept)}
+          aria-label={personName ? `Aceptar inscripción de ${personName}` : 'Aceptar inscripción'}
         >
           Aceptar
         </Button>
@@ -40,6 +43,7 @@ export default function RegistrationDecisionActions({
           loadingLabel="Rechazando…"
           disabled={isSubmitting}
           onClick={() => run(onReject)}
+          aria-label={personName ? `Rechazar inscripción de ${personName}` : 'Rechazar inscripción'}
         >
           Rechazar
         </Button>

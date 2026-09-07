@@ -179,11 +179,15 @@ export default function OrgRegisterPage() {
             <Input type="password" label="Repite la contraseña" placeholder="Confirma tu contraseña" required {...fieldProps('confirmPassword')} />
           </div>
 
-          <label className={`org-register-form__consent${errors.consent ? ' org-register-form__consent--error' : ''}`}>
+          <label className={`org-register-form__consent${errors.consent ? ' org-register-form__consent--error' : ''}`} htmlFor="org-consent">
             <input
+              id="org-consent"
               type="checkbox"
               checked={values.consent}
               onChange={(event) => setValues((current) => ({ ...current, consent: event.target.checked }))}
+              aria-invalid={Boolean(errors.consent)}
+              aria-describedby={errors.consent ? 'consent-error' : undefined}
+              required
             />{' '}
             <span>
               He leído y acepto la <strong>política de privacidad</strong>.
@@ -192,7 +196,11 @@ export default function OrgRegisterPage() {
               <b>*</b>
             </span>
           </label>
-          {errors.consent && <p className="org-register-form__error" role="alert">{errors.consent}</p>}
+          {errors.consent && (
+            <p id="consent-error" className="org-register-form__error" role="alert">
+              {errors.consent}
+            </p>
+          )}
 
           {status === 'error' && (
             <p className="org-register-form__error" role="alert">

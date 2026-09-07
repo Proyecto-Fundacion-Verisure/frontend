@@ -201,14 +201,12 @@ export default function CatalogPage() {
         <>
           <div className="catalog__grid">
             {activities.map((activity) => (
-              <Link
+              <ActivityCard
                 key={activity.id}
-                to={`/activities/${activity.id}`}
-                style={{ textDecoration: 'none', color: 'inherit' }}
-                aria-label={`Ver detalle de ${activity.title}`}
-              >
-                <ActivityCard activity={activity} isEnrolled={enrolledIds.has(activity.id)} />
-              </Link>
+                activity={activity}
+                isEnrolled={enrolledIds.has(activity.id)}
+                linkTo={`/activities/${activity.id}`}
+              />
             ))}
           </div>
 

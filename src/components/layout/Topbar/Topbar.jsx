@@ -29,7 +29,7 @@ export default function Topbar({ children }) {
     <header className="topbar">
       <div className="topbar__content">{children}</div>
       {user && (
-        <div className="topbar__user-menu" aria-label="Menú de usuario">
+        <div className="topbar__user-menu" role="group" aria-label="Menú de usuario">
           <div className="topbar__user-avatar" aria-hidden="true">
             {initials}
           </div>

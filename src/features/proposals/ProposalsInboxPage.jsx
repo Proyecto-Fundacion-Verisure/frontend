@@ -146,12 +146,14 @@ export default function ProposalsInboxPage() {
               <Button
                 size="small"
                 onClick={() => handleReject(row.id)}
+                aria-label={`Rechazar propuesta de ${row.organizationName}`}
               >
                 Rechazar
               </Button>
               <Link
                 className="button button--primary button--small"
                 to={getActivityDraftPath(row.id)}
+                aria-label={`Aceptar propuesta de ${row.organizationName}`}
               >
                 Aceptar
               </Link>
