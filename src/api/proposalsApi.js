@@ -1,6 +1,10 @@
 import client from './axiosClient';
 import { ApiError } from './apiError';
 
+const useDevelopmentMocks = () => (
+  import.meta.env.DEV && import.meta.env.VITE_USE_MOCKS !== 'false'
+);
+
 const MOCK_PROPOSALS = [
   {
     id: 1,
@@ -103,7 +107,7 @@ function mockAcceptProposal(id) {
 }
 
 export const getProposals = (params) =>
-  import.meta.env.DEV ? mockGetProposals(params) : client.get('/proposals', { params });
+  useDevelopmentMocks() ? mockGetProposals(params) : client.get('/proposals', { params });
 
 export const getProposal = (id) => client.get(`/proposals/${id}`);
 
@@ -161,4 +165,4 @@ function mockCreateProposal(data) {
 }
 
 export const createProposal = (data) =>
-  import.meta.env.DEV ? mockCreateProposal(data) : client.post('/proposals', data);
+  useDevelopmentMocks() ? mockCreateProposal(data) : client.post('/proposals', data);

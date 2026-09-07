@@ -8,3 +8,4 @@ export * from './registrations';
 export * from './reports';
 export * from './proposals';
 export * from './uploads';
+export * from './dashboard';

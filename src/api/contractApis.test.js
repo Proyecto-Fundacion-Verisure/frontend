@@ -22,9 +22,11 @@ import {
 } from './reportsApi';
 import { acceptProposal, rejectProposal } from './proposalsApi';
 import {
+  exportDashboardPdf,
   exportPartnersCsv,
   exportParticipationsCsv,
   getDashboard,
+  sanitizeDashboardParams,
 } from './dashboardApi';
 
 const { client } = vi.hoisted(() => ({
@@ -120,12 +122,13 @@ describe('proposal and dashboard API contracts', () => {
     expect(client.patch).toHaveBeenCalledWith('/proposals/10/reject');
   });
 
-  it('shares dashboard filters with both CSV exports', () => {
+  it('shares dashboard filters with both CSV exports and the PDF', () => {
     const filters = { year: 2026, line: 'SOCIAL' };
 
     getDashboard(filters);
     exportParticipationsCsv(filters);
     exportPartnersCsv(filters);
+    exportDashboardPdf(filters);
 
     expect(client.get).toHaveBeenNthCalledWith(1, '/dashboard', { params: filters });
     expect(client.get).toHaveBeenNthCalledWith(
@@ -138,5 +141,19 @@ describe('proposal and dashboard API contracts', () => {
       '/dashboard/export/partners.csv',
       { params: filters, responseType: 'blob' },
     );
+    expect(client.get).toHaveBeenNthCalledWith(
+      4,
+      '/dashboard/export/report.pdf',
+      { params: filters, responseType: 'blob' },
+    );
+  });
+
+  it('never sends filters outside the dashboard contract', () => {
+    expect(sanitizeDashboardParams({
+      year: 2026,
+      line: 'desoledad',
+      department: 'Tecnología',
+      page: 3,
+    })).toEqual({ year: 2026, line: 'desoledad' });
   });
 });
