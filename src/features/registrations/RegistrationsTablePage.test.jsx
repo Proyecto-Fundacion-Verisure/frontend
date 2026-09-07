@@ -110,7 +110,7 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     const row = (await screen.findByText('Ana Torres')).closest('tr');
-    await user.click(within(row).getByRole('button', { name: /^aceptar$/i }));
+    await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
 
     expect(await screen.findByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
     expect(acceptRegistration).toHaveBeenCalledWith(1);
@@ -127,7 +127,7 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     const row = (await screen.findByText('Ana Torres')).closest('tr');
-    await user.click(within(row).getByRole('button', { name: /^aceptar$/i }));
+    await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
 
     expect(await screen.findByRole('heading', { name: /aceptadas en cola 1/i })).toBeInTheDocument();
     expect(screen.getByText(/aceptada · en cola/i)).toBeInTheDocument();
@@ -143,7 +143,7 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     const row = (await screen.findByText('Ana Torres')).closest('tr');
-    await user.click(within(row).getByRole('button', { name: /^rechazar$/i }));
+    await user.click(within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i }));
 
     expect(await screen.findByRole('heading', { name: /rechazadas 1/i })).toBeInTheDocument();
     expect(rejectRegistration).toHaveBeenCalledWith(1);
@@ -157,11 +157,11 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     const row = (await screen.findByText('Ana Torres')).closest('tr');
-    await user.click(within(row).getByRole('button', { name: /^aceptar$/i }));
+    await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
 
     expect(await within(row).findByRole('alert')).toHaveTextContent('No se pudo aceptar.');
-    expect(within(row).getByRole('button', { name: /^aceptar$/i })).toBeEnabled();
-    await user.click(within(row).getByRole('button', { name: /^aceptar$/i }));
+    expect(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i })).toBeEnabled();
+    await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
     expect(acceptRegistration).toHaveBeenCalledTimes(2);
   });
 

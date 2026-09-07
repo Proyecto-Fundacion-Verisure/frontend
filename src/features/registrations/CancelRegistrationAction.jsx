@@ -28,9 +28,17 @@ export default function CancelRegistrationAction({ registration, decision, onCan
     }
   };
 
+  const personName = registration.person?.name ?? registration.employee?.name ?? registration.user?.name ?? registration.name ?? '';
   return (
     <>
-      <Button size="small" variant="danger" onClick={() => setIsOpen(true)}>Dar de baja</Button>
+      <Button
+        size="small"
+        variant="danger"
+        onClick={() => setIsOpen(true)}
+        aria-label={personName ? `Dar de baja inscripción de ${personName}` : 'Dar de baja inscripción'}
+      >
+        Dar de baja
+      </Button>
       <Modal
         isOpen={isOpen}
         onClose={close}

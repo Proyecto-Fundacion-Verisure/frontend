@@ -26,7 +26,11 @@ export default function Sidebar({ sections = [], counts = {} }) {
                 >
                   {Icon && <Icon size={18} aria-hidden="true" />}
                   <span className="sidebar__label">{label}</span>
-                  {badge > 0 && <span className="sidebar__badge">{badge}</span>}
+                  {badge > 0 && (
+                    <span className="sidebar__badge" aria-label={`${badge} notificaciones pendientes para ${label}`}>
+                      {badge}
+                    </span>
+                  )}
                 </NavLink>
               );
             })}

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Badge, Card, HeartButton, ProgressBar } from '../../components/ui';
 
 const LINE_LABELS = {
@@ -7,7 +8,7 @@ const LINE_LABELS = {
   medio_ambiente: 'Medio ambiente',
 };
 
-export default function ActivityCard({ activity, isEnrolled = false }) {
+export default function ActivityCard({ activity, isEnrolled = false, linkTo, onToggleFavorite, isFavoritePending = false }) {
   if (!activity) return null;
 
   const {
@@ -36,18 +37,17 @@ export default function ActivityCard({ activity, isEnrolled = false }) {
     status === 'COMPLETED' ||
     (total > 0 && occupied >= total);
 
-  return (
-    <Card className="activity-card activity-card--interactive">
-      {image && (
+  const mainContent = (
+    <>
+      {image ? (
         <div className="activity-card__image">
-          <img
-            src={image}
-            alt={title || 'Actividad'}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </div>
+      ) : (
+        <div className="activity-card__image" role="img" aria-label="Sin imagen disponible">
+          Sin imagen
         </div>
       )}
-      {!image && <div className="activity-card__image" aria-hidden="true">Sin imagen</div>}
 
       <div className="activity-card__body">
         <div className="activity-card__badges">
@@ -75,16 +75,33 @@ export default function ActivityCard({ activity, isEnrolled = false }) {
             {organizationName && <span className="activity-card__organization">{organizationName}</span>}
             {displayLocation && (
               <span className="activity-card__location" aria-label={`Ubicación: ${displayLocation}`}>
-                📍 {displayLocation}
+                <span aria-hidden="true">📍</span> {displayLocation}
               </span>
             )}
           </div>
         )}
       </div>
+    </>
+  );
+
+  return (
+    <Card className="activity-card activity-card--interactive">
+      {linkTo ? (
+        <Link to={linkTo} style={{ textDecoration: 'none', color: 'inherit' }} aria-label={`Ver detalle de ${title}`}>
+          {mainContent}
+        </Link>
+      ) : (
+        mainContent
+      )}
 
       <div className="activity-card__footer">
         <span className="activity-card__organization">{total > 0 ? `${occupied} de ${total} plazas` : ''}</span>
-        <HeartButton active={Boolean(favoritedByMe)} aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'} />
+        <HeartButton
+          active={Boolean(favoritedByMe)}
+          aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+          onClick={onToggleFavorite}
+          isLoading={isFavoritePending}
+        />
       </div>
     </Card>
   );

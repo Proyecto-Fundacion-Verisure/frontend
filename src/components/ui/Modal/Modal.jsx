@@ -19,6 +19,7 @@ export default function Modal({
   footer,
   closeLabel = 'Cerrar',
   closeOnBackdrop = true,
+  closeDisabled = false,
   size = 'medium',
   className = '',
   ...props
@@ -32,7 +33,13 @@ export default function Modal({
 
     const previouslyFocused = document.activeElement;
     const previousOverflow = document.body.style.overflow;
+    const root = document.getElementById('root');
     document.body.style.overflow = 'hidden';
+    if (root) {
+      root.setAttribute('aria-hidden', 'true');
+      // @ts-ignore - inert is supported in modern browsers
+      if ('inert' in root) root.inert = true;
+    }
 
     const dialog = dialogRef.current;
     const focusable = dialog?.querySelectorAll(FOCUSABLE_ELEMENTS);
@@ -41,6 +48,7 @@ export default function Modal({
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         event.preventDefault();
+        if (closeDisabled) return;
         onClose?.();
         return;
       }
@@ -68,16 +76,22 @@ export default function Modal({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = previousOverflow;
+      if (root) {
+        root.removeAttribute('aria-hidden');
+        if ('inert' in root) root.inert = false;
+      }
       previouslyFocused?.focus?.();
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, closeDisabled]);
 
   if (!isOpen) return null;
 
   return createPortal(
     <div
       className="modal-backdrop"
+      role="presentation"
       onMouseDown={(event) => {
+        if (closeDisabled) return;
         if (closeOnBackdrop && event.target === event.currentTarget) onClose?.();
       }}
     >
@@ -93,7 +107,9 @@ export default function Modal({
       >
         <div className="modal__header">
           {title && <h2 className="modal__title" id={titleId}>{title}</h2>}
-          <button className="modal__close" onClick={onClose} type="button" aria-label={closeLabel}>×</button>
+          <button className="modal__close" onClick={onClose} type="button" aria-label={closeLabel} disabled={closeDisabled}>
+            ×
+          </button>
         </div>
         {description && <p className="modal__description" id={descriptionId}>{description}</p>}
         <div className="modal__content">{children}</div>

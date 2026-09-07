@@ -13,13 +13,16 @@ export default function AppLayout() {
 
   return (
     <div className="app-layout">
+      <a href="#main" className="skip-link">
+        Saltar al contenido
+      </a>
       <Topbar>
         <Link to="/" className="topbar__brand">
           <img src={Logo} alt="Fundación Verisure" />
         </Link>
       </Topbar>
       <Sidebar sections={sections} counts={counts} />
-      <main className="app-layout__content">
+      <main id="main" tabIndex={-1} className="app-layout__content">
         <Outlet />
       </main>
     </div>
