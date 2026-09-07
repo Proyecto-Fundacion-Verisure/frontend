@@ -1,5 +1,9 @@
 import realClient from './axiosClient';
 
+const useDevelopmentMocks = () => (
+  import.meta.env.DEV && import.meta.env.VITE_USE_MOCKS !== 'false'
+);
+
 const MOCK_USERS = {
   admin: {
     id: 1, name: 'Admin Verisure', email: 'admin@verisure.com',
@@ -30,7 +34,7 @@ function mockLogin({ email }) {
 }
 
 export const login = (credentials) =>
-  import.meta.env.DEV ? mockLogin(credentials) : realClient.post('/auth/login', credentials);
+  useDevelopmentMocks() ? mockLogin(credentials) : realClient.post('/auth/login', credentials);
 
 export const logout = (accessToken) => realClient.post('/auth/logout', undefined, {
   headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,

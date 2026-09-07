@@ -1,4 +1,4 @@
-import { Outlet, Route, Routes } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import LandingPage from '../features/landing/LandingPage';
 import LoginPage from '../features/auth/LoginPage';
 import DashboardPage from '../features/dashboard/DashboardPage';
@@ -23,6 +23,8 @@ import AppLayout from '../components/layout/AppLayout/AppLayout';
 import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
 import RegistrationsTablePage from '../features/registrations/RegistrationsTablePage';
 import CertificatePage from '../features/reports/CertificatePage';
+import ReportsQueuePage from '../features/reports/ReportsQueuePage';
+import ReportFormPage from '../features/reports/ReportFormPage';
 
 export default function AppRouter() {
   return (
@@ -33,6 +35,10 @@ export default function AppRouter() {
       <Route path="/new-proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
       <Route path="/register-organization" element={<PublicLayout><OrgRegisterPage /></PublicLayout>} />
       {import.meta.env.DEV && <Route path="/ui-kit" element={<UiShowcase />} />}
+      <Route path="/explore" element={<Navigate to="/activities" replace />} />
+      <Route path="/inscriptions" element={<Navigate to="/admin/activities" replace />} />
+      <Route path="/closes" element={<Navigate to="/reports/pending" replace />} />
+      <Route path="/account-status" element={<PublicLayout><AccountStatusPage /></PublicLayout>} />
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route element={<RoleRoute roles={['ADMIN']} />}>
@@ -44,6 +50,8 @@ export default function AppRouter() {
             <Route path="/activities/:activityId/edit" element={<ActivityFormPage backPath="/admin/activities" />} />
             <Route path="/admin/activities" element={<ActivitiesListPage />} />
             <Route path="/admin/account-status" element={<AccountStatusPage />} />
+            <Route path="/reports/pending" element={<ReportsQueuePage />} />
+            <Route path="/reports/:reportId" element={<ReportFormPage />} />
           </Route>
           <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
             <Route path="/reports/:reportId/certificate" element={<CertificatePage />} />
@@ -58,6 +66,9 @@ export default function AppRouter() {
               <Route path="/activities/:activityId" element={<ActivityDetailPage />} />
               <Route path="/my-activities" element={<MyVolunteeringPage />} />
               <Route path="/my-volunteering" element={<MyVolunteeringPage />} />
+              <Route path="/reports/new" element={<ReportFormPage />} />
+              <Route path="/reports/:reportId" element={<ReportFormPage />} />
+              <Route path="/reports/pending" element={<ReportsQueuePage />} />
             </Route>
           </Route>
           <Route element={<RoleRoute roles={['ORG']} />}>

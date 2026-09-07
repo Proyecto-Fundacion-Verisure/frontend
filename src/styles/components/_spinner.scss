@@ -5,3 +5,7 @@
 .spinner--small { border-width: 2px; height: 1rem; width: 1rem; }
 .spinner--large { border-width: 4px; height: 2.5rem; width: 2.5rem; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; border-top-color: $color-muted; }
+}

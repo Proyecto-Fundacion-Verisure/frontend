@@ -47,8 +47,8 @@ describe('guardas de rutas', () => {
     expect(screen.getByRole('heading', { name: 'Contenido privado' })).toBeInTheDocument();
   });
 
-  it('devuelve una entidad no activa a su inicio', () => {
+  it('devuelve una entidad no activa a estado de cuenta', () => {
     renderGuard({ user: { role: 'ORG', status: 'PENDING_APPROVAL' }, roles: ['ORG'] });
-    expect(screen.getByRole('heading', { name: 'Inicio entidad' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Estado de cuenta' })).toBeInTheDocument();
   });
 });

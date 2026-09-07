@@ -11,7 +11,7 @@
   }
 }
 
-@mixin focus-ring($color: $color-coral) {
+@mixin focus-ring($color: $color-navy) {
   &:focus-visible {
     outline: 3px solid $color;
     outline-offset: 3px;

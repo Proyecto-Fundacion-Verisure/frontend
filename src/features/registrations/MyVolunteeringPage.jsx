@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cancelRegistration, getMyRegistrations } from '../../api/registrationsApi';
-import { Badge, Button, Card, EmptyState, Spinner } from '../../components/ui';
+import { Badge, Button, Card, EmptyState, Modal, Spinner } from '../../components/ui';
 
 function formatDate(value) {
   if (!value) return '—';
@@ -13,6 +13,7 @@ function formatDate(value) {
 }
 
 function RegistrationCard({ item, onCancel, isCancelling }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const activity = item.activity ?? {};
   const title = activity.title ?? `Actividad ${activity.id ?? ''}`;
   const partner = activity.partner ?? activity.organizationName ?? '';
@@ -21,12 +22,47 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
   const hours = activity.hours ?? activity.estimatedHours ?? null;
 
   const showQueue = item.queuePosition !== null && item.queuePosition !== undefined;
+  // Nuevo contrato: closureId + activityClosed; legacy: reportId/reportStatus
+  const closureId = item.closureId ?? item.reportId ?? null;
+  const activityClosed = typeof item.activityClosed === 'boolean' ? item.activityClosed : item.status === 'CLOSED';
+  const hasClosure = Boolean(closureId);
+  // Legacy fallback
   const hasReport = Boolean(item.reportId);
   const isReturned = item.reportStatus === 'RETURNED';
   const showAccepted = item.status === 'WAITLISTED';
   const acceptedLabel = item.accepted ? 'Aceptada' : 'Pendiente de revisión';
 
-  const statusLabel = item.status === 'WAITLISTED' ? 'En lista de espera' : item.status;
+  const statusLabels = {
+    WAITLISTED: 'En lista de espera',
+    CONFIRMED: 'CONFIRMADO',
+    CLOSED: 'cerrado',
+    PENDING_CLOSURE: 'Pendiente de cierre',
+    PENDING_REPORT: 'Pendiente de cierre',
+  };
+  const statusLabel = statusLabels[item.status] ?? item.status;
+
+  const startDateObj = startDate ? new Date(startDate) : null;
+  const isStarted = startDateObj ? startDateObj < new Date() : false;
+  // Derivar visibilidad de fecha de inicio y acción permitida en la respuesta (MyRegistrationItem.canCancel / allowedActions)
+  const allowedByBackend = (() => {
+    if (typeof item.canCancel === 'boolean') return item.canCancel;
+    if (typeof item.cancellable === 'boolean') return item.cancellable;
+    if (Array.isArray(item.allowedActions)) return item.allowedActions.includes('CANCEL') || item.allowedActions.includes('cancel');
+    if (Array.isArray(item.actions)) return item.actions.includes('CANCEL');
+    return true;
+  })();
+  // Persona solo cancela antes del inicio; regla administrativa (cancelar en cualquier momento) no se aplica aquí
+  const canCancel = (item.status === 'WAITLISTED' || item.status === 'CONFIRMED') && !isStarted && allowedByBackend;
+
+  const handleOpen = () => setIsModalOpen(true);
+  const handleClose = () => {
+    if (isCancelling) return;
+    setIsModalOpen(false);
+  };
+  const handleConfirm = async () => {
+    await onCancel(item.registrationId);
+    setIsModalOpen(false);
+  };
 
   return (
     <Card className="my-volunteering__card" data-testid={`registration-${item.registrationId}`}>
@@ -40,44 +76,92 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
       </p>
       {showQueue && <p className="my-volunteering__queue">Posición en cola: {item.queuePosition}</p>}
       {showAccepted && <p className="my-volunteering__accepted" data-testid={`accepted-${item.registrationId}`}>{acceptedLabel}</p>}
-      {!hasReport && (
-        <Link
-          to={`/reports/new?registrationId=${item.registrationId}`}
-          className="button button--primary button--small"
-          data-testid={`action-enviar-${item.registrationId}`}
-        >
-          Enviar cierre
-        </Link>
-      )}
-      {hasReport && isReturned && (
-        <Link
-          to={`/reports/${item.reportId}`}
-          className="button button--primary button--small"
-          data-testid={`action-corregir-${item.registrationId}`}
-        >
-          Corregir y reenviar
-        </Link>
-      )}
-      {hasReport && !isReturned && (
-        <Link
-          to={`/reports/${item.reportId}`}
-          className="button button--secondary button--small"
-          data-testid={`action-ver-${item.registrationId}`}
-        >
-          Ver cierre
-        </Link>
-      )}
-      {onCancel && (item.status === 'WAITLISTED' || item.status === 'CONFIRMED') && (
-        <Button
-          variant="secondary"
-          size="small"
-          onClick={() => onCancel(item.registrationId)}
-          data-testid={`cancel-${item.registrationId}`}
-          isLoading={isCancelling}
-          disabled={isCancelling}
-        >
-          Cancelar inscripción
-        </Button>
+      {(() => {
+        const isNewContract = 'closureId' in item || 'activityClosed' in item;
+        if (isNewContract) {
+          if (!hasClosure && !activityClosed) {
+            return (
+              <Link to={`/closures/new?registrationId=${item.registrationId}`} className="button button--primary button--small" data-testid={`action-enviar-${item.registrationId}`}>
+                Cerrar tu participación
+              </Link>
+            );
+          }
+          if (hasClosure && activityClosed) {
+            return (
+              <Link to={`/closures/${closureId}/certificate`} className="button button--primary button--small" data-testid={`action-cert-${item.registrationId}`}>
+                Descargar certificado
+              </Link>
+            );
+          }
+          if (hasClosure && !activityClosed) {
+            return (
+              <Link to={`/closures/${closureId}`} className="button button--secondary button--small" data-testid={`action-ver-${item.registrationId}`}>
+                Ver cierre
+              </Link>
+            );
+          }
+          return null;
+        }
+        // Legacy fallback (reportId/reportStatus)
+        if (!hasReport) {
+          return (
+            <Link to={`/reports/new?registrationId=${item.registrationId}`} className="button button--primary button--small" data-testid={`action-enviar-${item.registrationId}`}>
+              Enviar cierre
+            </Link>
+          );
+        }
+        if (hasReport && isReturned) {
+          return (
+            <Link to={`/reports/${item.reportId}`} className="button button--primary button--small" data-testid={`action-corregir-${item.registrationId}`}>
+              Corregir y reenviar
+            </Link>
+          );
+        }
+        if (hasReport && !isReturned) {
+          return (
+            <Link to={`/reports/${item.reportId}`} className="button button--secondary button--small" data-testid={`action-ver-${item.registrationId}`}>
+              Ver cierre
+            </Link>
+          );
+        }
+        return null;
+      })()}
+      {onCancel && canCancel && (
+        <>
+          <Button
+            variant="secondary"
+            size="small"
+            onClick={handleOpen}
+            data-testid={`cancel-${item.registrationId}`}
+            disabled={isCancelling}
+          >
+            Cancelar inscripción
+          </Button>
+          <Modal
+            isOpen={isModalOpen}
+            onClose={handleClose}
+            title="Cancelar inscripción"
+            description="¿Seguro que quieres cancelar tu inscripción? Esta acción no se puede deshacer."
+            footer={
+              <>
+                <Button variant="secondary" onClick={handleClose} disabled={isCancelling} data-testid={`modal-cancel-${item.registrationId}`}>
+                  Volver
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={handleConfirm}
+                  isLoading={isCancelling}
+                  disabled={isCancelling}
+                  data-testid={`confirm-cancel-${item.registrationId}`}
+                >
+                  Confirmar baja
+                </Button>
+              </>
+            }
+          >
+            <p>Se liberará tu plaza y se actualizará la lista de espera.</p>
+          </Modal>
+        </>
       )}
     </Card>
   );
@@ -144,6 +228,14 @@ export default function MyVolunteeringPage() {
       await cancelRegistration(registrationId);
       await fetchData();
     } catch (err) {
+      // Si hay desfase horario y backend devuelve DEADLINE_PASSED (409), actualizar interfaz
+      if (err?.code === 'DEADLINE_PASSED' || err?.status === 409) {
+        try {
+          await fetchData();
+        } catch {
+          // ignore
+        }
+      }
       setCancelError(err.message || 'No se pudo cancelar la inscripción.');
     } finally {
       setCancellingId(null);

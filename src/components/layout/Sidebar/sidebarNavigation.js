@@ -40,13 +40,13 @@ export const NAV_SECTIONS_BY_ROLE = {
       section: "Participación",
       items: [
         {
-          path: "/inscriptions",
+          path: "/admin/activities",
           label: "Inscripciones",
           icon: UserPlus,
           badgeKey: "inscriptions",
         },
         {
-          path: "/closes",
+          path: "/reports/pending",
           label: "Cierres",
           icon: CheckCircle2,
           badgeKey: "closes",
@@ -69,7 +69,7 @@ export const NAV_SECTIONS_BY_ROLE = {
     {
       section: "Voluntariado",
       items: [
-        { path: "/explore", label: "Explorar", icon: Compass },
+        { path: "/activities", label: "Explorar", icon: Compass },
         {
           path: "/my-activities",
           label: "Mis voluntariados",
@@ -79,6 +79,29 @@ export const NAV_SECTIONS_BY_ROLE = {
     },
   ],
   ORG: [
+    {
+      section: "Gestión",
+      items: [
+        {
+          path: "/org/activities",
+          label: "Mis actividades",
+          icon: ClipboardList,
+        },
+        {
+          path: "/org/reports",
+          label: "Informes",
+          icon: BarChart3,
+        },
+        {
+          path: "/org/proposals",
+          label: "Mis propuestas",
+          icon: FileText,
+          badgeKey: "proposals",
+        },
+      ],
+    },
+  ],
+  PARTNER: [
     {
       section: "Gestión",
       items: [

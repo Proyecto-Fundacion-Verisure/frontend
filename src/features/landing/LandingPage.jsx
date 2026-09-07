@@ -146,7 +146,7 @@ export default function LandingPage() {
               <p>
                 Queremos que las entidades sociales tengan un papel protagonista. Cuéntanos qué necesidades detectáis y qué iniciativas de voluntariado podrían marcar la diferencia, y trabajaremos juntos para convertir esas ideas en proyectos reales.
               </p>
-              <img src={colabImage} alt="imagen de personas haciendo un voluntariado" />
+              <img src={colabImage} alt="Personas voluntarias colaborando en una actividad comunitaria" />
               <Link className="button button--primary button--medium" to="/register-organization">
                 Registra tu entidad
               </Link>

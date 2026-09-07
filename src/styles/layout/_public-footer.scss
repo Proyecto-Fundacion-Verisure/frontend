@@ -39,7 +39,7 @@
     font-family: $font-sans;
     font-size: $font-size-xs;
     line-height: $line-height-normal;
-    color: rgb(255 255 255 / 64%);
+    color: rgb(255 255 255 / 78%);
   }
 
   &__col-title {
@@ -62,7 +62,7 @@
   &__link {
     font-family: $font-sans;
     font-size: $font-size-xs;
-    color: rgb(255 255 255 / 64%);
+    color: rgb(255 255 255 / 78%);
     text-decoration: none;
     transition: color $transition-fast;
 

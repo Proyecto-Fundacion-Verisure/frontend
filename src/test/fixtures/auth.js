@@ -5,6 +5,7 @@ export const Role = {
   ADMIN: 'ADMIN',
   EMPLOYEE: 'EMPLOYEE',
   ORG: 'ORG',
+  PARTNER: 'PARTNER',
 };
 
 export const UserStatus = {
@@ -68,6 +69,15 @@ export const MOCK_USERS_V2 = {
     department: null,
     organization: null,
     status: UserStatus.REJECTED,
+  },
+  partnerActive: {
+    id: 7,
+    name: 'Entidad Partner',
+    email: 'partner@entidad.org',
+    role: Role.PARTNER,
+    department: null,
+    organization: null,
+    status: UserStatus.ACTIVE,
   },
 };
 

@@ -4,8 +4,13 @@ import PublicFooter from '../PublicFooter/PublicFooter';
 export default function PublicLayout({ children }) {
   return (
     <div className="public-layout">
+      <a href="#main" className="skip-link">
+        Saltar al contenido
+      </a>
       <PublicHeader />
-      <main>{children}</main>
+      <main id="main" tabIndex={-1}>
+        {children}
+      </main>
       <PublicFooter />
     </div>
   );
