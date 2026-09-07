@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAdminActivities } from '../../api/activitiesApi';
+import { useAuth } from '../auth/AuthContext';
 import { Badge, Button, EmptyState, Input, Select, Spinner, Table } from '../../components/ui';
 import CancelActivityButton from './CancelActivityButton';
 
@@ -52,6 +53,9 @@ function getPageData(response) {
 }
 
 export default function ActivitiesListPage() {
+  const { user } = useAuth();
+  const isOrg = user?.role === 'ORG';
+
   const [activities, setActivities] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [searchInput, setSearchInput] = useState('');
@@ -70,6 +74,9 @@ export default function ActivitiesListPage() {
       setRequestState({ status: 'loading', error: null });
       try {
         const params = { page, limit: PAGE_SIZE };
+        if (isOrg && user?.name) {
+          params.organizationName = user.name;
+        }
         if (statusFilter) params.status = statusFilter;
         if (query) params.q = query;
 
@@ -89,7 +96,7 @@ export default function ActivitiesListPage() {
     return () => {
       cancelled = true;
     };
-  }, [page, query, reloadKey, statusFilter]);
+  }, [page, query, reloadKey, statusFilter, isOrg, user?.name]);
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -110,14 +117,16 @@ export default function ActivitiesListPage() {
         <strong className="activities-list__activity-title">{activity.title}</strong>
       ),
     },
-    {
-      key: 'partner',
-      label: 'Entidad colaboradora',
-      render: (activity) => activity.partner?.name
-        ?? activity.partnerName
-        ?? activity.organizationName
-        ?? '—',
-    },
+    ...(!isOrg
+      ? [{
+          key: 'partner',
+          label: 'Entidad colaboradora',
+          render: (activity) => activity.partner?.name
+            ?? activity.partnerName
+            ?? activity.organizationName
+            ?? '—',
+        }]
+      : []),
     {
       key: 'status',
       label: 'Estado',
@@ -157,12 +166,14 @@ export default function ActivitiesListPage() {
           >
             Editar
           </Link>
-          <Link
-            className="button button--secondary button--small"
-            to={`/activities/${activity.id}/registrations`}
-          >
-            Inscripciones
-          </Link>
+          {!isOrg && (
+            <Link
+              className="button button--secondary button--small"
+              to={`/activities/${activity.id}/registrations`}
+            >
+              Inscripciones
+            </Link>
+          )}
           <CancelActivityButton
             activity={activity}
             onCancelled={() => {
@@ -179,7 +190,7 @@ export default function ActivitiesListPage() {
     <section className="activities-list" aria-labelledby="activities-list-title">
       <header className="activities-list__header">
         <div>
-          <p className="activities-list__eyebrow">Administración</p>
+          <p className="activities-list__eyebrow">{isOrg ? 'Mi organización' : 'Administración'}</p>
           <h1 id="activities-list-title">Actividades</h1>
           <p>{totalElements} actividades encontradas</p>
         </div>
@@ -251,7 +262,7 @@ export default function ActivitiesListPage() {
 
       {requestState.status === 'success' && activities.length > 0 && (
         <>
-          <Table caption="Listado administrativo de actividades" columns={columns} data={activities} />
+          <Table caption={isOrg ? 'Listado de actividades de mi organización' : 'Listado administrativo de actividades'} columns={columns} data={activities} />
           <nav className="activities-list__pagination" aria-label="Paginación de actividades">
             <span>Página {page} de {Math.max(totalPages, 1)}</span>
             <div>

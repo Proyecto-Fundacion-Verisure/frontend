@@ -10,7 +10,7 @@ const MOCK_USERS = {
     role: 'EMPLOYEE', department: 'Marketing', organization: 'VERISURE_ES',
   },
   ong: {
-    id: 3, name: 'Fundación Social', email: 'ong@fundacion.org',
+    id: 3, name: 'Fundación Solitaria', email: 'ong@fundacion.org',
     role: 'ORG', department: null, organization: null, status: 'ACTIVE',
   },
   pendiente: {

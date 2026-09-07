@@ -128,6 +128,9 @@ function mockGetPublishedActivities(params = {}) {
 function mockGetAdminActivities(params = {}) {
   let results = [...MOCK_ACTIVITIES];
 
+  if (params.organizationName) {
+    results = results.filter((activity) => activity.organizationName === params.organizationName);
+  }
   if (params.status) {
     results = results.filter((activity) => activity.status === params.status);
   }

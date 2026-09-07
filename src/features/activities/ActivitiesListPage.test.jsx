@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getAdminActivities } from '../../api/activitiesApi';
+import { renderWithProviders } from '../../test/utils/renderWithProviders';
 import ActivitiesListPage from './ActivitiesListPage';
 
 vi.mock('../../api/activitiesApi', () => ({
@@ -30,6 +31,18 @@ const ACTIVITIES = [
   },
 ];
 
+const ORG_ACTIVITIES = [
+  {
+    id: 20,
+    title: 'Taller de MANUALIDADES',
+    organizationName: 'Fundación Solitaria',
+    status: 'PUBLISHED',
+    startDate: '2026-12-01T10:00:00Z',
+    capacity: 10,
+    favoriteCount: 3,
+  },
+];
+
 function pageResponse(content = ACTIVITIES, overrides = {}) {
   return {
     data: {
@@ -41,11 +54,17 @@ function pageResponse(content = ACTIVITIES, overrides = {}) {
   };
 }
 
-function renderPage() {
-  return render(
-    <MemoryRouter initialEntries={['/admin/activities']}>
-      <ActivitiesListPage />
-    </MemoryRouter>,
+const ADMIN_USER = { role: 'ADMIN', organizationName: null };
+const ORG_USER = { role: 'ORG', name: 'Fundación Solitaria' };
+
+function renderPage({ user: authUser = ADMIN_USER } = {}) {
+  return renderWithProviders(
+    <ActivitiesListPage />,
+    {
+      route: authUser.role === 'ORG' ? '/org/activities' : '/admin/activities',
+      initialEntries: [authUser.role === 'ORG' ? '/org/activities' : '/admin/activities'],
+      user: authUser,
+    },
   );
 }
 
@@ -153,5 +172,42 @@ describe('ActivitiesListPage', () => {
 
     expect(await screen.findByText('Mentoría digital')).toBeInTheDocument();
     expect(getAdminActivities).toHaveBeenCalledTimes(2);
+  });
+
+  it('shows eyebrow "Administración" for ADMIN role', async () => {
+    getAdminActivities.mockResolvedValue(pageResponse());
+    renderPage({ user: ADMIN_USER });
+
+    expect(await screen.findByText('Administración')).toBeInTheDocument();
+  });
+
+  it('does not show "Entidad colaboradora" column for ORG role', async () => {
+    getAdminActivities.mockResolvedValue(pageResponse(ORG_ACTIVITIES));
+    renderPage({ user: ORG_USER });
+
+    await screen.findByText('Taller de MANUALIDADES');
+    expect(screen.queryByText('Entidad colaboradora')).not.toBeInTheDocument();
+  });
+
+  it('shows eyebrow "Mi organización" and passes organizationName for ORG role', async () => {
+    getAdminActivities.mockResolvedValue(pageResponse(ORG_ACTIVITIES));
+    renderPage({ user: ORG_USER });
+
+    expect(await screen.findByText('Mi organización')).toBeInTheDocument();
+    expect(getAdminActivities).toHaveBeenCalledWith({
+      page: 1,
+      limit: 10,
+      organizationName: 'Fundación Solitaria',
+    });
+  });
+
+  it('shows action buttons for ORG role', async () => {
+    getAdminActivities.mockResolvedValue(pageResponse(ORG_ACTIVITIES));
+    renderPage({ user: ORG_USER });
+
+    const title = await screen.findByText('Taller de MANUALIDADES');
+    const row = title.closest('tr');
+    expect(within(row).getByRole('link', { name: /editar/i })).toBeInTheDocument();
+    expect(within(row).queryByRole('link', { name: /inscripciones/i })).not.toBeInTheDocument();
   });
 });
