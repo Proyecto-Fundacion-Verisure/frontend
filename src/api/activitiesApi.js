@@ -206,8 +206,20 @@ const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'tes
 
 export const getAdminActivities = (params) =>
   isMockEnabled() ? mockGetAdminActivities(params) : client.get('/admin/activities', { params });
-export const getPublishedActivities = (params) =>
-  isMockEnabled() ? mockGetPublishedActivities(params) : client.get('/activities/published', { params });
+export const getActivities = (params) => {
+  // Nuevo contrato: GET /api/activities?line,mode,from,to,page,size -> Page<ActivityCardResponse>
+  // Mantener compat: limit -> size, q -> search
+  const mapped = { ...params };
+  if (mapped.limit !== undefined && mapped.size === undefined) {
+    mapped.size = mapped.limit;
+    delete mapped.limit;
+  }
+  if (mapped.q !== undefined && mapped.query === undefined) {
+    mapped.query = mapped.q;
+  }
+  return isMockEnabled() ? mockGetPublishedActivities(params) : client.get('/activities', { params: mapped });
+};
+export const getPublishedActivities = getActivities;
 export const getActivityDetail = (id) =>
   isMockEnabled() ? mockGetActivityDetail(id) : client.get(`/activities/${id}`);
 export const getAdminActivity = (id) =>

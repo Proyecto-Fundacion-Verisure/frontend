@@ -101,4 +101,27 @@ export const NAV_SECTIONS_BY_ROLE = {
       ],
     },
   ],
+  PARTNER: [
+    {
+      section: "Gestión",
+      items: [
+        {
+          path: "/org/activities",
+          label: "Mis actividades",
+          icon: ClipboardList,
+        },
+        {
+          path: "/org/reports",
+          label: "Informes",
+          icon: BarChart3,
+        },
+        {
+          path: "/org/proposals",
+          label: "Mis propuestas",
+          icon: FileText,
+          badgeKey: "proposals",
+        },
+      ],
+    },
+  ],
 };

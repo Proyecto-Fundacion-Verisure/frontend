@@ -54,7 +54,7 @@ export function normalizeApiError(error) {
     status,
     code: data?.code ?? error?.code ?? null,
     details: data?.details ?? null,
-    fieldErrors: data?.fieldErrors ?? data?.errors ?? null,
+    fieldErrors: data?.fields ?? data?.fieldErrors ?? data?.errors ?? null,
     cause: error,
   });
 }
