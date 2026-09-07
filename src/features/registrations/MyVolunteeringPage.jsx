@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cancelRegistration, getMyRegistrations } from '../../api/registrationsApi';
-import { Badge, Button, Card, EmptyState, Spinner } from '../../components/ui';
+import { Badge, Button, Card, EmptyState, Modal, Spinner } from '../../components/ui';
 
 function formatDate(value) {
   if (!value) return '—';
@@ -13,6 +13,7 @@ function formatDate(value) {
 }
 
 function RegistrationCard({ item, onCancel, isCancelling }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const activity = item.activity ?? {};
   const title = activity.title ?? `Actividad ${activity.id ?? ''}`;
   const partner = activity.partner ?? activity.organizationName ?? '';
@@ -26,7 +27,26 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
   const showAccepted = item.status === 'WAITLISTED';
   const acceptedLabel = item.accepted ? 'Aceptada' : 'Pendiente de revisión';
 
-  const statusLabel = item.status === 'WAITLISTED' ? 'En lista de espera' : item.status;
+  const statusLabels = {
+    WAITLISTED: 'En lista de espera',
+    CONFIRMED: 'CONFIRMADO',
+    CLOSED: 'cerrado',
+  };
+  const statusLabel = statusLabels[item.status] ?? item.status;
+
+  const startDateObj = startDate ? new Date(startDate) : null;
+  const isStarted = startDateObj ? startDateObj < new Date() : false;
+  const canCancel = (item.status === 'WAITLISTED' || item.status === 'CONFIRMED') && !isStarted;
+
+  const handleOpen = () => setIsModalOpen(true);
+  const handleClose = () => {
+    if (isCancelling) return;
+    setIsModalOpen(false);
+  };
+  const handleConfirm = async () => {
+    await onCancel(item.registrationId);
+    setIsModalOpen(false);
+  };
 
   return (
     <Card className="my-volunteering__card" data-testid={`registration-${item.registrationId}`}>
@@ -67,17 +87,42 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
           Ver cierre
         </Link>
       )}
-      {onCancel && (item.status === 'WAITLISTED' || item.status === 'CONFIRMED') && (
-        <Button
-          variant="secondary"
-          size="small"
-          onClick={() => onCancel(item.registrationId)}
-          data-testid={`cancel-${item.registrationId}`}
-          isLoading={isCancelling}
-          disabled={isCancelling}
-        >
-          Cancelar inscripción
-        </Button>
+      {onCancel && canCancel && (
+        <>
+          <Button
+            variant="secondary"
+            size="small"
+            onClick={handleOpen}
+            data-testid={`cancel-${item.registrationId}`}
+            disabled={isCancelling}
+          >
+            Cancelar inscripción
+          </Button>
+          <Modal
+            isOpen={isModalOpen}
+            onClose={handleClose}
+            title="Cancelar inscripción"
+            description="¿Seguro que quieres cancelar tu inscripción? Esta acción no se puede deshacer."
+            footer={
+              <>
+                <Button variant="secondary" onClick={handleClose} disabled={isCancelling} data-testid={`modal-cancel-${item.registrationId}`}>
+                  Volver
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={handleConfirm}
+                  isLoading={isCancelling}
+                  disabled={isCancelling}
+                  data-testid={`confirm-cancel-${item.registrationId}`}
+                >
+                  Confirmar baja
+                </Button>
+              </>
+            }
+          >
+            <p>Se liberará tu plaza y se actualizará la lista de espera.</p>
+          </Modal>
+        </>
       )}
     </Card>
   );

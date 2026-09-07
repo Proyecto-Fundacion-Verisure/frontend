@@ -19,7 +19,7 @@ export default function RegistrationInfoModal({ isOpen, onClose, onConfirm, isSu
       }
     >
       <div id="registration-info-description">
-        <p>Tu solicitud comenzará en <strong>lista de espera</strong> y será revisada por la administración.</p>
+        <p>Tu solicitud comenzará en <strong>lista de espera </strong> y será revisada por la administración.</p>
       </div>
     </Modal>
   );
