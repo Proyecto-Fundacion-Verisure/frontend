@@ -52,7 +52,7 @@ describe('activity API contract', () => {
 
     expect(client.get).toHaveBeenNthCalledWith(1, '/activities/12');
     expect(client.get).toHaveBeenNthCalledWith(2, '/admin/activities/12');
-    expect(client.get).toHaveBeenNthCalledWith(3, '/activities/published', {
+    expect(client.get).toHaveBeenNthCalledWith(3, '/activities', {
       params: { page: 2 },
     });
     expect(client.patch).toHaveBeenCalledWith('/activities/12/cancel');
@@ -82,8 +82,8 @@ describe('registration API contract', () => {
   });
 });
 
-describe('report API contract', () => {
-  it('uses reportId for reads and the same POST for creation and resubmission', () => {
+describe('closure API contract', () => {
+  it('uses closureId for reads and the same POST for creation and resubmission', () => {
     const newReport = { registrationId: 8, actualHours: 6, rating: 5 };
     const returnedReport = { registrationId: 8, actualHours: 7, rating: 5 };
 
@@ -94,20 +94,20 @@ describe('report API contract', () => {
     validateReport(31, { validatedHours: 7 });
     returnReport(31, { note: 'Adjunta una evidencia legible.' });
 
-    expect(client.post).toHaveBeenNthCalledWith(1, '/reports', newReport);
-    expect(client.post).toHaveBeenNthCalledWith(2, '/reports', returnedReport);
-    expect(client.get).toHaveBeenNthCalledWith(1, '/reports/pending', {
+    expect(client.post).toHaveBeenNthCalledWith(1, '/closures', newReport);
+    expect(client.post).toHaveBeenNthCalledWith(2, '/closures', returnedReport);
+    expect(client.get).toHaveBeenNthCalledWith(1, '/closures/pending', {
       params: { page: 0 },
     });
-    expect(client.get).toHaveBeenNthCalledWith(2, '/reports/31');
+    expect(client.get).toHaveBeenNthCalledWith(2, '/closures/31');
     expect(client.patch).toHaveBeenNthCalledWith(
       1,
-      '/reports/31/validate',
+      '/closures/31/validate',
       { validatedHours: 7 },
     );
     expect(client.patch).toHaveBeenNthCalledWith(
       2,
-      '/reports/31/return',
+      '/closures/31/return',
       { note: 'Adjunta una evidencia legible.' },
     );
   });

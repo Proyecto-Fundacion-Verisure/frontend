@@ -62,6 +62,17 @@ src/
 
 Las llamadas HTTP viven en `src/api`; una pantalla no debe llamar a Axios directamente. La lógica específica permanece dentro de su `feature` y los patrones reutilizables se llevan a `components/ui`.
 
+## Demo — datos definitivos y restauración idempotente
+
+Datos versionados en `public/demo-data.json` (4 actividades `PUBLISHED/FULL/IN_PROGRESS/FINISHED`, inscripciones `active` WAITLISTED q3/q1 + `closed` CLOSED, 2 propuestas NEW/ACCEPTED, 2 orgs pendientes) y `docs/DEMO.md`.
+
+```bash
+npm ci && npm run demo:reset && npm run smoke # = test:run + build
+# o en navegador: localStorage.clear(); location.reload()
+```
+
+`scripts/restore-demo.js` es idempotente (N ejecuciones sin duplicar). `isMockEnabled = DEV && MODE !== 'test'` con delays 300ms y sin `failRate` aleatorio para demo estable. Ver `docs/DEMO.md` para prueba de humo 3 min (público → empleado → admin) en Chrome/Firefox 1440px y 390px.
+
 ### Convención de nombres
 
 Los componentes reutilizables siguen la estructura `NombreCarpeta/NombreCarpeta.jsx`, por ejemplo `Button/Button.jsx`. No se crean archivos `index.jsx`. `index.js` se reserva para exportaciones agrupadas, como `components/ui/index.js`.
