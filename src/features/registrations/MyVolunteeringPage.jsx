@@ -22,6 +22,11 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
   const hours = activity.hours ?? activity.estimatedHours ?? null;
 
   const showQueue = item.queuePosition !== null && item.queuePosition !== undefined;
+  // Nuevo contrato: closureId + activityClosed; legacy: reportId/reportStatus
+  const closureId = item.closureId ?? item.reportId ?? null;
+  const activityClosed = typeof item.activityClosed === 'boolean' ? item.activityClosed : item.status === 'CLOSED';
+  const hasClosure = Boolean(closureId);
+  // Legacy fallback
   const hasReport = Boolean(item.reportId);
   const isReturned = item.reportStatus === 'RETURNED';
   const showAccepted = item.status === 'WAITLISTED';
@@ -31,6 +36,8 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
     WAITLISTED: 'En lista de espera',
     CONFIRMED: 'CONFIRMADO',
     CLOSED: 'cerrado',
+    PENDING_CLOSURE: 'Pendiente de cierre',
+    PENDING_REPORT: 'Pendiente de cierre',
   };
   const statusLabel = statusLabels[item.status] ?? item.status;
 
@@ -69,33 +76,56 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
       </p>
       {showQueue && <p className="my-volunteering__queue">Posición en cola: {item.queuePosition}</p>}
       {showAccepted && <p className="my-volunteering__accepted" data-testid={`accepted-${item.registrationId}`}>{acceptedLabel}</p>}
-      {!hasReport && (
-        <Link
-          to={`/reports/new?registrationId=${item.registrationId}`}
-          className="button button--primary button--small"
-          data-testid={`action-enviar-${item.registrationId}`}
-        >
-          Enviar cierre
-        </Link>
-      )}
-      {hasReport && isReturned && (
-        <Link
-          to={`/reports/${item.reportId}`}
-          className="button button--primary button--small"
-          data-testid={`action-corregir-${item.registrationId}`}
-        >
-          Corregir y reenviar
-        </Link>
-      )}
-      {hasReport && !isReturned && (
-        <Link
-          to={`/reports/${item.reportId}`}
-          className="button button--secondary button--small"
-          data-testid={`action-ver-${item.registrationId}`}
-        >
-          Ver cierre
-        </Link>
-      )}
+      {(() => {
+        const isNewContract = 'closureId' in item || 'activityClosed' in item;
+        if (isNewContract) {
+          if (!hasClosure && !activityClosed) {
+            return (
+              <Link to={`/closures/new?registrationId=${item.registrationId}`} className="button button--primary button--small" data-testid={`action-enviar-${item.registrationId}`}>
+                Cerrar tu participación
+              </Link>
+            );
+          }
+          if (hasClosure && activityClosed) {
+            return (
+              <Link to={`/closures/${closureId}/certificate`} className="button button--primary button--small" data-testid={`action-cert-${item.registrationId}`}>
+                Descargar certificado
+              </Link>
+            );
+          }
+          if (hasClosure && !activityClosed) {
+            return (
+              <Link to={`/closures/${closureId}`} className="button button--secondary button--small" data-testid={`action-ver-${item.registrationId}`}>
+                Ver cierre
+              </Link>
+            );
+          }
+          return null;
+        }
+        // Legacy fallback (reportId/reportStatus)
+        if (!hasReport) {
+          return (
+            <Link to={`/reports/new?registrationId=${item.registrationId}`} className="button button--primary button--small" data-testid={`action-enviar-${item.registrationId}`}>
+              Enviar cierre
+            </Link>
+          );
+        }
+        if (hasReport && isReturned) {
+          return (
+            <Link to={`/reports/${item.reportId}`} className="button button--primary button--small" data-testid={`action-corregir-${item.registrationId}`}>
+              Corregir y reenviar
+            </Link>
+          );
+        }
+        if (hasReport && !isReturned) {
+          return (
+            <Link to={`/reports/${item.reportId}`} className="button button--secondary button--small" data-testid={`action-ver-${item.registrationId}`}>
+              Ver cierre
+            </Link>
+          );
+        }
+        return null;
+      })()}
       {onCancel && canCancel && (
         <>
           <Button

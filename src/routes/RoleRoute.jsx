@@ -6,11 +6,13 @@ export default function RoleRoute({ roles = [] }) {
   const { user } = useAuth();
 
   if (!user) return <Navigate to="/login" replace />;
-  if (user.role === 'ORG' && user.status !== 'ACTIVE') {
-    return <Navigate to={getRoleHomePath(user.role)} replace />;
+  const normalizedRole = user.role === 'PARTNER' ? 'ORG' : user.role;
+  const normalizedRoles = roles.map((r) => (r === 'PARTNER' ? 'ORG' : r));
+  if ((user.role === 'ORG' || user.role === 'PARTNER') && user.status !== 'ACTIVE') {
+    return <Navigate to="/account-status" replace />;
   }
 
-  return roles.includes(user.role)
+  return normalizedRoles.includes(normalizedRole)
     ? <Outlet />
     : <Navigate to={getRoleHomePath(user.role)} replace />;
 }
