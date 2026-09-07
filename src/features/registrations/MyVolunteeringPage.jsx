@@ -36,7 +36,16 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
 
   const startDateObj = startDate ? new Date(startDate) : null;
   const isStarted = startDateObj ? startDateObj < new Date() : false;
-  const canCancel = (item.status === 'WAITLISTED' || item.status === 'CONFIRMED') && !isStarted;
+  // Derivar visibilidad de fecha de inicio y acción permitida en la respuesta (MyRegistrationItem.canCancel / allowedActions)
+  const allowedByBackend = (() => {
+    if (typeof item.canCancel === 'boolean') return item.canCancel;
+    if (typeof item.cancellable === 'boolean') return item.cancellable;
+    if (Array.isArray(item.allowedActions)) return item.allowedActions.includes('CANCEL') || item.allowedActions.includes('cancel');
+    if (Array.isArray(item.actions)) return item.actions.includes('CANCEL');
+    return true;
+  })();
+  // Persona solo cancela antes del inicio; regla administrativa (cancelar en cualquier momento) no se aplica aquí
+  const canCancel = (item.status === 'WAITLISTED' || item.status === 'CONFIRMED') && !isStarted && allowedByBackend;
 
   const handleOpen = () => setIsModalOpen(true);
   const handleClose = () => {
@@ -189,6 +198,14 @@ export default function MyVolunteeringPage() {
       await cancelRegistration(registrationId);
       await fetchData();
     } catch (err) {
+      // Si hay desfase horario y backend devuelve DEADLINE_PASSED (409), actualizar interfaz
+      if (err?.code === 'DEADLINE_PASSED' || err?.status === 409) {
+        try {
+          await fetchData();
+        } catch {
+          // ignore
+        }
+      }
       setCancelError(err.message || 'No se pudo cancelar la inscripción.');
     } finally {
       setCancellingId(null);
