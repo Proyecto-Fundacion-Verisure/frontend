@@ -1,8 +1,8 @@
 import client from './axiosClient';
 
-const USE_MOCK_API = true;
+const USE_MOCK_API = import.meta.env.DEV && import.meta.env.MODE !== 'test';
 
-function simulateRequest({ data, delay = 1000, failRate = 0 } = {}) {
+function simulateRequest({ data, delay = 300, failRate = 0 } = {}) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < failRate) {
@@ -77,7 +77,7 @@ export const getPendingOrganizations = () => {
   if (USE_MOCK_API) {
     console.info('[MOCK] getPendingOrganizations');
     const pending = mockOrganizations.filter((org) => org.status === 'pending');
-    return simulateRequest({ data: pending, delay: 900, failRate: 0.1 });
+    return simulateRequest({ data: pending, delay: 300 });
   }
   return client.get('/organizations', { params: { status: 'pending' } });
 };
@@ -89,7 +89,7 @@ export const approveOrganization = (id) => {
     mockOrganizations = mockOrganizations.map((org) =>
       org.id === id ? { ...org, status: 'accepted' } : org
     );
-    return simulateRequest({ data: { id, status: 'accepted' }, delay: 800, failRate: 0.1 });
+    return simulateRequest({ data: { id, status: 'accepted' }, delay: 300 });
   }
   return client.patch(`/organizations/${id}/accept`);
 };
@@ -101,7 +101,7 @@ export const rejectOrganization = (id) => {
     mockOrganizations = mockOrganizations.map((org) =>
       org.id === id ? { ...org, status: 'rejected' } : org
     );
-    return simulateRequest({ data: { id, status: 'rejected' }, delay: 800, failRate: 0.1 });
+    return simulateRequest({ data: { id, status: 'rejected' }, delay: 300 });
   }
   return client.patch(`/organizations/${id}/reject`);
 };

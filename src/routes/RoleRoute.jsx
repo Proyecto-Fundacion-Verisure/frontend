@@ -7,7 +7,7 @@ export default function RoleRoute({ roles = [] }) {
 
   if (!user) return <Navigate to="/login" replace />;
   if (user.role === 'ORG' && user.status !== 'ACTIVE') {
-    return <Navigate to={getRoleHomePath(user.role)} replace />;
+    return <Navigate to="/account-status" replace />;
   }
 
   return roles.includes(user.role)

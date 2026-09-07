@@ -76,7 +76,29 @@ src/
 └── utils/        # Utilidades sin dependencia de React
 ```
 
-Cada feature se organiza por dominio: `auth`, `landing`, `activities`, `registrations`, `proposals`, `reports` y `dashboard`. Las peticiones HTTP se centralizan en `src/api`; el token se incorpora desde `localStorage` por el interceptor de Axios.
+Cada feature se organiza por dominio: `auth`, `landing`, `activities`, `registrations`, `proposals`, `reports`, `dashboard` y `orgs`. Las peticiones HTTP se centralizan en `src/api`; el token se incorpora desde `localStorage` por el interceptor de Axios.
+
+## Tres roles y flujos
+
+| Rol | Home | Rutas clave | Estado cuenta |
+|-----|------|-------------|---------------|
+| **Público** (sin auth) | `/` | `/proposal`, `/register-organization` | — |
+| **EMPLOYEE** (`@verisure.es`) | `/activities` | `/activities`, `/activities/:id`, `/my-activities`, `/reports/*`, `/reports/:id/certificate` | `ACTIVE` |
+| **ORG** (entidad) | `/org/activities` | `/register-organization` → `PENDING_VERIFICATION` → `PENDING_APPROVAL` → `/org/activities`, `/org/activities/new` (`DRAFT` → `PENDING_APPROVAL` → `PUBLISHED`), `/org/reports`, `/org/proposals` | `PENDING_VERIFICATION` / `PENDING_APPROVAL` / `ACTIVE` / `REJECTED` |
+| **ADMIN** | `/dashboard` | `/dashboard`, `/proposals`, `/activities/:id/registrations`, `/reports/pending`, `/admin/account-status`, `/admin/activities` | `ACTIVE` |
+
+Flujo ORG: `POST /organizations` (201) → verificación token 24h (`410 VERIFICATION_EXPIRED`) → `GET /organizations?status=pending` (ADMIN) → `PATCH /approve|reject` → `ACTIVE`. Actividad ORG: `DRAFT` → `PENDING_APPROVAL` → `PUBLISHED`/`RETURNED`.
+
+## Demo — datos definitivos y restauración idempotente
+
+Datos versionados en `public/demo-data.json` (4 actividades `PUBLISHED/FULL/IN_PROGRESS/FINISHED`, inscripciones `active` WAITLISTED q3/q1 + `closed` CLOSED, 2 propuestas NEW/ACCEPTED, 2 orgs pendientes) y `docs/DEMO.md`.
+
+```bash
+npm ci && npm run demo:reset && npm run smoke # = test:run + build
+# o en navegador: localStorage.clear(); location.reload()
+```
+
+`scripts/restore-demo.js` es idempotente (N ejecuciones sin duplicar). `isMockEnabled = DEV && MODE !== 'test'` con delays 300ms y sin `failRate` aleatorio para demo estable. Ver `docs/DEMO.md` para prueba de humo 3 min (público → empleado → admin) en Chrome/Firefox 1440px y 390px.
 
 Cada componente JSX debe repetir el nombre de su carpeta: `NombreComponente/NombreComponente.jsx`. No se usan archivos `index.jsx`. Los archivos `index.js` se reservan para exportaciones agrupadas, como `components/ui/index.js`.
 

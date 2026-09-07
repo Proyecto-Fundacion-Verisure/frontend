@@ -205,7 +205,7 @@ function mockCancelActivity(id) {
 const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'test';
 
 export const getAdminActivities = (params) =>
-  isMockEnabled() ? mockGetAdminActivities(params) : client.get('/activities', { params });
+  isMockEnabled() ? mockGetAdminActivities(params) : client.get('/admin/activities', { params });
 export const getPublishedActivities = (params) =>
   isMockEnabled() ? mockGetPublishedActivities(params) : client.get('/activities/published', { params });
 export const getActivityDetail = (id) =>
