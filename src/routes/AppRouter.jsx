@@ -13,6 +13,7 @@ import ProposalForm from '../features/proposals/ProposalForm';
 import OrgRegisterPage from '../features/orgs/OrgRegisterPage';
 import ActivityFormPage from '../features/activities/ActivityFormPage';
 import OrgImpactPage from '../features/orgs/OrgImpactPage';
+import OrgDashboardPage from '../features/orgs/OrgDashboardPage';
 import OrgProposalsPage from '../features/orgs/OrgProposalsPage';
 import ProposalsInboxPage from '../features/proposals/ProposalsInboxPage';
 import ProposalDetailPage from '../features/proposals/ProposalDetailPage';
@@ -75,6 +76,7 @@ export default function AppRouter() {
             </Route>
           </Route>
           <Route element={<RoleRoute roles={['PARTNER']} />}>
+            <Route path="/org/dashboard" element={<OrgDashboardPage />} />
             <Route
               path="/org/activities"
               element={
