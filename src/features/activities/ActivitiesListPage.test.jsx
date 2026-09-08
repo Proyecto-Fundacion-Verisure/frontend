@@ -121,7 +121,7 @@ describe('ActivitiesListPage', () => {
     const user = userEvent.setup();
     renderPage();
 
-    expect(await screen.findByRole('heading', { name: /no hay actividades/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /no hay proyectos/i })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /limpiar filtros/i }));
     expect(screen.getByLabelText(/filtrar por estado/i)).toHaveValue('');
   });
