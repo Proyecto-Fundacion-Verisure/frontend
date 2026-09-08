@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getDashboard } from '../../api/dashboardApi';
+import { Link } from 'react-router-dom';
 import { Button, Card, EmptyState, Spinner } from '../../components/ui';
 import { ACTIVITY_LINES, getLineByValue } from '../../constants/activityLines';
 import BarChart from './BarChart';
 import ChartTable from './ChartTable';
 import DashboardExports from './DashboardExports';
+import ExportMenu from './ExportMenu';
 import DashboardFilters, { isValidDashboardYear } from './DashboardFilters';
 import KpiRow, { KPI_DEFINITIONS } from './KpiRow';
 
@@ -145,8 +147,14 @@ export default function DashboardPage() {
           <p className="dashboard__eyebrow">Análisis de impacto</p>
           <h1>Panel de control</h1>
         </div>
-        <p>Consulta el impacto de las participaciones cerradas y descarga los resultados.</p>
+        <div className="dashboard__header-actions">
+          <Link to="/proposals" className="button button--secondary button--medium">
+            Ver propuestas recibidas
+          </Link>
+          <ExportMenu filters={filters} />
+        </div>
       </header>
+      <p className="dashboard__intro">Consulta el impacto de las participaciones cerradas y descarga los resultados.</p>
 
       <DashboardFilters
         year={year}
