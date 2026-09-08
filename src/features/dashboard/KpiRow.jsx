@@ -1,18 +1,18 @@
 import {
+  Building2,
   CalendarCheck2,
   Clock3,
-  HandHeart,
-  Heart,
+  TrendingDown,
+  TrendingUp,
   Users,
 } from 'lucide-react';
 import { Card } from '../../components/ui';
 
 export const KPI_DEFINITIONS = [
-  { key: 'reportedHours', label: 'Horas reportadas', Icon: Clock3, suffix: ' h' },
-  { key: 'activeVolunteers', label: 'Personas voluntarias', Icon: Users },
+  { key: 'reportedHours', label: 'Horas de voluntariado', Icon: Clock3, suffix: ' h' },
+  { key: 'activeVolunteers', label: 'Voluntarios únicos', Icon: Users },
   { key: 'finishedActivities', label: 'Actividades finalizadas', Icon: CalendarCheck2 },
-  { key: 'beneficiaries', label: 'Personas beneficiadas', Icon: HandHeart },
-  { key: 'totalFavorites', label: 'Favoritos acumulados', Icon: Heart },
+  { key: 'activePartners', label: 'Entidades colaboradoras', Icon: Building2 },
 ];
 
 export function formatDashboardNumber(value) {
@@ -22,13 +22,23 @@ export function formatDashboardNumber(value) {
   return new Intl.NumberFormat('es-ES', { maximumFractionDigits: 2 }).format(numericValue);
 }
 
-export default function KpiRow({ metrics = {} }) {
+export function formatDashboardVariation(value) {
+  const numericValue = Number(value);
+  if (!Number.isFinite(numericValue)) return null;
+  const sign = numericValue > 0 ? '+' : '';
+  return `${sign}${formatDashboardNumber(numericValue)} %`;
+}
+
+export default function KpiRow({ metrics = {}, variations = {} }) {
   return (
-    <section className="kpi-row" aria-label="Indicadores principales">
+    <div className="kpi-row" role="list" aria-label="Indicadores principales de impacto">
       {KPI_DEFINITIONS.map(({ key, label, Icon, suffix = '' }) => {
         const formattedValue = formatDashboardNumber(metrics[key]);
+        const variation = Number(variations[key]);
+        const formattedVariation = formatDashboardVariation(variations[key]);
+        const VariationIcon = variation < 0 ? TrendingDown : TrendingUp;
         return (
-          <Card as="div" className="kpi-card" key={key}>
+          <Card as="article" className="kpi-card" key={key} role="listitem">
             <Icon className="kpi-card__icon" aria-hidden="true" size={24} />
             <dl>
               <div>
@@ -36,9 +46,15 @@ export default function KpiRow({ metrics = {} }) {
                 <dd>{formattedValue}{formattedValue === '—' ? '' : suffix}</dd>
               </div>
             </dl>
+            {formattedVariation && (
+              <p className={`kpi-card__variation kpi-card__variation--${variation < 0 ? 'negative' : 'positive'}`}>
+                <VariationIcon aria-hidden="true" size={16} />
+                <span>{formattedVariation} respecto al trimestre anterior</span>
+              </p>
+            )}
           </Card>
         );
       })}
-    </section>
+    </div>
   );
 }

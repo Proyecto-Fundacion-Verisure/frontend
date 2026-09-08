@@ -7,10 +7,10 @@
 | Bloque | Tiempo | Responsable | Contenido | Transición |
 |--------|--------|-------------|-----------|------------|
 | **0. Intro problema** | 0:00-1:00 | Fabileoruf | Voluntariado descoordinado, 2 roles insuficientes, 24 historias → áreas pública, empleado, PARTNER y admin | “Elena muestra la solución” |
-| **1. Solución** | 1:00-2:30 | Elena | Arquitectura React 19 + Vite + Sass 7-1, `RegistrationsContext`/`FavoritesContext`, `Modal` accesible y 43 suites/254 tests | Click a `/` |
+| **1. Solución** | 1:00-2:30 | Elena | Arquitectura React 19 + Vite + Sass 7-1, `RegistrationsContext`/`FavoritesContext`, `Modal` accesible y 45 suites/256 tests | Click a `/` |
 | **2. Demo general** | 2:30-4:30 | Elena | **Público:** `/` → `/proposal` (201) → `/register-organization` (201) <br> **Empleado:** `/activities` filtros+Heart → `/activities/1` sticky+`RegisterButton` WAITLISTED q3 → `/my-activities` active/closed, cola, `Enviar cierre` | `localStorage.clear()` previo |
 | **3. Recorrido PARTNER 2 min** | 4:30-6:30 | Elena | Registro `POST /auth/register` → verificación `GET /auth/verify?token=` → ADMIN aprueba en `/admin/account-status` → PARTNER crea `DRAFT` en `/org/activities` y envía a revisión → ADMIN aprueba → EMPLOYEE se inscreve y envía `POST /closures` → PARTNER consulta `/org/reports` | Cronómetro 2:00 |
-| **4. Conclusiones** | 6:30-7:00 | Fabileoruf | Métricas: 22 pantallas, 43 suites, `DEMO.md` idempotente y flujo versionado | “Preguntas” |
+| **4. Conclusiones** | 6:30-7:00 | Fabileoruf | Métricas: 22 pantallas, 45 suites, `DEMO.md` idempotente y flujo versionado | “Preguntas” |
 
 **Ensayos (2 veces) — ver `docs/ENSAYOS.md`:**
 

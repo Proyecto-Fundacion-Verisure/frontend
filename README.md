@@ -29,7 +29,7 @@ Las variables que Vite expone al navegador deben empezar por `VITE_`. `.env.loca
 | --- | --- | --- |
 | `VITE_API_URL` | `http://localhost:8080/api` | URL base de Axios. |
 | `VITE_APP_ORIGIN` | `http://localhost:5173` | Origen local que debe admitir el CORS del backend. |
-| `VITE_USE_MOCKS` | `true` | Activa en desarrollo los mocks locales disponibles de autenticación y propuestas. Usa `false` para integración real. |
+| `VITE_USE_MOCKS` | `true` | Activa en desarrollo los mocks locales disponibles de autenticación, propuestas y dashboard. Usa `false` para integración real. |
 
 Después de cambiar una variable hay que reiniciar Vite. `VITE_USE_MOCKS` nunca habilita mocks en producción.
 
@@ -145,9 +145,9 @@ Los errores de validación por campo se muestran junto al control correspondient
 
 Hay dos capas diferentes:
 
-- Los mocks de desarrollo permiten recorrer el acceso y los flujos de propuestas disponibles sin levantar todo el backend. Se activan con `VITE_USE_MOCKS=true`.
+- Los mocks de desarrollo permiten recorrer el acceso y los flujos de propuestas y dashboard sin levantar todo el backend. Se activan con `VITE_USE_MOCKS=true`.
 - Los fixtures y mocks de `src/test/` se usan únicamente con Vitest; no forman parte del bundle de producción. Incluyen usuarios `ADMIN`, `EMPLOYEE` y `PARTNER`, estados de cuenta de entidad y respuestas de los principales dominios.
-- La integración real se activa con `VITE_USE_MOCKS=false` y requiere que `VITE_API_URL` apunte al backend. Los flujos sin mock local, incluido el dashboard, siempre usan la API.
+- La integración real se activa con `VITE_USE_MOCKS=false` y requiere que `VITE_API_URL` apunte al backend. Los flujos sin mock local siempre usan la API.
 
 No se deben añadir reglas de negocio a los mocks ni inferir campos que no estén en el contrato. Si el backend cambia, primero se actualizan el contrato y los fixtures, después la implementación.
 

@@ -26,7 +26,7 @@
 | Conclusiones | 0:30 | 0:30 | 0 | Cierre con `DEMO.md` idempotente |
 | **Total** | **7:00** | **7:03** | **+0:03** | **Apto** |
 
-**Evidencia:** Fotos cronómetro + notas registrador en `prototipo/ensayos/` (pendiente subir). Validación actual: 43 suites y 254 tests; `vite build` transforma 1972 módulos.
+**Evidencia:** Fotos cronómetro + notas registrador en `prototipo/ensayos/` (pendiente subir). Validación actual: 45 suites y 256 tests; `vite build` transforma 1975 módulos.
 
 ## Checklist pre-defensa
 

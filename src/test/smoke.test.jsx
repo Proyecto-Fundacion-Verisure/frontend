@@ -77,7 +77,7 @@ describe('smoke — recorrido público, empleado, administrador', () => {
         <DashboardPage />
       </MemoryRouter>
     );
-    expect(screen.getByRole('heading', { name: /panel de control/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /dashboard de impacto/i })).toBeInTheDocument();
   });
 
   it('demo data es coherente y sin secretos', async () => {
