@@ -44,8 +44,10 @@ export const domainErrors = {
     createApiError({ status: 409, code: 'ALREADY_REGISTERED', message: 'Ya estás inscrito en esta actividad.' }),
   registrationNotConfirmed: () =>
     createApiError({ status: 409, code: 'REGISTRATION_NOT_CONFIRMED', message: 'La inscripción no está confirmada.' }),
-  reportAlreadySubmitted: () =>
-    createApiError({ status: 409, code: 'REPORT_ALREADY_SUBMITTED', message: 'Ya has enviado el cierre para esta inscripción.' }),
+  activityNotClosed: () =>
+    createApiError({ status: 409, code: 'ACTIVITY_NOT_CLOSED', message: 'La actividad todavía no está cerrada.' }),
+  closureAlreadyClosed: () =>
+    createApiError({ status: 409, code: 'CLOSURE_ALREADY_CLOSED', message: 'El cierre ya está completado.' }),
   proposalAlreadyDecided: () =>
     createApiError({ status: 409, code: 'PROPOSAL_ALREADY_DECIDED', message: 'La propuesta ya ha sido decidida.' }),
   accountNotVerified: () =>

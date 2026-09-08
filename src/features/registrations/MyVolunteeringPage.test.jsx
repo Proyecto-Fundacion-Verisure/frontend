@@ -29,8 +29,8 @@ const activeItems = [
     status: 'WAITLISTED',
     queuePosition: 3,
     accepted: false,
-    reportId: null,
-    reportStatus: null,
+    closureId: null,
+    activityClosed: false,
   },
   {
     registrationId: 103,
@@ -38,8 +38,24 @@ const activeItems = [
     status: 'WAITLISTED',
     queuePosition: 1,
     accepted: true,
-    reportId: 502,
-    reportStatus: 'RETURNED',
+    closureId: null,
+    activityClosed: false,
+  },
+  {
+    registrationId: 105,
+    activity: { id: 5, title: 'Mentoría terminada', partner: 'Educamos Juntos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
+    status: 'PENDING_CLOSURE',
+    accepted: true,
+    closureId: null,
+    activityClosed: false,
+  },
+  {
+    registrationId: 106,
+    activity: { id: 6, title: 'Cierre enviado', partner: 'Fundación Cerca', startDate: '2026-07-01', endDate: '2026-07-02', hours: 4 },
+    status: 'PENDING_CLOSURE',
+    accepted: true,
+    closureId: 502,
+    activityClosed: false,
   },
 ];
 
@@ -49,8 +65,8 @@ const closedItems = [
     activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
     status: 'CLOSED',
     queuePosition: null,
-    reportId: 501,
-    reportStatus: 'VALIDATED',
+    closureId: 501,
+    activityClosed: true,
   },
 ];
 
@@ -73,7 +89,7 @@ describe('MyVolunteeringPage', () => {
   });
 
   it('maneja error con reintentar', async () => {
-    getMyRegistrations.mockRejectedValueOnce(new Error('Fallo de red')).mockResolvedValueOnce({ data: { active: [], closed: [] } });
+    getMyRegistrations.mockRejectedValueOnce(new Error('Fallo de red')).mockResolvedValueOnce({ data: [] });
     renderPage();
     expect(await screen.findByText(/fallo de red/i)).toBeInTheDocument();
     const user = userEvent.setup();
@@ -82,45 +98,39 @@ describe('MyVolunteeringPage', () => {
   });
 
   it('muestra ambos bloques vacíos cuando backend devuelve vacíos', async () => {
-    getMyRegistrations.mockResolvedValue({ data: { active: [], closed: [] } });
+    getMyRegistrations.mockResolvedValue({ data: [] });
     renderPage();
     expect(await screen.findByText(/no tienes inscripciones/i)).toBeInTheDocument();
   });
 
-  it('renderiza bloques activos y cerrados exactamente como backend sin filtros', async () => {
-    getMyRegistrations.mockResolvedValue({ data: { active: activeItems, closed: closedItems } });
+  it('separa la lista plana del backend en bloques activos y cerrados', async () => {
+    getMyRegistrations.mockResolvedValue({ data: [...activeItems, ...closedItems] });
     renderPage();
     expect(await screen.findByRole('heading', { name: /^activas$/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /^cerradas$/i })).toBeInTheDocument();
     // cada inscripción aparece en su bloque
     expect(screen.getByText('Acompañamiento a mayores')).toBeInTheDocument();
-    expect(screen.getAllByText('Jornada ambiental').length).toBe(2);
+    expect(screen.getAllByText('Jornada ambiental')).toHaveLength(2);
     // no hay filtros
     expect(screen.queryByLabelText(/filtrar/i)).not.toBeInTheDocument();
     expect(screen.queryByPlaceholderText(/buscar/i)).not.toBeInTheDocument();
   });
 
   it('muestra posición de cola y acciones pendiente según MyRegistrationItem', async () => {
-    getMyRegistrations.mockResolvedValue({ data: { active: activeItems, closed: closedItems } });
+    getMyRegistrations.mockResolvedValue({ data: [...activeItems, ...closedItems] });
     renderPage();
     await screen.findByText('Acompañamiento a mayores');
     expect(screen.getByText('Posición en cola: 3')).toBeInTheDocument();
     expect(screen.getByText('Posición en cola: 1')).toBeInTheDocument();
-    // Enviar cierre si no existe informe
-    const enviar = screen.getByTestId('action-enviar-101');
-    expect(enviar).toHaveTextContent('Enviar cierre');
-    expect(enviar).toHaveAttribute('href', expect.stringContaining('101'));
-    // Corregir y reenviar si RETURNED
-    const corregir = screen.getByTestId('action-corregir-103');
-    expect(corregir).toHaveTextContent('Corregir y reenviar');
-    expect(corregir).toHaveAttribute('href', '/reports/502');
-    // Ver cierre para VALIDATED usa reportId
-    const ver = screen.getByTestId('action-ver-104');
-    expect(ver).toHaveAttribute('href', '/reports/501');
+    const enviar = screen.getByTestId('action-enviar-105');
+    expect(enviar).toHaveTextContent('Cerrar tu participación');
+    expect(enviar).toHaveAttribute('href', '/closures/new?registrationId=105');
+    expect(screen.getByTestId('action-ver-106')).toHaveAttribute('href', '/closures/502');
+    expect(screen.getByTestId('action-cert-104')).toHaveAttribute('href', '/closures/501/certificate');
   });
 
   it('no reclasifica estados con reglas duplicadas', async () => {
-    getMyRegistrations.mockResolvedValue({ data: { active: [activeItems[0]], closed: [closedItems[0]] } });
+    getMyRegistrations.mockResolvedValue({ data: [activeItems[0], closedItems[0]] });
     renderPage();
     await screen.findByText('Acompañamiento a mayores');
     const activeSection = screen.getByRole('heading', { name: /^activas$/i }).closest('section');
@@ -129,11 +139,11 @@ describe('MyVolunteeringPage', () => {
     expect(closedSection).toHaveTextContent(/cerrado/i);
     // ensure active item not in closed and vice versa
     expect(activeSection).not.toHaveTextContent('Ver cierre');
-    expect(closedSection).toHaveTextContent('Ver cierre');
+    expect(closedSection).toHaveTextContent('Descargar certificado');
   });
 
   it('diferencia aceptada de todavía sin revisar via accepted', async () => {
-    getMyRegistrations.mockResolvedValue({ data: { active: activeItems, closed: [] } });
+    getMyRegistrations.mockResolvedValue({ data: activeItems });
     renderPage();
     await screen.findByText('Acompañamiento a mayores');
     // 101 accepted false -> Pendiente de revisión
@@ -148,8 +158,8 @@ describe('MyVolunteeringPage', () => {
   it('actualiza posición tras promoción o cancelación', async () => {
     const first = { ...activeItems[0], queuePosition: 3, accepted: false };
     const promoted = { ...activeItems[0], queuePosition: 2, accepted: true };
-    getMyRegistrations.mockResolvedValueOnce({ data: { active: [first], closed: [] } });
-    getMyRegistrations.mockResolvedValueOnce({ data: { active: [promoted], closed: [] } });
+    getMyRegistrations.mockResolvedValueOnce({ data: [first] });
+    getMyRegistrations.mockResolvedValueOnce({ data: [promoted] });
     cancelRegistration.mockResolvedValue({ data: { registrationId: 999, status: 'CANCELLED' } });
     renderPage();
     expect(await screen.findByText('Posición en cola: 3')).toBeInTheDocument();
@@ -165,7 +175,7 @@ describe('MyVolunteeringPage', () => {
   });
 
   it('cancelar modal no modifica datos', async () => {
-    getMyRegistrations.mockResolvedValue({ data: { active: [activeItems[0]], closed: [] } });
+    getMyRegistrations.mockResolvedValue({ data: [activeItems[0]] });
     renderPage();
     await screen.findByText('Acompañamiento a mayores');
     const user = userEvent.setup();
@@ -180,7 +190,7 @@ describe('MyVolunteeringPage', () => {
   it('ejecuta un solo PATCH al confirmar y oculta acción tras fecha de inicio', async () => {
     const future = { registrationId: 201, activity: { id: 10, title: 'Futura', partner: 'P', startDate: '2099-01-01', endDate: '2099-01-02', hours: 2 }, status: 'WAITLISTED', queuePosition: 2, accepted: false };
     const past = { registrationId: 202, activity: { id: 11, title: 'Pasada', partner: 'P', startDate: '2020-01-01', endDate: '2020-01-02', hours: 2 }, status: 'WAITLISTED', queuePosition: 2, accepted: false };
-    getMyRegistrations.mockResolvedValue({ data: { active: [future, past], closed: [] } });
+    getMyRegistrations.mockResolvedValue({ data: [future, past] });
     let resolveCancel;
     cancelRegistration.mockImplementation(() => new Promise((res) => { resolveCancel = res; }));
     renderPage();
@@ -198,7 +208,7 @@ describe('MyVolunteeringPage', () => {
   });
 
   it('trata DEADLINE_PASSED y NOT_OWNER sin cambiar interfaz', async () => {
-    getMyRegistrations.mockResolvedValue({ data: { active: [activeItems[0]], closed: [] } });
+    getMyRegistrations.mockResolvedValue({ data: [activeItems[0]] });
     renderPage();
     await screen.findByText('Acompañamiento a mayores');
     const user = userEvent.setup();

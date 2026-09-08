@@ -4,10 +4,76 @@ import {
   getPendingOrganizations,
   approveOrganization,
   rejectOrganization,
+  resendOrganizationRegistrationEmail,
 } from '../../api/orgApi';
+import { useAuth } from '../auth/AuthContext';
+
+const PARTNER_STATUS_COPY = {
+  PENDING_VERIFICATION: {
+    title: 'Verifica tu correo electrónico',
+    description: 'Te hemos enviado un enlace para confirmar la dirección de correo de la entidad.',
+  },
+  PENDING_APPROVAL: {
+    title: 'Cuenta pendiente de aprobación',
+    description: 'La Fundación está revisando la solicitud de tu entidad.',
+  },
+  REJECTED: {
+    title: 'Solicitud rechazada',
+    description: 'Contacta con la Fundación si necesitas más información sobre la decisión.',
+  },
+};
+
+function PartnerAccountStatus({ user }) {
+  const [resendState, setResendState] = useState('idle');
+  const copy = PARTNER_STATUS_COPY[user.status] ?? PARTNER_STATUS_COPY.PENDING_APPROVAL;
+
+  const resend = async () => {
+    setResendState('loading');
+    try {
+      await resendOrganizationRegistrationEmail(user.email);
+      setResendState('success');
+    } catch {
+      setResendState('error');
+    }
+  };
+
+  return (
+    <section className="account-status" aria-labelledby="partner-account-status-title">
+      <h1 id="partner-account-status-title" className="account-status__title">{copy.title}</h1>
+      <p>{copy.description}</p>
+      {user.status === 'PENDING_VERIFICATION' && (
+        <Button
+          onClick={resend}
+          isLoading={resendState === 'loading'}
+          loadingLabel="Reenviando…"
+        >
+          Reenviar correo de verificación
+        </Button>
+      )}
+      {resendState === 'success' && <p role="status">Correo reenviado.</p>}
+      {resendState === 'error' && <p role="alert">No hemos podido reenviar el correo.</p>}
+    </section>
+  );
+}
 
 export default function AccountStatusPage() {
+  const auth = useAuth();
+  if (auth?.user?.role === 'PARTNER') return <PartnerAccountStatus user={auth.user} />;
+  if (!auth?.user) {
+    return (
+      <EmptyState
+        title="Estado de la cuenta"
+        description="Inicia sesión para consultar el estado de tu entidad."
+      />
+    );
+  }
+  return <AdminAccountStatusPage />;
+}
+
+function AdminAccountStatusPage() {
   const [organizations, setOrganizations] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionPending, setActionPending] = useState(null);
@@ -21,9 +87,14 @@ export default function AccountStatusPage() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    getPendingOrganizations()
+    setError(null);
+    getPendingOrganizations({ status: 'PENDING', page: page - 1 })
       .then((res) => {
-        if (!cancelled) setOrganizations(res.data);
+        const organizations = res.data?.content ?? res.data;
+        if (!cancelled) {
+          setOrganizations(Array.isArray(organizations) ? organizations : []);
+          setTotalPages(Math.max(Number(res.data?.totalPages) || 1, 1));
+        }
       })
       .catch(() => {
         if (!cancelled) setError('No se pudieron cargar las organizaciones pendientes.');
@@ -32,7 +103,7 @@ export default function AccountStatusPage() {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, []);
+  }, [page]);
 
   const openConfirm = (orgId, orgName, action) => {
     setConfirmModal({ isOpen: true, orgId, orgName, action });
@@ -95,7 +166,7 @@ export default function AccountStatusPage() {
           <Card key={org.id} className="account-status__card">
             <div className="account-status__card-main">
               <div className="account-status__card-header">
-                <h2 className="account-status__org-name">{org.organizationName}</h2>
+                <h2 className="account-status__org-name">{org.organizationName ?? org.name}</h2>
                 <span className="account-status__badge badge badge--warning">Pendiente</span>
               </div>
 
@@ -134,7 +205,7 @@ export default function AccountStatusPage() {
                 variant="primary"
                 isLoading={actionPending === org.id}
                 loadingLabel="Procesando"
-                onClick={() => openConfirm(org.id, org.organizationName, 'accept')}
+                onClick={() => openConfirm(org.id, org.organizationName ?? org.name, 'accept')}
               >
                 Aceptar
               </Button>
@@ -142,7 +213,7 @@ export default function AccountStatusPage() {
                 variant="danger"
                 isLoading={actionPending === org.id}
                 loadingLabel="Procesando"
-                onClick={() => openConfirm(org.id, org.organizationName, 'reject')}
+                onClick={() => openConfirm(org.id, org.organizationName ?? org.name, 'reject')}
               >
                 Rechazar
               </Button>
@@ -150,6 +221,24 @@ export default function AccountStatusPage() {
           </Card>
         ))}
       </div>
+
+      <nav aria-label="Paginación de cuentas pendientes">
+        <span>Página {page} de {totalPages}</span>
+        <Button
+          variant="secondary"
+          disabled={page <= 1}
+          onClick={() => setPage((current) => current - 1)}
+        >
+          Anterior
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={page >= totalPages}
+          onClick={() => setPage((current) => current + 1)}
+        >
+          Siguiente
+        </Button>
+      </nav>
 
       <Modal
         isOpen={confirmModal.isOpen}

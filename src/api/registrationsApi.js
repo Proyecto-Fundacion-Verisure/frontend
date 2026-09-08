@@ -5,25 +5,28 @@ const MOCK_MY_REGISTRATIONS_ACTIVE = [
     registrationId: 101,
     activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: '2026-09-10', endDate: '2026-09-17', hours: 8 },
     status: 'WAITLISTED',
+    accepted: false,
     queuePosition: 3,
-    reportId: null,
-    reportStatus: null,
+    closureId: null,
+    activityClosed: false,
   },
   {
     registrationId: 102,
     activity: { id: 2, title: 'Taller educativo', partner: 'Educamos Juntos', startDate: '2026-09-12', endDate: '2026-09-13', hours: 6 },
     status: 'CONFIRMED',
+    accepted: true,
     queuePosition: null,
-    reportId: null,
-    reportStatus: null,
+    closureId: null,
+    activityClosed: false,
   },
   {
     registrationId: 103,
     activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
-    status: 'WAITLISTED',
-    queuePosition: 1,
-    reportId: 502,
-    reportStatus: 'RETURNED',
+    status: 'PENDING_CLOSURE',
+    accepted: true,
+    queuePosition: null,
+    closureId: null,
+    activityClosed: false,
   },
 ];
 
@@ -32,16 +35,17 @@ const MOCK_MY_REGISTRATIONS_CLOSED = [
     registrationId: 104,
     activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
     status: 'CLOSED',
+    accepted: true,
     queuePosition: null,
-    reportId: 501,
-    reportStatus: 'VALIDATED',
+    closureId: 501,
+    activityClosed: true,
   },
 ];
 
-const MOCK_MY_REGISTRATIONS = {
-  active: MOCK_MY_REGISTRATIONS_ACTIVE,
-  closed: MOCK_MY_REGISTRATIONS_CLOSED,
-};
+const MOCK_MY_REGISTRATIONS = [
+  ...MOCK_MY_REGISTRATIONS_ACTIVE,
+  ...MOCK_MY_REGISTRATIONS_CLOSED,
+];
 
 const MOCK_ACTIVITY_REGISTRATIONS = [
   { registrationId: 201, name: 'Ana Torres', department: 'Tecnología', organization: 'VERISURE_ES', yearHours: 12, status: 'WAITLISTED', accepted: false, queuePosition: 2 },
@@ -57,14 +61,11 @@ function mockGetActivityRegistrations(activityId) {
   const registrations = MOCK_ACTIVITY_REGISTRATIONS.map((registration) => ({ ...registration }));
   return Promise.resolve({
     data: {
-      activity: { id: Number(activityId), title: 'Acompañamiento a mayores', spots: 1 },
-      counters: {
-        confirmed: registrations.filter((item) => item.status === 'CONFIRMED').length,
-        waitlisted: registrations.filter((item) => item.status === 'WAITLISTED').length,
-        acceptedWaitlisted: registrations.filter((item) => item.status === 'WAITLISTED' && item.accepted).length,
-        unreviewed: registrations.filter((item) => item.status === 'WAITLISTED' && !item.accepted).length,
-      },
-      registrations,
+      content: registrations,
+      number: 0,
+      size: registrations.length,
+      totalElements: registrations.length,
+      totalPages: registrations.length ? 1 : 0,
     },
   });
 }
@@ -113,10 +114,14 @@ export const createRegistration = (activityId) => client.post('/registrations', 
 export const getMyRegistrations = () =>
   isMockEnabled() ? mockGetMyRegistrations() : client.get('/registrations/me');
 
-export const getActivityRegistrations = (activityId) =>
+export const getActivityRegistrations = (activityId, { status, page } = {}) =>
   isMockEnabled()
     ? mockGetActivityRegistrations(activityId)
-    : client.get(`/activities/${activityId}/registrations`);
+    : client.get('/admin/registrations', {
+      params: Object.fromEntries(Object.entries({ activityId, status, page }).filter(([, value]) => (
+        value !== undefined && value !== null && value !== ''
+      ))),
+    });
 
 export const acceptRegistration = (registrationId) =>
   isMockEnabled()

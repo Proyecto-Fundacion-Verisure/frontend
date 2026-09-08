@@ -12,17 +12,17 @@ function renderSidebar(role) {
   );
 }
 
-describe('Sidebar ORG navigation', () => {
-  it('renders exactly three links for ORG role', () => {
-    renderSidebar('ORG');
+describe('Sidebar PARTNER navigation', () => {
+  it('renders exactly three links for PARTNER role', () => {
+    renderSidebar('PARTNER');
 
     expect(screen.getByText('Mis actividades')).toBeInTheDocument();
     expect(screen.getByText('Informes')).toBeInTheDocument();
     expect(screen.getByText('Mis propuestas')).toBeInTheDocument();
   });
 
-  it('does not render admin-only links for ORG', () => {
-    renderSidebar('ORG');
+  it('does not render admin-only links for PARTNER', () => {
+    renderSidebar('PARTNER');
 
     expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
     expect(screen.queryByText('Crear actividad')).not.toBeInTheDocument();

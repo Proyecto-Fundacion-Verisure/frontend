@@ -9,11 +9,11 @@ const MOCK_USERS = {
   },
   ong: {
     id: 3, name: 'Fundación Social', email: 'ong@fundacion.org',
-    role: 'ORG', department: null, organization: null, status: 'ACTIVE',
+    role: 'PARTNER', department: null, organization: null, status: 'ACTIVE',
   },
   pendiente: {
     id: 4, name: 'Entidad Pendiente', email: 'pendiente@entidad.org',
-    role: 'ORG', department: null, organization: null, status: 'PENDING_APPROVAL',
+    role: 'PARTNER', department: null, organization: null, status: 'PENDING_APPROVAL',
   },
 };
 

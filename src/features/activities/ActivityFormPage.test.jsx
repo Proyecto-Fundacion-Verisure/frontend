@@ -7,7 +7,10 @@ import {
   getAdminActivity,
   publishActivity,
   updateActivity,
+  uploadActivityImage,
 } from '../../api/activitiesApi';
+import { createOrgActivity } from '../../api/orgApi';
+import { AuthContext } from '../auth/AuthContext';
 import ActivityFormPage from './ActivityFormPage';
 
 vi.mock('../../api/activitiesApi', () => ({
@@ -15,6 +18,13 @@ vi.mock('../../api/activitiesApi', () => ({
   getAdminActivity: vi.fn(),
   publishActivity: vi.fn(),
   updateActivity: vi.fn(),
+  uploadActivityImage: vi.fn(),
+}));
+
+vi.mock('../../api/orgApi', () => ({
+  createOrgActivity: vi.fn(),
+  submitOrgActivity: vi.fn(),
+  updateOrgActivity: vi.fn(),
 }));
 
 function renderForm() {
@@ -31,6 +41,16 @@ function renderEditForm() {
       <Routes>
         <Route path="/activities/:activityId/edit" element={<ActivityFormPage />} />
       </Routes>
+    </MemoryRouter>,
+  );
+}
+
+function renderPartnerForm() {
+  return render(
+    <MemoryRouter initialEntries={['/org/activities/new']}>
+      <AuthContext.Provider value={{ user: { role: 'PARTNER', status: 'ACTIVE' } }}>
+        <ActivityFormPage backPath="/org/activities" />
+      </AuthContext.Provider>
     </MemoryRouter>,
   );
 }
@@ -67,6 +87,8 @@ beforeEach(() => {
   getAdminActivity.mockReset();
   publishActivity.mockReset();
   updateActivity.mockReset();
+  uploadActivityImage.mockReset();
+  createOrgActivity.mockReset();
 });
 
 describe('ActivityFormPage', () => {
@@ -128,6 +150,23 @@ describe('ActivityFormPage', () => {
     }));
     expect(publishActivity).not.toHaveBeenCalled();
     expect(await screen.findByRole('heading', { name: /tu borrador está guardado/i })).toBeInTheDocument();
+  });
+
+  it('creates partner drafts through /org without exposing the admin upload', async () => {
+    createOrgActivity.mockResolvedValue({ data: { id: 51, status: 'DRAFT' }, status: 201 });
+    const user = userEvent.setup();
+    renderPartnerForm();
+    await fillValidForm(user);
+
+    expect(screen.queryByLabelText(/^imagen de portada$/i)).not.toBeInTheDocument();
+    expect(screen.getByLabelText(/url de imagen/i)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /guardar borrador/i }));
+
+    await waitFor(() => expect(createOrgActivity).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Taller de code',
+      line: 'educar',
+    })));
+    expect(createActivity).not.toHaveBeenCalled();
   });
 
   it('asks for confirmation, persists once and publishes with the returned id', async () => {

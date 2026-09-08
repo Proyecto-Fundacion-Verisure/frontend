@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import logo from '../../assets/images/logo-fundacion-verisure.png';
-import { getCertificate } from '../../api/reportsApi';
+import { getCertificate } from '../../api/closuresApi';
 import { Button, Spinner } from '../../components/ui';
 
 const LINE_LABELS = {
@@ -21,7 +21,7 @@ function formatDate(value) {
 }
 
 export default function CertificatePage() {
-  const { reportId } = useParams();
+  const { closureId } = useParams();
   const [certificate, setCertificate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,14 +30,14 @@ export default function CertificatePage() {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await getCertificate(reportId);
+      const { data } = await getCertificate(closureId);
       setCertificate(data);
     } catch (requestError) {
       setError(requestError);
     } finally {
       setLoading(false);
     }
-  }, [reportId]);
+  }, [closureId]);
 
   useEffect(() => {
     loadCertificate();
@@ -53,7 +53,7 @@ export default function CertificatePage() {
 
   if (error) {
     const isNotOwner = error.status === 403 || error.code === 'NOT_OWNER';
-    const isNotValidated = error.status === 409 || error.code === 'REPORT_NOT_VALIDATED';
+    const isNotValidated = error.status === 409 || error.code === 'ACTIVITY_NOT_CLOSED';
     const title = isNotOwner
       ? 'No puedes consultar este certificado'
       : isNotValidated
@@ -103,8 +103,8 @@ export default function CertificatePage() {
               <dd>{formatDate(certificate.startDate)} — {formatDate(certificate.endDate)}</dd>
             </div>
             <div className="certificate__hours">
-              <dt>Horas validadas</dt>
-              <dd>{certificate.validatedHours}</dd>
+            <dt>Horas realizadas</dt>
+            <dd>{certificate.actualHours ?? certificate.hours ?? '—'}</dd>
             </div>
             <div>
               <dt>Fecha de expedición</dt>

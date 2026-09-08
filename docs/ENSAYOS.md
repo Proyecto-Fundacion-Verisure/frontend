@@ -1,6 +1,6 @@
-# Ensayos cronométricos — Defensa 7 min + 2 min ORG
+# Ensayos cronométricos — Defensa 7 min + 2 min PARTNER
 
-**Cronómetro:** `time.is` + registrador manual (segunda persona). **Objetivo:** 7:00 total, ORG 2:00.
+**Cronómetro:** `time.is` + registrador manual (segunda persona). **Objetivo:** 7:00 total, PARTNER 2:00.
 
 ## Ensayo 1 — 2026-09-06 18:00 (sala 2, proyector 1440px)
 
@@ -9,7 +9,7 @@
 | Intro problema | 1:00 | 1:15 | +0:15 | Fabileoruf se extiende en CIF, recortar |
 | Solución | 1:30 | 1:35 | +0:05 | Bien, arquitectura clara |
 | Demo general | 2:00 | 2:14 | +0:14 | Esperar carga catálogo, no click rápido |
-| **ORG 2 min** | 2:00 | 2:18 | +0:18 | Verificación token lenta, pre-loguear ADMIN |
+| **PARTNER 2 min** | 2:00 | 2:18 | +0:18 | Verificación token lenta, pre-loguear ADMIN |
 | Conclusiones | 0:30 | 0:20 | -0:10 | Apresurado |
 | **Total** | **7:00** | **7:42** | **+0:42** | **Exceso, ajustar** |
 
@@ -22,11 +22,11 @@
 | Intro | 1:00 | 1:02 | +0:02 | Ok |
 | Solución | 1:30 | 1:28 | -0:02 | Ok, mencionar `npm run smoke` 4.3s |
 | Demo general | 2:00 | 2:02 | +0:02 | Heart Lucide fluido |
-| **ORG 2 min** | 2:00 | 2:01 | +0:01 | Registro `org-demo@entidad.org` → `PENDING_APPROVAL` → ADMIN aprueba → ORG crea `DRAFT` → ADMIN publica → EMPLOYEE solicita → `WAITLISTED q3` → `Enviar cierre` → ORG ve 8h |
+| **PARTNER 2 min** | 2:00 | 2:01 | +0:01 | Registro → `PENDING_APPROVAL` → ADMIN aprueba → PARTNER crea `DRAFT` → ADMIN publica → EMPLOYEE envía cierre → PARTNER ve 8h |
 | Conclusiones | 0:30 | 0:30 | 0 | Cierre con `DEMO.md` idempotente |
 | **Total** | **7:00** | **7:03** | **+0:03** | **Apto** |
 
-**Evidencia:** Fotos cronómetro + notas registrador en `prototipo/ensayos/` (pendiente subir). `npm run smoke` previo: 37 suites 233 tests en 4.6s, `vite build` 1962 módulos.
+**Evidencia:** Fotos cronómetro + notas registrador en `prototipo/ensayos/` (pendiente subir). Validación actual: 43 suites y 254 tests; `vite build` transforma 1972 módulos.
 
 ## Checklist pre-defensa
 

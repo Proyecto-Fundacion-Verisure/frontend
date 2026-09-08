@@ -1,7 +1,6 @@
 export const ROLE_HOME_PATHS = {
   ADMIN: '/dashboard',
   EMPLOYEE: '/activities',
-  ORG: '/org/activities',
   PARTNER: '/org/activities',
 };
 

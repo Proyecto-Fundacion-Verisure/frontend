@@ -25,6 +25,11 @@ const MODE_OPTIONS = [
 
 const ALLOWED_LINES = new Set(LINE_OPTIONS.map((o) => o.value).filter(Boolean));
 const ALLOWED_MODES = new Set(MODE_OPTIONS.map((o) => o.value).filter(Boolean));
+const normalizeDate = (value) => (
+  /^\d{4}-\d{2}-\d{2}$/.test(value ?? '') && !Number.isNaN(new Date(`${value}T00:00:00`).getTime())
+    ? value
+    : ''
+);
 
 export default function CatalogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -42,8 +47,8 @@ export default function CatalogPage() {
   const line = ALLOWED_LINES.has(rawLine) ? rawLine : '';
   const rawMode = searchParams.get('mode') || '';
   const mode = ALLOWED_MODES.has(rawMode) ? rawMode : '';
-  const q = (searchParams.get('q') || '').trim();
-
+  const from = normalizeDate(searchParams.get('from'));
+  const to = normalizeDate(searchParams.get('to'));
   const updateParams = useCallback(
     (patch, { resetPage = true } = {}) => {
       setSearchParams((prev) => {
@@ -52,7 +57,7 @@ export default function CatalogPage() {
           if (value) next.set(key, value);
           else next.delete(key);
         });
-        if (resetPage && ('line' in patch || 'mode' in patch || 'q' in patch)) {
+        if (resetPage && ['line', 'mode', 'from', 'to'].some((key) => key in patch)) {
           next.delete('page');
         }
         if (next.get('page') === '1') next.delete('page');
@@ -66,10 +71,11 @@ export default function CatalogPage() {
     setLoading(true);
     setError(null);
     try {
-      const params = { page, limit: LIMIT };
+      const params = { page: page - 1, size: LIMIT };
       if (line) params.line = line;
       if (mode) params.mode = mode;
-      if (q) params.q = q;
+      if (from) params.from = from;
+      if (to) params.to = to;
       const response = await getPublishedActivities(params);
       const data = response.data?.content ?? response.data;
       setActivities(Array.isArray(data) ? data : []);
@@ -83,7 +89,7 @@ export default function CatalogPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, line, mode, q]);
+  }, [page, line, mode, from, to]);
 
   useEffect(() => {
     if (registrationsCtx) return;
@@ -114,10 +120,11 @@ export default function CatalogPage() {
     setError(null);
     (async () => {
       try {
-        const params = { page, limit: LIMIT };
+        const params = { page: page - 1, size: LIMIT };
         if (line) params.line = line;
         if (mode) params.mode = mode;
-        if (q) params.q = q;
+        if (from) params.from = from;
+        if (to) params.to = to;
         const response = await getPublishedActivities(params);
         if (cancelled) return;
         const data = response.data?.content ?? response.data;
@@ -136,7 +143,7 @@ export default function CatalogPage() {
     return () => {
       cancelled = true;
     };
-  }, [page, line, mode, q]);
+  }, [page, line, mode, from, to]);
 
   const totalPages = Math.max(1, Math.ceil(totalCount / LIMIT));
 
@@ -192,7 +199,19 @@ export default function CatalogPage() {
             </option>
           ))}
         </Select>
-        <Input label="Buscar" placeholder="Título, organización…" value={q} onChange={(e) => updateParams({ q: e.target.value })} />
+        <Input
+          type="date"
+          label="Desde"
+          value={from}
+          onChange={(event) => updateParams({ from: event.target.value })}
+        />
+        <Input
+          type="date"
+          label="Hasta"
+          value={to}
+          min={from || undefined}
+          onChange={(event) => updateParams({ to: event.target.value })}
+        />
       </div>
 
       {activities.length === 0 ? (

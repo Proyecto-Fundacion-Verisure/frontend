@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAdminActivities } from '../../api/activitiesApi';
-import { Badge, Button, EmptyState, Input, Select, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, Select, Spinner, Table } from '../../components/ui';
 import CancelActivityButton from './CancelActivityButton';
+import PartnerActivityReviewActions from './PartnerActivityReviewActions';
 
 const PAGE_SIZE = 10;
 
@@ -54,8 +55,6 @@ function getPageData(response) {
 export default function ActivitiesListPage() {
   const [activities, setActivities] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
-  const [searchInput, setSearchInput] = useState('');
-  const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -69,9 +68,8 @@ export default function ActivitiesListPage() {
     const loadActivities = async () => {
       setRequestState({ status: 'loading', error: null });
       try {
-        const params = { page, limit: PAGE_SIZE };
+        const params = { page: page - 1 };
         if (statusFilter) params.status = statusFilter;
-        if (query) params.q = query;
 
         const response = await getAdminActivities(params);
         if (cancelled) return;
@@ -89,13 +87,7 @@ export default function ActivitiesListPage() {
     return () => {
       cancelled = true;
     };
-  }, [page, query, reloadKey, statusFilter]);
-
-  const handleSearch = (event) => {
-    event.preventDefault();
-    setPage(1);
-    setQuery(searchInput.trim());
-  };
+  }, [page, reloadKey, statusFilter]);
 
   const handleStatusChange = (event) => {
     setPage(1);
@@ -151,25 +143,39 @@ export default function ActivitiesListPage() {
       label: 'Acciones',
       render: (activity) => (
         <div className="activities-list__actions">
-          <Link
-            className="button button--secondary button--small"
-            to={`/activities/${activity.id}/edit`}
-          >
-            Editar
-          </Link>
+          {activity.status === 'PENDING_APPROVAL' ? (
+            <PartnerActivityReviewActions
+              activity={activity}
+              onReviewed={(result) => {
+                setNotice(result === 'approved'
+                  ? 'La actividad se ha aprobado correctamente.'
+                  : 'La actividad se ha devuelto a la entidad.');
+                setReloadKey((current) => current + 1);
+              }}
+            />
+          ) : activity.status === 'DRAFT' ? (
+            <Link
+              className="button button--secondary button--small"
+              to={`/activities/${activity.id}/edit`}
+            >
+              Editar
+            </Link>
+          ) : null}
           <Link
             className="button button--secondary button--small"
             to={`/activities/${activity.id}/registrations`}
           >
             Inscripciones
           </Link>
-          <CancelActivityButton
-            activity={activity}
-            onCancelled={() => {
-              setNotice('La actividad se ha cancelado correctamente.');
-              setReloadKey((current) => current + 1);
-            }}
-          />
+          {activity.status !== 'PENDING_APPROVAL' && (
+            <CancelActivityButton
+              activity={activity}
+              onCancelled={() => {
+                setNotice('La actividad se ha cancelado correctamente.');
+                setReloadKey((current) => current + 1);
+              }}
+            />
+          )}
         </div>
       ),
     },
@@ -189,16 +195,6 @@ export default function ActivitiesListPage() {
       </header>
 
       <div className="activities-list__toolbar">
-        <form className="activities-list__search" role="search" onSubmit={handleSearch}>
-          <Input
-            type="search"
-            label="Buscar actividades"
-            placeholder="Buscar por actividad o entidad"
-            value={searchInput}
-            onChange={(event) => setSearchInput(event.target.value)}
-          />
-          <Button type="submit" variant="secondary">Buscar</Button>
-        </form>
         <Select label="Filtrar por estado" value={statusFilter} onChange={handleStatusChange}>
           {STATUS_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>{option.label}</option>
@@ -237,8 +233,6 @@ export default function ActivitiesListPage() {
             <Button
               variant="secondary"
               onClick={() => {
-                setSearchInput('');
-                setQuery('');
                 setStatusFilter('');
                 setPage(1);
               }}

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { getActivityDetail } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
+import { useAuth } from '../auth/AuthContext';
 import { Badge, Button, Card, EmptyState, HeartButton, ProgressBar, Spinner } from '../../components/ui';
 import RegisterButton from '../registrations/RegisterButton';
 
@@ -19,6 +20,8 @@ export default function ActivityDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [localRegistration, setLocalRegistration] = useState(null);
+  const auth = useAuth();
+  const canParticipate = !auth?.user || auth.user.role === 'EMPLOYEE';
   const registrationsCtx = useRegistrationsOptional();
   const ctxRegistration = registrationsCtx ? registrationsCtx.getForActivity(activityId) : null;
   const currentRegistration = registrationsCtx ? ctxRegistration : localRegistration;
@@ -41,7 +44,7 @@ export default function ActivityDetailPage() {
   }, [fetchActivity]);
 
   useEffect(() => {
-    if (registrationsCtx) return;
+    if (registrationsCtx || !canParticipate) return;
     let cancelled = false;
     (async () => {
       try {
@@ -66,7 +69,7 @@ export default function ActivityDetailPage() {
     return () => {
       cancelled = true;
     };
-  }, [activityId, registrationsCtx]);
+  }, [activityId, canParticipate, registrationsCtx]);
 
   if (loading) {
     return (
@@ -125,10 +128,12 @@ export default function ActivityDetailPage() {
             <h1 id="activity-detail-title" className="activity-detail__title">
               {activity.title}
             </h1>
-            <HeartButton
-              active={favoritedByMe}
-              aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
-            />
+            {canParticipate && (
+              <HeartButton
+                active={favoritedByMe}
+                aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+              />
+            )}
           </div>
 
           <Card className="activity-detail__card">
@@ -159,7 +164,7 @@ export default function ActivityDetailPage() {
           </Card>
         </div>
 
-        <aside className="activity-detail__side" aria-label="Panel de inscripción">
+        {canParticipate && <aside className="activity-detail__side" aria-label="Panel de inscripción">
           <Card className="activity-detail__panel">
             <h2 className="activity-detail__panel-title">Inscripción</h2>
             {total > 0 && (
@@ -193,7 +198,7 @@ export default function ActivityDetailPage() {
               aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
             />
           </Card>
-        </aside>
+        </aside>}
       </div>
     </section>
   );

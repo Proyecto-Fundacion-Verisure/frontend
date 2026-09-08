@@ -6,7 +6,7 @@ import {
   rejectRegistration as rejectRegistrationRequest,
 } from '../../api/registrationsApi';
 
-export default function useRegistrations(activityId) {
+export default function useRegistrations(activityId, page = 0) {
   const pendingDecisions = useRef(new Set());
   const [board, setBoard] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,7 @@ export default function useRegistrations(activityId) {
     else setLoading(true);
     setError(null);
     try {
-      const { data } = await getActivityRegistrations(activityId);
+      const { data } = await getActivityRegistrations(activityId, { page });
       setBoard(data);
       return data;
     } catch (requestError) {
@@ -29,7 +29,7 @@ export default function useRegistrations(activityId) {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [activityId]);
+  }, [activityId, page]);
 
   useEffect(() => {
     load().catch(() => undefined);

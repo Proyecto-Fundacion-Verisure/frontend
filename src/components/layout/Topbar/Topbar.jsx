@@ -4,7 +4,7 @@ import { useAuth } from '../../../features/auth/AuthContext';
 const ROLE_LABELS = {
   ADMIN: 'Administrador',
   EMPLOYEE: 'Empleado',
-  ORG: 'Organización',
+  PARTNER: 'Entidad colaboradora',
 };
 
 function getInitials(name) {
@@ -19,7 +19,7 @@ export default function Topbar({ children }) {
   const { user, logout } = useAuth();
 
   const displayName =
-    user?.role === 'ORG' || user?.role === 'ORGANIZATION'
+    user?.role === 'PARTNER'
       ? (user?.organization ?? user?.name ?? user?.email ?? '')
       : (user?.name ?? user?.email ?? '');
   const roleLabel = ROLE_LABELS[user?.role] ?? user?.role;
