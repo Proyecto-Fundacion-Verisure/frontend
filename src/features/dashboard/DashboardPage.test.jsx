@@ -44,29 +44,38 @@ describe('DashboardPage', () => {
     api.getDashboard.mockResolvedValue({ data: DASHBOARD_RESPONSE });
   });
 
-  it('muestra los KPI, gráficos y tablas sin alterar el orden del backend', async () => {
+  it('muestra impacto, eficacia, distribución y demanda con los datos mock', async () => {
     renderDashboard(['/dashboard?year=2026&line=desoledad']);
 
-    expect(await screen.findByRole('region', { name: 'Indicadores principales' })).toBeInTheDocument();
+    expect(await screen.findByRole('list', { name: 'Indicadores principales de impacto' })).toBeInTheDocument();
     expect(api.getDashboard).toHaveBeenCalledWith(
       { year: 2026, line: 'desoledad' },
       { signal: expect.any(AbortSignal) },
     );
     expect(screen.getByText('2655 h')).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: /Horas por departamento/ })).toBeInTheDocument();
-    expect(screen.getByRole('region', { name: 'Tabla de horas por línea de acción' })).toBeInTheDocument();
+    expect(screen.getByText('Datos ficticios para validación')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Impacto' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Eficacia' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Distribución' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Demanda' })).toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { name: 'Participación de la plantilla' }))
+      .toHaveAttribute('aria-valuenow', '68');
+    expect(screen.getByRole('img', { name: /Participación por departamento/ })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Tabla de participación por departamento' }))
+      .toBeInTheDocument();
 
-    const rankingTable = screen.getByRole('region', { name: 'Tabla de actividades favoritas' });
-    const rows = within(rankingTable).getAllByRole('row');
-    expect(within(rows[1]).getByText('Acompañamiento a mayores')).toBeInTheDocument();
-    expect(within(rows[2]).getByText('Mentoría para el empleo')).toBeInTheDocument();
+    const ranking = screen.getByRole('list', { name: 'Top 10 de actividades favoritas' });
+    const rows = within(ranking).getAllByRole('listitem');
+    expect(rows).toHaveLength(10);
+    expect(within(rows[0]).getByText('Acompañamiento a mayores')).toBeInTheDocument();
+    expect(within(rows[1]).getByText('Mentoría para el empleo')).toBeInTheDocument();
   });
 
   it('aplica y limpia filtros en URL, consulta y descargas con los mismos valores', async () => {
     const user = userEvent.setup();
     api.exportParticipationsCsv.mockResolvedValue({ data: new Blob(['csv']) });
     renderDashboard();
-    await screen.findByRole('region', { name: 'Indicadores principales' });
+    await screen.findByRole('list', { name: 'Indicadores principales de impacto' });
 
     await user.type(screen.getByRole('spinbutton', { name: 'Año' }), '2026');
     await user.selectOptions(screen.getByRole('combobox', { name: 'Línea de acción' }), 'educar');
@@ -121,7 +130,7 @@ describe('DashboardPage', () => {
   it('normaliza parámetros inválidos sin enviarlos al backend', async () => {
     renderDashboard(['/dashboard?year=1800&line=inventada']);
 
-    await screen.findByRole('region', { name: 'Indicadores principales' });
+    await screen.findByRole('list', { name: 'Indicadores principales de impacto' });
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/dashboard'));
     expect(api.getDashboard).toHaveBeenCalledTimes(1);
     expect(api.getDashboard).toHaveBeenCalledWith({}, { signal: expect.any(AbortSignal) });
@@ -155,10 +164,10 @@ describe('DashboardPage', () => {
     unmount();
 
     api.getDashboard.mockResolvedValueOnce({
-      data: makeDashboardResponse({ hoursByDepartment: [], favoriteRanking: [] }),
+      data: makeDashboardResponse({ participationByDepartment: [], favoriteRanking: [] }),
     });
     renderDashboard();
-    expect(await screen.findByRole('heading', { name: 'Sin horas por departamento' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Sin participación por departamento' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Todavía no hay un ranking' })).toBeInTheDocument();
   });
 
@@ -175,6 +184,6 @@ describe('DashboardPage', () => {
     renderDashboard();
     expect(await screen.findByRole('alert')).toHaveTextContent('Error temporal.');
     await user.click(screen.getByRole('button', { name: 'Reintentar' }));
-    expect(await screen.findByRole('region', { name: 'Indicadores principales' })).toBeInTheDocument();
+    expect(await screen.findByRole('list', { name: 'Indicadores principales de impacto' })).toBeInTheDocument();
   });
 });

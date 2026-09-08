@@ -70,7 +70,7 @@ frontend/
 
 ## 4. Pruebas
 
-**Vitest `jsdom` + Testing Library, 43 suites / 254 tests (2026-09-07):**
+**Vitest `jsdom` + Testing Library, 45 suites / 256 tests (2026-09-08):**
 
 | Dominio | Pruebas destacadas |
 |---------|-------------------|
@@ -96,7 +96,7 @@ frontend/
 | Fuente diagrama | `prototipo/User_Flow_Verisure_3roles.drawio` (pendiente Figma) | Versionado |
 | Mockups | `verisure-mockups-v3 2/*.html` + `capturas/*` (44 PNG) | 7 vistas PARTNER nuevas |
 | Demo datos | `public/demo-data.json`, `scripts/restore-demo.js`, `docs/DEMO.md` | `npm run demo:reset` idempotente |
-| Código de roles | `src/routes/*`, `features/orgs/*`, `api/orgApi.js` | 43 suites |
+| Código de roles | `src/routes/*`, `features/orgs/*`, `api/orgApi.js` | 45 suites |
 | Entorno limpio | `.env.example`, `.gitignore` (`.env.local` no versionado) | `npm ci && npm run smoke` |
 
 `grep -R "entidad social" verisure-mockups-v3 2/*.html` → 0 en evaluable (solo copy público `LandingPage`).
