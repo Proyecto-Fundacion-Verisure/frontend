@@ -45,24 +45,6 @@
   gap: space('6');
 }
 
-.catalog__pagination {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: space('5');
-  font-size: $font-size-sm;
-  color: $color-muted;
-
-  > div {
-    display: flex;
-    gap: map-get($spacing, '5');
-  }
-}
-
-.catalog__pagination-info {
-  font-weight: $font-weight-medium;
-}
-
 @media (max-width: 64rem) {
   .catalog__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getProposals, rejectProposal } from '../../api/proposalsApi';
-import { Badge, Button, EmptyState, Select, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, Pagination, Select, Spinner, Table } from '../../components/ui';
 import { getActivityDraftPath } from './AcceptProposalButton';
 
 const STATUS_OPTIONS = [
@@ -207,27 +207,12 @@ export default function ProposalsInboxPage() {
             data={proposals}
             rowKey="id"
           />
-          <div className="proposals-inbox__pagination">
-            <span className="proposals-inbox__pagination-info">
-              Página {page} de {totalPages}
-            </span>
-            <div>
-              <Button
-                size="small"
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-              >
-                ← Anterior
-              </Button>
-              <Button
-                size="small"
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                Siguiente →
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            ariaLabel="Paginación de propuestas"
+          />
         </>
       )}
     </section>
