@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getPendingActivityClosures } from '../../api/closuresApi';
-import { Button, EmptyState, Spinner, Table } from '../../components/ui';
+import { Button, EmptyState, Pagination, Spinner, Table } from '../../components/ui';
 
 const PAGE_SIZE = 10;
 
@@ -77,11 +77,12 @@ export default function ReportsQueuePage() {
       {items.length ? (
         <>
           <Table caption="Actividades pendientes de cierre" columns={columns} data={items} rowKey="activityId" />
-          <nav aria-label="Paginación de cierres">
-            <span>Página {page} de {totalPages}</span>
-            <Button disabled={page <= 1} onClick={() => setPage((current) => current - 1)}>Anterior</Button>
-            <Button disabled={page >= totalPages} onClick={() => setPage((current) => current + 1)}>Siguiente</Button>
-          </nav>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            ariaLabel="Paginación de cierres"
+          />
         </>
       ) : (
         <EmptyState title="No hay cierres pendientes" description="Todas las actividades finalizadas están cerradas." />

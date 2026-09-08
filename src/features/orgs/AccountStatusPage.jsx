@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, Button, Modal, Spinner, EmptyState } from '../../components/ui';
+import { Card, Button, Modal, Pagination, Spinner, EmptyState } from '../../components/ui';
 import {
   getPendingOrganizations,
   approveOrganization,
@@ -222,23 +222,12 @@ function AdminAccountStatusPage() {
         ))}
       </div>
 
-      <nav aria-label="Paginación de cuentas pendientes">
-        <span>Página {page} de {totalPages}</span>
-        <Button
-          variant="secondary"
-          disabled={page <= 1}
-          onClick={() => setPage((current) => current - 1)}
-        >
-          Anterior
-        </Button>
-        <Button
-          variant="secondary"
-          disabled={page >= totalPages}
-          onClick={() => setPage((current) => current + 1)}
-        >
-          Siguiente
-        </Button>
-      </nav>
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        ariaLabel="Paginación de cuentas pendientes"
+      />
 
       <Modal
         isOpen={confirmModal.isOpen}

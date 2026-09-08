@@ -62,7 +62,7 @@ export default function ActivitiesListPage({
   showCreateButton = true,
   showPartnerColumn = DEFAULT_COLUMNS_CONFIG.showPartnerColumn,
   showRegistrationsLink = DEFAULT_COLUMNS_CONFIG.showRegistrationsLink,
-  title = 'Actividades',
+  title = 'Proyectos',
   eyebrow = 'Administración',
   createPath = '/activities/new',
 }) {
@@ -196,7 +196,7 @@ export default function ActivitiesListPage({
     },
   ];
 
-  const titleLower = title.slice(3);
+  const titleLower = title.replace(/^Mis /i, '').toLocaleLowerCase();
 
   return (
     <section className="activities-list" aria-labelledby="activities-list-title">
