@@ -40,21 +40,24 @@ const fileConfig = (params, config = {}, allowed = DASHBOARD_FILTERS) => request
 
 export const exportParticipationsCsv = (params = {}, config = {}) => {
   if (useDevelopmentMocks()) {
-    return mockResponse(new Blob(['activity,participants\nMock activity,598'], { type: 'text/csv' }), config);
+    const csv = `id,actividad,horas,departamento\n1,Actividad seudonimizada 1,8,Tecnología\n2,Actividad seudonimizada 2,5,Personas\n`;
+    return mockResponse(new Blob([csv], { type: 'text/csv' }), config);
   }
   return client.get('/dashboard/participations.csv', fileConfig(params, config));
 };
 
 export const exportPartnersCsv = (params = {}, config = {}) => {
   if (useDevelopmentMocks()) {
-    return mockResponse(new Blob(['partner,activities\nMock partner,24'], { type: 'text/csv' }), config);
+    const csv = `organizacion,actividades,horas\nOrg seudonimizada A,2,15\nOrg seudonimizada B,1,8\n`;
+    return mockResponse(new Blob([csv], { type: 'text/csv' }), config);
   }
   return client.get('/dashboard/partners.csv', fileConfig(params, config, YEAR_FILTER));
 };
 
 export const exportDashboardPdf = (params = {}, config = {}) => {
   if (useDevelopmentMocks()) {
-    return mockResponse(new Blob(['Mock dashboard report'], { type: 'application/pdf' }), config);
+    const pdfPlaceholder = `%PDF-1.4\n% Mock PDF for dashboard\n1 0 obj\n<< /Type /Catalog >>\nendobj\n`;
+    return mockResponse(new Blob([pdfPlaceholder], { type: 'application/pdf' }), config);
   }
   return client.get('/dashboard/report.pdf', fileConfig(params, config, YEAR_FILTER));
 };

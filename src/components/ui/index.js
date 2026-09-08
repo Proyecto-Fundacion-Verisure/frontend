@@ -5,6 +5,7 @@ export { default as EmptyState } from './EmptyState/EmptyState';
 export { default as HeartButton } from './HeartButton/HeartButton';
 export { default as Input } from './Input/Input';
 export { default as Modal } from './Modal/Modal';
+export { default as Pagination } from './Pagination/Pagination';
 export { default as ProgressBar } from './ProgressBar/ProgressBar';
 export { default as Select } from './Select/Select';
 export { default as Spinner } from './Spinner/Spinner';

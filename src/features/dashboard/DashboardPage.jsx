@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getDashboard } from '../../api/dashboardApi';
 import { Button, Card, EmptyState, Spinner } from '../../components/ui';
 import { ACTIVITY_LINES } from '../../constants/activityLines';
 import BarChart from './BarChart';
 import ChartTable from './ChartTable';
 import DashboardExports from './DashboardExports';
+import ExportMenu from './ExportMenu';
 import DashboardFilters, { isValidDashboardYear } from './DashboardFilters';
 import DashboardRanking from './DashboardRanking';
 import KpiRow, { KPI_DEFINITIONS, formatDashboardNumber } from './KpiRow';
@@ -207,8 +208,14 @@ export default function DashboardPage() {
             <span className="dashboard__demo-badge">Datos ficticios para validación</span>
           )}
         </div>
-        <p>Una visión clara del impacto, la eficacia, la distribución y la demanda del programa.</p>
+        <div className="dashboard__header-actions">
+          <Link to="/proposals" className="button button--secondary button--medium">
+            Ver propuestas recibidas
+          </Link>
+          <ExportMenu filters={filters} />
+        </div>
       </header>
+      <p className="dashboard__intro">Consulta el impacto de las participaciones cerradas y descarga los resultados.</p>
 
       <DashboardFilters
         year={year}

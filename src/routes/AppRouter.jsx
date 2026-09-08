@@ -4,16 +4,18 @@ import LoginPage from '../features/auth/LoginPage';
 import DashboardPage from '../features/dashboard/DashboardPage';
 import CatalogPage from '../features/activities/CatalogPage';
 import ActivitiesListPage from '../features/activities/ActivitiesListPage';
+import { getPartnerActivities } from '../api/activitiesApi';
 import UiShowcase from '../components/ui/UiShowcase/UiShowcase';
 import PublicLayout from '../components/layout/PublicLayout/PublicLayout';
 import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
 import ProposalForm from '../features/proposals/ProposalForm';
 import OrgRegisterPage from '../features/orgs/OrgRegisterPage';
-import OrgActivitiesPage from '../features/orgs/OrgActivitiesPage';
 import ActivityFormPage from '../features/activities/ActivityFormPage';
 import OrgImpactPage from '../features/orgs/OrgImpactPage';
+import OrgDashboardPage from '../features/orgs/OrgDashboardPage';
 import OrgProposalsPage from '../features/orgs/OrgProposalsPage';
+import OrgProposalFormPage from '../features/orgs/OrgProposalFormPage';
 import ProposalsInboxPage from '../features/proposals/ProposalsInboxPage';
 import ProposalDetailPage from '../features/proposals/ProposalDetailPage';
 import AccountStatusPage from '../features/orgs/AccountStatusPage';
@@ -75,10 +77,25 @@ export default function AppRouter() {
             </Route>
           </Route>
           <Route element={<RoleRoute roles={['PARTNER']} />}>
-            <Route path="/org/activities" element={<OrgActivitiesPage />} />
+            <Route path="/org/dashboard" element={<OrgDashboardPage />} />
+            <Route
+              path="/org/activities"
+              element={
+                <ActivitiesListPage
+                  fetchData={getPartnerActivities}
+                  showCreateButton={true}
+                  createPath="/org/activities/new"
+                  showPartnerColumn={false}
+                  showRegistrationsLink={false}
+                  title="Mis proyectos"
+                  eyebrow="Entidad colaboradora"
+                />
+              }
+            />
             <Route path="/org/activities/new" element={<ActivityFormPage backPath="/org/activities" />} />
             <Route path="/org/reports" element={<OrgImpactPage />} />
             <Route path="/org/proposals" element={<OrgProposalsPage />} />
+            <Route path="/org/proposals/new" element={<OrgProposalFormPage />} />
           </Route>
         </Route>
       </Route>

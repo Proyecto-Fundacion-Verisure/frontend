@@ -4,6 +4,7 @@ import clockIcon from '../../assets/icons/clock.svg';
 import usersIcon from '../../assets/icons/users.svg';
 import buildingIcon from '../../assets/icons/building.svg';
 import colabImage from '../../assets/images/landing-colaboration.png'
+import footerPortrait from '../../assets/images/footer-portrait.jpg'
 import StatCounter from "./StatCounter";
 
 const impactAreas = [
@@ -61,9 +62,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="landing-hero__art" aria-hidden="true">
-          <span />
-          <i />
-          <b />
+          <img src={footerPortrait} alt="" className="landing-hero__art-image" />
         </div>
       </section>
 

@@ -130,10 +130,65 @@ export const createOrgActivity = (data) => client.post('/org/activities', data);
 export const updateOrgActivity = (id, data) => client.put(`/org/activities/${id}`, data);
 export const submitOrgActivity = (id) => client.patch(`/org/activities/${id}/submit`);
 
-export const getOrgProposals = (params = {}) => (
-  client.get('/org/proposals', { params: pickParams(params, ['page']) })
-);
-export const createOrgProposal = (data) => client.post('/org/proposals', data);
+const MOCK_ORG_PROPOSALS = [
+  {
+    id: 101,
+    title: 'Taller de mentoría laboral',
+    description: 'Programa de mentoría para jóvenes en riesgo de exclusión social.',
+    line: 'educar',
+    status: 'PENDING_APPROVAL',
+    estimatedVolunteers: 8,
+    createdAt: '2026-08-20T10:00:00Z',
+  },
+  {
+    id: 102,
+    title: 'Acompañamiento semanal a mayores',
+    description: 'Visitas semanales para combatir la soledad no deseada.',
+    line: 'desoledad',
+    status: 'ACCEPTED',
+    activityId: 501,
+    estimatedVolunteers: 12,
+    createdAt: '2026-07-15T09:30:00Z',
+  },
+];
+
+function mockGetOrgProposals(params = {}) {
+  const page = Math.max(0, Number(params.page) || 0);
+  const size = 10;
+  const start = page * size;
+  const content = MOCK_ORG_PROPOSALS.slice(start, start + size);
+  return Promise.resolve({
+    data: {
+      content,
+      number: page,
+      size,
+      totalElements: MOCK_ORG_PROPOSALS.length,
+      totalPages: Math.ceil(MOCK_ORG_PROPOSALS.length / size),
+    },
+  });
+}
+
+export const getOrgProposals = (params = {}) =>
+  USE_MOCK_API
+    ? mockGetOrgProposals(params)
+    : client.get('/org/proposals', { params: pickParams(params, ['page']) });
+export const createOrgProposal = (data) => {
+  if (USE_MOCK_API) {
+    console.info('[MOCK] createOrgProposal', data);
+    return simulateRequest({
+      data: { id: Date.now(), status: data.status ?? 'DRAFT', ...data, createdAt: new Date().toISOString() },
+      delay: 400,
+    });
+  }
+  return client.post('/org/proposals', data);
+};
+export const submitOrgProposal = (id) => {
+  if (USE_MOCK_API) {
+    console.info('[MOCK] submitOrgProposal', id);
+    return simulateRequest({ data: { id, status: 'PENDING_APPROVAL' }, delay: 400 });
+  }
+  return client.patch(`/org/proposals/${id}/submit`);
+};
 export const getOrgDashboard = (year) => (
   client.get('/org/dashboard', { params: year ? { year } : {} })
 );

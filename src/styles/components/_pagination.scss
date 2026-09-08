@@ -1,0 +1,28 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/functions' as *;
+
+.pagination {
+  align-items: center;
+  color: $color-muted;
+  display: flex;
+  font-size: $font-size-sm;
+  justify-content: space-between;
+  margin-top: space('5');
+
+  > div {
+    display: flex;
+    gap: space('3');
+  }
+}
+
+@media (max-width: 38rem) {
+  .pagination {
+    align-items: stretch;
+    flex-direction: column;
+    gap: space('3');
+  }
+  .pagination > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
