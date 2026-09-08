@@ -87,10 +87,10 @@ Los tests se colocan junto a la unidad probada y usan `*.test.jsx` o `*.test.js`
 | --- | --- | --- |
 | Pública | `/`, `/login`, `/new-proposal`, `/register-organization` | Sin sesión |
 | Fundación | `/dashboard`, `/admin/activities`, `/activities/new`, `/proposals` | `ADMIN` |
-| Empleado | `/activities`, `/activities/:id`, `/my-volunteering`, `/reports/:id/certificate` | `EMPLOYEE` |
-| Entidad | `/org/activities`, `/org/proposals`, `/org/reports` | `ORG` |
+| Empleado | `/activities`, `/activities/:id`, `/my-volunteering`, `/closures/:id` | `EMPLOYEE` |
+| Entidad | `/org/activities`, `/org/proposals`, `/org/reports` | `PARTNER` |
 
-Las cuentas de entidad pueden estar en `PENDING_VERIFICATION`, `PENDING_APPROVAL`, `ACTIVE` o `REJECTED`. Una sesión `ORG` no activa se conserva para mostrar el estado de la cuenta; no se trata como una sesión anónima.
+Las cuentas de entidad pueden estar en `PENDING_VERIFICATION`, `PENDING_APPROVAL`, `ACTIVE` o `REJECTED`. Una sesión `PARTNER` no activa se conserva para mostrar el estado de la cuenta; no se trata como una sesión anónima.
 
 ### Cuentas locales disponibles con mocks
 
@@ -100,8 +100,8 @@ El mock identifica el usuario por el comienzo del correo; la contraseña no se v
 | --- | --- | --- |
 | `admin@verisure.com` | `ADMIN` | `/dashboard` |
 | `empleado@verisure.com` | `EMPLOYEE` | `/activities` |
-| `ong@fundacion.org` | `ORG · ACTIVE` | `/org/activities` |
-| `pendiente@entidad.org` | `ORG · PENDING_APPROVAL` | Estado de cuenta |
+| `ong@fundacion.org` | `PARTNER · ACTIVE` | `/org/activities` |
+| `pendiente@entidad.org` | `PARTNER · PENDING_APPROVAL` | Estado de cuenta |
 
 ## Contrato backend v2
 
@@ -110,11 +110,16 @@ Los JSON usan `camelCase`. La entidad se llama `Registration` y sus rutas parten
 ### Inscripciones
 
 - `POST /api/registrations` crea una inscripción.
-- `GET /api/registrations/me` devuelve las inscripciones de la persona autenticada.
+- `GET /api/registrations/me` devuelve `List<MyRegistrationItem>`.
+- La lista usa `closureId` y `activityClosed` para mostrar el cierre o el certificado.
 - Las decisiones administrativas y la cancelación usan `PATCH`.
 - La cancelación común es `PATCH /api/registrations/{id}/cancel`, con un motivo opcional.
 - `accepted` es un booleano separado de `RegistrationStatus`. Una solicitud puede estar aceptada administrativamente y continuar en `WAITLISTED` si no hay plaza.
-- `RegistrationStatus`: `WAITLISTED`, `CONFIRMED`, `REJECTED`, `CANCELLED`, `PENDING_REPORT` y `CLOSED`.
+- `RegistrationStatus`: `WAITLISTED`, `CONFIRMED`, `REJECTED`, `CANCELLED`, `PENDING_CLOSURE` y `CLOSED`.
+
+### Cierres
+
+El cierre individual se envía a `POST /api/closures` como multipart, con la parte JSON `request` y la evidencia opcional `evidence`. La Fundación gestiona el cierre global de la actividad en `/api/admin/activities/{id}/closure`.
 
 ### Propuestas
 
@@ -124,9 +129,9 @@ Los JSON usan `camelCase`. La entidad se llama `Registration` y sus rutas parten
 
 `GET /api/dashboard` recibe solamente `year` y `line`. Esos mismos filtros se usan en las exportaciones:
 
-- `/api/dashboard/export/participations.csv`: participaciones seudonimizadas, sin nombre ni correo.
-- `/api/dashboard/export/partners.csv`: entidades, actividades y horas.
-- `/api/dashboard/export/report.pdf`: indicadores y gráficos; el PDF es opcional para el MVP.
+- `/api/dashboard/participations.csv`: participaciones seudonimizadas, sin nombre ni correo.
+- `/api/dashboard/partners.csv`: entidades, actividades y horas.
+- `/api/dashboard/report.pdf`: indicadores y gráficos.
 
 Las descargas se solicitan como `blob` y la interfaz libera cada `ObjectURL` después de iniciar la descarga.
 
@@ -141,7 +146,7 @@ Los errores de validación por campo se muestran junto al control correspondient
 Hay dos capas diferentes:
 
 - Los mocks de desarrollo permiten recorrer el acceso y los flujos de propuestas disponibles sin levantar todo el backend. Se activan con `VITE_USE_MOCKS=true`.
-- Los fixtures y mocks de `src/test/` se usan únicamente con Vitest; no forman parte del bundle de producción. Incluyen usuarios `ADMIN`, `EMPLOYEE` y `ORG`, estados de cuenta de entidad y respuestas de los principales dominios.
+- Los fixtures y mocks de `src/test/` se usan únicamente con Vitest; no forman parte del bundle de producción. Incluyen usuarios `ADMIN`, `EMPLOYEE` y `PARTNER`, estados de cuenta de entidad y respuestas de los principales dominios.
 - La integración real se activa con `VITE_USE_MOCKS=false` y requiere que `VITE_API_URL` apunte al backend. Los flujos sin mock local, incluido el dashboard, siempre usan la API.
 
 No se deben añadir reglas de negocio a los mocks ni inferir campos que no estén en el contrato. Si el backend cambia, primero se actualizan el contrato y los fixtures, después la implementación.

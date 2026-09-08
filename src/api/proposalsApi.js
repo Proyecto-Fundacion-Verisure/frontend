@@ -2,7 +2,8 @@ import client from './axiosClient';
 import { ApiError } from './apiError';
 
 const useDevelopmentMocks = () => (
-  import.meta.env.DEV && import.meta.env.VITE_USE_MOCKS !== 'false'
+  import.meta.env.DEV
+  && import.meta.env.VITE_USE_MOCKS !== 'false'
 );
 
 const MOCK_PROPOSALS = [
@@ -80,14 +81,19 @@ function mockGetProposals(params = {}) {
     results = results.filter((p) => p.status === params.status);
   }
 
-  const page = Number(params.page) || 1;
-  const limit = Number(params.limit) || 10;
-  const start = (page - 1) * limit;
-  const paged = results.slice(start, start + limit);
+  const page = Math.max(0, Number(params.page) || 0);
+  const size = 10;
+  const start = page * size;
+  const content = results.slice(start, start + size);
 
   return Promise.resolve({
-    data: paged,
-    headers: { 'x-total-count': String(results.length) },
+    data: {
+      content,
+      number: page,
+      size,
+      totalElements: results.length,
+      totalPages: Math.ceil(results.length / size),
+    },
   });
 }
 
@@ -106,14 +112,22 @@ function mockAcceptProposal(id) {
   });
 }
 
-export const getProposals = (params) =>
-  useDevelopmentMocks() ? mockGetProposals(params) : client.get('/proposals', { params });
+const pickAdminParams = (params = {}) => Object.fromEntries(
+  Object.entries(params).filter(([key, value]) => (
+    ['status', 'page'].includes(key) && value !== undefined && value !== null && value !== ''
+  )),
+);
 
-export const getProposal = (id) => client.get(`/proposals/${id}`);
+export const getProposals = (params = {}) =>
+  useDevelopmentMocks()
+    ? mockGetProposals(params)
+    : client.get('/admin/proposals', { params: pickAdminParams(params) });
 
-export const acceptProposal = (id) => client.post(`/proposals/${id}/accept`);
+export const getProposal = (id) => client.get(`/admin/proposals/${id}`);
 
-export const rejectProposal = (id) => client.patch(`/proposals/${id}/reject`);
+export const acceptProposal = (id) => client.post(`/admin/proposals/${id}/accept`);
+
+export const rejectProposal = (id) => client.patch(`/admin/proposals/${id}/reject`);
 
 function validateProposal(data) {
   const fieldErrors = {};

@@ -1,6 +1,6 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Badge, Button, EmptyState, Spinner, Table } from '../../components/ui';
-import RegistrationSummary from './RegistrationSummary';
 import RegistrationDecisionActions from './RegistrationDecisionActions';
 import CancelRegistrationAction from './CancelRegistrationAction';
 import useRegistrations from './useRegistrations';
@@ -31,7 +31,7 @@ function getSectionKey(registration) {
   }
   return {
     CONFIRMED: 'confirmed',
-    PENDING_REPORT: 'pending-report',
+    PENDING_CLOSURE: 'pending-report',
     CLOSED: 'closed',
     REJECTED: 'rejected',
     CANCELLED: 'cancelled',
@@ -93,6 +93,7 @@ const BASE_COLUMNS = [
 
 export default function RegistrationsTablePage() {
   const { activityId } = useParams();
+  const [page, setPage] = useState(1);
   const {
     board,
     loading,
@@ -102,7 +103,7 @@ export default function RegistrationsTablePage() {
     acceptRegistration,
     rejectRegistration,
     cancelRegistration,
-  } = useRegistrations(activityId);
+  } = useRegistrations(activityId, page - 1);
 
   if (loading) {
     return (
@@ -127,6 +128,8 @@ export default function RegistrationsTablePage() {
   }
 
   const registrations = getRegistrations(board);
+  const totalElements = Number(board?.totalElements) || registrations.length;
+  const totalPages = Math.max(Number(board?.totalPages) || 1, 1);
   const grouped = registrations.reduce((result, registration) => {
     const key = getSectionKey(registration);
     result[key] = [...(result[key] ?? []), registration];
@@ -171,10 +174,8 @@ export default function RegistrationsTablePage() {
           <h1 id="registrations-title">Inscripciones</h1>
           <p>{board?.activity?.title ?? board?.activityTitle ?? `Actividad ${activityId}`}</p>
         </div>
-        <strong>{registrations.length} inscripciones</strong>
+        <strong>{totalElements} inscripciones</strong>
       </header>
-
-      <RegistrationSummary board={board} />
 
       {registrations.length === 0 ? (
         <EmptyState
@@ -202,6 +203,25 @@ export default function RegistrationsTablePage() {
               </section>
             );
           })}
+          <nav aria-label="Paginación de inscripciones">
+            <span>Página {page} de {totalPages}</span>
+            <Button
+              size="small"
+              variant="secondary"
+              disabled={page <= 1}
+              onClick={() => setPage((current) => current - 1)}
+            >
+              Anterior
+            </Button>
+            <Button
+              size="small"
+              variant="secondary"
+              disabled={page >= totalPages}
+              onClick={() => setPage((current) => current + 1)}
+            >
+              Siguiente
+            </Button>
+          </nav>
         </div>
       )}
     </section>

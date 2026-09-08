@@ -12,7 +12,7 @@
 
 ```
 frontend/
-├── src/api/              # axiosClient (interceptor 401 → auth:unauthorized), authApi, activitiesApi, registrationsApi, reportsApi, proposalsApi, orgApi, dashboardApi
+├── src/api/              # axiosClient, authApi, activitiesApi, registrationsApi, closuresApi, proposalsApi, orgApi, dashboardApi
 ├── src/components/ui/    # Button, Card, Modal (portal, focus trap, inert), Table, HeartButton (Lucide), EmptyState, Spinner, Badge...
 ├── src/components/layout/# AppLayout (Topbar+Sidebar+Outlet), PublicLayout, PublicHeader/Footer
 ├── src/features/
@@ -47,22 +47,22 @@ frontend/
 | **RegistrationsContext + FavoritesContext** | Prop drilling / Redux | Sincronía catálogo↔ficha sin recarga (H13, H15), evita `favoriteCount` global |
 | **Modal portal + focus trap + inert** | `dialog` nativo | Control total `Escape`, `backdrop`, `focus-ring` navy, `prefers-reduced-motion` |
 | **MSW descartado, `vi.mock` + fixtures** | MSW | Mocks contractuales fuera de prod (`src/test/**` excluido de build), sin red, deterministas |
-| **Org mock `isMockEnabled=DEV&&!test` + delay 300ms** | `USE_MOCK_API=true` aleatorio | Demo estable (sin `failRate 0.1`), idempotente |
-| **MyRegistrationsResponse `{active,closed}`** | Filtrado local por `status` | No reclasificar, confiar en backend, mostrar cola y `accepted` directo |
+| **Mocks solo en desarrollo** | Activarlos en producción | Demo estable y llamadas reales verificables en test |
+| **`List<MyRegistrationItem>` plano** | Respuesta `{active,closed}` | Coincide con el contrato y clasifica por `status`/`activityClosed` |
 
 ---
 
 ## 3. Modelo (backend v2)
 
-**Roles:** `PÚBLICO` (no auth) → `EMPLOYEE` (`VERISURE_ES`, `ACTIVE`) → `ORG` (`PENDING_VERIFICATION → PENDING_APPROVAL → ACTIVE/REJECTED`) → `ADMIN`.
+**Roles:** `EMPLOYEE` (`VERISURE_ES`/`VERISURE_GROUP`) → `PARTNER` (`PENDING_VERIFICATION → PENDING_APPROVAL → ACTIVE/REJECTED`) → `ADMIN`; las rutas públicas no requieren rol.
 
 **Actividad:** `DRAFT → PENDING_APPROVAL → PUBLISHED` (public: `PUBLISHED/FULL/IN_PROGRESS/FINISHED` 200, `DRAFT/CANCELLED` 404). Campos: `registrationDeadline` (cierre), `capacity`/`registeredCount`, `favoritedByMe` (sin `favoriteCount`).
 
-**Inscripción:** `WAITLISTED/CONFIRMED/REJECTED/CANCELLED/PENDING_REPORT/CLOSED` + `accepted:boolean` + `queuePosition?` (nunca `ACTIVITY_FULL`). `POST /registrations {activityId} → 201 WAITLISTED`, `PATCH /cancel` sin `reason` para propietaria, `DELETE` no usado.
+**Inscripción:** `WAITLISTED/CONFIRMED/REJECTED/CANCELLED/PENDING_CLOSURE/CLOSED` + `accepted:boolean` + `queuePosition?`. `POST /registrations {activityId}` crea y `PATCH /cancel` acepta `reason?`.
 
-**MyRegistrationItem:** `{registrationId, activity{id,title,partner,startDate,endDate,hours}, status, queuePosition?, reportId?, reportStatus?, canCancel?}` → `MyRegistrationsResponse`.
+**MyRegistrationItem:** `{registrationId, activity{id,title,partner,startDate,endDate,hours}, status, queuePosition?, closureId?, activityClosed}` → lista plana.
 
-**Reporte:** `POST /reports` 201 nuevo / 200 reenvío `RETURNED` mismo `reportId` / 409 `REPORT_ALREADY_SUBMITTED`; `GET /reports/pending → Page<ReportSummary>` vs `GET /reports/:id → ReportDetailResponse`; `validatedHours`/`note`.
+**Cierre:** el empleado envía `POST /closures` multipart (`request` + `evidence?`). La Fundación guarda/finaliza el cierre agregado en `/admin/activities/{id}/closure`; no existe validación posterior de horas.
 
 **Propuesta:** `NEW/ACCEPTED/REJECTED` + `409 PROPOSAL_ALREADY_DECIDED`; `CIF` validación + `429`.
 
@@ -70,18 +70,18 @@ frontend/
 
 ## 4. Pruebas
 
-**Vitest `jsdom` + Testing Library, 37 suites / 233 tests (2026-09-07):**
+**Vitest `jsdom` + Testing Library, 43 suites / 254 tests (2026-09-07):**
 
 | Dominio | Pruebas destacadas |
 |---------|-------------------|
-| `CatalogPage` | filtros `line/mode/q` → URL, paginación `x-total-count`, `Ya estás apuntado`, sin `favoriteCount`, nested Link corregido |
+| `CatalogPage` | filtros `line/mode`, paginación Spring `Page`, `Ya estás apuntado` y favoritos |
 | `ActivityDetailPage` | 404, recarga por `activityId`, sticky solo desktop, `favoritedByMe`, cola `WAITLISTED q3`, `accepted` |
-| `MyVolunteeringPage` | `active/closed` sin filtros, `queuePosition` directo, `Aceptada/Pendiente`, `Enviar/Corregir`, cancel Modal, `DEADLINE_PASSED/ NOT_OWNER`, ocultación tras `startDate` |
+| `MyVolunteeringPage` | lista plana, `queuePosition`, `accepted`, `closureId`, certificado y cancelación |
 | `RegisterButton` | `WAITLISTED` inicial, `FULL` admite cola, `ALREADY_REGISTERED/DEADLINE_PASSED` no cambia UI, anti-doble |
 | `HeartButton` | Lucide relleno/vacío, `aria-pressed`, `isLoading` spinner, revierte 404/409, sin contador, persiste entre sesiones |
 | `ProposalsInbox/RegistrationsTable` | `aria-label` por fila, `409 PROPOSAL_ALREADY_DECIDED` |
 | `OrgRegister/AccountStatus` | `409 CIF_ALREADY_REGISTERED`, `410 VERIFICATION_EXPIRED`, `PENDING_*` |
-| `contract.fixtures` | 23 tests enums `WAITLISTED/CONFIRMED...`, `REPORT_ALREADY_SUBMITTED`, mismo `reportId` |
+| `contract.fixtures` | enums actuales, DTOs de cierre, Spring `Page`, uploads y errores de dominio |
 | `smoke` | Landing → Catálogo → Ficha → Mis inscripciones → Dashboard (público/empleado/admin) |
 
 **Cobertura:** `v8` excluye `src/test/**`; `npm run test:coverage` genera `coverage/`.
@@ -94,9 +94,9 @@ frontend/
 |-----------|------|--------------|
 | Flujo 3 roles | `prototipo/User_Flow_Verisure_3roles_Evaluacion.pdf` + `frontend/docs/User_Flow_3roles_Evaluacion.pdf` | Reemplaza P9 (2 roles) |
 | Fuente diagrama | `prototipo/User_Flow_Verisure_3roles.drawio` (pendiente Figma) | Versionado |
-| Mockups | `verisure-mockups-v3 2/*.html` + `capturas/*` (44 PNG) | 7 ORG nuevas |
+| Mockups | `verisure-mockups-v3 2/*.html` + `capturas/*` (44 PNG) | 7 vistas PARTNER nuevas |
 | Demo datos | `public/demo-data.json`, `scripts/restore-demo.js`, `docs/DEMO.md` | `npm run demo:reset` idempotente |
-| Código 3 roles | `src/routes/*`, `features/orgs/*`, `api/orgApi.js` | 36 suites |
+| Código de roles | `src/routes/*`, `features/orgs/*`, `api/orgApi.js` | 43 suites |
 | Entorno limpio | `.env.example`, `.gitignore` (`.env.local` no versionado) | `npm ci && npm run smoke` |
 
 `grep -R "entidad social" verisure-mockups-v3 2/*.html` → 0 en evaluable (solo copy público `LandingPage`).
@@ -107,7 +107,7 @@ frontend/
 
 | Integrante | Responsabilidad | Entregables |
 |------------|-----------------|-------------|
-| **Elena** | Frontend MVP, catálogo/ficha, inscripciones, cierres, ORG, accesibilidad FE1, demo | `Activity*`, `Registrations*`, `HeartButton`, `MyVolunteeringPage`, `DEMO.md`, `MEMORIA.md` |
+| **Elena** | Frontend MVP, catálogo/ficha, inscripciones, cierres, PARTNER, accesibilidad FE1, demo | `Activity*`, `Registrations*`, `HeartButton`, `MyVolunteeringPage`, `DEMO.md`, `MEMORIA.md` |
 | **Fabileoruf** | PO, 24 historias, backend v2 (#150 etc.), revisión docs | `project-items.json`, issues #41-#51, #74 |
 | **Equipo** | QA, presentación, segunda revisión | `GUION.md`, ensayos cronométricos |
 

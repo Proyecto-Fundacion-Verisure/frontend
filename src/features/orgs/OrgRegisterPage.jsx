@@ -15,24 +15,10 @@ const initialValues = {
   consent: false,
 };
 
-const CIF_LETTERS = /^[ABCDEFGHJKLMNPQRSUVW]$/i;
-
 const RESEND_COOLDOWN_SECONDS = 5;
 
 function isValidCif(value) {
-  const cif = value.trim().toUpperCase();
-  if (cif.length < 9) return false;
-  if (!CIF_LETTERS.test(cif[0])) return false;
-  if (!/^\d{7}[A-Z0-9]$/.test(cif.slice(1))) return false;
-
-  let sum = 0;
-  for (let i = 1; i <= 7; i++) {
-    const n = parseInt(cif[i], 10);
-    sum += i % 2 === 0 ? n : (n < 5 ? n * 2 : n * 2 - 9);
-  }
-  const controlDigit = (10 - (sum % 10)) % 10;
-  const lastChar = cif[8];
-  return lastChar === String(controlDigit) || lastChar === 'J' === false;
+  return /^[A-Z0-9]{9}$/i.test(value.trim());
 }
 
 function validate(values) {
@@ -41,7 +27,7 @@ function validate(values) {
   if (!values.cif.trim()) {
     errors.cif = 'Introduce el CIF.';
   } else if (!isValidCif(values.cif)) {
-    errors.cif = 'Introduce un CIF válido (letra + 7 dígitos + dígito de control).';
+    errors.cif = 'Introduce un CIF de 9 caracteres alfanuméricos.';
   }
   if (!values.contactName.trim()) errors.contactName = 'Indica una persona de contacto.';
   if (!/^\S+@\S+\.\S+$/.test(values.email.trim())) errors.email = 'Introduce un correo electrónico válido.';
@@ -102,7 +88,7 @@ export default function OrgRegisterPage() {
     setStatus('loading');
     try {
       await createOrganization({
-        organizationName: values.organizationName.trim(),
+        name: values.organizationName.trim(),
         cif: values.cif.trim().toUpperCase(),
         contactName: values.contactName.trim(),
         email: values.email.trim().toLowerCase(),

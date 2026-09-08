@@ -48,15 +48,24 @@ export function mockGetMyRegistrations() {
     status: r.status,
     accepted: r.accepted,
     queuePosition: r.queuePosition ?? null,
-    reportId: r.reportId ?? null,
-    reportStatus: r.reportStatus ?? null,
+    closureId: r.closureId ?? null,
+    activityClosed: Boolean(r.activityClosed),
   }));
   return Promise.resolve({ data: items, status: 200 });
 }
 
 export function mockGetActivityRegistrations() {
-  // Not central to #73; return empty page
-  return Promise.resolve({ data: [...store.values()], status: 200 });
+  const content = [...store.values()];
+  return Promise.resolve({
+    data: {
+      content,
+      number: 0,
+      size: content.length,
+      totalElements: content.length,
+      totalPages: content.length ? 1 : 0,
+    },
+    status: 200,
+  });
 }
 
 export function mockAcceptRegistration(registrationId) {

@@ -46,7 +46,7 @@ export const NAV_SECTIONS_BY_ROLE = {
           badgeKey: "inscriptions",
         },
         {
-          path: "/reports/pending",
+          path: "/admin/activities/pending-closure",
           label: "Cierres",
           icon: CheckCircle2,
           badgeKey: "closes",
@@ -78,13 +78,7 @@ export const NAV_SECTIONS_BY_ROLE = {
       ],
     },
   ],
-  ORG: [
-    {
-      section: "Análisis",
-      items: [
-        { path: "/org/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      ],
-    },
+  PARTNER: [
     {
       section: "Gestión",
       items: [

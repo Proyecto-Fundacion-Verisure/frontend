@@ -22,13 +22,9 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
   const hours = activity.hours ?? activity.estimatedHours ?? null;
 
   const showQueue = item.queuePosition !== null && item.queuePosition !== undefined;
-  // Nuevo contrato: closureId + activityClosed; legacy: reportId/reportStatus
-  const closureId = item.closureId ?? item.reportId ?? null;
-  const activityClosed = typeof item.activityClosed === 'boolean' ? item.activityClosed : item.status === 'CLOSED';
+  const closureId = item.closureId ?? null;
+  const activityClosed = Boolean(item.activityClosed);
   const hasClosure = Boolean(closureId);
-  // Legacy fallback
-  const hasReport = Boolean(item.reportId);
-  const isReturned = item.reportStatus === 'RETURNED';
   const showAccepted = item.status === 'WAITLISTED';
   const acceptedLabel = item.accepted ? 'Aceptada' : 'Pendiente de revisión';
 
@@ -37,7 +33,6 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
     CONFIRMED: 'CONFIRMADO',
     CLOSED: 'cerrado',
     PENDING_CLOSURE: 'Pendiente de cierre',
-    PENDING_REPORT: 'Pendiente de cierre',
   };
   const statusLabel = statusLabels[item.status] ?? item.status;
 
@@ -77,49 +72,23 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
       {showQueue && <p className="my-volunteering__queue">Posición en cola: {item.queuePosition}</p>}
       {showAccepted && <p className="my-volunteering__accepted" data-testid={`accepted-${item.registrationId}`}>{acceptedLabel}</p>}
       {(() => {
-        const isNewContract = 'closureId' in item || 'activityClosed' in item;
-        if (isNewContract) {
-          if (!hasClosure && !activityClosed) {
-            return (
-              <Link to={`/closures/new?registrationId=${item.registrationId}`} className="button button--primary button--small" data-testid={`action-enviar-${item.registrationId}`}>
-                Cerrar tu participación
-              </Link>
-            );
-          }
-          if (hasClosure && activityClosed) {
-            return (
-              <Link to={`/closures/${closureId}/certificate`} className="button button--primary button--small" data-testid={`action-cert-${item.registrationId}`}>
-                Descargar certificado
-              </Link>
-            );
-          }
-          if (hasClosure && !activityClosed) {
-            return (
-              <Link to={`/closures/${closureId}`} className="button button--secondary button--small" data-testid={`action-ver-${item.registrationId}`}>
-                Ver cierre
-              </Link>
-            );
-          }
-          return null;
-        }
-        // Legacy fallback (reportId/reportStatus)
-        if (!hasReport) {
+        if (!hasClosure && !activityClosed && item.status === 'PENDING_CLOSURE') {
           return (
-            <Link to={`/reports/new?registrationId=${item.registrationId}`} className="button button--primary button--small" data-testid={`action-enviar-${item.registrationId}`}>
-              Enviar cierre
+            <Link to={`/closures/new?registrationId=${item.registrationId}`} className="button button--primary button--small" data-testid={`action-enviar-${item.registrationId}`}>
+              Cerrar tu participación
             </Link>
           );
         }
-        if (hasReport && isReturned) {
+        if (hasClosure && activityClosed) {
           return (
-            <Link to={`/reports/${item.reportId}`} className="button button--primary button--small" data-testid={`action-corregir-${item.registrationId}`}>
-              Corregir y reenviar
+            <Link to={`/closures/${closureId}/certificate`} className="button button--primary button--small" data-testid={`action-cert-${item.registrationId}`}>
+              Descargar certificado
             </Link>
           );
         }
-        if (hasReport && !isReturned) {
+        if (hasClosure && !activityClosed) {
           return (
-            <Link to={`/reports/${item.reportId}`} className="button button--secondary button--small" data-testid={`action-ver-${item.registrationId}`}>
+            <Link to={`/closures/${closureId}`} className="button button--secondary button--small" data-testid={`action-ver-${item.registrationId}`}>
               Ver cierre
             </Link>
           );
@@ -181,39 +150,9 @@ export default function MyVolunteeringPage() {
     try {
       const res = await getMyRegistrations();
       const payload = res.data ?? res;
-      // MyRegistrationsResponse: { active: MyRegistrationItem[], closed: MyRegistrationItem[] }
-      // Support variants: active/closed, activeRegistrations/closedRegistrations, or flat array
-      if (payload && Array.isArray(payload.active) && Array.isArray(payload.closed)) {
-        setActive(payload.active);
-        setClosed(payload.closed);
-      } else if (payload && Array.isArray(payload.activeRegistrations) && Array.isArray(payload.closedRegistrations)) {
-        setActive(payload.activeRegistrations);
-        setClosed(payload.closedRegistrations);
-      } else if (payload && payload.data && (Array.isArray(payload.data.active) || Array.isArray(payload.data.closed))) {
-        setActive(payload.data.active ?? []);
-        setClosed(payload.data.closed ?? []);
-      } else if (Array.isArray(payload)) {
-        // Fallback for legacy mock flat array: treat as active, closed empty (do not reclassify by status)
-        setActive(payload);
-        setClosed([]);
-      } else if (Array.isArray(payload?.content)) {
-        setActive(payload.content);
-        setClosed([]);
-      } else if (payload && typeof payload === 'object') {
-        // Try to detect active/closed inside data property (axios response already unwrapped)
-        const maybeActive = payload.active ?? payload.actives ?? null;
-        const maybeClosed = payload.closed ?? payload.closedRegistrations ?? null;
-        if (Array.isArray(maybeActive) || Array.isArray(maybeClosed)) {
-          setActive(maybeActive ?? []);
-          setClosed(maybeClosed ?? []);
-        } else {
-          setActive([]);
-          setClosed([]);
-        }
-      } else {
-        setActive([]);
-        setClosed([]);
-      }
+      const items = Array.isArray(payload) ? payload : [];
+      setActive(items.filter((item) => item.status !== 'CLOSED' && !item.activityClosed));
+      setClosed(items.filter((item) => item.status === 'CLOSED' || item.activityClosed));
     } catch (err) {
       setError(err);
     } finally {

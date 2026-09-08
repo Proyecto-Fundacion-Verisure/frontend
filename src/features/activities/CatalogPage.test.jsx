@@ -73,7 +73,7 @@ describe('CatalogPage', () => {
     renderCatalog();
 
     expect(await screen.findByText(/Fallo de red/i)).toBeInTheDocument();
-    expect(getPublishedActivities).toHaveBeenCalledWith(expect.objectContaining({ page: 1, limit: 12 }));
+    expect(getPublishedActivities).toHaveBeenCalledWith(expect.objectContaining({ page: 0, size: 12 }));
     const user = userEvent.setup();
     await user.click(screen.getByRole('button', { name: /reintentar/i }));
     expect(await screen.findByText(/acompañamiento a mayores/i)).toBeInTheDocument();
@@ -95,11 +95,11 @@ describe('CatalogPage', () => {
     expect(screen.getByRole('button', { name: /quitar de favoritos/i })).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByRole('button', { name: /añadir a favoritos/i })).toHaveAttribute('aria-pressed', 'false');
     expect(screen.queryByText(/favoriteCount/i)).not.toBeInTheDocument();
-    expect(getPublishedActivities).toHaveBeenCalledWith(expect.objectContaining({ page: 1, limit: 12 }));
+    expect(getPublishedActivities).toHaveBeenCalledWith(expect.objectContaining({ page: 0, size: 12 }));
     expect(getPublishedActivities).not.toHaveBeenCalledWith(expect.objectContaining({ favoriteCount: expect.anything() }));
   });
 
-  it('filtra por line, mode y q sin usar endpoint administrativo', async () => {
+  it('filtra por line y mode sin usar parámetros fuera del contrato', async () => {
     getPublishedActivities.mockResolvedValue({ data: mockActivities, headers: { 'x-total-count': '2' } });
     const user = userEvent.setup();
     renderCatalog();
@@ -107,10 +107,10 @@ describe('CatalogPage', () => {
 
     await user.selectOptions(screen.getByLabelText(/^línea$/i), 'desoledad');
     expect(await screen.findByText(/acompañamiento a mayores/i)).toBeInTheDocument();
-    expect(getPublishedActivities).toHaveBeenLastCalledWith(expect.objectContaining({ line: 'desoledad', page: 1 }));
+    expect(getPublishedActivities).toHaveBeenLastCalledWith(expect.objectContaining({ line: 'desoledad', page: 0 }));
 
     await user.selectOptions(screen.getByLabelText(/modalidad/i), 'ONLINE');
-    expect(getPublishedActivities).toHaveBeenLastCalledWith(expect.objectContaining({ line: 'desoledad', mode: 'ONLINE', page: 1 }));
+    expect(getPublishedActivities).toHaveBeenLastCalledWith(expect.objectContaining({ line: 'desoledad', mode: 'ONLINE', page: 0 }));
   });
 
   it('pagina en escritorio con Page y x-total-count', async () => {
@@ -125,24 +125,32 @@ describe('CatalogPage', () => {
 
     await user.click(screen.getByRole('button', { name: /siguiente/i }));
     expect(await screen.findByText(/página 2 de 2/i)).toBeInTheDocument();
-    expect(getPublishedActivities).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }));
+    expect(getPublishedActivities).toHaveBeenLastCalledWith(expect.objectContaining({ page: 1 }));
     expect(screen.getByRole('button', { name: /siguiente/i })).toBeDisabled();
 
     await user.click(screen.getByRole('button', { name: /anterior/i }));
     expect(await screen.findByText(/página 1 de 2/i)).toBeInTheDocument();
   });
 
-  it('sincroniza filtros y búsqueda con la URL y normaliza inválidos', async () => {
+  it('sincroniza los filtros admitidos con la URL', async () => {
     getPublishedActivities.mockResolvedValue({ data: mockActivities, headers: { 'x-total-count': '2' } });
-    renderCatalog(['/activities?line=desoledad&mode=ONLINE&q=mayores&page=2']);
+    renderCatalog(['/activities?line=desoledad&mode=ONLINE&from=2026-09-01&to=2026-09-30&page=2']);
 
     expect(await screen.findByText(/acompañamiento a mayores/i)).toBeInTheDocument();
     expect(getPublishedActivities).toHaveBeenCalledWith(
-      expect.objectContaining({ line: 'desoledad', mode: 'ONLINE', q: 'mayores', page: 2 }),
+      expect.objectContaining({
+        line: 'desoledad',
+        mode: 'ONLINE',
+        from: '2026-09-01',
+        to: '2026-09-30',
+        page: 1,
+        size: 12,
+      }),
     );
     expect(screen.getByLabelText(/^línea$/i)).toHaveValue('desoledad');
     expect(screen.getByLabelText(/modalidad/i)).toHaveValue('ONLINE');
-    expect(screen.getByLabelText(/buscar/i)).toHaveValue('mayores');
+    expect(screen.getByLabelText(/desde/i)).toHaveValue('2026-09-01');
+    expect(screen.getByLabelText(/hasta/i)).toHaveValue('2026-09-30');
   });
 
   it('normaliza valores inválidos a los predeterminados', async () => {
@@ -150,7 +158,7 @@ describe('CatalogPage', () => {
     renderCatalog(['/activities?line=INVALID&mode=bad&page=abc']);
 
     expect(await screen.findByText(/acompañamiento a mayores/i)).toBeInTheDocument();
-    expect(getPublishedActivities).toHaveBeenCalledWith(expect.objectContaining({ page: 1 }));
+    expect(getPublishedActivities).toHaveBeenCalledWith(expect.objectContaining({ page: 0 }));
     expect(getPublishedActivities).not.toHaveBeenCalledWith(expect.objectContaining({ line: 'INVALID' }));
     expect(getPublishedActivities).not.toHaveBeenCalledWith(expect.objectContaining({ mode: 'bad' }));
     expect(screen.getByLabelText(/^línea$/i)).toHaveValue('');
@@ -166,7 +174,7 @@ describe('CatalogPage', () => {
 
     await user.selectOptions(screen.getByLabelText(/^línea$/i), 'educar');
     expect(await screen.findByText(/página 1 de/i)).toBeInTheDocument();
-    expect(getPublishedActivities).toHaveBeenLastCalledWith(expect.objectContaining({ line: 'educar', page: 1 }));
+    expect(getPublishedActivities).toHaveBeenLastCalledWith(expect.objectContaining({ line: 'educar', page: 0 }));
   });
 
   it('muestra distintivo Completa derivado de plazas y distintivo Ya estás apuntado cruzando una única carga', async () => {

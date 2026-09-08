@@ -4,6 +4,7 @@
 
 export const ActivityStatus = {
   DRAFT: 'DRAFT',
+  PENDING_APPROVAL: 'PENDING_APPROVAL',
   PUBLISHED: 'PUBLISHED',
   FULL: 'FULL',
   IN_PROGRESS: 'IN_PROGRESS',

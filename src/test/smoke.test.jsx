@@ -52,10 +52,15 @@ describe('smoke — recorrido público, empleado, administrador', () => {
 
   it('empleado: mis inscripciones muestra bloques active/closed', async () => {
     getMyRegistrations.mockResolvedValue({
-      data: {
-        active: [{ registrationId: 101, activity: { id: 1, title: 'Act', partner: 'P', startDate: '2099-01-01', endDate: '2099-01-02', hours: 2 }, status: 'WAITLISTED', queuePosition: 3, accepted: false }],
-        closed: [],
-      },
+      data: [{
+        registrationId: 101,
+        activity: { id: 1, title: 'Act', partner: 'P', startDate: '2099-01-01', endDate: '2099-01-02', hours: 2 },
+        status: 'WAITLISTED',
+        queuePosition: 3,
+        accepted: false,
+        closureId: null,
+        activityClosed: false,
+      }],
     });
     render(
       <MemoryRouter initialEntries={['/my-activities']}>

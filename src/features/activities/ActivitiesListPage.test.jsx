@@ -2,12 +2,13 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getAdminActivities } from '../../api/activitiesApi';
-import { renderWithProviders } from '../../test/utils/renderWithProviders';
+import { approveActivity, getAdminActivities, returnActivity } from '../../api/activitiesApi';
 import ActivitiesListPage from './ActivitiesListPage';
 
 vi.mock('../../api/activitiesApi', () => ({
   getAdminActivities: vi.fn(),
+  approveActivity: vi.fn(),
+  returnActivity: vi.fn(),
 }));
 
 const ACTIVITIES = [
@@ -70,6 +71,8 @@ function renderPage({ user: authUser = ADMIN_USER } = {}) {
 
 beforeEach(() => {
   getAdminActivities.mockReset();
+  approveActivity.mockReset();
+  returnActivity.mockReset();
 });
 
 describe('ActivitiesListPage', () => {
@@ -98,10 +101,10 @@ describe('ActivitiesListPage', () => {
       'href',
       '/activities/12/registrations',
     );
-    expect(getAdminActivities).toHaveBeenCalledWith({ page: 1, limit: 10 });
+    expect(getAdminActivities).toHaveBeenCalledWith({ page: 0 });
   });
 
-  it('sends status and search filters to the administrative endpoint', async () => {
+  it('sends the status filter supported by the administrative endpoint', async () => {
     getAdminActivities.mockResolvedValue(pageResponse());
     const user = userEvent.setup();
     renderPage();
@@ -109,18 +112,8 @@ describe('ActivitiesListPage', () => {
 
     await user.selectOptions(screen.getByLabelText(/filtrar por estado/i), 'DRAFT');
     await waitFor(() => expect(getAdminActivities).toHaveBeenLastCalledWith({
-      page: 1,
-      limit: 10,
+      page: 0,
       status: 'DRAFT',
-    }));
-
-    await user.type(screen.getByLabelText(/buscar actividades/i), 'mentor');
-    await user.click(screen.getByRole('button', { name: /^buscar$/i }));
-    await waitFor(() => expect(getAdminActivities).toHaveBeenLastCalledWith({
-      page: 1,
-      limit: 10,
-      status: 'DRAFT',
-      q: 'mentor',
     }));
   });
 
@@ -136,7 +129,7 @@ describe('ActivitiesListPage', () => {
     expect(screen.getByRole('button', { name: /anterior/i })).toBeDisabled();
     await user.click(screen.getByRole('button', { name: /siguiente/i }));
 
-    await waitFor(() => expect(getAdminActivities).toHaveBeenLastCalledWith({ page: 2, limit: 10 }));
+    await waitFor(() => expect(getAdminActivities).toHaveBeenLastCalledWith({ page: 1 }));
     expect(screen.getByText(/página 2 de 2/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /siguiente/i })).toBeDisabled();
   });
@@ -148,7 +141,6 @@ describe('ActivitiesListPage', () => {
 
     expect(await screen.findByRole('heading', { name: /no hay actividades/i })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /limpiar filtros/i }));
-    expect(screen.getByLabelText(/buscar actividades/i)).toHaveValue('');
     expect(screen.getByLabelText(/filtrar por estado/i)).toHaveValue('');
   });
 

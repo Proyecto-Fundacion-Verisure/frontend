@@ -42,13 +42,13 @@ describe('guardas de rutas', () => {
     expect(screen.getByRole('heading', { name: 'Inicio empleado' })).toBeInTheDocument();
   });
 
-  it('admite una entidad activa cuando la ruta acepta ORG', () => {
-    renderGuard({ user: { role: 'ORG', status: 'ACTIVE' }, roles: ['ORG'] });
+  it('admite una entidad activa cuando la ruta acepta PARTNER', () => {
+    renderGuard({ user: { role: 'PARTNER', status: 'ACTIVE' }, roles: ['PARTNER'] });
     expect(screen.getByRole('heading', { name: 'Contenido privado' })).toBeInTheDocument();
   });
 
   it('devuelve una entidad no activa a estado de cuenta', () => {
-    renderGuard({ user: { role: 'ORG', status: 'PENDING_APPROVAL' }, roles: ['ORG'] });
+    renderGuard({ user: { role: 'PARTNER', status: 'PENDING_APPROVAL' }, roles: ['PARTNER'] });
     expect(screen.getByRole('heading', { name: 'Estado de cuenta' })).toBeInTheDocument();
   });
 });
