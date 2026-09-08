@@ -208,7 +208,7 @@ export default function ActivitiesListPage({
         </div>
         {showCreateButton && (
           <Link className="button button--primary button--medium" to={createPath}>
-            Crear {titleLower}
+            Nuevo proyecto →
           </Link>
         )}
       </header>

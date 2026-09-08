@@ -86,7 +86,7 @@ export default function OrgProposalsPage() {
           <p>{proposals.length} propuestas encontradas</p>
         </div>
         <Link className="button button--primary button--medium" to="/org/proposals/new">
-          Crear propuesta
+          Nueva propuesta →
         </Link>
       </header>
       {proposals.length ? (
