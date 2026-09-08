@@ -5,6 +5,11 @@ import { Badge, Button, EmptyState, Select, Spinner, Table } from '../../compone
 import CancelActivityButton from './CancelActivityButton';
 import PartnerActivityReviewActions from './PartnerActivityReviewActions';
 
+const DEFAULT_COLUMNS_CONFIG = {
+  showPartnerColumn: true,
+  showRegistrationsLink: true,
+};
+
 const PAGE_SIZE = 10;
 
 const STATUS_OPTIONS = [
@@ -52,7 +57,15 @@ function getPageData(response) {
   return { content, totalElements, totalPages };
 }
 
-export default function ActivitiesListPage() {
+export default function ActivitiesListPage({
+  fetchData = getAdminActivities,
+  showCreateButton = true,
+  showPartnerColumn = DEFAULT_COLUMNS_CONFIG.showPartnerColumn,
+  showRegistrationsLink = DEFAULT_COLUMNS_CONFIG.showRegistrationsLink,
+  title = 'Actividades',
+  eyebrow = 'Administración',
+  createPath = '/activities/new',
+}) {
   const [activities, setActivities] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
@@ -71,7 +84,7 @@ export default function ActivitiesListPage() {
         const params = { page: page - 1 };
         if (statusFilter) params.status = statusFilter;
 
-        const response = await getAdminActivities(params);
+        const response = await fetchData(params);
         if (cancelled) return;
         const pageData = getPageData(response);
         setActivities(pageData.content);
@@ -87,7 +100,7 @@ export default function ActivitiesListPage() {
     return () => {
       cancelled = true;
     };
-  }, [page, reloadKey, statusFilter]);
+  }, [page, reloadKey, statusFilter, fetchData]);
 
   const handleStatusChange = (event) => {
     setPage(1);
@@ -97,19 +110,19 @@ export default function ActivitiesListPage() {
   const columns = [
     {
       key: 'title',
-      label: 'Actividad',
+      label: 'Proyecto',
       render: (activity) => (
         <strong className="activities-list__activity-title">{activity.title}</strong>
       ),
     },
-    {
+    ...(showPartnerColumn ? [{
       key: 'partner',
       label: 'Entidad colaboradora',
       render: (activity) => activity.partner?.name
         ?? activity.partnerName
         ?? activity.organizationName
         ?? '—',
-    },
+    }] : []),
     {
       key: 'status',
       label: 'Estado',
@@ -148,8 +161,8 @@ export default function ActivitiesListPage() {
               activity={activity}
               onReviewed={(result) => {
                 setNotice(result === 'approved'
-                  ? 'La actividad se ha aprobado correctamente.'
-                  : 'La actividad se ha devuelto a la entidad.');
+                  ? 'El proyecto se ha aprobado correctamente.'
+                  : 'El proyecto se ha devuelto a la entidad.');
                 setReloadKey((current) => current + 1);
               }}
             />
@@ -161,12 +174,14 @@ export default function ActivitiesListPage() {
               Editar
             </Link>
           ) : null}
-          <Link
-            className="button button--secondary button--small"
-            to={`/activities/${activity.id}/registrations`}
-          >
-            Inscripciones
-          </Link>
+          {showRegistrationsLink && (
+            <Link
+              className="button button--secondary button--small"
+              to={`/activities/${activity.id}/registrations`}
+            >
+              Inscripciones
+            </Link>
+          )}
           {activity.status !== 'PENDING_APPROVAL' && (
             <CancelActivityButton
               activity={activity}
@@ -185,13 +200,15 @@ export default function ActivitiesListPage() {
     <section className="activities-list" aria-labelledby="activities-list-title">
       <header className="activities-list__header">
         <div>
-          <p className="activities-list__eyebrow">Administración</p>
-          <h1 id="activities-list-title">Actividades</h1>
-          <p>{totalElements} actividades encontradas</p>
+          <p className="activities-list__eyebrow">{eyebrow}</p>
+          <h1 id="activities-list-title">{title}</h1>
+          <p>{totalElements} proyectos encontrados</p>
         </div>
-        <Link className="button button--primary button--medium" to="/activities/new">
-          Crear actividad
-        </Link>
+        {showCreateButton && (
+          <Link className="button button--primary button--medium" to={createPath}>
+            Crear proyecto
+          </Link>
+        )}
       </header>
 
       <div className="activities-list__toolbar">
@@ -205,21 +222,21 @@ export default function ActivitiesListPage() {
       {notice && <p className="activities-list__notice" role="status">{notice}</p>}
 
       {requestState.status === 'loading' && (
-        <div className="activities-list__loading" aria-label="Cargando actividades">
-          <Spinner label="Cargando actividades…" />
+        <div className="activities-list__loading" aria-label="Cargando proyectos">
+          <Spinner label="Cargando proyectos…" />
         </div>
       )}
 
       {requestState.status === 'error' && requestState.error?.status === 403 && (
         <div className="activities-list__error" role="alert">
-          No tienes permiso para consultar las actividades administrativas.
+          No tienes permiso para consultar los proyectos administrativos.
         </div>
       )}
 
       {requestState.status === 'error' && requestState.error?.status !== 403 && (
         <div className="activities-list__error-panel">
           <p className="activities-list__error" role="alert">
-            {requestState.error?.message || 'No hemos podido cargar las actividades.'}
+            {requestState.error?.message || 'No hemos podido cargar los proyectos.'}
           </p>
           <Button onClick={() => setReloadKey((current) => current + 1)}>Reintentar</Button>
         </div>
@@ -227,8 +244,8 @@ export default function ActivitiesListPage() {
 
       {requestState.status === 'success' && activities.length === 0 && (
         <EmptyState
-          title="No hay actividades"
-          description="No se encontraron actividades con los filtros seleccionados."
+          title="No hay proyectos"
+          description="No se encontraron proyectos con los filtros seleccionados."
           action={(
             <Button
               variant="secondary"
@@ -245,8 +262,8 @@ export default function ActivitiesListPage() {
 
       {requestState.status === 'success' && activities.length > 0 && (
         <>
-          <Table caption="Listado administrativo de actividades" columns={columns} data={activities} />
-          <nav className="activities-list__pagination" aria-label="Paginación de actividades">
+          <Table caption="Listado de proyectos" columns={columns} data={activities} />
+          <nav className="activities-list__pagination" aria-label="Paginación de proyectos">
             <span>Página {page} de {Math.max(totalPages, 1)}</span>
             <div>
               <Button
