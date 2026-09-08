@@ -14,6 +14,7 @@ import OrgRegisterPage from '../features/orgs/OrgRegisterPage';
 import ActivityFormPage from '../features/activities/ActivityFormPage';
 import OrgImpactPage from '../features/orgs/OrgImpactPage';
 import OrgProposalsPage from '../features/orgs/OrgProposalsPage';
+import OrgProposalFormPage from '../features/orgs/OrgProposalFormPage';
 import ProposalsInboxPage from '../features/proposals/ProposalsInboxPage';
 import ProposalDetailPage from '../features/proposals/ProposalDetailPage';
 import AccountStatusPage from '../features/orgs/AccountStatusPage';
@@ -92,6 +93,7 @@ export default function AppRouter() {
             <Route path="/org/activities/new" element={<ActivityFormPage backPath="/org/activities" />} />
             <Route path="/org/reports" element={<OrgImpactPage />} />
             <Route path="/org/proposals" element={<OrgProposalsPage />} />
+            <Route path="/org/proposals/new" element={<OrgProposalFormPage />} />
           </Route>
         </Route>
       </Route>

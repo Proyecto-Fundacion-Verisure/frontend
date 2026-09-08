@@ -196,17 +196,19 @@ export default function ActivitiesListPage({
     },
   ];
 
+  const titleLower = title.charAt(0).toLowerCase() + title.slice(1);
+
   return (
     <section className="activities-list" aria-labelledby="activities-list-title">
       <header className="activities-list__header">
         <div>
           <p className="activities-list__eyebrow">{eyebrow}</p>
           <h1 id="activities-list-title">{title}</h1>
-          <p>{totalElements} proyectos encontrados</p>
+          <p>{totalElements} {titleLower} encontrados</p>
         </div>
         {showCreateButton && (
           <Link className="button button--primary button--medium" to={createPath}>
-            Crear proyecto
+            Crear {titleLower}
           </Link>
         )}
       </header>
@@ -222,21 +224,21 @@ export default function ActivitiesListPage({
       {notice && <p className="activities-list__notice" role="status">{notice}</p>}
 
       {requestState.status === 'loading' && (
-        <div className="activities-list__loading" aria-label="Cargando proyectos">
-          <Spinner label="Cargando proyectos…" />
+        <div className="activities-list__loading" aria-label={`Cargando ${titleLower}`}>
+          <Spinner label={`Cargando ${titleLower}…`} />
         </div>
       )}
 
       {requestState.status === 'error' && requestState.error?.status === 403 && (
         <div className="activities-list__error" role="alert">
-          No tienes permiso para consultar los proyectos administrativos.
+          No tienes permiso para consultar los {titleLower}.
         </div>
       )}
 
       {requestState.status === 'error' && requestState.error?.status !== 403 && (
         <div className="activities-list__error-panel">
           <p className="activities-list__error" role="alert">
-            {requestState.error?.message || 'No hemos podido cargar los proyectos.'}
+            {requestState.error?.message || `No hemos podido cargar los ${titleLower}.`}
           </p>
           <Button onClick={() => setReloadKey((current) => current + 1)}>Reintentar</Button>
         </div>
@@ -244,8 +246,8 @@ export default function ActivitiesListPage({
 
       {requestState.status === 'success' && activities.length === 0 && (
         <EmptyState
-          title="No hay proyectos"
-          description="No se encontraron proyectos con los filtros seleccionados."
+          title={`No hay ${titleLower}`}
+          description={`No se encontraron ${titleLower} con los filtros seleccionados.`}
           action={(
             <Button
               variant="secondary"
@@ -262,8 +264,8 @@ export default function ActivitiesListPage({
 
       {requestState.status === 'success' && activities.length > 0 && (
         <>
-          <Table caption="Listado de proyectos" columns={columns} data={activities} />
-          <nav className="activities-list__pagination" aria-label="Paginación de proyectos">
+          <Table caption={`Listado de ${titleLower}`} columns={columns} data={activities} />
+          <nav className="activities-list__pagination" aria-label={`Paginación de ${titleLower}`}>
             <span>Página {page} de {Math.max(totalPages, 1)}</span>
             <div>
               <Button

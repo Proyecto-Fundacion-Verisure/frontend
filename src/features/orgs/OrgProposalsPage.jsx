@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getOrgProposals } from '../../api/orgApi';
-import { Button, EmptyState, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, Spinner, Table } from '../../components/ui';
+
+const STATUS_BADGES = {
+  DRAFT: { label: 'Borrador', variant: 'neutral' },
+  PENDING_APPROVAL: { label: 'Pendiente', variant: 'warning' },
+  ACCEPTED: { label: 'Aceptada', variant: 'success' },
+  REJECTED: { label: 'Rechazada', variant: 'danger' },
+};
 
 export default function OrgProposalsPage() {
   const [page, setPage] = useState(1);
@@ -38,17 +46,49 @@ export default function OrgProposalsPage() {
 
   const columns = [
     { key: 'title', label: 'Propuesta', render: (item) => item.title ?? item.description ?? `Propuesta ${item.id}` },
-    { key: 'status', label: 'Estado', render: (item) => item.status },
+    {
+      key: 'status',
+      label: 'Estado',
+      render: (item) => {
+        const badge = STATUS_BADGES[item.status];
+        return badge
+          ? <Badge variant={badge.variant}>{badge.label}</Badge>
+          : item.status ?? '—';
+      },
+    },
     {
       key: 'createdAt',
       label: 'Fecha',
       render: (item) => item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-ES') : '—',
     },
+    {
+      key: 'actions',
+      label: 'Acciones',
+      render: (item) => item.status === 'ACCEPTED'
+        ? (
+          <Link
+            className="button button--primary button--small"
+            to="/org/activities/new"
+          >
+            Crear actividad
+          </Link>
+        )
+        : '—',
+    },
   ];
 
   return (
-    <section aria-labelledby="org-proposals-title">
-      <h1 id="org-proposals-title">Mis propuestas</h1>
+    <section className="activities-list" aria-labelledby="org-proposals-title">
+      <header className="activities-list__header">
+        <div>
+          <p className="activities-list__eyebrow">Entidad colaboradora</p>
+          <h1 id="org-proposals-title">Mis propuestas</h1>
+          <p>{proposals.length} propuestas encontradas</p>
+        </div>
+        <Link className="button button--primary button--medium" to="/org/proposals/new">
+          Crear propuesta
+        </Link>
+      </header>
       {proposals.length ? (
         <>
           <Table caption="Propuestas de mi entidad" columns={columns} data={proposals} />
