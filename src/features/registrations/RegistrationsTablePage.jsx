@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Badge, Button, EmptyState, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, Pagination, Spinner, Table } from '../../components/ui';
 import RegistrationDecisionActions from './RegistrationDecisionActions';
 import CancelRegistrationAction from './CancelRegistrationAction';
 import useRegistrations from './useRegistrations';
@@ -203,25 +203,12 @@ export default function RegistrationsTablePage() {
               </section>
             );
           })}
-          <nav aria-label="Paginación de inscripciones">
-            <span>Página {page} de {totalPages}</span>
-            <Button
-              size="small"
-              variant="secondary"
-              disabled={page <= 1}
-              onClick={() => setPage((current) => current - 1)}
-            >
-              Anterior
-            </Button>
-            <Button
-              size="small"
-              variant="secondary"
-              disabled={page >= totalPages}
-              onClick={() => setPage((current) => current + 1)}
-            >
-              Siguiente
-            </Button>
-          </nav>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            ariaLabel="Paginación de inscripciones"
+          />
         </div>
       )}
     </section>

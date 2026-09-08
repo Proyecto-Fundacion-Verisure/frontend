@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getPublishedActivities } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
-import { Button, EmptyState, Input, Select, Spinner } from '../../components/ui';
+import { Button, EmptyState, Input, Pagination, Select, Spinner } from '../../components/ui';
 import ActivityCard from './ActivityCard';
 
 const LIMIT = 12;
@@ -65,6 +65,13 @@ export default function CatalogPage() {
       });
     },
     [setSearchParams],
+  );
+
+  const handlePageChange = useCallback(
+    (newPage) => {
+      updateParams({ page: String(newPage) }, { resetPage: false });
+    },
+    [updateParams],
   );
 
   const fetchActivities = useCallback(async () => {
@@ -229,27 +236,12 @@ export default function CatalogPage() {
             ))}
           </div>
 
-          <div className="catalog__pagination">
-            <span className="catalog__pagination-info">
-              Página {page} de {totalPages}
-            </span>
-            <div>
-              <Button
-                size="small"
-                disabled={page <= 1}
-                onClick={() => updateParams({ page: String(page - 1) }, { resetPage: false })}
-              >
-                ← Anterior
-              </Button>
-              <Button
-                size="small"
-                disabled={page >= totalPages}
-                onClick={() => updateParams({ page: String(page + 1) }, { resetPage: false })}
-              >
-                Siguiente →
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            ariaLabel="Paginación de catálogo"
+          />
         </>
       )}
     </section>
