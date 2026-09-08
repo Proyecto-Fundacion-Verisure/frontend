@@ -25,14 +25,32 @@ const fileConfig = (params, config = {}, allowed = DASHBOARD_FILTERS) => request
   responseType: 'blob',
 }, allowed);
 
-export const exportParticipationsCsv = (params = {}, config = {}) => (
-  client.get('/dashboard/participations.csv', fileConfig(params, config))
-);
+const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'test';
 
-export const exportPartnersCsv = (params = {}, config = {}) => (
-  client.get('/dashboard/partners.csv', fileConfig(params, config, YEAR_FILTER))
-);
+function mockBlob(content, type) {
+  return Promise.resolve({ data: new Blob([content], { type }) });
+}
 
-export const exportDashboardPdf = (params = {}, config = {}) => (
-  client.get('/dashboard/report.pdf', fileConfig(params, config, YEAR_FILTER))
-);
+export const exportParticipationsCsv = (params = {}, config = {}) => {
+  if (isMockEnabled()) {
+    const csv = `id,actividad,horas,departamento\n1,Actividad seudonimizada 1,8,Tecnología\n2,Actividad seudonimizada 2,5,Personas\n`;
+    return mockBlob(csv, 'text/csv');
+  }
+  return client.get('/dashboard/participations.csv', fileConfig(params, config));
+};
+
+export const exportPartnersCsv = (params = {}, config = {}) => {
+  if (isMockEnabled()) {
+    const csv = `organizacion,actividades,horas\nOrg seudonimizada A,2,15\nOrg seudonimizada B,1,8\n`;
+    return mockBlob(csv, 'text/csv');
+  }
+  return client.get('/dashboard/partners.csv', fileConfig(params, config, YEAR_FILTER));
+};
+
+export const exportDashboardPdf = (params = {}, config = {}) => {
+  if (isMockEnabled()) {
+    const pdfPlaceholder = `%PDF-1.4\n% Mock PDF for dashboard\n1 0 obj\n<< /Type /Catalog >>\nendobj\n`;
+    return mockBlob(pdfPlaceholder, 'application/pdf');
+  }
+  return client.get('/dashboard/report.pdf', fileConfig(params, config, YEAR_FILTER));
+};

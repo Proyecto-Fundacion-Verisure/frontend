@@ -141,6 +141,42 @@ function mockGetAdminActivities(params = {}) {
   });
 }
 
+function getPartnerOrganizationName() {
+  try {
+    const serializedUser = localStorage.getItem('user');
+    if (!serializedUser) return null;
+    const user = JSON.parse(serializedUser);
+    return user?.organization ?? user?.name ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function mockGetPartnerActivities(params = {}) {
+  const partnerName = getPartnerOrganizationName();
+  let results = partnerName
+    ? MOCK_ACTIVITIES.filter((a) => a.organizationName === partnerName)
+    : [...MOCK_ACTIVITIES];
+
+  if (params.status) {
+    results = results.filter((activity) => activity.status === params.status);
+  }
+  const page = Math.max(0, Number(params.page) || 0);
+  const size = Number(params.size) || 10;
+  const start = page * size;
+  const content = results.slice(start, start + size);
+
+  return Promise.resolve({
+    data: {
+      content,
+      number: page,
+      size,
+      totalElements: results.length,
+      totalPages: Math.ceil(results.length / size),
+    },
+  });
+}
+
 function mockGetActivityDetail(id) {
   const activity = MOCK_ACTIVITIES.find((a) => String(a.id) === String(id));
   if (!activity) {
@@ -234,3 +270,8 @@ export const approveActivity = (id) => client.patch(`/admin/activities/${id}/app
 export const returnActivity = (id, note) => (
   client.patch(`/admin/activities/${id}/return`, { note })
 );
+
+export const getPartnerActivities = (params = {}) =>
+  isMockEnabled()
+    ? mockGetPartnerActivities(params)
+    : client.get('/org/activities', { params: pickParams(params, ['status', 'page']) });
