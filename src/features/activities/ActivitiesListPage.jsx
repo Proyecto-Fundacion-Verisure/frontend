@@ -112,7 +112,7 @@ export default function ActivitiesListPage() {
   const columns = [
     {
       key: 'title',
-      label: 'Actividad',
+      label: 'Proyecto',
       render: (activity) => (
         <strong className="activities-list__activity-title">{activity.title}</strong>
       ),
@@ -177,7 +177,7 @@ export default function ActivitiesListPage() {
           <CancelActivityButton
             activity={activity}
             onCancelled={() => {
-              setNotice('La actividad se ha cancelado correctamente.');
+              setNotice('El proyecto se ha cancelado correctamente.');
               setReloadKey((current) => current + 1);
             }}
           />
@@ -191,11 +191,11 @@ export default function ActivitiesListPage() {
       <header className="activities-list__header">
         <div>
           <p className="activities-list__eyebrow">{isOrg ? 'Mi organización' : 'Administración'}</p>
-          <h1 id="activities-list-title">Actividades</h1>
-          <p>{totalElements} actividades encontradas</p>
+          <h1 id="activities-list-title">Proyectos</h1>
+          <p>{totalElements} proyectos encontrados</p>
         </div>
-        <Link className="button button--primary button--medium" to="/activities/new">
-          Crear actividad
+        <Link className="button button--primary button--medium" to={isOrg ? "/org/activities/new" : "/activities/new" }>
+          Crear proyecto
         </Link>
       </header>
 
@@ -203,8 +203,8 @@ export default function ActivitiesListPage() {
         <form className="activities-list__search" role="search" onSubmit={handleSearch}>
           <Input
             type="search"
-            label="Buscar actividades"
-            placeholder="Buscar por actividad o entidad"
+            label="Buscar proyectos"
+            placeholder="Buscar por proyecto o entidad"
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
           />
@@ -220,21 +220,21 @@ export default function ActivitiesListPage() {
       {notice && <p className="activities-list__notice" role="status">{notice}</p>}
 
       {requestState.status === 'loading' && (
-        <div className="activities-list__loading" aria-label="Cargando actividades">
-          <Spinner label="Cargando actividades…" />
+        <div className="activities-list__loading" aria-label="Cargando proyectos">
+          <Spinner label="Cargando proyectos…" />
         </div>
       )}
 
       {requestState.status === 'error' && requestState.error?.status === 403 && (
         <div className="activities-list__error" role="alert">
-          No tienes permiso para consultar las actividades administrativas.
+          No tienes permiso para consultar los proyectos administrativos.
         </div>
       )}
 
       {requestState.status === 'error' && requestState.error?.status !== 403 && (
         <div className="activities-list__error-panel">
           <p className="activities-list__error" role="alert">
-            {requestState.error?.message || 'No hemos podido cargar las actividades.'}
+            {requestState.error?.message || 'No hemos podido cargar los proyectos.'}
           </p>
           <Button onClick={() => setReloadKey((current) => current + 1)}>Reintentar</Button>
         </div>
@@ -242,8 +242,8 @@ export default function ActivitiesListPage() {
 
       {requestState.status === 'success' && activities.length === 0 && (
         <EmptyState
-          title="No hay actividades"
-          description="No se encontraron actividades con los filtros seleccionados."
+          title="No hay proyectos"
+          description="No se encontraron proyectos con los filtros seleccionados."
           action={(
             <Button
               variant="secondary"
@@ -262,7 +262,7 @@ export default function ActivitiesListPage() {
 
       {requestState.status === 'success' && activities.length > 0 && (
         <>
-          <Table caption={isOrg ? 'Listado de actividades de mi organización' : 'Listado administrativo de actividades'} columns={columns} data={activities} />
+          <Table caption={isOrg ? 'Listado de proyectos de mi organización' : 'Listado administrativo de actividades'} columns={columns} data={activities} />
           <nav className="activities-list__pagination" aria-label="Paginación de actividades">
             <span>Página {page} de {Math.max(totalPages, 1)}</span>
             <div>

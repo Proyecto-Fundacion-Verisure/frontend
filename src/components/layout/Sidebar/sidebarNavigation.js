@@ -23,7 +23,7 @@ export const NAV_SECTIONS_BY_ROLE = {
       items: [
         {
           path: "/activities/new",
-          label: "Crear actividad",
+          label: "Crear proyecto",
           icon: CirclePlus,
           variant: "cta",
         },
@@ -80,46 +80,35 @@ export const NAV_SECTIONS_BY_ROLE = {
   ],
   ORG: [
     {
-      section: "Gestión",
+      section: "Análisis",
       items: [
-        {
-          path: "/org/activities",
-          label: "Mis actividades",
-          icon: ClipboardList,
-        },
-        {
-          path: "/org/reports",
-          label: "Informes",
-          icon: BarChart3,
-        },
-        {
-          path: "/org/proposals",
-          label: "Mis propuestas",
-          icon: FileText,
-          badgeKey: "proposals",
-        },
+        { path: "/org/dashboard", label: "Dashboard", icon: LayoutDashboard },
       ],
     },
-  ],
-  PARTNER: [
     {
       section: "Gestión",
       items: [
         {
-          path: "/org/activities",
-          label: "Mis actividades",
-          icon: ClipboardList,
+          path: "/org/activities/new",
+          label: "Crear proyecto",
+          icon: CirclePlus,
+          variant: "cta",
         },
         {
-          path: "/org/reports",
-          label: "Informes",
-          icon: BarChart3,
+          path: "/org/activities",
+          label: "Mis proyectos",
+          icon: ClipboardList,
         },
         {
           path: "/org/proposals",
           label: "Mis propuestas",
           icon: FileText,
           badgeKey: "proposals",
+        },
+        {
+          path: "/org/reports",
+          label: "Cierres",
+          icon: CheckCircle2,
         },
       ],
     },
