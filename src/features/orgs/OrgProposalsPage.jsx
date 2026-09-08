@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getOrgProposals } from '../../api/orgApi';
-import { Badge, Button, EmptyState, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, Pagination, Spinner, Table } from '../../components/ui';
 
 const STATUS_BADGES = {
   DRAFT: { label: 'Borrador', variant: 'neutral' },
@@ -92,11 +92,12 @@ export default function OrgProposalsPage() {
       {proposals.length ? (
         <>
           <Table caption="Propuestas de mi entidad" columns={columns} data={proposals} />
-          <nav aria-label="Paginación de propuestas de la entidad">
-            <span>Página {page} de {totalPages}</span>
-            <Button disabled={page <= 1} onClick={() => setPage((current) => current - 1)}>Anterior</Button>
-            <Button disabled={page >= totalPages} onClick={() => setPage((current) => current + 1)}>Siguiente</Button>
-          </nav>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            ariaLabel="Paginación de propuestas"
+          />
         </>
       ) : (
         <EmptyState title="No hay propuestas" description="Tu entidad todavía no ha enviado propuestas." />

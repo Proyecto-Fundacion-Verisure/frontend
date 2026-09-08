@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAdminActivities } from '../../api/activitiesApi';
-import { Badge, Button, EmptyState, Select, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, Pagination, Select, Spinner, Table } from '../../components/ui';
 import CancelActivityButton from './CancelActivityButton';
 import PartnerActivityReviewActions from './PartnerActivityReviewActions';
 
@@ -186,7 +186,7 @@ export default function ActivitiesListPage({
             <CancelActivityButton
               activity={activity}
               onCancelled={() => {
-                setNotice('La actividad se ha cancelado correctamente.');
+                setNotice('El proyecto se ha cancelado correctamente.');
                 setReloadKey((current) => current + 1);
               }}
             />
@@ -196,7 +196,7 @@ export default function ActivitiesListPage({
     },
   ];
 
-  const titleLower = title.charAt(0).toLowerCase() + title.slice(1);
+  const titleLower = title.slice(3);
 
   return (
     <section className="activities-list" aria-labelledby="activities-list-title">
@@ -265,27 +265,12 @@ export default function ActivitiesListPage({
       {requestState.status === 'success' && activities.length > 0 && (
         <>
           <Table caption={`Listado de ${titleLower}`} columns={columns} data={activities} />
-          <nav className="activities-list__pagination" aria-label={`Paginación de ${titleLower}`}>
-            <span>Página {page} de {Math.max(totalPages, 1)}</span>
-            <div>
-              <Button
-                size="small"
-                variant="secondary"
-                disabled={page <= 1}
-                onClick={() => setPage((current) => current - 1)}
-              >
-                ← Anterior
-              </Button>
-              <Button
-                size="small"
-                variant="secondary"
-                disabled={page >= totalPages}
-                onClick={() => setPage((current) => current + 1)}
-              >
-                Siguiente →
-              </Button>
-            </div>
-          </nav>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            ariaLabel={`Paginación de ${titleLower}`}
+          />
         </>
       )}
     </section>
