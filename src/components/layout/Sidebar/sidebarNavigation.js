@@ -23,7 +23,7 @@ export const NAV_SECTIONS_BY_ROLE = {
       items: [
         {
           path: "/activities/new",
-          label: "Crear proyecto",
+          label: "Nuevo proyecto",
           icon: CirclePlus,
           variant: "cta",
         },
@@ -90,7 +90,7 @@ export const NAV_SECTIONS_BY_ROLE = {
       items: [
         {
           path: "/org/activities/new",
-          label: "Crear proyecto",
+          label: "Nuevo proyecto",
           icon: CirclePlus,
           variant: "cta",
         },

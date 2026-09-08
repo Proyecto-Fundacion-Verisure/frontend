@@ -101,6 +101,10 @@
 .proposal-form__footer small {
   color: $color-muted;
 }
+.proposal-form__actions {
+  display: flex;
+  gap: space("4");
+}
 .proposal-steps {
   padding-top: space("4");
 }

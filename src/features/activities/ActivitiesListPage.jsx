@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAdminActivities } from '../../api/activitiesApi';
-import { Badge, Button, EmptyState, Select, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, Pagination, Select, Spinner, Table } from '../../components/ui';
 import CancelActivityButton from './CancelActivityButton';
 import PartnerActivityReviewActions from './PartnerActivityReviewActions';
 
@@ -186,7 +186,7 @@ export default function ActivitiesListPage({
             <CancelActivityButton
               activity={activity}
               onCancelled={() => {
-                setNotice('La actividad se ha cancelado correctamente.');
+                setNotice('El proyecto se ha cancelado correctamente.');
                 setReloadKey((current) => current + 1);
               }}
             />
@@ -196,17 +196,19 @@ export default function ActivitiesListPage({
     },
   ];
 
+  const titleLower = title.slice(3);
+
   return (
     <section className="activities-list" aria-labelledby="activities-list-title">
       <header className="activities-list__header">
         <div>
           <p className="activities-list__eyebrow">{eyebrow}</p>
           <h1 id="activities-list-title">{title}</h1>
-          <p>{totalElements} proyectos encontrados</p>
+          <p>{totalElements} {titleLower} encontrados</p>
         </div>
         {showCreateButton && (
           <Link className="button button--primary button--medium" to={createPath}>
-            Crear proyecto
+            Nuevo proyecto →
           </Link>
         )}
       </header>
@@ -222,21 +224,21 @@ export default function ActivitiesListPage({
       {notice && <p className="activities-list__notice" role="status">{notice}</p>}
 
       {requestState.status === 'loading' && (
-        <div className="activities-list__loading" aria-label="Cargando proyectos">
-          <Spinner label="Cargando proyectos…" />
+        <div className="activities-list__loading" aria-label={`Cargando ${titleLower}`}>
+          <Spinner label={`Cargando ${titleLower}…`} />
         </div>
       )}
 
       {requestState.status === 'error' && requestState.error?.status === 403 && (
         <div className="activities-list__error" role="alert">
-          No tienes permiso para consultar los proyectos administrativos.
+          No tienes permiso para consultar los {titleLower}.
         </div>
       )}
 
       {requestState.status === 'error' && requestState.error?.status !== 403 && (
         <div className="activities-list__error-panel">
           <p className="activities-list__error" role="alert">
-            {requestState.error?.message || 'No hemos podido cargar los proyectos.'}
+            {requestState.error?.message || `No hemos podido cargar los ${titleLower}.`}
           </p>
           <Button onClick={() => setReloadKey((current) => current + 1)}>Reintentar</Button>
         </div>
@@ -244,8 +246,8 @@ export default function ActivitiesListPage({
 
       {requestState.status === 'success' && activities.length === 0 && (
         <EmptyState
-          title="No hay proyectos"
-          description="No se encontraron proyectos con los filtros seleccionados."
+          title={`No hay ${titleLower}`}
+          description={`No se encontraron ${titleLower} con los filtros seleccionados.`}
           action={(
             <Button
               variant="secondary"
@@ -262,28 +264,13 @@ export default function ActivitiesListPage({
 
       {requestState.status === 'success' && activities.length > 0 && (
         <>
-          <Table caption="Listado de proyectos" columns={columns} data={activities} />
-          <nav className="activities-list__pagination" aria-label="Paginación de proyectos">
-            <span>Página {page} de {Math.max(totalPages, 1)}</span>
-            <div>
-              <Button
-                size="small"
-                variant="secondary"
-                disabled={page <= 1}
-                onClick={() => setPage((current) => current - 1)}
-              >
-                ← Anterior
-              </Button>
-              <Button
-                size="small"
-                variant="secondary"
-                disabled={page >= totalPages}
-                onClick={() => setPage((current) => current + 1)}
-              >
-                Siguiente →
-              </Button>
-            </div>
-          </nav>
+          <Table caption={`Listado de ${titleLower}`} columns={columns} data={activities} />
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            ariaLabel={`Paginación de ${titleLower}`}
+          />
         </>
       )}
     </section>
