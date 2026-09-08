@@ -571,7 +571,29 @@
 
 @include respond-to('xl') {
   .dashboard-distribution-card__content {
+    align-items: start;
     grid-template-columns: minmax(0, 3fr) minmax(26rem, 2fr);
+
+    .bar-chart__scroll { padding-top: .375rem; }
+    .table-wrapper { align-self: start; }
+
+    .chart-table {
+      min-width: 0;
+
+      caption,
+      thead {
+        clip: rect(0, 0, 0, 0);
+        clip-path: inset(50%);
+        height: 1px;
+        overflow: hidden;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+      }
+
+      tbody tr { height: 2.75rem; }
+      td { padding-block: 0; }
+    }
   }
 }
 
