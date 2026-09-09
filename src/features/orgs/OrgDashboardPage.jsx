@@ -1,148 +1,180 @@
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { BarChart3, Clock3, FileText, Users } from 'lucide-react';
-import { Badge, Button, Card, ProgressBar } from '../../components/ui';
+import { useCallback, useEffect, useState } from 'react';
+import { getOrgDashboard } from '../../api/orgApi';
+import { Card, EmptyState, Spinner, Button } from '../../components/ui';
+import BarChart from '../dashboard/BarChart';
+import ChartTable from '../dashboard/ChartTable';
+import KpiRow from '../dashboard/KpiRow';
+import { ORG_KPI_DEFINITIONS, ORG_KPI_KEYS } from './orgDashboardDefinitions';
 
-const MOCK_METRICS = [
-  { key: 'activeProposals', label: 'Propuestas Activas', value: 12, hint: '+3 este mes', Icon: FileText },
-  { key: 'assignedVolunteers', label: 'Voluntarios Asignados', value: 48, hint: 'En 5 iniciativas', Icon: Users },
-  { key: 'totalHours', label: 'Impacto Total', value: '1.2K', hint: 'Horas registradas', Icon: Clock3 },
-];
+function hasOrgDashboardData(data) {
+  if (!data || typeof data !== 'object') return false;
+  const metrics = data.kpis ?? data;
+  return ORG_KPI_KEYS.some((key) => {
+    const value = metrics[key];
+    return value !== null && value !== undefined && Number(value) > 0;
+  });
+}
 
-const MOCK_INITIATIVES = [
-  {
-    id: 'REF-2024-08',
-    category: 'Medio Ambiente',
-    date: 'Hace 2 días',
-    title: 'Reforestación Sierra Norte',
-    description: 'Proyecto de recuperación de flora autóctona en zonas afectadas por incendios.',
-    status: 'En revisión',
-    statusVariant: 'warning',
-  },
-  {
-    id: 'REF-2024-07',
-    category: 'Inclusión Social',
-    date: 'Hace 1 semana',
-    title: 'Taller Tecnológico Mayores',
-    description: 'Alfabetización digital para la tercera edad en centros cívicos.',
-    status: 'Información requerida',
-    statusVariant: 'danger',
-    action: 'Ver detalles →',
-    highlighted: true,
-  },
-  {
-    id: 'REF-2024-06',
-    category: 'Educación',
-    date: 'Hace 1 mes',
-    title: 'Apoyo Escolar Distrito Sur',
-    description: 'Clases de refuerzo para niños en riesgo de exclusión social.',
-    status: 'En curso',
-    statusVariant: 'success',
-    volunteers: 12,
-    hours: 24,
-    progress: 48,
-  },
-];
-
-function InitiativeCard({ initiative }) {
-  const { category, date, title, description, status, statusVariant, id, action, volunteers, hours, progress, highlighted } = initiative;
+function OrgDashboardSection({ id, number, title, description, children }) {
   return (
-    <Card className={`initiative-card ${highlighted ? 'initiative-card--highlighted' : ''}`}>
-      <div className="initiative-card__header">
-        <Badge variant="info">{category}</Badge>
-        <span className="initiative-card__date">{date}</span>
-      </div>
-      <h3 className="initiative-card__title">{title}</h3>
-      <p className="initiative-card__description">{description}</p>
-      <div className="initiative-card__footer">
-        <Badge variant={statusVariant}>{status}</Badge>
-        <span className="initiative-card__id">{id}</span>
-      </div>
-      {action && (
-        <Link to={`/org/proposals/${id}`} className="initiative-card__action">
-          {action}
-        </Link>
-      )}
-      {volunteers !== undefined && (
-        <div className="initiative-card__meta">
-          <span>{volunteers} Voluntarios</span>
-          <span>{hours}h registradas</span>
+    <section className="dashboard-block" aria-labelledby={`${id}-title`}>
+      <header className="dashboard-block__header">
+        <span className="dashboard-block__number" aria-hidden="true">{number}</span>
+        <div>
+          <h2 id={`${id}-title`}>{title}</h2>
+          <p>{description}</p>
         </div>
-      )}
-      {progress !== undefined && (
-        <ProgressBar value={progress} max={100} label="Progreso" valueLabel={`${progress}%`} />
-      )}
-    </Card>
+      </header>
+      {children}
+    </section>
   );
 }
 
 export default function OrgDashboardPage() {
-  const [filter, setFilter] = useState('activos');
+  const [requestState, setRequestState] = useState({ status: 'loading', data: null, error: null });
+  const [retryKey, setRetryKey] = useState(0);
 
-  const initiatives = useMemo(() => {
-    if (filter === 'todos') return MOCK_INITIATIVES;
-    // Activos: En revisión + En curso (excluye Información requerida si se considera no activo? Mock dice Activos por defecto debe mostrar las 3? Según spec, Activos incluye En revisión y En curso, pero para demo mostramos las 3 y destacamos Información requerida)
-    // Para cumplir "Activos por defecto debe aparecer seleccionado Activos" y que filtre, definimos Activos = En revisión + En curso
-    return MOCK_INITIATIVES.filter((i) => i.status === 'En revisión' || i.status === 'En curso');
-  }, [filter]);
+  const load = useCallback(async () => {
+    let active = true;
+    setRequestState((current) => ({ ...current, status: 'loading', error: null }));
+    try {
+      const { data } = await getOrgDashboard();
+      if (active) setRequestState({ status: 'success', data, error: null });
+    } catch (error) {
+      if (active && !error?.isCanceled) setRequestState({ status: 'error', data: null, error });
+    }
+    return () => { active = false; };
+  }, [retryKey]);
+
+  useEffect(() => {
+    const cleanup = load();
+    return () => { if (typeof cleanup === 'function') cleanup(); };
+  }, [load]);
+
+  const dashboardData = requestState.data ?? {};
+  const metrics = dashboardData.kpis ?? dashboardData;
+  const evolutionData = Array.isArray(dashboardData.evolutionByYear) ? dashboardData.evolutionByYear : [];
+  const lineData = Array.isArray(dashboardData.distributionByLine) ? dashboardData.distributionByLine : [];
 
   return (
-    <div className="org-dashboard">
-      <header className="org-dashboard__header">
+    <div className="dashboard">
+      <header className="dashboard__header">
         <div>
-          <h1>Panel de Propuestas</h1>
-          <p>Gestiona y haz seguimiento de tus iniciativas presentadas.</p>
+          <p className="dashboard__eyebrow">Entidad colaboradora</p>
+          <h1>Panel de control de la entidad</h1>
+          {dashboardData.dataSource === 'mock' && (
+            <span className="dashboard__demo-badge">Datos ficticios para validación</span>
+          )}
         </div>
-        <Link to="/org/activities/new" className="button button--primary button--medium">
-          Nueva Propuesta →
-        </Link>
       </header>
+      <p className="dashboard__intro">
+        Consulta las horas recibidas, actividades, voluntarios y personas beneficiadas
+        a partir de los cierres validados por la administración.
+      </p>
 
-      <section className="org-dashboard__metrics" aria-label="Métricas">
-        {MOCK_METRICS.map(({ key, label, value, hint, Icon }) => (
-          <Card key={key} className="org-metric-card">
-            <div className="org-metric-card__icon" aria-hidden="true">
-              <Icon size={20} />
-            </div>
-            <div className="org-metric-card__content">
-              <p className="org-metric-card__value">{value}</p>
-              <p className="org-metric-card__label">{label}</p>
-              <p className="org-metric-card__hint">{hint}</p>
-            </div>
-          </Card>
-        ))}
-      </section>
+      {requestState.status === 'loading' && (
+        <Card className="dashboard__loading" role="status" aria-live="polite">
+          <Spinner label="Cargando el panel de tu entidad…" />
+          <p>Cargando indicadores…</p>
+        </Card>
+      )}
 
-      <section className="org-dashboard__initiatives" aria-labelledby="initiatives-title">
-        <div className="org-dashboard__initiatives-header">
-          <h2 id="initiatives-title">Tus Iniciativas</h2>
-          <div className="org-dashboard__filters" role="group" aria-label="Filtros de iniciativas">
-            <Button
-              variant={filter === 'todos' ? 'primary' : 'secondary'}
-              size="small"
-              onClick={() => setFilter('todos')}
-              aria-pressed={filter === 'todos'}
-            >
-              Todos
-            </Button>
-            <Button
-              variant={filter === 'activos' ? 'primary' : 'secondary'}
-              size="small"
-              onClick={() => setFilter('activos')}
-              aria-pressed={filter === 'activos'}
-            >
-              Activos
-            </Button>
-          </div>
-        </div>
+      {requestState.status === 'error' && requestState.error?.status === 403 && (
+        <Card className="dashboard__error" role="alert">
+          <h2>Acceso restringido</h2>
+          <p>No tienes permiso para consultar el panel de tu entidad.</p>
+        </Card>
+      )}
 
-        <div className="org-dashboard__grid">
-          {initiatives.map((item) => (
-            <InitiativeCard key={item.id} initiative={item} />
-          ))}
-        </div>
-        {initiatives.length === 0 && <p className="org-dashboard__empty">No hay iniciativas para este filtro.</p>}
-      </section>
+      {requestState.status === 'error' && requestState.error?.status !== 403 && (
+        <Card className="dashboard__error">
+          <h2>No hemos podido cargar el panel</h2>
+          <p role="alert">{requestState.error?.message ?? 'Comprueba tu conexión y vuelve a intentarlo.'}</p>
+          <Button onClick={() => setRetryKey((c) => c + 1)}>Reintentar</Button>
+        </Card>
+      )}
+
+      {requestState.status === 'success' && !hasOrgDashboardData(dashboardData) && (
+        <Card>
+          <EmptyState
+            title="Todavía no hay cierres validados"
+            description="El panel se completa cuando la administración valida los cierres de tus actividades. Si acabas de llegar, no es un error: tus indicadores aparecerán aquí."
+          />
+        </Card>
+      )}
+
+      {requestState.status === 'success' && hasOrgDashboardData(dashboardData) && (
+        <>
+          <OrgDashboardSection
+            id="impact"
+            number="01"
+            title="Indicadores"
+            description="Resultados acumulados de las actividades con cierres validados."
+          >
+            <KpiRow
+              metrics={metrics}
+              variations={dashboardData.variations ?? {}}
+              definitions={ORG_KPI_DEFINITIONS}
+              variationLabel="respecto al año anterior"
+              listLabel="Indicadores de la entidad"
+            />
+          </OrgDashboardSection>
+
+          <OrgDashboardSection
+            id="evolution"
+            number="02"
+            title="Evolución por año"
+            description="Horas recibidas en cada año con cierres validados."
+          >
+            <Card as="article" className="dashboard-distribution-card dashboard-distribution-card--wide">
+              <div className="dashboard-distribution-card__content">
+                <BarChart
+                  data={evolutionData}
+                  title="Evolución de horas recibidas por año"
+                  description="Horas recibidas en cada año"
+                  labelKey="year"
+                  valueKey="receivedHours"
+                />
+                <ChartTable
+                  data={evolutionData}
+                  caption="Tabla de evolución de horas recibidas por año"
+                  categoryLabel="Año"
+                  valueLabel="Horas recibidas"
+                  labelKey="year"
+                  valueKey="receivedHours"
+                />
+              </div>
+            </Card>
+          </OrgDashboardSection>
+
+          <OrgDashboardSection
+            id="distribution"
+            number="03"
+            title="Reparto por línea de acción"
+            description="Horas recibidas en cada línea de acción."
+          >
+            <Card as="article" className="dashboard-distribution-card dashboard-distribution-card--wide">
+              <div className="dashboard-distribution-card__content">
+                <BarChart
+                  data={lineData}
+                  title="Reparto por línea de acción"
+                  description="Horas recibidas por línea de acción"
+                  labelKey="label"
+                  valueKey="value"
+                />
+                <ChartTable
+                  data={lineData}
+                  caption="Tabla de reparto por línea de acción"
+                  categoryLabel="Línea de acción"
+                  valueLabel="Horas recibidas"
+                  labelKey="label"
+                  valueKey="value"
+                />
+              </div>
+            </Card>
+          </OrgDashboardSection>
+        </>
+      )}
     </div>
   );
 }

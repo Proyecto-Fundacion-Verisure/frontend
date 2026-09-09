@@ -1,7 +1,13 @@
 import client from './axiosClient';
 import { registerPartner, resendVerification } from './authApi';
+import { getOrgDashboardMockData } from '../assets/mock/data/orgDashboard';
 
 const USE_MOCK_API = import.meta.env.DEV && import.meta.env.MODE !== 'test';
+const useDevelopmentMocks = () => (
+  import.meta.env.DEV
+  && import.meta.env.MODE !== 'test'
+  && import.meta.env.VITE_USE_MOCKS !== 'false'
+);
 
 function simulateRequest({ data, delay = 300, failRate = 0 } = {}) {
   return new Promise((resolve, reject) => {
@@ -189,6 +195,7 @@ export const submitOrgProposal = (id) => {
   }
   return client.patch(`/org/proposals/${id}/submit`);
 };
-export const getOrgDashboard = (year) => (
-  client.get('/org/dashboard', { params: year ? { year } : {} })
-);
+export const getOrgDashboard = (year) => {
+  if (useDevelopmentMocks()) return simulateRequest({ data: getOrgDashboardMockData() });
+  return client.get('/org/dashboard', { params: year ? { year } : {} });
+};
