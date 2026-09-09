@@ -4,7 +4,7 @@ import { ApiError } from './apiError';
 const useDevelopmentMocks = () => (
   import.meta.env.DEV
   && import.meta.env.MODE !== 'test'
-  && import.meta.env.VITE_USE_MOCKS !== 'false'
+  && import.meta.env.VITE_USE_AUTH_MOCKS !== 'false'
 );
 
 const MOCK_USERS = {
