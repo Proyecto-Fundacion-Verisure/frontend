@@ -73,8 +73,10 @@ export default function DashboardExports({ filters = {} }) {
         <div>
           <p className="dashboard__eyebrow">Exportaciones</p>
           <h2 id="dashboard-exports-title">Descargar resultados</h2>
+          <p className="dashboard-exports__description">
+            Cada archivo utiliza exactamente los filtros activos del dashboard.
+          </p>
         </div>
-        <p>Cada archivo utiliza exactamente los filtros activos del dashboard.</p>
       </div>
       <div className="dashboard-exports__grid">
         {EXPORTS.map((definition) => {

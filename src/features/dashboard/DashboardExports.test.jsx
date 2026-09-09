@@ -21,6 +21,15 @@ describe('DashboardExports', () => {
     downloadBlob.mockReset();
   });
 
+  it('coloca la explicación de los filtros debajo del título', () => {
+    render(<DashboardExports filters={{}} />);
+
+    const title = screen.getByRole('heading', { name: 'Descargar resultados' });
+    expect(title.nextElementSibling).toHaveTextContent(
+      'Cada archivo utiliza exactamente los filtros activos del dashboard.',
+    );
+  });
+
   it('descarga ambos CSV y el PDF con los mismos filtros', async () => {
     const user = userEvent.setup();
     const filters = { year: 2026, line: 'desoledad' };

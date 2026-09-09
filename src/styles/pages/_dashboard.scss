@@ -414,6 +414,11 @@
   display: grid;
   gap: space('5');
 
+  &__description {
+    color: $color-muted;
+    margin-top: space('2');
+  }
+
   &__grid {
     display: grid;
     gap: space('4');
