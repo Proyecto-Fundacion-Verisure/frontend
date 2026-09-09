@@ -6,20 +6,17 @@ import {
   finalizeActivityClosure,
   getActivityClosure,
   getClosure,
-  getPendingActivityClosures,
   saveActivityClosure,
   submitClosure,
 } from '../../api/closuresApi';
 import ActivityClosurePage from './ActivityClosurePage';
 import ReportFormPage from './ReportFormPage';
-import ReportsQueuePage from './ReportsQueuePage';
 
 vi.mock('../../api/closuresApi', () => ({
   finalizeActivityClosure: vi.fn(),
   getActivityClosure: vi.fn(),
   getCertificate: vi.fn(),
   getClosure: vi.fn(),
-  getPendingActivityClosures: vi.fn(),
   saveActivityClosure: vi.fn(),
   submitClosure: vi.fn(),
 }));
@@ -115,29 +112,5 @@ describe('administrative activity closure pages', () => {
     }));
     expect(finalizeActivityClosure).toHaveBeenCalledWith('41');
     expect(await screen.findByText('Actividad cerrada.')).toBeInTheDocument();
-  });
-
-  it('renders a Spring Page of activities pending closure', async () => {
-    getPendingActivityClosures.mockResolvedValue({
-      data: {
-        content: [{ activityId: 41, activityTitle: 'Mentoría', partnerName: 'Fundación Cerca' }],
-        number: 0,
-        totalElements: 1,
-        totalPages: 1,
-      },
-    });
-
-    render(
-      <MemoryRouter initialEntries={['/admin/activities/pending-closure']}>
-        <ReportsQueuePage />
-      </MemoryRouter>,
-    );
-
-    expect(await screen.findByText('Mentoría')).toBeInTheDocument();
-    expect(getPendingActivityClosures).toHaveBeenCalledWith({ page: 0 });
-    expect(screen.getByRole('link', { name: /revisar cierre/i })).toHaveAttribute(
-      'href',
-      '/admin/activities/41/closure',
-    );
   });
 });

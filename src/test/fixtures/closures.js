@@ -43,6 +43,18 @@ export function makeActivityClosure(overrides = {}) {
   };
 }
 
+export function makeActivitySummary(overrides = {}) {
+  return {
+    activityId: 41,
+    activityTitle: 'Mentoría laboral',
+    endDate: '2026-07-30T17:00:00Z',
+    expectedHours: 30,
+    reportedHours: 24,
+    closuresReceived: 6,
+    ...overrides,
+  };
+}
+
 export function makePage(content = [], { totalElements = content.length, page = 0, size = 10 } = {}) {
   const totalPages = totalElements === 0 ? 0 : Math.ceil(totalElements / size);
   return {
