@@ -29,10 +29,16 @@ export function formatDashboardVariation(value) {
   return `${sign}${formatDashboardNumber(numericValue)} %`;
 }
 
-export default function KpiRow({ metrics = {}, variations = {} }) {
+export default function KpiRow({
+  metrics = {},
+  variations = {},
+  definitions = KPI_DEFINITIONS,
+  variationLabel = 'respecto al trimestre anterior',
+  listLabel = 'Indicadores principales de impacto',
+}) {
   return (
-    <div className="kpi-row" role="list" aria-label="Indicadores principales de impacto">
-      {KPI_DEFINITIONS.map(({ key, label, Icon, suffix = '' }) => {
+    <div className="kpi-row" role="list" aria-label={listLabel}>
+      {definitions.map(({ key, label, Icon, suffix = '' }) => {
         const formattedValue = formatDashboardNumber(metrics[key]);
         const variation = Number(variations[key]);
         const formattedVariation = formatDashboardVariation(variations[key]);
@@ -49,7 +55,7 @@ export default function KpiRow({ metrics = {}, variations = {} }) {
             {formattedVariation && (
               <p className={`kpi-card__variation kpi-card__variation--${variation < 0 ? 'negative' : 'positive'}`}>
                 <VariationIcon aria-hidden="true" size={16} />
-                <span>{formattedVariation} respecto al trimestre anterior</span>
+                <span>{formattedVariation} {variationLabel}</span>
               </p>
             )}
           </Card>
