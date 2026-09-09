@@ -26,7 +26,7 @@ import AppLayout from '../components/layout/AppLayout/AppLayout';
 import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
 import RegistrationsTablePage from '../features/registrations/RegistrationsTablePage';
 import CertificatePage from '../features/reports/CertificatePage';
-import ReportsQueuePage from '../features/reports/ReportsQueuePage';
+import PendingClosurePage from '../features/reports/PendingClosurePage';
 import ReportFormPage from '../features/reports/ReportFormPage';
 import ActivityClosurePage from '../features/reports/ActivityClosurePage';
 
@@ -58,7 +58,7 @@ export default function AppRouter() {
             <Route path="/activities/:activityId/edit" element={<ActivityFormPage backPath="/admin/activities" />} />
             <Route path="/admin/activities" element={<ActivitiesListPage />} />
             <Route path="/admin/account-status" element={<AccountStatusPage />} />
-            <Route path="/admin/activities/pending-closure" element={<ReportsQueuePage />} />
+            <Route path="/admin/activities/pending-closure" element={<PendingClosurePage />} />
             <Route path="/admin/activities/:activityId/closure" element={<ActivityClosurePage />} />
           </Route>
           <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
