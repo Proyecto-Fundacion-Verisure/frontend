@@ -40,7 +40,7 @@ export const NAV_SECTIONS_BY_ROLE = {
       section: "Participación",
       items: [
         {
-          path: "/inscriptions",
+          path: "/activities/6/registrations",
           label: "Inscripciones",
           icon: UserPlus,
           badgeKey: "inscriptions",

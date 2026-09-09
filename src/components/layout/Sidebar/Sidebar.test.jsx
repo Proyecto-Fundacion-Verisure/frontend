@@ -38,4 +38,13 @@ describe('Sidebar ADMIN navigation', () => {
       '/activities/new',
     );
   });
+
+  it('links Inscripciones to the registrations page', () => {
+    renderSidebar('ADMIN');
+
+    expect(screen.getByRole('link', { name: /inscripciones/i })).toHaveAttribute(
+      'href',
+      '/activities/6/registrations',
+    );
+  });
 });

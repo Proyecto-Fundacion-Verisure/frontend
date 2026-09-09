@@ -40,7 +40,7 @@ export default function AppRouter() {
       <Route path="/register-organization" element={<PublicLayout><OrgRegisterPage /></PublicLayout>} />
       {import.meta.env.DEV && <Route path="/ui-kit" element={<UiShowcase />} />}
       <Route path="/explore" element={<Navigate to="/activities" replace />} />
-      <Route path="/inscriptions" element={<Navigate to="/admin/activities" replace />} />
+      <Route path="/inscriptions" element={<Navigate to="/activities/6/registrations" replace />} />
       <Route path="/closes" element={<Navigate to="/admin/activities/pending-closure" replace />} />
       <Route path="/account-status" element={<PublicLayout><AccountStatusPage /></PublicLayout>} />
       <Route element={<ProtectedRoute />}>
