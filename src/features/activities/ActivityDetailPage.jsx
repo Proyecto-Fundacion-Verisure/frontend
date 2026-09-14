@@ -177,7 +177,7 @@ export default function ActivityDetailPage() {
                 Ya estás apuntado
                 {currentRegistration?.status === 'WAITLISTED'
                   ? ' — En lista de espera'
-                  : currentRegistration?.status
+                  : currentRegistration?.status && currentRegistration.status !== 'CONFIRMED'
                     ? ` — ${currentRegistration.status}`
                     : ''}
                 .

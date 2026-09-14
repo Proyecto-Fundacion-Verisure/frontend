@@ -164,6 +164,7 @@ describe('ActivityDetailPage', () => {
     renderDetail('1');
     await screen.findByRole('heading', { name: /acompañamiento a mayores/i });
     expect(await screen.findByText('Ya estás apuntado')).toBeInTheDocument();
+    expect(document.body).not.toHaveTextContent(/\bCONFIRMED\b/);
     expect(getMyRegistrations).toHaveBeenCalled();
   });
 
@@ -214,7 +215,7 @@ describe('ActivityDetailPage', () => {
   });
 
   // H12 — Modal explicativo antes de confirmar
-  it('muestra modal con explicación WAITLISTED y accepted antes de confirmar', async () => {
+  it('muestra modal con una explicación amigable antes de confirmar', async () => {
     getActivityDetail.mockResolvedValue({
       data: { id: 1, title: 'Actividad', description: 'Desc', capacity: 10, registeredCount: 2 },
     });
@@ -225,14 +226,10 @@ describe('ActivityDetailPage', () => {
 
     expect(await screen.findByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText(/Antes de solicitar tu inscripción/i)).toBeInTheDocument();
-    expect(screen.getByText(/lista de espera.*WAITLISTED/i)).toBeInTheDocument();
+    expect(screen.getByText(/lista de espera/i)).toBeInTheDocument();
     expect(screen.getByText(/revisada por la administración/i)).toBeInTheDocument();
-    expect(screen.getByText(/accepted=true/i)).toBeInTheDocument();
-    expect(screen.getByText(/Aceptada/i)).toBeInTheDocument();
-    expect(screen.getByText(/Si hay plaza disponible/i)).toBeInTheDocument();
-    expect(screen.getByText('CONFIRMED')).toBeInTheDocument();
-    expect(screen.getByText(/continuarás en cola/i)).toBeInTheDocument();
     expect(screen.getByText(/no se confirma automáticamente/i)).toBeInTheDocument();
+    expect(screen.getByRole('dialog')).not.toHaveTextContent(/WAITLISTED|accepted=true|CONFIRMED/i);
   });
 
   it('confirmar envía una sola solicitud', async () => {
