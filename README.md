@@ -9,6 +9,19 @@ Aplicación React para gestionar el voluntariado de Fundación Verisure: catálo
 - Backend disponible cuando se prueben flujos sin mocks.
 - Navegador actualizado: Chrome, Firefox, Edge o Safari.
 
+## Dependencias
+
+| Categoría | Paquete | Uso |
+| --- | --- | --- |
+| Dependencias | `react` / `react-dom` ^19.1 | UI y renderizado. |
+| | `react-router-dom` ^7.5 | Enrutado, rutas protegidas y por rol. |
+| | `axios` ^1.8 | Cliente HTTP con interceptores. |
+| | `lucide-react` ^1.34 | Iconografía. |
+| | `react-error-boundary` ^6.1 | Límite de errores global. |
+| DevDependencies | `vite` ^6.3, `vitest` ^3.1 | Bundler y runner de pruebas. |
+| | `@testing-library/*`, `jsdom`, `@vitest/coverage-v8` | Pruebas de componentes e informes de cobertura. |
+| | `sass` ^1.86 | Compilación de los estilos Sass. |
+
 ## Instalación y primer arranque
 
 ```bash
@@ -42,6 +55,8 @@ Después de cambiar una variable hay que reiniciar Vite. `VITE_USE_MOCKS` nunca 
 | `npm test` | Abre Vitest en modo interactivo. |
 | `npm run test:run` | Ejecuta todas las pruebas una vez. |
 | `npm run test:coverage` | Ejecuta las pruebas y genera el informe de cobertura. |
+| `npm run demo:reset` | Restaura los datos de demo de forma idempotente. |
+| `npm run smoke` | Ejecuta `test:run` seguido de `build` como comprobación rápida. |
 
 ## Arquitectura
 
@@ -50,17 +65,33 @@ src/
 ├── api/          # Cliente Axios, errores y endpoints por dominio
 ├── assets/       # Imágenes, iconos y datos mock usados en desarrollo
 ├── components/
-│   ├── layout/   # Topbar, Sidebar y layouts
+│   ├── ErrorBoundary/  # Límite de errores global de la aplicación
+│   ├── layout/   # AppLayout, PublicLayout, Topbar, Sidebar y footer
 │   └── ui/       # Componentes compartidos y accesibles
 ├── constants/    # Valores compartidos, como líneas de acción
 ├── features/     # Pantallas y lógica agrupadas por funcionalidad
 ├── hooks/        # Hooks transversales
 ├── routes/       # Router, rutas protegidas y autorización por rol
-├── styles/       # Sass 7-1: tokens, base, componentes, layout y páginas
+├── styles/       # Sass 7-1: abstracts, base, componentes, layout y páginas
 └── test/         # Fixtures, mocks y utilidades exclusivas de pruebas
 ```
 
 Las llamadas HTTP viven en `src/api`; una pantalla no debe llamar a Axios directamente. La lógica específica permanece dentro de su `feature` y los patrones reutilizables se llevan a `components/ui`.
+
+### Módulos de funcionalidad (`src/features`)
+
+| Módulo | Responsabilidad |
+| --- | --- |
+| `activities` | Catálogo, listado, detalle, alta/edición y cancelación de actividades; acciones de revisión de entidad. |
+| `auth` | Login, contexto de sesión y hook de autenticación. |
+| `dashboard` | KPIs, gráficos, ranking, exportaciones y filtros del dashboard de impacto. |
+| `favorites` | Contexto de actividades favoritas del catálogo. |
+| `landing` | Página pública de inicio y contadores de impacto. |
+| `not-found` | Página 404. |
+| `orgs` | Alta de entidad, dashboard, propuestas e impacto de la entidad colaboradora; estado de cuenta. |
+| `proposals` | Formulario, detalle, bandeja de entrada, aceptación y confirmación de propuestas. |
+| `registrations` | Inscripciones: catálogo, voluntariado propio, tabla de gestión, cancelación y decisiones. |
+| `reports` | Cierres (individual y global), certificados y formularios de reporte. |
 
 ## Demo — datos definitivos y restauración idempotente
 
@@ -85,10 +116,12 @@ Los tests se colocan junto a la unidad probada y usan `*.test.jsx` o `*.test.js`
 
 | Área | Rutas principales | Rol |
 | --- | --- | --- |
-| Pública | `/`, `/login`, `/new-proposal`, `/register-organization` | Sin sesión |
-| Fundación | `/dashboard`, `/admin/activities`, `/activities/new`, `/proposals` | `ADMIN` |
-| Empleado | `/activities`, `/activities/:id`, `/my-volunteering`, `/closures/:id` | `EMPLOYEE` |
-| Entidad | `/org/activities`, `/org/proposals`, `/org/reports` | `PARTNER` |
+| Pública | `/`, `/login`, `/new-proposal` o `/proposal`, `/register-organization`, `/account-status` | Sin sesión |
+| Fundación | `/dashboard`, `/proposals`, `/activities/:id`, `/activities/:id/registrations`, `/activities/new`, `/activities/:id/edit`, `/admin/activities`, `/admin/activities/pending-closure`, `/admin/activities/:id/closure`, `/admin/account-status` | `ADMIN` |
+| Empleado | `/activities`, `/activities/:id`, `/my-volunteering`, `/my-activities`, `/closures/new`, `/closures/:id`, `/closures/:id/certificate` | `EMPLOYEE` |
+| Entidad | `/org/dashboard`, `/org/activities`, `/org/activities/new`, `/org/proposals`, `/org/proposals/new`, `/org/reports` | `PARTNER` |
+
+Algunas rutas son compartidas: `/closures/:closureId` y `/activities/:activityId` están disponibles para `ADMIN` y `EMPLOYEE`. En desarrollo también existe `/ui-kit` para el muestrario de componentes, y hay redirecciones de compatibilidad: `/explore` → `/activities`, `/inscriptions` → `/activities/6/registrations` y `/closes` → `/admin/activities/pending-closure`.
 
 Las cuentas de entidad pueden estar en `PENDING_VERIFICATION`, `PENDING_APPROVAL`, `ACTIVE` o `REJECTED`. Una sesión `PARTNER` no activa se conserva para mostrar el estado de la cuenta; no se trata como una sesión anónima.
 

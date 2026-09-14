@@ -21,7 +21,7 @@ frontend/
 │   ├── activities/       # CatalogPage, ActivityDetailPage (sticky), ActivityCard, ActivityFormPage
 │   ├── registrations/    # RegistrationsContext, MyVolunteeringPage, RegistrationsTablePage, RegisterButton, RegistrationInfoModal
 │   ├── proposals/        # ProposalForm, ProposalsInboxPage, ProposalDetailPage
-│   ├── reports/          # ReportsQueuePage, ReportFormPage, CertificatePage
+│   ├── reports/          # PendingClosurePage, ReportFormPage, CertificatePage
 │   ├── orgs/             # OrgRegisterPage, AccountStatusPage, OrgActivitiesPage, OrgProposalsPage, OrgImpactPage
 │   ├── dashboard/        # DashboardPage
 │   └── not-found/        # NotFoundPage
