@@ -1,4 +1,4 @@
-@use '../abstracts' as *;
+@use "../abstracts" as *;
 
 .button {
   @include focus-ring;
@@ -6,34 +6,55 @@
   align-items: center;
   display: inline-flex;
   font-weight: $font-weight-semibold;
-  gap: space('2');
+  gap: space("2");
   justify-content: center;
   min-height: $control-height;
   border: 0;
   border-radius: $radius-md;
   cursor: pointer;
   text-decoration: none;
-  transition: background-color $transition-fast, border-color $transition-fast, color $transition-fast, transform $transition-fast;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast,
+    transform $transition-fast;
 
-  &:active:not(:disabled) { transform: translateY(1px); }
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
 
-  &--small { font-size: $font-size-sm; min-height: 2.25rem; padding: space('2') space('3'); }
-  &--medium { padding: space('3') space('4'); }
-  &--large { font-size: $font-size-lg; min-height: 3.25rem; padding: space('3') space('6'); }
+  &--small {
+    font-size: $font-size-sm;
+    min-height: 2.25rem;
+    padding: space("2") space("3");
+  }
+  &--medium {
+    padding: space("3") space("4");
+  }
+  &--large {
+    font-size: $font-size-lg;
+    min-height: 3.25rem;
+    padding: space("3") space("6");
+  }
 
   &--primary {
     background: $color-coral;
     color: $color-surface;
-
-    &:hover:not(:disabled) { background: #ff8179; }
+    margin-top: 10px;
+    margin-left: 10px;
+    &:hover:not(:disabled) {
+      background: #ff8179;
+    }
   }
 
-    &--secondary {
+  &--secondary {
     background: transparent;
     border: 2px solid $color-coral-dark;
     color: $color-coral-dark;
 
-    &:hover:not(:disabled) { background: rgb(16 42 67 / 7%); }
+    &:hover:not(:disabled) {
+      background: rgb(16 42 67 / 7%);
+    }
   }
 
   &--ghost {
@@ -51,10 +72,14 @@
     background: $color-danger;
     color: $color-surface;
 
-    &:hover:not(:disabled) { background: #9b2c2c; }
+    &:hover:not(:disabled) {
+      background: #9b2c2c;
+    }
   }
 }
 
 @media (max-width: 38rem) {
-  .button--small { min-height: 2.75rem; }
+  .button--small {
+    min-height: 2.75rem;
+  }
 }
