@@ -29,6 +29,7 @@ export default function RegisterButton({ activity, children = 'Solicitar inscrip
   const handleClose = useCallback(() => {
     if (submittingRef.current) return;
     setIsModalOpen(false);
+    setError(null);
   }, []);
 
   const handleConfirm = useCallback(async () => {
@@ -74,7 +75,10 @@ export default function RegisterButton({ activity, children = 'Solicitar inscrip
       >
         {children}
       </Button>
-      {error && (
+      {/* El error se pinta dentro del modal, que es donde está mirando quien acaba
+          de pulsar Confirmar y lo único visible mientras el modal está abierto.
+          Aquí fuera solo queda para el caso de que ya se haya cerrado. */}
+      {error && !isModalOpen && (
         <p role="alert" className="register-button__error">
           {error.message || 'No se pudo completar la solicitud.'}
         </p>
@@ -84,6 +88,7 @@ export default function RegisterButton({ activity, children = 'Solicitar inscrip
         onClose={handleClose}
         onConfirm={handleConfirm}
         isSubmitting={isSubmitting}
+        error={error}
       />
     </>
   );

@@ -16,10 +16,10 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const activity = item.activity ?? {};
   const title = activity.title ?? `Actividad ${activity.id ?? ''}`;
-  const partner = activity.partner ?? activity.organizationName ?? '';
-  const startDate = activity.startDate ?? activity.start ?? '';
-  const endDate = activity.endDate ?? activity.end ?? '';
-  const hours = activity.hours ?? activity.estimatedHours ?? null;
+  const partner = activity.partner ?? '';
+  const startDate = activity.startDate ?? '';
+  const endDate = activity.endDate ?? '';
+  const hours = activity.hours ?? null;
 
   const showQueue = item.queuePosition !== null && item.queuePosition !== undefined;
   const closureId = item.closureId ?? null;
@@ -36,18 +36,16 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
   };
   const statusLabel = statusLabels[item.status] ?? item.status;
 
-  const startDateObj = startDate ? new Date(startDate) : null;
-  const isStarted = startDateObj ? startDateObj < new Date() : false;
-  // Derivar visibilidad de fecha de inicio y acción permitida en la respuesta (MyRegistrationItem.canCancel / allowedActions)
-  const allowedByBackend = (() => {
-    if (typeof item.canCancel === 'boolean') return item.canCancel;
-    if (typeof item.cancellable === 'boolean') return item.cancellable;
-    if (Array.isArray(item.allowedActions)) return item.allowedActions.includes('CANCEL') || item.allowedActions.includes('cancel');
-    if (Array.isArray(item.actions)) return item.actions.includes('CANCEL');
-    return true;
-  })();
-  // Persona solo cancela antes del inicio; regla administrativa (cancelar en cualquier momento) no se aplica aquí
-  const canCancel = (item.status === 'WAITLISTED' || item.status === 'CONFIRMED') && !isStarted && allowedByBackend;
+  // El backend deja cancelar hasta el día de inicio incluido: usa
+  // `LocalDate.now().isAfter(startDate)`, que ese mismo día todavía es falso.
+  // `startDate` llega como 'YYYY-MM-DD', así que comparamos cadenas en formato
+  // local y nos ahorramos el `new Date('2026-09-14')`, que se interpreta como
+  // medianoche UTC y al oeste de Greenwich adelanta la regla un día.
+  const todayIso = new Date().toLocaleDateString('sv');
+  const hasStarted = Boolean(startDate) && todayIso > startDate;
+  // Solo la persona, y solo antes de empezar. La administradora cancela en
+  // cualquier momento, pero eso es el tablero, no esta pantalla.
+  const canCancel = (item.status === 'WAITLISTED' || item.status === 'CONFIRMED') && !hasStarted;
 
   const handleOpen = () => setIsModalOpen(true);
   const handleClose = () => {
@@ -167,8 +165,10 @@ export default function MyVolunteeringPage() {
       await cancelRegistration(registrationId);
       await fetchData();
     } catch (err) {
-      // Si hay desfase horario y backend devuelve DEADLINE_PASSED (409), actualizar interfaz
-      if (err?.code === 'DEADLINE_PASSED' || err?.status === 409) {
+      // DEADLINE_PASSED (400) significa que el backend ya no deja cancelar: la
+      // actividad empezó. Recargamos para que la fila deje de ofrecer el botón,
+      // que es lo que la pantalla estaba enseñando de más.
+      if (err?.code === 'DEADLINE_PASSED') {
         try {
           await fetchData();
         } catch {

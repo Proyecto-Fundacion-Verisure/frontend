@@ -1,4 +1,6 @@
 import client from './axiosClient';
+import { ApiError } from './apiError';
+import { isMockEnabled as isModuleMockEnabled } from './mocks';
 
 const MOCK_MY_REGISTRATIONS_ACTIVE = [
   {
@@ -47,11 +49,22 @@ const MOCK_MY_REGISTRATIONS = [
   ...MOCK_MY_REGISTRATIONS_CLOSED,
 ];
 
+// Forma de RegistrationRow: el campo es `userName`, no `name`.
 const MOCK_ACTIVITY_REGISTRATIONS = [
-  { registrationId: 201, name: 'Ana Torres', department: 'Tecnología', organization: 'VERISURE_ES', yearHours: 12, status: 'WAITLISTED', accepted: false, queuePosition: 2 },
-  { registrationId: 202, name: 'Luis Martín', department: 'Personas', organization: 'VERISURE_GROUP', yearHours: 8, status: 'WAITLISTED', accepted: true, queuePosition: 1 },
-  { registrationId: 203, name: 'Marta Ruiz', department: 'Operaciones', organization: 'VERISURE_ES', yearHours: 16, status: 'CONFIRMED', accepted: true },
+  { registrationId: 201, userName: 'Ana Torres', department: 'Tecnología', organization: 'VERISURE_ES', yearHours: 12, status: 'WAITLISTED', accepted: false, queuePosition: 2 },
+  { registrationId: 202, userName: 'Luis Martín', department: 'Personas', organization: 'VERISURE_GROUP', yearHours: 8, status: 'WAITLISTED', accepted: true, queuePosition: 1 },
+  { registrationId: 203, userName: 'Marta Ruiz', department: 'Operaciones', organization: 'VERISURE_ES', yearHours: 16, status: 'CONFIRMED', accepted: true },
 ];
+
+function mockGetRegistrationCounts() {
+  return Promise.resolve({
+    data: {
+      confirmed: MOCK_ACTIVITY_REGISTRATIONS.filter((r) => r.status === 'CONFIRMED').length,
+      waitlisted: MOCK_ACTIVITY_REGISTRATIONS.filter((r) => r.status === 'WAITLISTED').length,
+      unreviewed: MOCK_ACTIVITY_REGISTRATIONS.filter((r) => r.status === 'WAITLISTED' && !r.accepted).length,
+    },
+  });
+}
 
 function mockGetMyRegistrations() {
   return Promise.resolve({ data: MOCK_MY_REGISTRATIONS });
@@ -78,7 +91,7 @@ function findMockRegistration(registrationId) {
 
 function mockAcceptRegistration(registrationId) {
   const registration = findMockRegistration(registrationId);
-  if (!registration) return Promise.reject(new Error('Inscripción no encontrada.'));
+  if (!registration) return Promise.reject(new ApiError({ message: 'Inscripción no encontrada.', status: 404, code: 'NOT_FOUND' }));
   const hasSpot = !MOCK_ACTIVITY_REGISTRATIONS.some((item) => item.status === 'CONFIRMED');
   Object.assign(registration, {
     accepted: true,
@@ -89,14 +102,14 @@ function mockAcceptRegistration(registrationId) {
 
 function mockRejectRegistration(registrationId) {
   const registration = findMockRegistration(registrationId);
-  if (!registration) return Promise.reject(new Error('Inscripción no encontrada.'));
+  if (!registration) return Promise.reject(new ApiError({ message: 'Inscripción no encontrada.', status: 404, code: 'NOT_FOUND' }));
   Object.assign(registration, { accepted: false, status: 'REJECTED' });
   return Promise.resolve({ data: { ...registration } });
 }
 
 function mockCancelRegistration(registrationId) {
   const registration = findMockRegistration(registrationId);
-  if (!registration) return Promise.reject(new Error('Inscripción no encontrada.'));
+  if (!registration) return Promise.reject(new ApiError({ message: 'Inscripción no encontrada.', status: 404, code: 'NOT_FOUND' }));
   registration.status = 'CANCELLED';
 
   const promoted = MOCK_ACTIVITY_REGISTRATIONS
@@ -107,7 +120,7 @@ function mockCancelRegistration(registrationId) {
   return Promise.resolve({ data: { ...registration } });
 }
 
-const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'test';
+const isMockEnabled = () => isModuleMockEnabled('REGISTRATION');
 
 export const createRegistration = (activityId) => client.post('/registrations', { activityId });
 
@@ -122,6 +135,14 @@ export const getActivityRegistrations = (activityId, { status, page } = {}) =>
         value !== undefined && value !== null && value !== ''
       ))),
     });
+
+// Los contadores van en su propia ruta y no dentro del tablero: la respuesta de
+// `/admin/registrations` es el Page de Spring, y ahí no caben tres cifras que
+// además son de toda la actividad y no de la página. `activityId` es obligatorio.
+export const getRegistrationCounts = (activityId) =>
+  isMockEnabled()
+    ? mockGetRegistrationCounts(activityId)
+    : client.get('/admin/registrations/counts', { params: { activityId } });
 
 export const acceptRegistration = (registrationId) =>
   isMockEnabled()

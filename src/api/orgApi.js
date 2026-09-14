@@ -1,13 +1,9 @@
 import client from './axiosClient';
 import { registerPartner, resendVerification } from './authApi';
 import { getOrgDashboardMockData } from '../assets/mock/data/orgDashboard';
+import { isMockEnabled } from './mocks';
 
-const USE_MOCK_API = import.meta.env.DEV && import.meta.env.MODE !== 'test';
-const useDevelopmentMocks = () => (
-  import.meta.env.DEV
-  && import.meta.env.MODE !== 'test'
-  && import.meta.env.VITE_USE_MOCKS !== 'false'
-);
+const useDevelopmentMocks = () => isMockEnabled('ORG');
 
 function simulateRequest({ data, delay = 300, failRate = 0 } = {}) {
   return new Promise((resolve, reject) => {
@@ -57,7 +53,7 @@ let mockOrganizations = [
 ];
 
 export const createOrganization = (data) => {
-  if (USE_MOCK_API) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] createOrganization', data);
     const newOrg = {
       id: `org-${Date.now()}`,
@@ -73,7 +69,7 @@ export const createOrganization = (data) => {
 };
 
 export const resendOrganizationRegistrationEmail = (email) => {
-  if (USE_MOCK_API) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] resendOrganizationConfirmationEmail', email);
     return simulateRequest({ data: { resent: true }, delay: 1000 });
   }
@@ -82,7 +78,7 @@ export const resendOrganizationRegistrationEmail = (email) => {
 
 // Devuelve las cuentas de organización pendientes de revisión por la admin.
 export const getPendingOrganizations = ({ status = 'PENDING', page = 0 } = {}) => {
-  if (USE_MOCK_API) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] getPendingOrganizations');
     const pending = mockOrganizations.filter((org) => org.status === status);
     return simulateRequest({
@@ -101,7 +97,7 @@ export const getPendingOrganizations = ({ status = 'PENDING', page = 0 } = {}) =
 
 // Acepta la cuenta: la organización pasa a poder acceder a la plataforma.
 export const approveOrganization = (id) => {
-  if (USE_MOCK_API) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] approveOrganization', id);
     mockOrganizations = mockOrganizations.map((org) =>
       org.id === id ? { ...org, status: 'ACTIVE' } : org
@@ -113,7 +109,7 @@ export const approveOrganization = (id) => {
 
 // Rechaza la cuenta. La seguridad la da la confirmación en el modal, no un motivo.
 export const rejectOrganization = (id) => {
-  if (USE_MOCK_API) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] rejectOrganization', id);
     mockOrganizations = mockOrganizations.map((org) =>
       org.id === id ? { ...org, status: 'REJECTED' } : org
@@ -175,11 +171,11 @@ function mockGetOrgProposals(params = {}) {
 }
 
 export const getOrgProposals = (params = {}) =>
-  USE_MOCK_API
+  useDevelopmentMocks()
     ? mockGetOrgProposals(params)
     : client.get('/org/proposals', { params: pickParams(params, ['page']) });
 export const createOrgProposal = (data) => {
-  if (USE_MOCK_API) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] createOrgProposal', data);
     return simulateRequest({
       data: { id: Date.now(), status: data.status ?? 'DRAFT', ...data, createdAt: new Date().toISOString() },
@@ -189,7 +185,7 @@ export const createOrgProposal = (data) => {
   return client.post('/org/proposals', data);
 };
 export const submitOrgProposal = (id) => {
-  if (USE_MOCK_API) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] submitOrgProposal', id);
     return simulateRequest({ data: { id, status: 'PENDING_APPROVAL' }, delay: 400 });
   }

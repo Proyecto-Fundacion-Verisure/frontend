@@ -1,10 +1,8 @@
 import client from './axiosClient';
 import { ApiError } from './apiError';
+import { isMockEnabled } from './mocks';
 
-const useDevelopmentMocks = () => (
-  import.meta.env.DEV
-  && import.meta.env.VITE_USE_MOCKS !== 'false'
-);
+const useDevelopmentMocks = () => isMockEnabled('PROPOSAL');
 
 const MOCK_PROPOSALS = [
   {

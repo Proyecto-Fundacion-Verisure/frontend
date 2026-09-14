@@ -25,6 +25,7 @@ import NotFoundPage from '../features/not-found/NotFoundPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
 import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
 import RegistrationsTablePage from '../features/registrations/RegistrationsTablePage';
+import { DEMO_REGISTRATIONS_PATH } from '../constants/demoActivity';
 import CertificatePage from '../features/reports/CertificatePage';
 import PendingClosurePage from '../features/reports/PendingClosurePage';
 import ReportFormPage from '../features/reports/ReportFormPage';
@@ -40,7 +41,7 @@ export default function AppRouter() {
       <Route path="/register-organization" element={<PublicLayout><OrgRegisterPage /></PublicLayout>} />
       {import.meta.env.DEV && <Route path="/ui-kit" element={<UiShowcase />} />}
       <Route path="/explore" element={<Navigate to="/activities" replace />} />
-      <Route path="/inscriptions" element={<Navigate to="/activities/6/registrations" replace />} />
+      <Route path="/inscriptions" element={<Navigate to={DEMO_REGISTRATIONS_PATH} replace />} />
       <Route path="/closes" element={<Navigate to="/admin/activities/pending-closure" replace />} />
       <Route path="/account-status" element={<PublicLayout><AccountStatusPage /></PublicLayout>} />
       <Route element={<ProtectedRoute />}>

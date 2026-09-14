@@ -30,14 +30,16 @@ export function RegistrationsProvider({ children }) {
   const addRegistration = useCallback((registrationResponse) => {
     // Apply exactly the RegistrationResponse received with 201 — do not build ID or queue position locally
     if (!registrationResponse) return;
+    // Ojo con los dos nombres: la lista viene de `/registrations/me`, cuyas filas
+    // son MyRegistrationItem y llevan `registrationId`; lo que llega aquí es el
+    // RegistrationResponse del 201, que llama `id` a lo mismo. El deduplicado
+    // anterior solo miraba `registrationId` en el recién llegado, así que con
+    // datos reales no descartaba nunca.
+    const newId = registrationResponse.registrationId ?? registrationResponse.id;
+    if (newId === undefined || newId === null) return;
     setRegistrations((prev) => {
       const list = Array.isArray(prev) ? [...prev] : [];
-      // Avoid duplicate by registrationId or activityId if already present
-      const exists = list.some(
-        (r) =>
-          (r.registrationId && registrationResponse.registrationId && String(r.registrationId) === String(registrationResponse.registrationId)) ||
-          (r.id && registrationResponse.registrationId && String(r.id) === String(registrationResponse.registrationId))
-      );
+      const exists = list.some((r) => String(r.registrationId ?? r.id) === String(newId));
       if (exists) return prev;
       return [...list, registrationResponse];
     });
