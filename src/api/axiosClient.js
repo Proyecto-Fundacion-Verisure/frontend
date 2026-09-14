@@ -16,6 +16,16 @@ export function clearSession({ notify = false } = {}) {
   }
 }
 
+const LOGIN_PATH = '/auth/login';
+
+// Un 401 del propio login son credenciales incorrectas, no una sesión caducada:
+// el formulario lo muestra en su mensaje de error y no debe rebotar a /login.
+function isSessionExpiry(error) {
+  const isUnauthorized = error?.response?.status === 401;
+  const isLoginAttempt = error?.config?.url?.endsWith(LOGIN_PATH);
+  return isUnauthorized && !isLoginAttempt;
+}
+
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? '/api',
   headers: { 'Content-Type': 'application/json' },
@@ -35,7 +45,7 @@ axiosClient.interceptors.request.use((config) => {
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error?.response?.status === 401) clearSession({ notify: true });
+    if (isSessionExpiry(error)) clearSession({ notify: true });
     return Promise.reject(normalizeApiError(error));
   },
 );

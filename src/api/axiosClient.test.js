@@ -97,6 +97,26 @@ describe('axiosClient', () => {
     expect(onUnauthorized).toHaveBeenCalledOnce();
   });
 
+  it('keeps the session untouched when the login itself answers 401', async () => {
+    window.localStorage.setItem('accessToken', 'previous-token');
+    const onUnauthorized = vi.fn();
+    window.addEventListener(AUTH_UNAUTHORIZED_EVENT, onUnauthorized, { once: true });
+
+    const request = axiosClient.post('/auth/login', {}, {
+      adapter: failingAdapter(401, { message: 'Credenciales no válidas.' }),
+    });
+
+    await expect(request).rejects.toMatchObject({
+      name: 'ApiError',
+      message: 'Credenciales no válidas.',
+      status: 401,
+    });
+    expect(window.localStorage.getItem('accessToken')).toBe('previous-token');
+    expect(onUnauthorized).not.toHaveBeenCalled();
+
+    window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, onUnauthorized);
+  });
+
   it('returns a comprehensible network error', async () => {
     const adapter = vi.fn(async (config) => {
       throw new AxiosError('Network Error', AxiosError.ERR_NETWORK, config);
