@@ -21,7 +21,7 @@ export default function RegistrationDecisionActions({
     }
   };
 
-  const personName = registration.person?.name ?? registration.employee?.name ?? registration.user?.name ?? registration.name ?? '';
+  const personName = registration.userName ?? '';
 
   return (
     <div className="registration-actions">

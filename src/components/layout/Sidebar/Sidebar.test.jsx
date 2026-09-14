@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import Sidebar from './Sidebar';
 import { NAV_SECTIONS_BY_ROLE } from './sidebarNavigation';
+import { DEMO_REGISTRATIONS_PATH } from '../../../constants/demoActivity';
 
 function renderSidebar(role) {
   return render(
@@ -42,9 +43,12 @@ describe('Sidebar ADMIN navigation', () => {
   it('links Inscripciones to the registrations page', () => {
     renderSidebar('ADMIN');
 
+    // Contra la constante y no contra un número escrito aquí: el id estaba a mano
+    // en el menú y en el router, y al cambiar uno este enlace se quedó apuntando
+    // a una actividad sin inscripciones.
     expect(screen.getByRole('link', { name: /inscripciones/i })).toHaveAttribute(
       'href',
-      '/activities/6/registrations',
+      DEMO_REGISTRATIONS_PATH,
     );
   });
 });

@@ -42,9 +42,14 @@ Las variables que Vite expone al navegador deben empezar por `VITE_`. `.env.loca
 | --- | --- | --- |
 | `VITE_API_URL` | `http://localhost:8080/api` | URL base de Axios. |
 | `VITE_APP_ORIGIN` | `http://localhost:5173` | Origen local que debe admitir el CORS del backend. |
-| `VITE_USE_MOCKS` | `true` | Activa en desarrollo los mocks locales disponibles de autenticación, propuestas y dashboard. Usa `false` para integración real. |
+| `VITE_USE_MOCKS` | `true` | Activa en desarrollo los mocks locales de todos los módulos. Usa `false` para integración real. |
+| `VITE_USE_<MODULO>_MOCKS` | `false` | Activa o apaga los mocks de un solo módulo, y **manda sobre la global**. Módulos: `AUTH`, `REGISTRATION`, `ACTIVITY`, `CLOSURE`, `PROPOSAL`, `ORG`, `DASHBOARD`. |
 
-Después de cambiar una variable hay que reiniciar Vite. `VITE_USE_MOCKS` nunca habilita mocks en producción.
+El interruptor vive en `src/api/mocks.js` y tiene dos niveles a propósito: la integración con el backend va módulo a módulo, así que hace falta poder apagar login e inscripciones —ya integrados— sin tumbar dashboard, propuestas, catálogo y rol entidad, que todavía no tienen backend.
+
+Los módulos ya integrados no dependen de la global: la lista `INTEGRATED` de `mocks.js` los manda al backend real aunque `VITE_USE_MOCKS` esté encendida. Esa lista existe porque el estado de integración no debe vivir solo en un `.env`, donde una reescritura que olvide una línea devuelve el módulo al mock sin que nada avise. Su variable de módulo sigue mandando sobre la lista, así que `VITE_USE_AUTH_MOCKS=true` continúa sirviendo para trabajar con el backend apagado.
+
+Después de cambiar una variable hay que reiniciar Vite. Los mocks nunca se habilitan en producción ni en los tests: el interruptor exige `import.meta.env.DEV` y descarta `MODE === 'test'`, donde cada test monta los suyos con `vi.mock`.
 
 ## Comandos
 
@@ -125,16 +130,24 @@ Algunas rutas son compartidas: `/closures/:closureId` y `/activities/:activityId
 
 Las cuentas de entidad pueden estar en `PENDING_VERIFICATION`, `PENDING_APPROVAL`, `ACTIVE` o `REJECTED`. Una sesión `PARTNER` no activa se conserva para mostrar el estado de la cuenta; no se trata como una sesión anónima.
 
-### Cuentas locales disponibles con mocks
+### Cuentas locales
 
-El mock identifica el usuario por el comienzo del correo; la contraseña no se valida porque estos datos nunca salen del navegador.
+El login ya autentica contra el backend real, así que **las cuentas que sirven son las de la semilla**, no las del mock. Todas comparten la contraseña `Verisure2026!`, que es un dato de demostración y no un secreto: existen solo fuera de producción, porque `UserSeeder` lleva `@Profile("!prod")`. El identificador es el correo completo.
 
 | Correo | Rol/estado | Inicio |
 | --- | --- | --- |
-| `admin@verisure.com` | `ADMIN` | `/dashboard` |
-| `empleado@verisure.com` | `EMPLOYEE` | `/activities` |
-| `ong@fundacion.org` | `PARTNER · ACTIVE` | `/org/activities` |
-| `pendiente@entidad.org` | `PARTNER · PENDING_APPROVAL` | Estado de cuenta |
+| `carmen.ortega@fundacionverisure.org` | `ADMIN` | `/dashboard` |
+| `ana.gil@verisure.es` | `EMPLOYEE` | `/activities` |
+| `marta.ribas@caritasbcn.org` | `PARTNER · ACTIVE` | `/org/activities` |
+| `pau.estevez@caritasbcn.org` | `PARTNER · PENDING_VERIFICATION` | 403 `ACCOUNT_NOT_VERIFIED` |
+| `elena.vargas@aldeasinfantiles.org` | `PARTNER · PENDING_APPROVAL` | 403 `ACCOUNT_PENDING_APPROVAL` |
+| `rosa.delgado@manosunidas.org` | `PARTNER · REJECTED` | 403 `ACCOUNT_REJECTED` |
+
+Hay ocho `EMPLOYEE` más en la semilla, con el patrón `nombre.apellido@verisure.es`.
+
+#### Cuentas del mock de login
+
+Solo aplican con el backend apagado, poniendo `VITE_USE_AUTH_MOCKS=true`. El mock identifica el usuario por el comienzo del correo y **no valida la contraseña**, porque estos datos nunca salen del navegador: `admin@verisure.com` (`ADMIN`), `empleado@verisure.com` (`EMPLOYEE`), `ong@fundacion.org` (`PARTNER · ACTIVE`) y `pendiente@entidad.org` (`PARTNER · PENDING_APPROVAL`).
 
 ## Contrato backend v2
 
@@ -178,9 +191,9 @@ Los errores de validación por campo se muestran junto al control correspondient
 
 Hay dos capas diferentes:
 
-- Los mocks de desarrollo permiten recorrer el acceso y los flujos de propuestas y dashboard sin levantar todo el backend. Se activan con `VITE_USE_MOCKS=true`.
+- Los mocks de desarrollo permiten recorrer los flujos sin levantar todo el backend. Se activan con `VITE_USE_MOCKS=true`, y se apagan módulo a módulo con `VITE_USE_<MODULO>_MOCKS=false`.
 - Los fixtures y mocks de `src/test/` se usan únicamente con Vitest; no forman parte del bundle de producción. Incluyen usuarios `ADMIN`, `EMPLOYEE` y `PARTNER`, estados de cuenta de entidad y respuestas de los principales dominios.
-- La integración real se activa con `VITE_USE_MOCKS=false` y requiere que `VITE_API_URL` apunte al backend. Los flujos sin mock local siempre usan la API.
+- La integración real requiere que `VITE_API_URL` apunte al backend. Hoy están integrados el login y el módulo de inscripciones —«Mis voluntariados» y el tablero—; el resto sigue en mocks hasta que su backend exista.
 
 No se deben añadir reglas de negocio a los mocks ni inferir campos que no estén en el contrato. Si el backend cambia, primero se actualizan el contrato y los fixtures, después la implementación.
 

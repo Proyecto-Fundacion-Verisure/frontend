@@ -55,3 +55,15 @@
     margin-top: space('6');
   }
 }
+
+// Aviso de error dentro del modal de inscripción. Va aquí y no junto al botón
+// que lo abre porque mientras el modal está abierto el resto de la página queda
+// `inert` y `aria-hidden`: un aviso de fuera no se ve ni se anuncia.
+.registration-info-modal__error {
+  background: $color-danger-light;
+  border-left: 3px solid $color-danger;
+  border-radius: $radius-sm;
+  color: $color-danger;
+  margin: space('4') 0 0;
+  padding: space('3') space('4');
+}

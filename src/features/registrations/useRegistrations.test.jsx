@@ -4,6 +4,7 @@ import {
   acceptRegistration,
   cancelRegistration,
   getActivityRegistrations,
+  getRegistrationCounts,
   rejectRegistration,
 } from '../../api/registrationsApi';
 import useRegistrations from './useRegistrations';
@@ -12,27 +13,36 @@ vi.mock('../../api/registrationsApi', () => ({
   acceptRegistration: vi.fn(),
   cancelRegistration: vi.fn(),
   getActivityRegistrations: vi.fn(),
+  getRegistrationCounts: vi.fn(),
   rejectRegistration: vi.fn(),
 }));
 
-const INITIAL_BOARD = {
-  counters: { confirmed: 0, waitlisted: 1, unreviewed: 1 },
-  registrations: [{ registrationId: 10, status: 'WAITLISTED', accepted: false }],
-};
+// El tablero es el Page de Spring: las filas van en `content` y los contadores
+// llegan por su propia ruta. La versión anterior inventaba un `{ counters,
+// registrations }` que es justo lo que el contrato descarta.
+const page = (content) => ({
+  content,
+  number: 0,
+  size: 10,
+  totalElements: content.length,
+  totalPages: content.length ? 1 : 0,
+});
+
+const INITIAL_BOARD = page([{ registrationId: 10, userName: 'Ana Torres', status: 'WAITLISTED', accepted: false }]);
+const COUNTS = { confirmed: 0, waitlisted: 1, unreviewed: 1 };
 
 beforeEach(() => {
   acceptRegistration.mockReset();
   cancelRegistration.mockReset();
   getActivityRegistrations.mockReset();
+  getRegistrationCounts.mockReset();
+  getRegistrationCounts.mockResolvedValue({ data: COUNTS });
   rejectRegistration.mockReset();
 });
 
 describe('useRegistrations', () => {
   it('loads the board and reloads it after accepting', async () => {
-    const refreshedBoard = {
-      counters: { confirmed: 1, waitlisted: 0, unreviewed: 0 },
-      registrations: [{ registrationId: 10, status: 'CONFIRMED', accepted: true }],
-    };
+    const refreshedBoard = page([{ registrationId: 10, userName: 'Ana Torres', status: 'CONFIRMED', accepted: true }]);
     getActivityRegistrations
       .mockResolvedValueOnce({ data: INITIAL_BOARD })
       .mockResolvedValueOnce({ data: refreshedBoard });
@@ -56,7 +66,7 @@ describe('useRegistrations', () => {
     let resolveRejection;
     getActivityRegistrations
       .mockResolvedValueOnce({ data: INITIAL_BOARD })
-      .mockResolvedValueOnce({ data: { registrations: [] } });
+      .mockResolvedValueOnce({ data: page([]) });
     rejectRegistration.mockReturnValue(new Promise((resolve) => {
       resolveRejection = resolve;
     }));
@@ -101,7 +111,7 @@ describe('useRegistrations', () => {
     const cancelled = { registrationId: 10, activityId: 8, status: 'CANCELLED', accepted: true };
     getActivityRegistrations
       .mockResolvedValueOnce({ data: INITIAL_BOARD })
-      .mockResolvedValueOnce({ data: { registrations: [cancelled] } });
+      .mockResolvedValueOnce({ data: page([cancelled]) });
     cancelRegistration.mockResolvedValue({ data: cancelled });
     const { result } = renderHook(() => useRegistrations(8));
     await waitFor(() => expect(result.current.board).toEqual(INITIAL_BOARD));
@@ -112,6 +122,6 @@ describe('useRegistrations', () => {
 
     expect(cancelRegistration).toHaveBeenCalledWith(10, reason);
     expect(getActivityRegistrations).toHaveBeenCalledTimes(2);
-    expect(result.current.board.registrations[0].status).toBe('CANCELLED');
+    expect(result.current.board.content[0].status).toBe('CANCELLED');
   });
 });

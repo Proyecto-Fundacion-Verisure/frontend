@@ -1,6 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createProposal } from './proposalsApi';
 import { ApiError } from './apiError';
+
+// Estas pruebas van contra el mock de propuestas a propósito: es lo único que hay
+// mientras BE2 no entregue el endpoint. En modo test los mocks están apagados por
+// defecto, así que hay que encenderlo por su nombre.
+beforeAll(() => vi.stubEnv('VITE_USE_PROPOSAL_MOCKS', 'true'));
+afterAll(() => vi.unstubAllEnvs());
 
 const VALID_PROPOSAL = {
   organizationName: 'Fundación Ejemplo',

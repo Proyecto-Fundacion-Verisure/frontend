@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Badge, Button, EmptyState, Pagination, Spinner, Table } from '../../components/ui';
 import RegistrationDecisionActions from './RegistrationDecisionActions';
 import CancelRegistrationAction from './CancelRegistrationAction';
@@ -38,48 +38,31 @@ function getSectionKey(registration) {
   }[registration.status] ?? 'unreviewed';
 }
 
+// La respuesta es el Page de Spring, así que las filas van en `content`.
 function getRegistrations(payload) {
-  if (Array.isArray(payload)) return payload;
-  for (const key of ['registrations', 'items', 'content']) {
-    if (Array.isArray(payload?.[key])) return payload[key];
-  }
-  return [];
+  return Array.isArray(payload?.content) ? payload.content : [];
 }
 
-function getPersonName(registration) {
-  return registration.person?.name
-    ?? registration.employee?.name
-    ?? registration.user?.name
-    ?? registration.userName
-    ?? registration.name
-    ?? '—';
-}
-
+// Los cuatro primeros son RegistrationRow tal cual lo declara el contrato. Antes
+// aquí había cascadas contra `person.name`, `employee.name`, `annualHours` y
+// media docena más de nombres que no existen en ninguna parte: hacían creer que
+// el backend servía varias formas, y tapaban un campo mal leído con un guion.
 const BASE_COLUMNS = [
-  { key: 'person', label: 'Persona', render: getPersonName },
+  { key: 'person', label: 'Persona', render: (registration) => registration.userName },
   {
     key: 'department',
     label: 'Departamento',
-    render: (registration) => registration.person?.department
-      ?? registration.employee?.department
-      ?? registration.department
-      ?? '—',
+    render: (registration) => registration.department,
   },
   {
     key: 'organization',
     label: 'Organización',
-    render: (registration) => registration.person?.organization
-      ?? registration.employee?.organization
-      ?? registration.organization
-      ?? '—',
+    render: (registration) => registration.organization,
   },
   {
     key: 'yearHours',
     label: 'Horas del año',
-    render: (registration) => registration.yearHours
-      ?? registration.annualHours
-      ?? registration.hoursThisYear
-      ?? 0,
+    render: (registration) => registration.yearHours ?? 0,
   },
   {
     key: 'status',
@@ -93,9 +76,11 @@ const BASE_COLUMNS = [
 
 export default function RegistrationsTablePage() {
   const { activityId } = useParams();
+  const { state } = useLocation();
   const [page, setPage] = useState(1);
   const {
     board,
+    counts,
     loading,
     error,
     decision,
@@ -172,9 +157,22 @@ export default function RegistrationsTablePage() {
           <Link className="registrations-page__back" to="/admin/activities">← Volver a actividades</Link>
           <p className="registrations-page__eyebrow">Administración</p>
           <h1 id="registrations-title">Inscripciones</h1>
-          <p>{board?.activity?.title ?? board?.activityTitle ?? `Actividad ${activityId}`}</p>
+          {/* El título lo trae el enlace de origen: la respuesta es un Page de
+              Spring y ahí no viaja la actividad. Cuando BE2 entregue
+              GET /api/activities/{id} esto puede pasar a ser una petición. */}
+          <p>{state?.activityTitle ?? `Actividad ${activityId}`}</p>
         </div>
-        <strong>{totalElements} inscripciones</strong>
+        <div className="registrations-page__totals">
+          <strong>{totalElements} inscripciones</strong>
+          {counts && (
+            // De toda la actividad, no de esta página: por eso van en su propia ruta.
+            <dl className="registrations-page__counts">
+              <div><dt>Confirmadas</dt><dd>{counts.confirmed}</dd></div>
+              <div><dt>En cola</dt><dd>{counts.waitlisted}</dd></div>
+              <div><dt>Sin revisar</dt><dd>{counts.unreviewed}</dd></div>
+            </dl>
+          )}
+        </div>
       </header>
 
       {registrations.length === 0 ? (

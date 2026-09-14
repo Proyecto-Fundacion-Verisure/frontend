@@ -1,11 +1,8 @@
 import realClient from './axiosClient';
 import { ApiError } from './apiError';
+import { isMockEnabled } from './mocks';
 
-const useDevelopmentMocks = () => (
-  import.meta.env.DEV
-  && import.meta.env.MODE !== 'test'
-  && import.meta.env.VITE_USE_AUTH_MOCKS !== 'false'
-);
+const useDevelopmentMocks = () => isMockEnabled('AUTH');
 
 const MOCK_USERS = {
   admin: {

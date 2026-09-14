@@ -20,7 +20,36 @@
   }
 
   p:last-child { color: $color-muted; margin: space('2') 0 0; }
+}
+
+.registrations-page__totals {
+  display: grid;
+  gap: space('3');
+  justify-items: end;
+
   > strong { color: $color-navy; white-space: nowrap; }
+}
+
+// Contadores de toda la actividad, no de la página que se está viendo.
+.registrations-page__counts {
+  display: flex;
+  gap: space('5');
+  margin: 0;
+
+  div { text-align: right; }
+
+  dt {
+    color: $color-muted;
+    font-size: $font-size-sm;
+    white-space: nowrap;
+  }
+
+  dd {
+    color: $color-navy;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    margin: 0;
+  }
 }
 
 .registrations-page__back {
@@ -129,6 +158,8 @@
 @media (max-width: 38rem) {
   .registrations-page { padding-inline: space('4'); }
   .registrations-page__header { align-items: flex-start; flex-direction: column; }
+  .registrations-page__totals { justify-items: start; }
+  .registrations-page__counts div { text-align: left; }
   .registrations-page__state-actions { align-items: stretch; flex-direction: column; }
 }
 

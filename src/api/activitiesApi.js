@@ -1,96 +1,110 @@
 import client from './axiosClient';
 import { ApiError } from './apiError';
+import { isMockEnabled as isModuleMockEnabled } from './mocks';
 
+// Ids, títulos y entidades copiados de `ActivitySeeder` del backend.
+//
+// El catálogo sigue mockeado porque `GET /api/activities` es de BE2 y no existe
+// todavía, pero el módulo de inscripciones ya es real: `RegistrationsProvider`
+// cruza estos ids con los que devuelve `/registrations/me` para marcar el «ya
+// inscrito», y `RegisterButton` manda el id a `POST /registrations` de verdad.
+// Con ids inventados el corazón se pintaba mal e inscribirse daba 404. Cuando
+// llegue `B2-07`, este bloque desaparece.
+//
+// Los nombres de campo siguen siendo los del mock —`capacity`, `organizationName`,
+// `image`— y no los del contrato —`spots`, `partnerName`, `imageUrl`—: renombrarlos
+// toca el pintado de las pantallas de BE2, y eso va con su integración.
 const MOCK_ACTIVITIES = [
   {
-    id: 1,
-    title: 'Acompañamiento a mayores',
-    description: 'Visitas semanales a personas mayores en situación de soledad no deseada.',
-    line: 'desoledad',
-    mode: 'PRESENCIAL',
-    capacity: 20,
-    registeredCount: 8,
-    organizationName: 'Fundación Solitaria',
-    location: 'Madrid',
-    image: '/images/01-desoledad-linea-de-accion.png',
-    favoritedByMe: true,
-    favoriteCount: 14,
-    status: 'PUBLISHED',
-  },
-  {
-    id: 2,
-    title: 'Taller educativo para jóvenes',
-    description: 'Talleres de refuerzo escolar para menores en riesgo de exclusión.',
+    id: 5,
+    title: 'Refuerzo escolar',
+    description: 'Apoyo escolar para menores en riesgo de exclusión.',
     line: 'educar',
-    mode: 'ONLINE',
-    capacity: 10,
-    registeredCount: 10,
-    organizationName: 'Educamos Juntos',
-    location: 'Online',
-    image: '/images/02-educar-linea-de-accion.png',
-    favoritedByMe: false,
-    favoriteCount: 8,
-    status: 'FULL',
-  },
-  {
-    id: 3,
-    title: 'Prevención del acoso escolar',
-    description: 'Campañas de sensibilización contra el acoso en centros educativos.',
-    line: 'acoso',
     mode: 'PRESENCIAL',
-    capacity: 15,
-    registeredCount: 5,
-    organizationName: 'Prevención Total',
-    location: 'Barcelona',
-    image: '/images/03-acoso-linea-de-accion.png',
+    capacity: 6,
+    registeredCount: 0,
+    organizationName: 'Educamos Juntos',
+    location: 'Madrid',
+    image: '/images/02-educar-linea-de-accion.png',
     favoritedByMe: false,
     favoriteCount: 5,
     status: 'IN_PROGRESS',
   },
   {
-    id: 4,
-    title: 'Jornada de voluntariado ambiental',
-    description: 'Jornadas de voluntariado corporativo en entornos naturales.',
-    line: 'medio_ambiente',
-    mode: 'MIXTO',
-    capacity: 30,
-    registeredCount: 12,
-    organizationName: 'Voluntarios Activos',
-    location: 'Valencia',
-    image: '/images/04-voluntariado-linea-de-accion.png',
-    favoritedByMe: true,
-    favoriteCount: 21,
-    status: 'FINISHED',
-  },
-  {
-    id: 5,
-    title: 'Mentoría laboral',
-    description: 'Mentoría para el empleo: Renace, Reinicia y Despega.',
+    id: 6,
+    title: 'Mentoría online para jóvenes',
+    description: 'Acompañamiento individual en la búsqueda del primer empleo.',
     line: 'educar',
-    mode: 'PRESENCIAL',
-    capacity: 12,
-    registeredCount: 3,
+    mode: 'ONLINE',
+    capacity: 4,
+    registeredCount: 0,
     organizationName: 'Educamos Juntos',
-    location: 'Sevilla',
+    location: 'Online',
     image: '/images/02-educar-linea-de-accion.png',
     favoritedByMe: false,
     favoriteCount: 3,
-    status: 'DRAFT',
+    status: 'IN_PROGRESS',
   },
   {
-    id: 6,
-    title: 'Acompañamiento telefónico',
-    description: 'Llamadas semanales para combatir la soledad no deseada.',
-    line: 'desoledad',
-    mode: 'ONLINE',
-    capacity: 25,
-    registeredCount: 18,
-    organizationName: 'Fundación Solitaria',
-    location: 'Online',
-    image: '/images/01-desoledad-linea-de-accion.png',
+    id: 7,
+    title: 'Limpieza de playas',
+    description: 'Jornada de recogida de residuos en el litoral.',
+    line: 'medioambiente',
+    mode: 'PRESENCIAL',
+    capacity: 8,
+    registeredCount: 0,
+    organizationName: 'Cruz Roja Valencia',
+    location: 'Valencia',
+    image: '/images/04-voluntariado-linea-de-accion.png',
+    favoritedByMe: true,
+    favoriteCount: 14,
+    status: 'PUBLISHED',
+  },
+  {
+    id: 8,
+    title: 'Reparto del banco de alimentos',
+    description: 'Clasificación y reparto de alimentos a familias en situación vulnerable.',
+    line: 'medioambiente',
+    mode: 'PRESENCIAL',
+    capacity: 6,
+    registeredCount: 0,
+    organizationName: 'Banco de Alimentos',
+    location: 'Valencia',
+    image: '/images/04-voluntariado-linea-de-accion.png',
+    favoritedByMe: false,
+    favoriteCount: 8,
+    status: 'PUBLISHED',
+  },
+  {
+    id: 9,
+    title: 'Charlas de prevención',
+    description: 'Charlas en institutos sobre convivencia y prevención del acoso.',
+    line: 'acoso',
+    mode: 'MIXTO',
+    capacity: 5,
+    registeredCount: 0,
+    organizationName: 'Prevención Total',
+    location: 'Barcelona',
+    image: '/images/03-acoso-linea-de-accion.png',
     favoritedByMe: false,
     favoriteCount: 2,
-    status: 'CANCELLED',
+    status: 'PUBLISHED',
+  },
+  {
+    // Aforo 2 y lleno: es la que manda a la cola, y la que abre el tablero.
+    id: 10,
+    title: 'Visitas a residencias',
+    description: 'Visitas de acompañamiento en residencias de mayores.',
+    line: 'desoledad',
+    mode: 'PRESENCIAL',
+    capacity: 2,
+    registeredCount: 2,
+    organizationName: 'Cáritas Barcelona',
+    location: 'Barcelona',
+    image: '/images/01-desoledad-linea-de-accion.png',
+    favoritedByMe: true,
+    favoriteCount: 21,
+    status: 'FULL',
   },
 ];
 
@@ -225,7 +239,7 @@ function mockCancelActivity(id) {
   return Promise.resolve({ status: 204 });
 }
 
-const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'test';
+const isMockEnabled = () => isModuleMockEnabled('ACTIVITY');
 
 const pickParams = (params = {}, allowed = []) => Object.fromEntries(
   Object.entries(params).filter(([key, value]) => (

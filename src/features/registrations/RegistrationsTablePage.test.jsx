@@ -6,6 +6,7 @@ import {
   acceptRegistration,
   cancelRegistration,
   getActivityRegistrations,
+  getRegistrationCounts,
   rejectRegistration,
 } from '../../api/registrationsApi';
 import RegistrationsTablePage from './RegistrationsTablePage';
@@ -14,15 +15,19 @@ vi.mock('../../api/registrationsApi', () => ({
   acceptRegistration: vi.fn(),
   cancelRegistration: vi.fn(),
   getActivityRegistrations: vi.fn(),
+  getRegistrationCounts: vi.fn(),
   rejectRegistration: vi.fn(),
 }));
 
+// Forma de RegistrationRow, tal y como la declara el contrato. La versión
+// anterior mezclaba `name`, `person.name`, `hoursThisYear` y `annualHours` para
+// ejercitar unas cascadas defensivas que el backend nunca ha servido.
 const BOARD = {
   content: [
-    { registrationId: 1, name: 'Ana Torres', department: 'Tecnología', organization: 'VERISURE_ES', yearHours: 12, status: 'WAITLISTED', accepted: false },
-    { registrationId: 2, person: { name: 'Luis Martín', department: 'Personas', organization: 'VERISURE_GROUP' }, hoursThisYear: 8, status: 'WAITLISTED', accepted: true },
-    { registrationId: 3, name: 'Marta Ruiz', department: 'Operaciones', organization: 'VERISURE_ES', annualHours: 16, status: 'CONFIRMED', accepted: true },
-    { registrationId: 4, name: 'Sara Gil', status: 'REJECTED', accepted: false, rejectionReason: 'No mostrar' },
+    { registrationId: 1, userName: 'Ana Torres', department: 'Tecnología', organization: 'VERISURE_ES', yearHours: 12, status: 'WAITLISTED', accepted: false },
+    { registrationId: 2, userName: 'Luis Martín', department: 'Personas', organization: 'VERISURE_GROUP', yearHours: 8, status: 'WAITLISTED', accepted: true, queuePosition: 1 },
+    { registrationId: 3, userName: 'Marta Ruiz', department: 'Operaciones', organization: 'VERISURE_ES', yearHours: 16, status: 'CONFIRMED', accepted: true },
+    { registrationId: 4, userName: 'Sara Gil', department: 'Riesgos', organization: 'VERISURE_ES', yearHours: 0, status: 'REJECTED', accepted: false, rejectionReason: 'No mostrar' },
   ],
   number: 0,
   size: 10,
@@ -30,9 +35,11 @@ const BOARD = {
   totalPages: 1,
 };
 
-function renderPage() {
+const COUNTS = { confirmed: 1, waitlisted: 2, unreviewed: 1 };
+
+function renderPage(entry = '/activities/8/registrations') {
   return render(
-    <MemoryRouter initialEntries={['/activities/8/registrations']}>
+    <MemoryRouter initialEntries={[entry]}>
       <Routes>
         <Route path="/activities/:activityId/registrations" element={<RegistrationsTablePage />} />
       </Routes>
@@ -44,6 +51,8 @@ beforeEach(() => {
   acceptRegistration.mockReset();
   cancelRegistration.mockReset();
   getActivityRegistrations.mockReset();
+  getRegistrationCounts.mockReset();
+  getRegistrationCounts.mockResolvedValue({ data: COUNTS });
   rejectRegistration.mockReset();
 });
 
@@ -68,6 +77,43 @@ describe('RegistrationsTablePage', () => {
     expect(screen.getByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /rechazadas 1/i })).toBeInTheDocument();
     expect(screen.queryByText('No mostrar')).not.toBeInTheDocument();
+  });
+
+  it('shows activity-wide counts in the header, not page counts', async () => {
+    getActivityRegistrations.mockResolvedValue({ data: BOARD });
+    getRegistrationCounts.mockResolvedValue({ data: { confirmed: 9, waitlisted: 7, unreviewed: 4 } });
+    renderPage();
+
+    await screen.findByText('Ana Torres');
+    expect(getRegistrationCounts).toHaveBeenCalledWith('8');
+
+    // Las cifras de la cabecera son de toda la actividad y no coinciden con las
+    // de las secciones, que cuentan solo esta página. Es a propósito.
+    const counts = within(screen.getByRole('banner')).getByText('Confirmadas').closest('dl');
+    expect(within(counts).getByText('9')).toBeInTheDocument();
+    expect(within(counts).getByText('7')).toBeInTheDocument();
+    expect(within(counts).getByText('4')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
+  });
+
+  it('still renders the board when the counts request fails', async () => {
+    getActivityRegistrations.mockResolvedValue({ data: BOARD });
+    getRegistrationCounts.mockRejectedValue({ status: 500, message: 'Sin contadores.' });
+    renderPage();
+
+    // Sin cifras la pantalla se lee igual; sin filas, no. Ojo: «Confirmadas» es
+    // también un título de sección, así que hay que mirar la lista de la cabecera.
+    expect(await screen.findByText('Ana Torres')).toBeInTheDocument();
+    expect(document.querySelector('.registrations-page__counts')).toBeNull();
+    expect(screen.queryByRole('heading', { name: /no hemos podido cargar/i })).not.toBeInTheDocument();
+  });
+
+  it('falls back to the activity id when no title travelled with the link', async () => {
+    getActivityRegistrations.mockResolvedValue({ data: BOARD });
+    renderPage();
+
+    await screen.findByText('Ana Torres');
+    expect(screen.getByText('Actividad 8')).toBeInTheDocument();
   });
 
   it('shows a clear empty state', async () => {

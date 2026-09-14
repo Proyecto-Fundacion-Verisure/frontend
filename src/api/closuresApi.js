@@ -1,6 +1,7 @@
 import client from './axiosClient';
+import { isMockEnabled as isModuleMockEnabled } from './mocks';
 
-const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'test';
+const isMockEnabled = () => isModuleMockEnabled('CLOSURE');
 
 function mockGetCertificate(closureId) {
   return Promise.resolve({
