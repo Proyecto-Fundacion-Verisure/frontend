@@ -1,0 +1,67 @@
+@use '../abstracts' as *;
+
+.closure-form {
+  &__notice {
+    background: $color-success-light;
+    border-left: 3px solid $color-success;
+    border-radius: $radius-sm;
+    color: $color-success;
+    margin-block: space('4');
+    padding: space('3') space('4');
+  }
+
+  &__file {
+    align-items: center;
+    background: $color-background;
+    border: 1px dashed $color-border-strong;
+    border-radius: $radius-md;
+    display: flex;
+    flex-wrap: wrap;
+    gap: space('3');
+    padding: space('3');
+  }
+
+  &__file-preview {
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    height: 3.5rem;
+    object-fit: cover;
+    width: 3.5rem;
+  }
+
+  &__file-badge {
+    align-items: center;
+    background: $color-info-light;
+    border-radius: $radius-sm;
+    color: $color-info;
+    display: inline-flex;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    height: 3.5rem;
+    justify-content: center;
+    text-transform: uppercase;
+    width: 3.5rem;
+  }
+
+  &__file-info {
+    display: flex;
+    flex-direction: column;
+    gap: space('1');
+    min-width: 0;
+  }
+
+  &__file-name {
+    color: $color-text;
+    font-weight: $font-weight-semibold;
+    overflow-wrap: anywhere;
+  }
+
+  &__file-size {
+    color: $color-muted;
+    font-size: $font-size-sm;
+  }
+
+  &__file-actions {
+    margin-left: auto;
+  }
+}
