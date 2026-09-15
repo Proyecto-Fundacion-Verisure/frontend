@@ -42,7 +42,7 @@ Las variables que Vite expone al navegador deben empezar por `VITE_`. `.env.loca
 | --- | --- | --- |
 | `VITE_API_URL` | `http://localhost:8080/api` | URL base de Axios. |
 | `VITE_APP_ORIGIN` | `http://localhost:5173` | Origen local que debe admitir el CORS del backend. |
-| `VITE_USE_MOCKS` | `true` | Activa en desarrollo los mocks locales disponibles de autenticación, propuestas y dashboard. Usa `false` para integración real. |
+| `VITE_USE_MOCKS` | `false` | Usa `true` únicamente para la demo local. El valor predeterminado prueba la integración real. |
 
 Después de cambiar una variable hay que reiniciar Vite. `VITE_USE_MOCKS` nunca habilita mocks en producción.
 
@@ -102,7 +102,7 @@ npm ci && npm run demo:reset && npm run smoke # = test:run + build
 # o en navegador: localStorage.clear(); location.reload()
 ```
 
-`scripts/restore-demo.js` es idempotente (N ejecuciones sin duplicar). `isMockEnabled = DEV && MODE !== 'test'` con delays 300ms y sin `failRate` aleatorio para demo estable. Ver `docs/DEMO.md` para prueba de humo 3 min (público → empleado → admin) en Chrome/Firefox 1440px y 390px.
+`scripts/restore-demo.js` es idempotente (N ejecuciones sin duplicar). Los mocks solo se activan de forma explícita con `VITE_USE_MOCKS=true` y no tienen fallos aleatorios. Ver `docs/DEMO.md` para la prueba de humo.
 
 ### Convención de nombres
 
@@ -123,7 +123,7 @@ Los tests se colocan junto a la unidad probada y usan `*.test.jsx` o `*.test.js`
 
 Algunas rutas son compartidas: `/closures/:closureId` y `/activities/:activityId` están disponibles para `ADMIN` y `EMPLOYEE`. En desarrollo también existe `/ui-kit` para el muestrario de componentes, y hay redirecciones de compatibilidad: `/explore` → `/activities`, `/inscriptions` → `/activities/6/registrations` y `/closes` → `/admin/activities/pending-closure`.
 
-Las cuentas de entidad pueden estar en `PENDING_VERIFICATION`, `PENDING_APPROVAL`, `ACTIVE` o `REJECTED`. Una sesión `PARTNER` no activa se conserva para mostrar el estado de la cuenta; no se trata como una sesión anónima.
+Las cuentas de entidad pueden estar en `PENDING_VERIFICATION`, `PENDING_APPROVAL`, `ACTIVE` o `REJECTED`. En integración real el backend no emite JWT a una cuenta no activa; si `status` no está presente en el usuario autenticado, el frontend considera válida la sesión que el backend acaba de autorizar.
 
 ### Cuentas locales disponibles con mocks
 
@@ -178,7 +178,7 @@ Los errores de validación por campo se muestran junto al control correspondient
 
 Hay dos capas diferentes:
 
-- Los mocks de desarrollo permiten recorrer el acceso y los flujos de propuestas y dashboard sin levantar todo el backend. Se activan con `VITE_USE_MOCKS=true`.
+- Los mocks de desarrollo permiten recorrer los flujos sin levantar el backend. Se activan de forma explícita con `VITE_USE_MOCKS=true`; todos los módulos respetan la misma variable.
 - Los fixtures y mocks de `src/test/` se usan únicamente con Vitest; no forman parte del bundle de producción. Incluyen usuarios `ADMIN`, `EMPLOYEE` y `PARTNER`, estados de cuenta de entidad y respuestas de los principales dominios.
 - La integración real se activa con `VITE_USE_MOCKS=false` y requiere que `VITE_API_URL` apunte al backend. Los flujos sin mock local siempre usan la API.
 

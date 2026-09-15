@@ -44,7 +44,7 @@ describe('Sidebar ADMIN navigation', () => {
 
     expect(screen.getByRole('link', { name: /inscripciones/i })).toHaveAttribute(
       'href',
-      '/activities/6/registrations',
+      '/admin/registrations',
     );
   });
 });

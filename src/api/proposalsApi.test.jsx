@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createProposal } from './proposalsApi';
 import { ApiError } from './apiError';
 
@@ -15,6 +15,9 @@ const VALID_PROPOSAL = {
 };
 
 describe('createProposal mock', () => {
+  beforeEach(() => vi.stubEnv('VITE_USE_MOCKS', 'true'));
+  afterEach(() => vi.unstubAllEnvs());
+
   it('returns 201 with status NEW for valid data', async () => {
     const response = await createProposal(VALID_PROPOSAL);
 

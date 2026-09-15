@@ -2,12 +2,6 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../../features/auth/AuthContext';
 import { getPendingOrganizations } from '../../../api/orgApi';
 
-const COUNTS_BY_ROLE = {
-  ADMIN: { proposals: 3, inscriptions: 5, closes: 2 },
-  PARTNER: { proposals: 1, closes: 4 },
-  EMPLOYEE: { inscriptions: 2 },
-};
-
 export function useSidebarCounts() {
   const { user } = useAuth();
   const [pendingAccounts, setPendingAccounts] = useState(0);
@@ -17,12 +11,16 @@ export function useSidebarCounts() {
     let cancelled = false;
     getPendingOrganizations()
       .then((res) => {
-        if (!cancelled) setPendingAccounts(res.data.length);
+        if (!cancelled) {
+          const content = res.data?.content ?? res.data;
+          const count = res.data?.totalElements
+            ?? (Array.isArray(content) ? content.length : 0);
+          setPendingAccounts(Number(count) || 0);
+        }
       })
       .catch(() => {});
     return () => { cancelled = true; };
   }, [user?.role]);
 
-  const staticCounts = COUNTS_BY_ROLE[user?.role] ?? {};
-  return { ...staticCounts, pendingAccounts };
+  return { pendingAccounts };
 }

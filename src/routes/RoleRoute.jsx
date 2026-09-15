@@ -6,7 +6,7 @@ export default function RoleRoute({ roles = [] }) {
   const { user } = useAuth();
 
   if (!user) return <Navigate to="/login" replace />;
-  if (user.role === 'PARTNER' && user.status !== 'ACTIVE') {
+  if (user.role === 'PARTNER' && user.status !== undefined && user.status !== 'ACTIVE') {
     return <Navigate to="/account-status" replace />;
   }
 

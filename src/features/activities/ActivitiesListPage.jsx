@@ -65,6 +65,7 @@ export default function ActivitiesListPage({
   title = 'Proyectos',
   eyebrow = 'Administración',
   createPath = '/activities/new',
+  editPath = '/activities/:activityId/edit',
 }) {
   const [activities, setActivities] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
@@ -169,7 +170,7 @@ export default function ActivitiesListPage({
           ) : activity.status === 'DRAFT' ? (
             <Link
               className="button button--secondary button--small"
-              to={`/activities/${activity.id}/edit`}
+              to={editPath.replace(':activityId', activity.id)}
             >
               Editar
             </Link>
@@ -225,7 +226,7 @@ export default function ActivitiesListPage({
 
       {requestState.status === 'loading' && (
         <div className="activities-list__loading" aria-label={`Cargando ${titleLower}`}>
-          <Spinner label={`Cargando ${titleLower}…`} />
+          <Spinner label="Cargando actividades…" />
         </div>
       )}
 

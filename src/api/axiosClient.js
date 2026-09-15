@@ -22,6 +22,15 @@ const axiosClient = axios.create({
   timeout: 15_000,
 });
 
+const LOGIN_PATH = '/auth/login';
+
+function isSessionExpiry(error) {
+  const isUnauthorized = error?.response?.status === 401;
+  const requestUrl = error?.config?.url ?? '';
+  const isLoginAttempt = requestUrl.endsWith(LOGIN_PATH);
+  return isUnauthorized && !isLoginAttempt;
+}
+
 axiosClient.interceptors.request.use((config) => {
   const token = storage?.getItem('accessToken');
   if (token) {
@@ -35,7 +44,7 @@ axiosClient.interceptors.request.use((config) => {
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error?.response?.status === 401) clearSession({ notify: true });
+    if (isSessionExpiry(error)) clearSession({ notify: true });
     return Promise.reject(normalizeApiError(error));
   },
 );

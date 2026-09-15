@@ -1,13 +1,9 @@
 import client from './axiosClient';
 import { getDashboardMockData } from '../assets/mock/data/dashboard';
+import { isDevelopmentMockEnabled } from './mockConfig';
 
 const DASHBOARD_FILTERS = ['year', 'line'];
 const YEAR_FILTER = ['year'];
-const useDevelopmentMocks = () => (
-  import.meta.env.DEV
-  && import.meta.env.MODE !== 'test'
-  && import.meta.env.VITE_USE_MOCKS !== 'false'
-);
 
 export function sanitizeDashboardParams(params = {}, allowed = DASHBOARD_FILTERS) {
   return allowed.reduce((result, key) => {
@@ -29,7 +25,7 @@ const mockResponse = (data, config = {}) => {
 
 export const getDashboard = (params = {}, config = {}) => {
   const cleanParams = sanitizeDashboardParams(params);
-  if (useDevelopmentMocks()) return mockResponse(getDashboardMockData(cleanParams), config);
+  if (isDevelopmentMockEnabled()) return mockResponse(getDashboardMockData(cleanParams), config);
   return client.get('/dashboard', requestConfig(cleanParams, config));
 };
 
@@ -39,7 +35,7 @@ const fileConfig = (params, config = {}, allowed = DASHBOARD_FILTERS) => request
 }, allowed);
 
 export const exportParticipationsCsv = (params = {}, config = {}) => {
-  if (useDevelopmentMocks()) {
+  if (isDevelopmentMockEnabled()) {
     const csv = `id,actividad,horas,departamento\n1,Actividad seudonimizada 1,8,Tecnología\n2,Actividad seudonimizada 2,5,Personas\n`;
     return mockResponse(new Blob([csv], { type: 'text/csv' }), config);
   }
@@ -47,7 +43,7 @@ export const exportParticipationsCsv = (params = {}, config = {}) => {
 };
 
 export const exportPartnersCsv = (params = {}, config = {}) => {
-  if (useDevelopmentMocks()) {
+  if (isDevelopmentMockEnabled()) {
     const csv = `organizacion,actividades,horas\nOrg seudonimizada A,2,15\nOrg seudonimizada B,1,8\n`;
     return mockResponse(new Blob([csv], { type: 'text/csv' }), config);
   }
@@ -55,7 +51,7 @@ export const exportPartnersCsv = (params = {}, config = {}) => {
 };
 
 export const exportDashboardPdf = (params = {}, config = {}) => {
-  if (useDevelopmentMocks()) {
+  if (isDevelopmentMockEnabled()) {
     const pdfPlaceholder = `%PDF-1.4\n% Mock PDF for dashboard\n1 0 obj\n<< /Type /Catalog >>\nendobj\n`;
     return mockResponse(new Blob([pdfPlaceholder], { type: 'application/pdf' }), config);
   }

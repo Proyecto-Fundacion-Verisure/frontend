@@ -1,9 +1,11 @@
 import client from './axiosClient';
+import { isDevelopmentMockEnabled } from './mockConfig';
+import { normalizeRegistration, normalizeRequestResult } from './normalizers';
 
 const MOCK_MY_REGISTRATIONS_ACTIVE = [
   {
     registrationId: 101,
-    activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: '2026-09-10', endDate: '2026-09-17', hours: 8 },
+    activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: '2027-09-10', endDate: '2027-09-17', hours: 8 },
     status: 'WAITLISTED',
     accepted: false,
     queuePosition: 3,
@@ -12,7 +14,7 @@ const MOCK_MY_REGISTRATIONS_ACTIVE = [
   },
   {
     registrationId: 102,
-    activity: { id: 2, title: 'Taller educativo', partner: 'Educamos Juntos', startDate: '2026-09-12', endDate: '2026-09-13', hours: 6 },
+    activity: { id: 2, title: 'Taller educativo', partner: 'Educamos Juntos', startDate: '2027-09-12', endDate: '2027-09-13', hours: 6 },
     status: 'CONFIRMED',
     accepted: true,
     queuePosition: null,
@@ -70,6 +72,20 @@ function mockGetActivityRegistrations(activityId) {
   });
 }
 
+function mockGetRegistrationCounts() {
+  const confirmed = MOCK_ACTIVITY_REGISTRATIONS.filter(
+    (registration) => registration.status === 'CONFIRMED',
+  ).length;
+  const waitlisted = MOCK_ACTIVITY_REGISTRATIONS.filter(
+    (registration) => registration.status === 'WAITLISTED',
+  ).length;
+  const unreviewed = MOCK_ACTIVITY_REGISTRATIONS.filter(
+    (registration) => registration.status === 'WAITLISTED' && !registration.accepted,
+  ).length;
+
+  return Promise.resolve({ data: { confirmed, waitlisted, unreviewed } });
+}
+
 function findMockRegistration(registrationId) {
   return MOCK_ACTIVITY_REGISTRATIONS.find(
     (registration) => String(registration.registrationId) === String(registrationId),
@@ -107,33 +123,55 @@ function mockCancelRegistration(registrationId) {
   return Promise.resolve({ data: { ...registration } });
 }
 
-const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'test';
+const normalized = (request) => normalizeRequestResult(request, normalizeRegistration);
 
-export const createRegistration = (activityId) => client.post('/registrations', { activityId });
+function mockCreateRegistration(activityId) {
+  const registration = {
+    id: Date.now(),
+    activityId: Number(activityId),
+    status: 'WAITLISTED',
+    accepted: false,
+    queuePosition: 1,
+    createdAt: new Date().toISOString(),
+  };
+  return Promise.resolve({ data: registration, status: 201 });
+}
+
+export const createRegistration = (activityId) => normalized(
+  isDevelopmentMockEnabled()
+    ? mockCreateRegistration(activityId)
+    : client.post('/registrations', { activityId }),
+);
 
 export const getMyRegistrations = () =>
-  isMockEnabled() ? mockGetMyRegistrations() : client.get('/registrations/me');
+  normalized(isDevelopmentMockEnabled() ? mockGetMyRegistrations() : client.get('/registrations/me'));
 
 export const getActivityRegistrations = (activityId, { status, page } = {}) =>
-  isMockEnabled()
+  normalized(isDevelopmentMockEnabled()
     ? mockGetActivityRegistrations(activityId)
     : client.get('/admin/registrations', {
       params: Object.fromEntries(Object.entries({ activityId, status, page }).filter(([, value]) => (
         value !== undefined && value !== null && value !== ''
       ))),
-    });
+    }));
+
+export const getRegistrationCounts = (activityId) => (
+  isDevelopmentMockEnabled()
+    ? mockGetRegistrationCounts()
+    : client.get('/admin/registrations/counts', { params: { activityId } })
+);
 
 export const acceptRegistration = (registrationId) =>
-  isMockEnabled()
+  normalized(isDevelopmentMockEnabled()
     ? mockAcceptRegistration(registrationId)
-    : client.patch(`/registrations/${registrationId}/accept`);
+    : client.patch(`/registrations/${registrationId}/accept`));
 
 export const rejectRegistration = (registrationId) =>
-  isMockEnabled()
+  normalized(isDevelopmentMockEnabled()
     ? mockRejectRegistration(registrationId)
-    : client.patch(`/registrations/${registrationId}/reject`);
+    : client.patch(`/registrations/${registrationId}/reject`));
 
 export const cancelRegistration = (registrationId, reason) =>
-  isMockEnabled()
+  normalized(isDevelopmentMockEnabled()
     ? mockCancelRegistration(registrationId)
-    : client.patch(`/registrations/${registrationId}/cancel`, reason ? { reason } : undefined);
+    : client.patch(`/registrations/${registrationId}/cancel`, reason ? { reason } : undefined));

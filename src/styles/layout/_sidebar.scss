@@ -1,3 +1,4 @@
+@use 'sass:map';
 @use '../abstracts/variables' as *;
 
 .app-layout {
@@ -12,7 +13,7 @@
 
 .app-layout__content {
   grid-area: content;
-  padding: map-get($spacing, '6');
+  padding: map.get($spacing, '6');
   overflow-y: auto;
   background-color: $color-background;
 }
@@ -23,12 +24,12 @@
   background-color: $color-surface;
   border-right: 1px solid $color-border;
   overflow-y: auto;
-  padding: map-get($spacing, '4') map-get($spacing, '4') ;
+  padding: map.get($spacing, '4') map.get($spacing, '4') ;
 }
 
 .sidebar__section-title {
   display: block;
-  padding: map-get($spacing, '4') map-get($spacing, '4') map-get($spacing, '2');
+  padding: map.get($spacing, '4') map.get($spacing, '4') map.get($spacing, '2');
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
   color: $color-muted;
@@ -39,8 +40,8 @@
 .sidebar__link {
   display: flex;
   align-items: center;
-  gap: map-get($spacing, '2');
-  padding: map-get($spacing, '2') map-get($spacing, '4');
+  gap: map.get($spacing, '2');
+  padding: map.get($spacing, '2') map.get($spacing, '4');
   border-radius: $radius-md;
   color: $color-text;
   font-size: $font-size-md;
@@ -60,7 +61,7 @@
     color: $color-surface;
     font-weight: $font-weight-semibold;
     border-radius: $radius-lg;
-    margin-bottom: map-get($spacing, '2');
+    margin-bottom: map.get($spacing, '2');
 
     &:hover { background-color: $color-coral-dark; }
   }
@@ -108,14 +109,14 @@
 
   .sidebar__nav {
     display: flex;
-    gap: map-get($spacing, '2');
+    gap: map.get($spacing, '2');
     min-width: max-content;
-    padding: map-get($spacing, '2') map-get($spacing, '4');
+    padding: map.get($spacing, '2') map.get($spacing, '4');
   }
 
   .sidebar__section {
     display: flex;
-    gap: map-get($spacing, '2');
+    gap: map.get($spacing, '2');
   }
 
   .sidebar__section-title { display: none; }
@@ -123,6 +124,6 @@
   .sidebar__link {
     min-height: 2.75rem;
     white-space: nowrap;
-    padding: map-get($spacing, '2') map-get($spacing, '3');
+    padding: map.get($spacing, '2') map.get($spacing, '3');
   }
 }

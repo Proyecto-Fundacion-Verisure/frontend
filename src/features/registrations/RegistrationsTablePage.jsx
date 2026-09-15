@@ -172,7 +172,11 @@ export default function RegistrationsTablePage() {
           <Link className="registrations-page__back" to="/admin/activities">← Volver a actividades</Link>
           <p className="registrations-page__eyebrow">Administración</p>
           <h1 id="registrations-title">Inscripciones</h1>
-          <p>{board?.activity?.title ?? board?.activityTitle ?? `Actividad ${activityId}`}</p>
+          <p>
+            {board?.activity?.title
+              ?? board?.activityTitle
+              ?? (activityId ? `Actividad ${activityId}` : 'Todas las actividades')}
+          </p>
         </div>
         <strong>{totalElements} inscripciones</strong>
       </header>

@@ -3,6 +3,7 @@ export { default as Button } from './Button/Button';
 export { default as Card } from './Card/Card';
 export { default as EmptyState } from './EmptyState/EmptyState';
 export { default as HeartButton } from './HeartButton/HeartButton';
+export { default as AuthenticatedImage } from './AuthenticatedImage/AuthenticatedImage';
 export { default as Input } from './Input/Input';
 export { default as Modal } from './Modal/Modal';
 export { default as Pagination } from './Pagination/Pagination';

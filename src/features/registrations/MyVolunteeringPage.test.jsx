@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import MyVolunteeringPage from './MyVolunteeringPage';
 import { cancelRegistration, getMyRegistrations } from '../../api/registrationsApi';
 
@@ -71,8 +71,12 @@ const closedItems = [
 ];
 
 beforeEach(() => {
+  vi.useFakeTimers({ shouldAdvanceTime: true });
+  vi.setSystemTime(new Date('2026-09-01T12:00:00Z'));
   getMyRegistrations.mockReset();
 });
+
+afterEach(() => vi.useRealTimers());
 
 describe('MyVolunteeringPage', () => {
   it('muestra carga inicial', () => {

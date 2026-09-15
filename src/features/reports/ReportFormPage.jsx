@@ -16,8 +16,8 @@ const initialValues = {
 function validate(values, evidence, registrationId) {
   const errors = {};
   if (!registrationId) errors.registrationId = 'No se ha indicado la inscripción.';
-  if (!values.actualHours || Number(values.actualHours) <= 0) {
-    errors.actualHours = 'Indica las horas realizadas.';
+  if (!values.actualHours || !Number.isInteger(Number(values.actualHours)) || Number(values.actualHours) <= 0) {
+    errors.actualHours = 'Indica un número entero de horas realizadas.';
   }
   if (!values.rating || Number(values.rating) < 1 || Number(values.rating) > 5) {
     errors.rating = 'Selecciona una valoración entre 1 y 5.';
@@ -140,8 +140,8 @@ export default function ReportFormPage() {
       <form onSubmit={handleSubmit} noValidate>
         <Input
           type="number"
-          min="0.1"
-          step="0.1"
+          min="1"
+          step="1"
           name="actualHours"
           label="Horas realizadas"
           value={values.actualHours}

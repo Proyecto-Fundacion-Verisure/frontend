@@ -1,5 +1,12 @@
 import client from './axiosClient';
 import { ApiError } from './apiError';
+import { isDevelopmentMockEnabled } from './mockConfig';
+import {
+  normalizeActivity,
+  normalizeRequestResult,
+  serializeActivityLine,
+  serializeActivityRequest,
+} from './normalizers';
 
 const MOCK_ACTIVITIES = [
   {
@@ -94,8 +101,15 @@ const MOCK_ACTIVITIES = [
   },
 ];
 
+const PUBLIC_ACTIVITY_STATUSES = new Set([
+  'PUBLISHED',
+  'FULL',
+  'IN_PROGRESS',
+  'FINISHED',
+]);
+
 function mockGetPublishedActivities(params = {}) {
-  let results = [...MOCK_ACTIVITIES];
+  let results = MOCK_ACTIVITIES.filter((activity) => PUBLIC_ACTIVITY_STATUSES.has(activity.status));
 
   if (params.line) {
     results = results.filter((a) => a.line === params.line);
@@ -178,7 +192,9 @@ function mockGetPartnerActivities(params = {}) {
 }
 
 function mockGetActivityDetail(id) {
-  const activity = MOCK_ACTIVITIES.find((a) => String(a.id) === String(id));
+  const activity = MOCK_ACTIVITIES.find((a) => (
+    String(a.id) === String(id) && PUBLIC_ACTIVITY_STATUSES.has(a.status)
+  ));
   if (!activity) {
     return Promise.reject(
       new ApiError({ message: 'No se ha encontrado el recurso solicitado.', status: 404 }),
@@ -188,7 +204,10 @@ function mockGetActivityDetail(id) {
 }
 
 async function mockGetAdminActivity(id) {
-  const { data: activity } = await mockGetActivityDetail(id);
+  const activity = MOCK_ACTIVITIES.find((item) => String(item.id) === String(id));
+  if (!activity) {
+    throw new ApiError({ message: 'No se ha encontrado el recurso solicitado.', status: 404 });
+  }
   return {
     data: {
       ...activity,
@@ -225,37 +244,85 @@ function mockCancelActivity(id) {
   return Promise.resolve({ status: 204 });
 }
 
-const isMockEnabled = () => import.meta.env.DEV && import.meta.env.MODE !== 'test';
-
 const pickParams = (params = {}, allowed = []) => Object.fromEntries(
   Object.entries(params).filter(([key, value]) => (
     allowed.includes(key) && value !== undefined && value !== null && value !== ''
   )),
 );
 
+const normalized = (request) => normalizeRequestResult(request, normalizeActivity);
+
+function mockCreateActivity(data, { partner = false } = {}) {
+  const id = Math.max(...MOCK_ACTIVITIES.map((activity) => Number(activity.id) || 0), 0) + 1;
+  const activity = normalizeActivity({
+    id,
+    ...data,
+    status: 'DRAFT',
+    partnerName: partner ? getPartnerOrganizationName() : data.partnerName,
+  });
+  MOCK_ACTIVITIES.push(activity);
+  return Promise.resolve({ data: activity, status: 201 });
+}
+
+function mockUpdateActivity(id, data) {
+  const index = MOCK_ACTIVITIES.findIndex((activity) => String(activity.id) === String(id));
+  if (index < 0) {
+    return Promise.reject(new ApiError({ message: 'No se ha encontrado el recurso solicitado.', status: 404 }));
+  }
+  MOCK_ACTIVITIES[index] = normalizeActivity({ ...MOCK_ACTIVITIES[index], ...data });
+  return Promise.resolve({ data: MOCK_ACTIVITIES[index] });
+}
+
+function mockChangeActivityStatus(id, status) {
+  const activity = MOCK_ACTIVITIES.find((item) => String(item.id) === String(id));
+  if (!activity) {
+    return Promise.reject(new ApiError({ message: 'No se ha encontrado el recurso solicitado.', status: 404 }));
+  }
+  activity.status = status;
+  return Promise.resolve({ data: normalizeActivity(activity) });
+}
+
 export const getAdminActivities = (params) =>
-  isMockEnabled()
+  normalized(isDevelopmentMockEnabled()
     ? mockGetAdminActivities(params)
-    : client.get('/admin/activities', { params: pickParams(params, ['status', 'page']) });
+    : client.get('/admin/activities', { params: pickParams(params, ['status', 'page']) }));
 export const getActivities = (params = {}) => (
-  isMockEnabled()
+  normalized(isDevelopmentMockEnabled()
     ? mockGetPublishedActivities(params)
     : client.get('/activities', {
-      params: pickParams(params, ['line', 'mode', 'from', 'to', 'page', 'size']),
-    })
+      params: pickParams(
+        { ...params, line: serializeActivityLine(params.line) },
+        ['line', 'mode', 'from', 'to', 'page', 'size'],
+      ),
+    }))
 );
 export const getPublishedActivities = getActivities;
 export const getActivityDetail = (id) =>
-  isMockEnabled() ? mockGetActivityDetail(id) : client.get(`/activities/${id}`);
+  normalized(isDevelopmentMockEnabled() ? mockGetActivityDetail(id) : client.get(`/activities/${id}`));
 export const getAdminActivity = (id) =>
-  isMockEnabled() ? mockGetAdminActivity(id) : client.get(`/admin/activities/${id}`);
-export const createActivity = (data) => client.post('/admin/activities', data);
-export const updateActivity = (id, data) => client.put(`/admin/activities/${id}`, data);
-export const publishActivity = (id) => client.patch(`/admin/activities/${id}/publish`);
+  normalized(isDevelopmentMockEnabled() ? mockGetAdminActivity(id) : client.get(`/admin/activities/${id}`));
+export const createActivity = (data) => normalized(
+  isDevelopmentMockEnabled()
+    ? mockCreateActivity(data)
+    : client.post('/admin/activities', serializeActivityRequest(data)),
+);
+export const updateActivity = (id, data) => normalized(
+  isDevelopmentMockEnabled()
+    ? mockUpdateActivity(id, data)
+    : client.put(`/admin/activities/${id}`, serializeActivityRequest(data)),
+);
+export const publishActivity = (id) => normalized(
+  isDevelopmentMockEnabled()
+    ? mockChangeActivityStatus(id, 'PUBLISHED')
+    : client.patch(`/admin/activities/${id}/publish`),
+);
 export const cancelActivity = (id) =>
-  isMockEnabled() ? mockCancelActivity(id) : client.patch(`/admin/activities/${id}/cancel`);
+  normalized(isDevelopmentMockEnabled() ? mockCancelActivity(id) : client.patch(`/admin/activities/${id}/cancel`));
 
 export const uploadActivityImage = (image) => {
+  if (isDevelopmentMockEnabled()) {
+    return Promise.resolve({ data: { url: `/uploads/${encodeURIComponent(image.name)}` }, status: 201 });
+  }
   const body = new FormData();
   body.append('image', image);
   return client.post('/admin/activity-images', body, {
@@ -264,14 +331,22 @@ export const uploadActivityImage = (image) => {
 };
 
 export const getPendingActivities = (params = {}) => (
-  client.get('/admin/activities/pending', { params: pickParams(params, ['page']) })
+  normalized(isDevelopmentMockEnabled()
+    ? mockGetAdminActivities({ ...params, status: 'PENDING_APPROVAL' })
+    : client.get('/admin/activities/pending', { params: pickParams(params, ['page']) }))
 );
-export const approveActivity = (id) => client.patch(`/admin/activities/${id}/approve`);
+export const approveActivity = (id) => normalized(
+  isDevelopmentMockEnabled()
+    ? mockChangeActivityStatus(id, 'PUBLISHED')
+    : client.patch(`/admin/activities/${id}/approve`),
+);
 export const returnActivity = (id, note) => (
-  client.patch(`/admin/activities/${id}/return`, { note })
+  normalized(isDevelopmentMockEnabled()
+    ? mockChangeActivityStatus(id, 'DRAFT')
+    : client.patch(`/admin/activities/${id}/return`, { note }))
 );
 
 export const getPartnerActivities = (params = {}) =>
-  isMockEnabled()
+  normalized(isDevelopmentMockEnabled()
     ? mockGetPartnerActivities(params)
-    : client.get('/org/activities', { params: pickParams(params, ['status', 'page']) });
+    : client.get('/org/activities', { params: pickParams(params, ['status', 'page']) }));

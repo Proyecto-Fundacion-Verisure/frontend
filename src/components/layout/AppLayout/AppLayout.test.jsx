@@ -5,6 +5,12 @@ import { describe, expect, it, vi } from 'vitest';
 import { AuthContext } from '../../../features/auth/AuthContext';
 import AppLayout from './AppLayout';
 
+vi.mock('../../../api/orgApi', () => ({
+  getPendingOrganizations: vi.fn(() => Promise.resolve({
+    data: { content: [], totalElements: 0 },
+  })),
+}));
+
 describe('AppLayout', () => {
   it('enlaza el logo de la topbar con la landing page', async () => {
     const user = userEvent.setup();

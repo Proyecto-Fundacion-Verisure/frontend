@@ -13,7 +13,7 @@ export function RegistrationsProvider({ children }) {
     setError(null);
     try {
       const res = await getMyRegistrations();
-      const payload = res.data ?? res;
+      const payload = res.data?.content ?? res.data ?? res;
       setRegistrations(Array.isArray(payload) ? payload : []);
     } catch (err) {
       setError(err);
@@ -32,14 +32,18 @@ export function RegistrationsProvider({ children }) {
     if (!registrationResponse) return;
     setRegistrations((prev) => {
       const list = Array.isArray(prev) ? [...prev] : [];
-      // Avoid duplicate by registrationId or activityId if already present
-      const exists = list.some(
-        (r) =>
-          (r.registrationId && registrationResponse.registrationId && String(r.registrationId) === String(registrationResponse.registrationId)) ||
-          (r.id && registrationResponse.registrationId && String(r.id) === String(registrationResponse.registrationId))
-      );
+      const responseId = registrationResponse.registrationId ?? registrationResponse.id;
+      const responseActivityId = registrationResponse.activityId ?? registrationResponse.activity?.id;
+      const exists = list.some((registration) => {
+        const registrationId = registration.registrationId ?? registration.id;
+        const activityId = registration.activityId ?? registration.activity?.id;
+        return (responseId != null && String(registrationId) === String(responseId))
+          || (responseActivityId != null
+            && String(activityId) === String(responseActivityId)
+            && registration.status !== 'CANCELLED');
+      });
       if (exists) return prev;
-      return [...list, registrationResponse];
+      return [...list, { ...registrationResponse, registrationId: responseId }];
     });
   }, []);
 
