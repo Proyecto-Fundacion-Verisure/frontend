@@ -24,12 +24,9 @@ export default function useRegistrations(activityId, page = 0) {
       // Los contadores son de toda la actividad y el tablero es de una página, así
       // que van en peticiones distintas. Un fallo suyo no puede tumbar el tablero:
       // sin cifras la pantalla se lee igual, sin filas no.
-      const countsRequest = activityId
-        ? getRegistrationCounts(activityId).catch(() => null)
-        : Promise.resolve(null);
       const [{ data }, countsResult] = await Promise.all([
         getActivityRegistrations(activityId, { page }),
-        countsRequest,
+        getRegistrationCounts(activityId).catch(() => null),
       ]);
       setBoard(data);
       setCounts(countsResult?.data ?? null);

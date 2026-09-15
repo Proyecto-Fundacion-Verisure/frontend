@@ -1,8 +1,8 @@
 import realClient from './axiosClient';
 import { ApiError } from './apiError';
-import { isDevelopmentMockEnabled as isModuleMockEnabled } from './mockConfig';
+import { isMockEnabled } from './mocks';
 
-const isDevelopmentMockEnabled = () => isModuleMockEnabled('AUTH');
+const useDevelopmentMocks = () => isMockEnabled('AUTH');
 
 const MOCK_USERS = {
   admin: {
@@ -51,51 +51,18 @@ function mockLogin({ email }) {
 }
 
 export const login = (credentials) =>
-  isDevelopmentMockEnabled() ? mockLogin(credentials) : realClient.post('/auth/login', credentials);
+  useDevelopmentMocks() ? mockLogin(credentials) : realClient.post('/auth/login', credentials);
 
-export const logout = (accessToken) => (
-  isDevelopmentMockEnabled()
-    ? Promise.resolve({ status: 204 })
-    : realClient.post('/auth/logout', undefined, {
-      headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
-    })
-);
+export const logout = (accessToken) => realClient.post('/auth/logout', undefined, {
+  headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+});
 
-export const getCurrentUser = () => {
-  if (!isDevelopmentMockEnabled()) return realClient.get('/auth/me');
-  try {
-    const user = JSON.parse(localStorage.getItem('user'));
-    return user ? Promise.resolve({ data: user }) : Promise.reject(
-      new ApiError({ message: 'La sesión no es válida.', status: 401 }),
-    );
-  } catch {
-    return Promise.reject(new ApiError({ message: 'La sesión no es válida.', status: 401 }));
-  }
-};
+export const getCurrentUser = () => realClient.get('/auth/me');
 
-export const registerPartner = (data) => (
-  isDevelopmentMockEnabled()
-    ? Promise.resolve({
-      data: {
-        id: Date.now(),
-        name: data.contactName,
-        email: data.email,
-        role: 'PARTNER',
-        status: 'PENDING_VERIFICATION',
-      },
-      status: 201,
-    })
-    : realClient.post('/auth/register', data)
-);
+export const registerPartner = (data) => realClient.post('/auth/register', data);
 
-export const verifyEmail = (token) => (
-  isDevelopmentMockEnabled()
-    ? Promise.resolve({ data: { verified: true, token } })
-    : realClient.get('/auth/verify', { params: { token } })
-);
+export const verifyEmail = (token) => realClient.get('/auth/verify', { params: { token } });
 
 export const resendVerification = (email) => (
-  isDevelopmentMockEnabled()
-    ? Promise.resolve({ data: { resent: true, email } })
-    : realClient.post('/auth/resend-verification', { email })
+  realClient.post('/auth/resend-verification', { email })
 );

@@ -23,7 +23,6 @@ vi.mock('../../api/activitiesApi', () => ({
 
 vi.mock('../../api/orgApi', () => ({
   createOrgActivity: vi.fn(),
-  getOrgActivity: vi.fn(),
   submitOrgActivity: vi.fn(),
   updateOrgActivity: vi.fn(),
 }));
@@ -78,9 +77,9 @@ async function fillValidForm(user) {
   await user.selectOptions(screen.getByLabelText(/modalidad/i), 'presencial');
   await user.type(screen.getByLabelText(/máximo de participantes/i), '15');
   await user.type(screen.getByLabelText(/horas estimadas/i), '3');
-  await user.type(screen.getByLabelText(/^fecha de inicio/i), '2026-09-10');
-  await user.type(screen.getByLabelText(/^fecha de fin/i), '2026-09-10');
-  await user.type(screen.getByLabelText(/fecha límite de inscripción/i), '2026-09-08');
+  await user.type(screen.getByLabelText(/fecha y hora de inicio/i), '2026-09-10T10:00');
+  await user.type(screen.getByLabelText(/fecha y hora de fin/i), '2026-09-10T13:00');
+  await user.type(screen.getByLabelText(/fecha límite de inscripción/i), '2026-09-08T23:59');
 }
 
 beforeEach(() => {
@@ -102,8 +101,8 @@ describe('ActivityFormPage', () => {
     expect(screen.getByLabelText(/modalidad/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/máximo de participantes/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/horas estimadas/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^fecha de inicio/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^fecha de fin/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/fecha y hora de inicio/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/fecha y hora de fin/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/fecha límite de inscripción/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /guardar borrador/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /^publicar actividad$/i })).toBeInTheDocument();
@@ -126,11 +125,11 @@ describe('ActivityFormPage', () => {
     renderForm();
 
     await fillValidForm(user);
-    await user.clear(screen.getByLabelText(/^fecha de fin/i));
-    await user.type(screen.getByLabelText(/^fecha de fin/i), '2026-09-09');
+    await user.clear(screen.getByLabelText(/fecha y hora de fin/i));
+    await user.type(screen.getByLabelText(/fecha y hora de fin/i), '2026-09-09T10:00');
     await user.click(screen.getByRole('button', { name: /guardar borrador/i }));
 
-    expect(await screen.findByText(/la fecha de fin no puede ser anterior/i)).toBeInTheDocument();
+    expect(await screen.findByText(/la fecha de fin debe ser posterior/i)).toBeInTheDocument();
     expect(createActivity).not.toHaveBeenCalled();
   });
 
@@ -146,8 +145,7 @@ describe('ActivityFormPage', () => {
     expect(createActivity).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Taller de code',
       line: 'educar',
-      spots: 15,
-      mode: 'PRESENCIAL',
+      maxParticipants: 15,
       hours: 3,
     }));
     expect(publishActivity).not.toHaveBeenCalled();
@@ -265,7 +263,7 @@ describe('ActivityFormPage', () => {
 
     await waitFor(() => expect(updateActivity).toHaveBeenCalledWith('12', expect.objectContaining({
       title: 'Mentoría avanzada',
-      spots: 15,
+      maxParticipants: 15,
       hours: 3,
     })));
     expect(createActivity).not.toHaveBeenCalled();

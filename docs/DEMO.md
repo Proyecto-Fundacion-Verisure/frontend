@@ -4,7 +4,7 @@
 
 ## Datos definitivos (versionados)
 
-Fuente: `public/demo-data.json` (generado por `scripts/restore-demo.js`) y los mocks de `src/api/*`, activados únicamente con `VITE_USE_MOCKS=true`.
+Fuente: `public/demo-data.json` (generado por `scripts/restore-demo.js`) y `src/api/*` mocks (`isMockEnabled = DEV && MODE !== 'test'`).
 
 | Entidad | Datos | Notas |
 |---------|-------|-------|
@@ -25,7 +25,7 @@ npm ci                # sin secretos, usa .env.example
 npm run demo:reset    # escribe public/demo-data.json
 npm run test:run      # suite completa
 npm run build         # vite build
-VITE_USE_MOCKS=true npm run dev # mocks activos de forma explícita
+npm run dev -- --mode development # mocks activos
 ```
 
 **Opción B — Navegador (sin backend):**

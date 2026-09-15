@@ -94,7 +94,6 @@ export default function OrgRegisterPage() {
         email: values.email.trim().toLowerCase(),
         phone: values.phone.trim(),
         password: values.password,
-        consent: values.consent,
       });
       setStatus('idle');
       setResendStatus('idle');

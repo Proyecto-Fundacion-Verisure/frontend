@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -200,17 +200,17 @@ describe('ProposalForm', () => {
 
     // foco visible en el botón de envío
     const submit = screen.getByRole('button', { name: /enviar propuesta/i });
-    act(() => submit.focus());
+    submit.focus();
     expect(submit).toHaveFocus();
 
     // cada campo puede recibir foco por teclado
     const orgInput = screen.getByLabelText(/nombre de la organización/i);
-    act(() => orgInput.focus());
+    orgInput.focus();
     expect(orgInput).toHaveFocus();
 
     // marcar consentimiento con teclado (Space)
     const consent = screen.getByRole('checkbox', { name: /he leído y acepto/i });
-    act(() => consent.focus());
+    consent.focus();
     await user.keyboard(' ');
     expect(consent).toBeChecked();
   });
@@ -222,7 +222,7 @@ describe('ProposalForm', () => {
     const orgInput = screen.getByLabelText(/nombre de la organización/i);
     expect(screen.queryByText('Indica el nombre de la organización.')).not.toBeInTheDocument();
 
-    act(() => orgInput.focus());
+    orgInput.focus();
     await user.tab();
     expect(screen.getByText('Indica el nombre de la organización.')).toBeInTheDocument();
     expect(orgInput).toHaveAttribute('aria-invalid', 'true');
@@ -247,7 +247,7 @@ describe('ProposalForm', () => {
     const consent = screen.getByRole('checkbox', { name: /he leído y acepto/i });
     expect(screen.queryByText('Debes aceptar la política de privacidad.')).not.toBeInTheDocument();
 
-    act(() => consent.focus());
+    consent.focus();
     await user.tab();
     expect(screen.getByText('Debes aceptar la política de privacidad.')).toBeInTheDocument();
 

@@ -1,14 +1,11 @@
 import client from './axiosClient';
 import { ApiError } from './apiError';
-import { isDevelopmentMockEnabled as isModuleMockEnabled } from './mockConfig';
-import { normalizeRegistration, normalizeRequestResult } from './normalizers';
-
-const isDevelopmentMockEnabled = () => isModuleMockEnabled('REGISTRATION');
+import { isMockEnabled as isModuleMockEnabled } from './mocks';
 
 const MOCK_MY_REGISTRATIONS_ACTIVE = [
   {
     registrationId: 101,
-    activity: { id: 5, title: 'Refuerzo escolar', partner: 'Educamos Juntos', startDate: '2027-09-10', endDate: '2027-09-17', hours: 8 },
+    activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: '2026-09-10', endDate: '2026-09-17', hours: 8 },
     status: 'WAITLISTED',
     accepted: false,
     queuePosition: 3,
@@ -17,7 +14,7 @@ const MOCK_MY_REGISTRATIONS_ACTIVE = [
   },
   {
     registrationId: 102,
-    activity: { id: 6, title: 'Mentoría online para jóvenes', partner: 'Educamos Juntos', startDate: '2027-09-12', endDate: '2027-09-13', hours: 6 },
+    activity: { id: 2, title: 'Taller educativo', partner: 'Educamos Juntos', startDate: '2026-09-12', endDate: '2026-09-13', hours: 6 },
     status: 'CONFIRMED',
     accepted: true,
     queuePosition: null,
@@ -26,7 +23,7 @@ const MOCK_MY_REGISTRATIONS_ACTIVE = [
   },
   {
     registrationId: 103,
-    activity: { id: 9, title: 'Charlas de prevención', partner: 'Prevención Total', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
+    activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
     status: 'PENDING_CLOSURE',
     accepted: true,
     queuePosition: null,
@@ -38,7 +35,7 @@ const MOCK_MY_REGISTRATIONS_ACTIVE = [
 const MOCK_MY_REGISTRATIONS_CLOSED = [
   {
     registrationId: 104,
-    activity: { id: 7, title: 'Limpieza de playas', partner: 'Cruz Roja Valencia', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
+    activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
     status: 'CLOSED',
     accepted: true,
     queuePosition: null,
@@ -123,55 +120,41 @@ function mockCancelRegistration(registrationId) {
   return Promise.resolve({ data: { ...registration } });
 }
 
-const normalized = (request) => normalizeRequestResult(request, normalizeRegistration);
+const isMockEnabled = () => isModuleMockEnabled('REGISTRATION');
 
-function mockCreateRegistration(activityId) {
-  const registration = {
-    id: Date.now(),
-    activityId: Number(activityId),
-    status: 'WAITLISTED',
-    accepted: false,
-    queuePosition: 1,
-    createdAt: new Date().toISOString(),
-  };
-  return Promise.resolve({ data: registration, status: 201 });
-}
-
-export const createRegistration = (activityId) => normalized(
-  isDevelopmentMockEnabled()
-    ? mockCreateRegistration(activityId)
-    : client.post('/registrations', { activityId }),
-);
+export const createRegistration = (activityId) => client.post('/registrations', { activityId });
 
 export const getMyRegistrations = () =>
-  normalized(isDevelopmentMockEnabled() ? mockGetMyRegistrations() : client.get('/registrations/me'));
+  isMockEnabled() ? mockGetMyRegistrations() : client.get('/registrations/me');
 
 export const getActivityRegistrations = (activityId, { status, page } = {}) =>
-  normalized(isDevelopmentMockEnabled()
+  isMockEnabled()
     ? mockGetActivityRegistrations(activityId)
     : client.get('/admin/registrations', {
       params: Object.fromEntries(Object.entries({ activityId, status, page }).filter(([, value]) => (
         value !== undefined && value !== null && value !== ''
       ))),
-    }));
+    });
 
-export const getRegistrationCounts = (activityId) => (
-  isDevelopmentMockEnabled()
-    ? mockGetRegistrationCounts()
-    : client.get('/admin/registrations/counts', { params: { activityId } })
-);
+// Los contadores van en su propia ruta y no dentro del tablero: la respuesta de
+// `/admin/registrations` es el Page de Spring, y ahí no caben tres cifras que
+// además son de toda la actividad y no de la página. `activityId` es obligatorio.
+export const getRegistrationCounts = (activityId) =>
+  isMockEnabled()
+    ? mockGetRegistrationCounts(activityId)
+    : client.get('/admin/registrations/counts', { params: { activityId } });
 
 export const acceptRegistration = (registrationId) =>
-  normalized(isDevelopmentMockEnabled()
+  isMockEnabled()
     ? mockAcceptRegistration(registrationId)
-    : client.patch(`/registrations/${registrationId}/accept`));
+    : client.patch(`/registrations/${registrationId}/accept`);
 
 export const rejectRegistration = (registrationId) =>
-  normalized(isDevelopmentMockEnabled()
+  isMockEnabled()
     ? mockRejectRegistration(registrationId)
-    : client.patch(`/registrations/${registrationId}/reject`));
+    : client.patch(`/registrations/${registrationId}/reject`);
 
 export const cancelRegistration = (registrationId, reason) =>
-  normalized(isDevelopmentMockEnabled()
+  isMockEnabled()
     ? mockCancelRegistration(registrationId)
-    : client.patch(`/registrations/${registrationId}/cancel`, reason ? { reason } : undefined));
+    : client.patch(`/registrations/${registrationId}/cancel`, reason ? { reason } : undefined);

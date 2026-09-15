@@ -49,6 +49,7 @@ export default function OrgProposalFormPage() {
   const [touched, setTouched] = useState({});
   const [status, setStatus] = useState("idle");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingProposalId, setPendingProposalId] = useState(null);
   const selectedLine = getLineByValue(values.line);
 
   const handleFieldChange = (event) => {
@@ -102,6 +103,7 @@ export default function OrgProposalFormPage() {
         ...values,
         estimatedVolunteers: Number(values.estimatedVolunteers) || null,
         image: selectedLine?.image ?? null,
+        status: "DRAFT",
       });
       navigate("/org/proposals");
     } catch (error) {
@@ -122,9 +124,9 @@ export default function OrgProposalFormPage() {
         ...values,
         estimatedVolunteers: Number(values.estimatedVolunteers) || null,
         image: selectedLine?.image ?? null,
+        status: "PENDING_APPROVAL",
       });
-      if (!data?.id) throw new Error('La respuesta no incluye el identificador de la propuesta.');
-      await submitOrgProposal(data.id);
+      setPendingProposalId(data.id);
       setShowConfirmModal(true);
       setStatus("idle");
     } catch (error) {

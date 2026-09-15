@@ -16,7 +16,7 @@ export default function Pagination({
           size="small"
           variant="secondary"
           disabled={page <= 1}
-          onClick={() => onPageChange(page - 1)}
+          onClick={() => onPageChange((current) => current - 1)}
         >
           ← Anterior
         </Button>
@@ -24,7 +24,7 @@ export default function Pagination({
           size="small"
           variant="secondary"
           disabled={page >= safeTotal}
-          onClick={() => onPageChange(page + 1)}
+          onClick={() => onPageChange((current) => current + 1)}
         >
           Siguiente →
         </Button>

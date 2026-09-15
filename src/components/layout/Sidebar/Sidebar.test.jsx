@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import Sidebar from './Sidebar';
 import { NAV_SECTIONS_BY_ROLE } from './sidebarNavigation';
+import { DEMO_REGISTRATIONS_PATH } from '../../../constants/demoActivity';
 
 function renderSidebar(role) {
   return render(
@@ -47,7 +48,7 @@ describe('Sidebar ADMIN navigation', () => {
     // a una actividad sin inscripciones.
     expect(screen.getByRole('link', { name: /inscripciones/i })).toHaveAttribute(
       'href',
-      '/admin/registrations',
+      DEMO_REGISTRATIONS_PATH,
     );
   });
 });

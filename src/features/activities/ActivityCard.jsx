@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { AuthenticatedImage, Badge, Card, HeartButton, ProgressBar } from '../../components/ui';
+import { Badge, Card, HeartButton, ProgressBar } from '../../components/ui';
 
 const LINE_LABELS = {
   desoledad: 'Desoledad',
@@ -29,10 +29,7 @@ export default function ActivityCard({ activity, isEnrolled = false, linkTo, onT
   const displayLocation = location || address || city || null;
 
   const lineLabel = LINE_LABELS[line] || line;
-  const hasOccupancy = registeredCount !== null
-    && registeredCount !== undefined
-    && Number.isFinite(Number(registeredCount));
-  const occupied = hasOccupancy ? Number(registeredCount) : 0;
+  const occupied = Number(registeredCount) || 0;
   const total = Number(capacity) || 0;
   const isFull =
     status === 'FULL' ||
@@ -44,7 +41,7 @@ export default function ActivityCard({ activity, isEnrolled = false, linkTo, onT
     <>
       {image ? (
         <div className="activity-card__image">
-          <AuthenticatedImage src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
       ) : (
         <div className="activity-card__image" role="img" aria-label="Sin imagen disponible">
@@ -63,7 +60,7 @@ export default function ActivityCard({ activity, isEnrolled = false, linkTo, onT
         {title && <h3 className="activity-card__title">{title}</h3>}
         {description && <p className="activity-card__description">{description}</p>}
 
-        {total > 0 && hasOccupancy && (
+        {total > 0 && (
           <ProgressBar
             value={occupied}
             max={total}
@@ -98,9 +95,7 @@ export default function ActivityCard({ activity, isEnrolled = false, linkTo, onT
       )}
 
       <div className="activity-card__footer">
-        <span className="activity-card__organization">
-          {total > 0 ? hasOccupancy ? `${occupied} de ${total} plazas` : `${total} plazas` : ''}
-        </span>
+        <span className="activity-card__organization">{total > 0 ? `${occupied} de ${total} plazas` : ''}</span>
         <HeartButton
           active={Boolean(favoritedByMe)}
           aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}

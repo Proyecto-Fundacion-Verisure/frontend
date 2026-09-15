@@ -1,10 +1,9 @@
 import client from './axiosClient';
 import { registerPartner, resendVerification } from './authApi';
 import { getOrgDashboardMockData } from '../assets/mock/data/orgDashboard';
-import { isDevelopmentMockEnabled as isModuleMockEnabled } from './mockConfig';
-import { normalizeActivity, normalizeRequestResult, serializeActivityRequest } from './normalizers';
+import { isMockEnabled } from './mocks';
 
-const isDevelopmentMockEnabled = () => isModuleMockEnabled('ORG');
+const useDevelopmentMocks = () => isMockEnabled('ORG');
 
 function simulateRequest({ data, delay = 300, failRate = 0 } = {}) {
   return new Promise((resolve, reject) => {
@@ -54,7 +53,7 @@ let mockOrganizations = [
 ];
 
 export const createOrganization = (data) => {
-  if (isDevelopmentMockEnabled()) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] createOrganization', data);
     const newOrg = {
       id: `org-${Date.now()}`,
@@ -70,7 +69,7 @@ export const createOrganization = (data) => {
 };
 
 export const resendOrganizationRegistrationEmail = (email) => {
-  if (isDevelopmentMockEnabled()) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] resendOrganizationConfirmationEmail', email);
     return simulateRequest({ data: { resent: true }, delay: 1000 });
   }
@@ -79,7 +78,7 @@ export const resendOrganizationRegistrationEmail = (email) => {
 
 // Devuelve las cuentas de organización pendientes de revisión por la admin.
 export const getPendingOrganizations = ({ status = 'PENDING', page = 0 } = {}) => {
-  if (isDevelopmentMockEnabled()) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] getPendingOrganizations');
     const pending = mockOrganizations.filter((org) => org.status === status);
     return simulateRequest({
@@ -98,7 +97,7 @@ export const getPendingOrganizations = ({ status = 'PENDING', page = 0 } = {}) =
 
 // Acepta la cuenta: la organización pasa a poder acceder a la plataforma.
 export const approveOrganization = (id) => {
-  if (isDevelopmentMockEnabled()) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] approveOrganization', id);
     mockOrganizations = mockOrganizations.map((org) =>
       org.id === id ? { ...org, status: 'ACTIVE' } : org
@@ -110,7 +109,7 @@ export const approveOrganization = (id) => {
 
 // Rechaza la cuenta. La seguridad la da la confirmación en el modal, no un motivo.
 export const rejectOrganization = (id) => {
-  if (isDevelopmentMockEnabled()) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] rejectOrganization', id);
     mockOrganizations = mockOrganizations.map((org) =>
       org.id === id ? { ...org, status: 'REJECTED' } : org
@@ -126,83 +125,12 @@ const pickParams = (params = {}, allowed) => Object.fromEntries(
   )),
 );
 
-let mockOrgActivities = [];
-
-function mockGetOrgActivities(params = {}) {
-  const matching = params.status
-    ? mockOrgActivities.filter((activity) => activity.status === params.status)
-    : mockOrgActivities;
-  const page = Math.max(0, Number(params.page) || 0);
-  const size = 10;
-  const content = matching.slice(page * size, (page + 1) * size);
-  return Promise.resolve({
-    data: {
-      content,
-      number: page,
-      size,
-      totalElements: matching.length,
-      totalPages: Math.ceil(matching.length / size),
-    },
-  });
-}
-
-function mockCreateOrgActivity(data) {
-  const activity = normalizeActivity({ id: Date.now(), ...data, status: 'DRAFT' });
-  mockOrgActivities = [activity, ...mockOrgActivities];
-  return Promise.resolve({ data: activity, status: 201 });
-}
-
-function mockGetOrgActivity(id) {
-  const activity = mockOrgActivities.find((item) => String(item.id) === String(id));
-  return activity
-    ? Promise.resolve({ data: activity })
-    : Promise.reject(Object.assign(new Error('Actividad no encontrada.'), { status: 404 }));
-}
-
-function mockUpdateOrgActivity(id, data) {
-  let updated = null;
-  mockOrgActivities = mockOrgActivities.map((activity) => {
-    if (String(activity.id) !== String(id)) return activity;
-    updated = normalizeActivity({ ...activity, ...data });
-    return updated;
-  });
-  return updated
-    ? Promise.resolve({ data: updated })
-    : Promise.reject(Object.assign(new Error('Actividad no encontrada.'), { status: 404 }));
-}
-
-function mockSubmitOrgActivity(id) {
-  return mockUpdateOrgActivity(id, { status: 'PENDING_APPROVAL' });
-}
-
 export const getOrgActivities = (params = {}) => (
-  normalizeRequestResult(
-    isDevelopmentMockEnabled()
-      ? mockGetOrgActivities(params)
-      : client.get('/org/activities', { params: pickParams(params, ['status', 'page']) }),
-    normalizeActivity,
-  )
+  client.get('/org/activities', { params: pickParams(params, ['status', 'page']) })
 );
-export const getOrgActivity = (id) => normalizeRequestResult(
-  isDevelopmentMockEnabled() ? mockGetOrgActivity(id) : client.get(`/org/activities/${id}`),
-  normalizeActivity,
-);
-export const createOrgActivity = (data) => normalizeRequestResult(
-  isDevelopmentMockEnabled()
-    ? mockCreateOrgActivity(data)
-    : client.post('/org/activities', serializeActivityRequest(data)),
-  normalizeActivity,
-);
-export const updateOrgActivity = (id, data) => normalizeRequestResult(
-  isDevelopmentMockEnabled()
-    ? mockUpdateOrgActivity(id, data)
-    : client.put(`/org/activities/${id}`, serializeActivityRequest(data)),
-  normalizeActivity,
-);
-export const submitOrgActivity = (id) => normalizeRequestResult(
-  isDevelopmentMockEnabled() ? mockSubmitOrgActivity(id) : client.patch(`/org/activities/${id}/submit`),
-  normalizeActivity,
-);
+export const createOrgActivity = (data) => client.post('/org/activities', data);
+export const updateOrgActivity = (id, data) => client.put(`/org/activities/${id}`, data);
+export const submitOrgActivity = (id) => client.patch(`/org/activities/${id}/submit`);
 
 const MOCK_ORG_PROPOSALS = [
   {
@@ -243,36 +171,27 @@ function mockGetOrgProposals(params = {}) {
 }
 
 export const getOrgProposals = (params = {}) =>
-  isDevelopmentMockEnabled()
+  useDevelopmentMocks()
     ? mockGetOrgProposals(params)
     : client.get('/org/proposals', { params: pickParams(params, ['page']) });
 export const createOrgProposal = (data) => {
-  if (isDevelopmentMockEnabled()) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] createOrgProposal', data);
-    const proposal = {
-      id: Date.now(),
-      status: 'DRAFT',
-      ...data,
-      createdAt: new Date().toISOString(),
-    };
-    MOCK_ORG_PROPOSALS.unshift(proposal);
     return simulateRequest({
-      data: proposal,
+      data: { id: Date.now(), status: data.status ?? 'DRAFT', ...data, createdAt: new Date().toISOString() },
       delay: 400,
     });
   }
   return client.post('/org/proposals', data);
 };
 export const submitOrgProposal = (id) => {
-  if (isDevelopmentMockEnabled()) {
+  if (useDevelopmentMocks()) {
     console.info('[MOCK] submitOrgProposal', id);
-    const proposal = MOCK_ORG_PROPOSALS.find((item) => String(item.id) === String(id));
-    if (proposal) proposal.status = 'PENDING_APPROVAL';
     return simulateRequest({ data: { id, status: 'PENDING_APPROVAL' }, delay: 400 });
   }
   return client.patch(`/org/proposals/${id}/submit`);
 };
 export const getOrgDashboard = (year) => {
-  if (isDevelopmentMockEnabled()) return simulateRequest({ data: getOrgDashboardMockData() });
+  if (useDevelopmentMocks()) return simulateRequest({ data: getOrgDashboardMockData() });
   return client.get('/org/dashboard', { params: year ? { year } : {} });
 };

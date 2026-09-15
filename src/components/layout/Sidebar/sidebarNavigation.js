@@ -9,6 +9,7 @@ import {
   BarChart3,
   Building2,
 } from "lucide-react";
+import { DEMO_REGISTRATIONS_PATH } from "../../../constants/demoActivity";
 
 export const NAV_SECTIONS_BY_ROLE = {
   ADMIN: [
@@ -40,7 +41,9 @@ export const NAV_SECTIONS_BY_ROLE = {
       section: "Participación",
       items: [
         {
-          path: "/admin/registrations",
+          // Apunta a la ruta final y no a `/inscriptions`: el menú usa NavLink y
+          // con la redirección de por medio el resaltado de activo se perdería.
+          path: DEMO_REGISTRATIONS_PATH,
           label: "Inscripciones",
           icon: UserPlus,
           badgeKey: "inscriptions",

@@ -61,7 +61,6 @@ beforeEach(() => {
 describe('CatalogPage', () => {
   it('muestra carga inicial', () => {
     getPublishedActivities.mockReturnValue(new Promise(() => {}));
-    getMyRegistrations.mockReturnValue(new Promise(() => {}));
     renderCatalog();
     expect(screen.getByLabelText(/cargando catálogo/i)).toBeInTheDocument();
   });

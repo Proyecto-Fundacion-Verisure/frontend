@@ -1,6 +1,51 @@
-import { isDevelopmentMockEnabled } from './mockConfig';
+/**
+ * Interruptor de mocks, en dos niveles.
+ *
+ * Mientras haya módulos sin backend, apagar los mocks tiene que poder hacerse
+ * módulo a módulo: inscripciones ya está integrado, pero dashboard, propuestas,
+ * catálogo y rol entidad no tienen backend todavía y necesitan seguir en falso.
+ *
+ *   VITE_USE_MOCKS=false                 apaga todos los módulos
+ *   VITE_USE_REGISTRATION_MOCKS=false    apaga solo ese, dejando el resto
+ *
+ * La variable de módulo manda sobre la global, así que también sirve para lo
+ * contrario: dejar uno encendido con todo lo demás apagado.
+ *
+ * Tres reglas que no se negocian por configuración:
+ *
+ * - **En producción nunca hay mocks.** `import.meta.env.DEV` corta antes que
+ *   cualquier variable.
+ * - **En modo test tampoco, salvo que alguien lo pida por su nombre.** Los tests
+ *   montan sus dobles con `vi.mock`, y un mock por debajo haría pasar pruebas que
+ *   no prueban nada. La excepción es un test que prueba el mock en sí —los hay,
+ *   como `proposalsApi.test.jsx`—: ese lo enciende con `vi.stubEnv` de su módulo,
+ *   que es explícito y se lee en el propio fichero de test.
+ * - **Un módulo ya integrado no vuelve al mock por la global.** Ver `INTEGRATED`.
+ */
 
-/** Compatibilidad para los módulos integrados en paralelo durante el Sprint 4. */
-export const isMockEnabled = (module) => isDevelopmentMockEnabled(module);
+/**
+ * Módulos que ya hablan con el backend de verdad.
+ *
+ * El estado de integración vive aquí, en el código, y no solo en un `.env`:
+ * reescribir `.env.development` y olvidar una línea fue precisamente lo que
+ * devolvió el login al mock, donde las cuentas reales de la semilla no existen
+ * y todas respondían «Credenciales inválidas.». La global ya no puede
+ * remockearlos; solo su propia variable de módulo, que sigue siendo la
+ * escotilla para trabajar con el backend apagado.
+ */
+const INTEGRATED = new Set(['AUTH', 'REGISTRATION']);
+
+export const isMockEnabled = (module) => {
+  if (!import.meta.env.DEV) return false;
+
+  const forModule = import.meta.env[`VITE_USE_${module}_MOCKS`];
+  if (forModule !== undefined) return forModule !== 'false';
+
+  if (import.meta.env.MODE === 'test') return false;
+
+  if (INTEGRATED.has(module)) return false;
+
+  return import.meta.env.VITE_USE_MOCKS !== 'false';
+};
 
 export default isMockEnabled;
