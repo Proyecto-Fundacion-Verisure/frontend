@@ -37,6 +37,10 @@ const BOARD = {
 
 const COUNTS = { confirmed: 1, waitlisted: 2, unreviewed: 1 };
 
+function rowOf(personName) {
+  return screen.getByText(personName).closest('tr');
+}
+
 function renderPage(entry = '/activities/8/registrations') {
   return render(
     <MemoryRouter initialEntries={[entry]}>
@@ -57,7 +61,7 @@ beforeEach(() => {
 });
 
 describe('RegistrationsTablePage', () => {
-  it('renders reviewed, unreviewed and rejected registrations in separate sections', async () => {
+  it('groups waitlisted rows in "En cola" and confirmed in "Confirmadas"', async () => {
     getActivityRegistrations.mockResolvedValue({ data: BOARD });
     renderPage();
 
@@ -65,18 +69,46 @@ describe('RegistrationsTablePage', () => {
     expect(await screen.findByRole('heading', { name: /inscripciones/i, level: 1 })).toBeInTheDocument();
     expect(getActivityRegistrations).toHaveBeenCalledWith('8', { page: 0 });
 
-    const unreviewed = screen.getByRole('region', { name: /sin revisar de la actividad/i });
-    expect(within(unreviewed).getByText('Ana Torres')).toBeInTheDocument();
-    expect(within(unreviewed).getByText('Tecnología')).toBeInTheDocument();
-    expect(within(unreviewed).getByText('VERISURE_ES')).toBeInTheDocument();
-    expect(within(unreviewed).getByText('12')).toBeInTheDocument();
+    const queue = screen.getByRole('region', { name: /en cola de la actividad/i });
+    expect(within(queue).getByText('Ana Torres')).toBeInTheDocument();
+    expect(within(queue).getByText('Luis Martín')).toBeInTheDocument();
+    expect(within(queue).getByText('Tecnología')).toBeInTheDocument();
+    expect(within(queue).getByText('VERISURE_ES')).toBeInTheDocument();
+    expect(within(queue).getByText('12')).toBeInTheDocument();
 
-    const acceptedQueue = screen.getByRole('region', { name: /aceptadas en cola de la actividad/i });
-    expect(within(acceptedQueue).getByText('Luis Martín')).toBeInTheDocument();
-    expect(within(acceptedQueue).getByText(/aceptada · en cola/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /en cola 2/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /rechazadas 1/i })).toBeInTheDocument();
+
+    const confirmed = screen.getByRole('region', { name: /confirmadas de la actividad/i });
+    expect(within(confirmed).getByText('Marta Ruiz')).toBeInTheDocument();
+
+    // La distinción «sin revisar» y «aceptada en cola» vive en la fila, no en la sección.
+    expect(within(rowOf('Ana Torres')).getByText(/sin revisar/i)).toBeInTheDocument();
+    expect(within(rowOf('Luis Martín')).getByText(/aceptada · en cola/i)).toBeInTheDocument();
+    expect(within(rowOf('Ana Torres')).getByRole('button', { name: /aceptar inscripción de ana torres/i })).toBeInTheDocument();
+    expect(within(rowOf('Luis Martín')).getByRole('button', { name: /dar de baja inscripción de luis martín/i })).toBeInTheDocument();
     expect(screen.queryByText('No mostrar')).not.toBeInTheDocument();
+  });
+
+  it('keeps the terminal sections collapsed under "Historial" until toggled', async () => {
+    getActivityRegistrations.mockResolvedValue({ data: BOARD });
+    const user = userEvent.setup();
+    renderPage();
+
+    await screen.findByText('Ana Torres');
+    expect(screen.queryByRole('heading', { name: /rechazadas/i })).not.toBeInTheDocument();
+
+    const toggle = screen.getByRole('button', { name: /historial \(1\)/i });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await user.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+    expect(screen.getByRole('heading', { name: /rechazadas 1/i })).toBeInTheDocument();
+    expect(within(screen.getByRole('region', { name: /rechazadas de la actividad/i })).getByText('Sara Gil')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /aceptar inscripción de sara gil/i })).not.toBeInTheDocument();
+
+    await user.click(toggle);
+    expect(screen.queryByRole('heading', { name: /rechazadas/i })).not.toBeInTheDocument();
   });
 
   it('shows activity-wide counts in the header, not page counts', async () => {
@@ -87,13 +119,10 @@ describe('RegistrationsTablePage', () => {
     await screen.findByText('Ana Torres');
     expect(getRegistrationCounts).toHaveBeenCalledWith('8');
 
-    // Las cifras de la cabecera son de toda la actividad y no coinciden con las
-    // de las secciones, que cuentan solo esta página. Es a propósito.
-    const counts = within(screen.getByRole('banner')).getByText('Confirmadas').closest('dl');
-    expect(within(counts).getByText('9')).toBeInTheDocument();
-    expect(within(counts).getByText('7')).toBeInTheDocument();
-    expect(within(counts).getByText('4')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
+    // La cifra de la cabecera es de toda la actividad y no coincide con las de
+    // las secciones, que cuentan solo esta página. Es a propósito.
+    expect(screen.getByText(/confirmadas 9 · en cola 7, de las que 4 sin revisar/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /en cola 2/i })).toBeInTheDocument();
   });
 
   it('still renders the board when the counts request fails', async () => {
@@ -101,10 +130,8 @@ describe('RegistrationsTablePage', () => {
     getRegistrationCounts.mockRejectedValue({ status: 500, message: 'Sin contadores.' });
     renderPage();
 
-    // Sin cifras la pantalla se lee igual; sin filas, no. Ojo: «Confirmadas» es
-    // también un título de sección, así que hay que mirar la lista de la cabecera.
     expect(await screen.findByText('Ana Torres')).toBeInTheDocument();
-    expect(document.querySelector('.registrations-page__counts')).toBeNull();
+    expect(document.querySelector('.registrations-page__summary')).toBeNull();
     expect(screen.queryByRole('heading', { name: /no hemos podido cargar/i })).not.toBeInTheDocument();
   });
 
@@ -162,8 +189,9 @@ describe('RegistrationsTablePage', () => {
     await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
 
     expect(await screen.findByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /en cola 0/i })).toBeInTheDocument();
     expect(acceptRegistration).toHaveBeenCalledWith(1);
-    expect(screen.queryByRole('heading', { name: /sin revisar 1/i })).not.toBeInTheDocument();
+    expect(within(screen.getByRole('region', { name: /confirmadas de la actividad/i })).getByText('Ana Torres')).toBeInTheDocument();
   });
 
   it('keeps an accepted registration in the queue when backend reports no spot', async () => {
@@ -178,8 +206,10 @@ describe('RegistrationsTablePage', () => {
     const row = (await screen.findByText('Ana Torres')).closest('tr');
     await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
 
-    expect(await screen.findByRole('heading', { name: /aceptadas en cola 1/i })).toBeInTheDocument();
-    expect(screen.getByText(/aceptada · en cola/i)).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /en cola 1/i })).toBeInTheDocument();
+    const refreshedRow = (await screen.findByText('Ana Torres')).closest('tr');
+    expect(within(refreshedRow).getByText(/aceptada · en cola/i)).toBeInTheDocument();
+    expect(within(refreshedRow).getByRole('button', { name: /dar de baja inscripción de ana torres/i })).toBeInTheDocument();
   });
 
   it('rejects without asking for or sending a reason', async () => {
@@ -194,9 +224,13 @@ describe('RegistrationsTablePage', () => {
     const row = (await screen.findByText('Ana Torres')).closest('tr');
     await user.click(within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i }));
 
-    expect(await screen.findByRole('heading', { name: /rechazadas 1/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /historial \(1\)/i })).toBeInTheDocument();
     expect(rejectRegistration).toHaveBeenCalledWith(1);
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /historial \(1\)/i }));
+    expect(await screen.findByRole('heading', { name: /rechazadas 1/i })).toBeInTheDocument();
+    expect(within(screen.getByRole('region', { name: /rechazadas de la actividad/i })).getByText('Ana Torres')).toBeInTheDocument();
   });
 
   it('keeps the row actionable after a decision error', async () => {
@@ -239,7 +273,9 @@ describe('RegistrationsTablePage', () => {
 
     const refreshedPerson = await screen.findByText('Luis Martín');
     expect(within(refreshedPerson.closest('tr')).getByText('Confirmada')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /sin revisar 1/i })).toBeInTheDocument();
+    const anaRow = (await screen.findByText('Ana Torres')).closest('tr');
+    expect(within(anaRow).getByText('Sin revisar')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /en cola 1/i })).toBeInTheDocument();
     expect(cancelRegistration).toHaveBeenCalledWith(3, undefined);
   });
 
@@ -261,6 +297,6 @@ describe('RegistrationsTablePage', () => {
 
     const remainingPerson = await screen.findByText('Ana Torres');
     expect(within(remainingPerson.closest('tr')).getByText('Sin revisar')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: /confirmadas 1/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /confirmadas 0/i })).toBeInTheDocument();
   });
 });

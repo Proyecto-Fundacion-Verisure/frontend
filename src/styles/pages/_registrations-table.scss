@@ -30,26 +30,15 @@
   > strong { color: $color-navy; white-space: nowrap; }
 }
 
-// Contadores de toda la actividad, no de la página que se está viendo.
-.registrations-page__counts {
-  display: flex;
-  gap: space('5');
+// Datos de toda la actividad, no de la página que se está viendo. Enuncia la
+// relación en texto en vez de alinear cifras sueltas: «Confirmadas 2 · En cola
+// 3, de las que 2 sin revisar» — sin revisar está dentro de en cola.
+.registrations-page__summary {
+  color: $color-muted;
+  font-size: $font-size-sm;
   margin: 0;
-
-  div { text-align: right; }
-
-  dt {
-    color: $color-muted;
-    font-size: $font-size-sm;
-    white-space: nowrap;
-  }
-
-  dd {
-    color: $color-navy;
-    font-size: $font-size-lg;
-    font-weight: $font-weight-bold;
-    margin: 0;
-  }
+  text-align: right;
+  white-space: nowrap;
 }
 
 .registrations-page__back {
@@ -126,6 +115,68 @@
   }
 }
 
+// Historial plegable: agrupa las secciones terminales en un solo bloque.
+.registrations-page__section--history {
+  border-top: 1px solid $color-border;
+  padding-top: space('6');
+}
+
+.registrations-page__history-toggle {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: $color-navy;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  gap: space('2');
+  padding: space('1') 0;
+
+  &:hover {
+    color: $color-coral-dark;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-coral;
+    outline-offset: 2px;
+  }
+}
+
+.registrations-page__history-chevron {
+  color: $color-coral-dark;
+  display: inline-block;
+  transition: transform .18s ease;
+}
+
+.registrations-page__history-content {
+  display: grid;
+  gap: space('8');
+  margin-top: space('6');
+}
+
+.registrations-page__section--terminal h3 {
+  align-items: center;
+  color: $color-navy;
+  display: flex;
+  font-size: $font-size-lg;
+  gap: space('2');
+  margin: 0 0 space('3');
+
+  span {
+    background: $color-background;
+    border-radius: $radius-pill;
+    font-size: $font-size-sm;
+    padding: space('1') space('2');
+  }
+}
+
+.registrations-page__section--terminal .table-wrapper {
+  background: transparent;
+  box-shadow: none;
+}
+
 .registrations-page--state {
   display: grid;
   justify-items: center;
@@ -159,7 +210,7 @@
   .registrations-page { padding-inline: space('4'); }
   .registrations-page__header { align-items: flex-start; flex-direction: column; }
   .registrations-page__totals { justify-items: start; }
-  .registrations-page__counts div { text-align: left; }
+  .registrations-page__summary { text-align: left; white-space: normal; }
   .registrations-page__state-actions { align-items: stretch; flex-direction: column; }
 }
 
