@@ -22,7 +22,19 @@ vi.mock('../../api/closuresApi', () => ({
   submitClosure: vi.fn(),
 }));
 
-beforeEach(() => vi.clearAllMocks());
+// jsdom no define `URL.createObjectURL` / `URL.revokeObjectURL`.  Los
+// estubamos a nivel de archivo para que el componente los pueda usar al
+// previsualizar imágenes y no rompa tests con archivos de tipo imagen.
+const createObjectURL = vi.fn(() => 'blob:preview');
+const revokeObjectURL = vi.fn();
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  createObjectURL.mockClear();
+  revokeObjectURL.mockClear();
+  URL.createObjectURL = createObjectURL;
+  URL.revokeObjectURL = revokeObjectURL;
+});
 
 describe('employee closure page', () => {
   it('sends a new closure with optional evidence and treats 201 as creation', async () => {
@@ -246,6 +258,100 @@ describe('employee closure page', () => {
     await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent(/no permitido/i);
+    expect(screen.getByRole('button', { name: /enviar cierre/i })).toBeEnabled();
+  });
+
+  it('shows the selected file name, size and a way to remove it, releasing the temporary preview URL', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
+        <Routes>
+          <Route path="/closures/new" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    const file = new File([new ArrayBuffer(2048)], 'screenshot.jpg', { type: 'image/jpeg' });
+    await user.upload(screen.getByLabelText(/evidencia \(opcional\)/i), file);
+
+    expect(createObjectURL).toHaveBeenCalledWith(file);
+    expect(screen.getByTestId('closure-file-name')).toHaveTextContent('screenshot.jpg');
+    expect(screen.getByTestId('closure-file-size')).toHaveTextContent('2 KB');
+    expect(screen.getByTestId('closure-file-preview').querySelector('img')).toBeInTheDocument();
+
+    await user.click(screen.getByTestId('closure-remove-evidence'));
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:preview');
+    expect(screen.queryByTestId('closure-file-preview')).not.toBeInTheDocument();
+  });
+
+  it('sends the closure without evidence after removing the file', async () => {
+    submitClosure.mockResolvedValue({ status: 201, data: { closureId: 1, actualHours: 6, rating: 5 } });
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
+        <Routes>
+          <Route path="/closures/new" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await user.upload(screen.getByLabelText(/evidencia \(opcional\)/i), new File(['proof'], 'proof.pdf', { type: 'application/pdf' }));
+    await user.click(screen.getByTestId('closure-remove-evidence'));
+
+    await user.type(screen.getByLabelText(/horas realizadas/i), '6');
+    await user.selectOptions(screen.getByRole('combobox', { name: /valoración/i }), '5');
+    await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
+
+    await waitFor(() => expect(submitClosure).toHaveBeenCalledWith({
+      registrationId: 103,
+      actualHours: 6,
+      rating: 5,
+      evidenceConsent: false,
+    }, null));
+    expect(screen.queryByTestId('closure-file-preview')).not.toBeInTheDocument();
+  });
+
+  it('does not send when evidence is present without consent (400 contract)', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
+        <Routes>
+          <Route path="/closures/new" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await user.upload(screen.getByLabelText(/evidencia \(opcional\)/i), new File(['proof'], 'proof.pdf', { type: 'application/pdf' }));
+    await user.type(screen.getByLabelText(/horas realizadas/i), '6');
+    await user.selectOptions(screen.getByRole('combobox', { name: /valoración/i }), '5');
+    await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
+
+    expect(await screen.findByText(/autorizar el tratamiento/i)).toBeInTheDocument();
+    expect(submitClosure).not.toHaveBeenCalled();
+  });
+
+  it('paints the server 413 error next to the evidence control', async () => {
+    submitClosure.mockRejectedValue(presets.payloadTooLarge());
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
+        <Routes>
+          <Route path="/closures/new" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await user.type(screen.getByLabelText(/horas realizadas/i), '6');
+    await user.selectOptions(screen.getByRole('combobox', { name: /valoración/i }), '5');
+    await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent(/tamaño máximo/i);
+    expect(alert.closest('.field')).toBeTruthy();
     expect(screen.getByRole('button', { name: /enviar cierre/i })).toBeEnabled();
   });
 });

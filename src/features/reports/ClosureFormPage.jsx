@@ -1,10 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { getClosure, submitClosure } from '../../api/closuresApi';
 import { Button, Input, Select, Spinner, Textarea } from '../../components/ui';
 
 const MAX_EVIDENCE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_EVIDENCE_TYPES = new Set(['application/pdf', 'image/jpeg', 'image/png']);
+
+function formatBytes(bytes) {
+  if (bytes == null || !Number.isFinite(bytes) || bytes <= 0) return '';
+  if (bytes < 1024) return `${Math.round(bytes)} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 const emptyValues = {
   actualHours: '',
@@ -77,6 +84,8 @@ export default function ClosureFormPage() {
 
   const [values, setValues] = useState(emptyValues);
   const [evidence, setEvidence] = useState(null);
+  const [evidenceUrl, setEvidenceUrl] = useState(null);
+  const evidenceInputRef = useRef(null);
   const [errors, setErrors] = useState({});
   const [requestState, setRequestState] = useState(isDetail ? 'loading' : 'idle');
   const [closure, setClosure] = useState(null);
@@ -86,6 +95,13 @@ export default function ClosureFormPage() {
   // En la corrección el id no viaja en la ruta: viene del cierre ya cargado.
   // En el envío nuevo llega como query param `registrationId`.
   const registrationId = searchParams.get('registrationId') ?? closure?.registrationId ?? null;
+
+  // La vista previa usa una URL temporal (`URL.createObjectURL`). Esta limpieza
+  // la libera al retirar el archivo y al desmontar el componente: sin ella cada
+  // selección dejaría una URL colgada en memoria.
+  useEffect(() => () => {
+    if (evidenceUrl) URL.revokeObjectURL(evidenceUrl);
+  }, [evidenceUrl]);
 
   const loadClosure = useCallback(async () => {
     if (!closureId) return;
@@ -130,6 +146,20 @@ export default function ClosureFormPage() {
     }));
   };
 
+  const handleEvidenceChange = (event) => {
+    const file = event.target.files?.[0] ?? null;
+    setEvidence(file);
+    setEvidenceUrl(file?.type.startsWith('image/') ? URL.createObjectURL(file) : null);
+    setErrors((current) => ({ ...current, evidence: undefined, evidenceConsent: undefined }));
+  };
+
+  const handleRemoveEvidence = () => {
+    if (evidenceInputRef.current) evidenceInputRef.current.value = '';
+    setEvidence(null);
+    setEvidenceUrl(null);
+    setErrors((current) => ({ ...current, evidence: undefined, evidenceConsent: undefined }));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const nextErrors = validate(values, evidence, registrationId);
@@ -159,8 +189,16 @@ export default function ClosureFormPage() {
       setSubmitStatus(Number(response?.status) === 201 ? 'created' : 'corrected');
       setRequestState('success');
     } catch (error) {
-      setErrors(error?.fieldErrors && typeof error.fieldErrors === 'object' ? error.fieldErrors : {});
-      setRequestError(error?.message || 'No hemos podido enviar el cierre.');
+      const nextErrors = error?.fieldErrors && typeof error.fieldErrors === 'object'
+        ? { ...error.fieldErrors }
+        : {};
+      // Los 413 (tamaño) y 415 (tipo) del multipart no llegan asociados a un
+      // campo: se pintan junto al control de evidencia, no como error global.
+      if ((error?.status === 413 || error?.status === 415) && !nextErrors.evidence) {
+        nextErrors.evidence = error?.message || 'No se pudo adjuntar la evidencia.';
+      }
+      setErrors(nextErrors);
+      setRequestError(Object.keys(nextErrors).length ? '' : (error?.message || 'No hemos podido enviar el cierre.'));
       setRequestState('idle');
     }
   };
@@ -233,14 +271,41 @@ export default function ClosureFormPage() {
         <div className={errors.evidence ? 'field field--error' : 'field'}>
           <label className="field__label" htmlFor="closure-evidence">Evidencia (opcional)</label>
           <input
+            ref={evidenceInputRef}
             id="closure-evidence"
             className="field__control"
             type="file"
             accept="application/pdf,image/jpeg,image/png"
-            onChange={(event) => setEvidence(event.target.files?.[0] ?? null)}
+            onChange={handleEvidenceChange}
             aria-describedby={errors.evidence ? 'closure-evidence-error' : undefined}
             aria-invalid={Boolean(errors.evidence)}
           />
+          {evidence && (
+            <div className="closure-form__file" data-testid="closure-file-preview">
+              {evidence.type.startsWith('image/') && evidenceUrl ? (
+                <img className="closure-form__file-preview" src={evidenceUrl} alt="" />
+              ) : (
+                <span className="closure-form__file-badge" aria-hidden="true">
+                  {evidence.type === 'application/pdf' ? 'PDF' : 'IMG'}
+                </span>
+              )}
+              <div className="closure-form__file-info">
+                <span className="closure-form__file-name" data-testid="closure-file-name">{evidence.name}</span>
+                <span className="closure-form__file-size" data-testid="closure-file-size">{formatBytes(evidence.size)}</span>
+              </div>
+              <div className="closure-form__file-actions">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="small"
+                  onClick={handleRemoveEvidence}
+                  data-testid="closure-remove-evidence"
+                >
+                  Retirar archivo
+                </Button>
+              </div>
+            </div>
+          )}
           {errors.evidence && <span id="closure-evidence-error" className="field__error" role="alert">{errors.evidence}</span>}
         </div>
         <label htmlFor="evidence-consent">
