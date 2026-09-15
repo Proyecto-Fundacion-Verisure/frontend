@@ -42,6 +42,6 @@ export const MOCK_PROPOSALS_V2 = [
   makeProposal({ id: 1, status: ProposalStatus.NEW }),
   makeProposal({ id: 2, organizationName: 'Educamos Juntos', cif: 'B87654321', contactName: 'Carlos Ruiz', email: 'carlos@educamos.org', line: 'educar', status: ProposalStatus.NEW }),
   makeProposal({ id: 3, organizationName: 'Prevención Total', cif: 'F11223344', contactName: 'Ana Martín', email: 'ana@prevencion.org', line: 'acoso', status: ProposalStatus.ACCEPTED }),
-  makeProposal({ id: 4, organizationName: 'Voluntarios Activos', cif: 'A55667788', contactName: 'Pedro López', email: 'pedro@voluntarios.org',     line: 'medio_ambiente', status: ProposalStatus.ACCEPTED }),
+  makeProposal({ id: 4, organizationName: 'Voluntarios Activos', cif: 'A55667788', contactName: 'Pedro López', email: 'pedro@voluntarios.org',     line: 'medioambiente', status: ProposalStatus.ACCEPTED }),
   makeProposal({ id: 5, organizationName: 'Ayuda Directa', cif: 'C99887766', contactName: 'Laura Sánchez', email: 'laura@ayudadirecta.org', status: ProposalStatus.REJECTED }),
 ];

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getAdminActivities } from '../../api/activitiesApi';
 import { Badge, Button, EmptyState, Pagination, Select, Spinner, Table } from '../../components/ui';
 import CancelActivityButton from './CancelActivityButton';
+import { formatDate } from '../../utils/dates';
 import PartnerActivityReviewActions from './PartnerActivityReviewActions';
 
 const DEFAULT_COLUMNS_CONFIG = {
@@ -32,15 +33,6 @@ const STATUS_BADGES = {
   FINISHED: { label: 'Finalizada', variant: 'neutral' },
   CANCELLED: { label: 'Cancelada', variant: 'danger' },
 };
-
-function formatDate(value) {
-  if (!value) return '—';
-  return new Intl.DateTimeFormat('es-ES', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  }).format(new Date(value));
-}
 
 function getPageData(response) {
   const payload = response.data;

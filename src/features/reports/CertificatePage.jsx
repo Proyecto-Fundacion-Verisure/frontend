@@ -3,22 +3,17 @@ import { Link, useParams } from 'react-router-dom';
 import logo from '../../assets/images/logo-fundacion-verisure.png';
 import { getCertificate } from '../../api/closuresApi';
 import { Button, Spinner } from '../../components/ui';
+import { formatDate, formatDateRange } from '../../utils/dates';
 
 const LINE_LABELS = {
   desoledad: 'Desoledad',
   educar: 'Educar para proteger',
   acoso: 'Protegidos ante el acoso',
-  medio_ambiente: 'Medio ambiente',
+  medioambiente: 'Medio ambiente',
 };
 
-function formatDate(value) {
-  if (!value) return '—';
-  return new Intl.DateTimeFormat('es-ES', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(new Date(value));
-}
+// El certificado es un documento formal, así que el mes va escrito entero.
+const CERT_FORMAT = { day: 'numeric', month: 'long', year: 'numeric' };
 
 export default function CertificatePage() {
   const { closureId } = useParams();
@@ -100,7 +95,7 @@ export default function CertificatePage() {
           <dl className="certificate__details">
             <div>
               <dt>Periodo de participación</dt>
-              <dd>{formatDate(certificate.startDate)} — {formatDate(certificate.endDate)}</dd>
+              <dd>{formatDateRange(certificate.startDate, certificate.endDate, CERT_FORMAT)}</dd>
             </div>
             <div className="certificate__hours">
             <dt>Horas realizadas</dt>
@@ -108,7 +103,7 @@ export default function CertificatePage() {
             </div>
             <div>
               <dt>Fecha de expedición</dt>
-              <dd>{formatDate(certificate.issuedAt ?? certificate.issueDate)}</dd>
+              <dd>{formatDate(certificate.issuedAt ?? certificate.issueDate, CERT_FORMAT)}</dd>
             </div>
           </dl>
         </div>

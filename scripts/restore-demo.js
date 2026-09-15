@@ -19,7 +19,7 @@ const definitiveData = {
     { id: 1, title: 'Acompañamiento a mayores', line: 'desoledad', mode: 'PRESENCIAL', capacity: 20, registeredCount: 8, status: 'PUBLISHED', favoritedByMe: true },
     { id: 2, title: 'Taller educativo para jóvenes', line: 'educar', mode: 'ONLINE', capacity: 10, registeredCount: 10, status: 'FULL', favoritedByMe: false },
     { id: 3, title: 'Prevención del acoso escolar', line: 'acoso', mode: 'PRESENCIAL', capacity: 15, registeredCount: 5, status: 'IN_PROGRESS', favoritedByMe: false },
-    { id: 4, title: 'Jornada de voluntariado ambiental', line: 'medio_ambiente', mode: 'MIXTO', capacity: 30, registeredCount: 12, status: 'FINISHED', favoritedByMe: true },
+    { id: 4, title: 'Jornada de voluntariado ambiental', line: 'medioambiente', mode: 'MIXTO', capacity: 30, registeredCount: 12, status: 'FINISHED', favoritedByMe: true },
   ],
   registrations: [
     { registrationId: 101, activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: '2026-09-10', endDate: '2026-09-17', hours: 8 }, status: 'WAITLISTED', queuePosition: 3, accepted: false, closureId: null, activityClosed: false },

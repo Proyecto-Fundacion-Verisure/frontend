@@ -12,7 +12,7 @@ export function mockGetPublishedActivities(params = {}) {
       (a) =>
         a.title.toLowerCase().includes(q) ||
         a.description.toLowerCase().includes(q) ||
-        a.organizationName.toLowerCase().includes(q) ||
+        a.partnerName.toLowerCase().includes(q) ||
         (a.location && a.location.toLowerCase().includes(q)),
     );
   }

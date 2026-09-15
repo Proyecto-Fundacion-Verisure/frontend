@@ -51,7 +51,7 @@ const MOCK_PROPOSALS = [
     contactName: 'Pedro López',
     email: 'pedro@voluntarios.org',
     phone: '600 777 888',
-    line: 'medio_ambiente',
+    line: 'medioambiente',
     description: 'Jornadas de voluntariado corporativo en entornos naturales.',
     estimatedVolunteers: 20,
     status: 'ACCEPTED',

@@ -11,7 +11,6 @@ import {
   publishActivity,
   returnActivity,
   updateActivity,
-  uploadActivityImage,
 } from './activitiesApi';
 import {
   getCurrentUser,
@@ -134,18 +133,13 @@ describe('activity API contract', () => {
     expect(client.patch).toHaveBeenNthCalledWith(2, '/admin/activities/12/cancel');
   });
 
-  it('uses multipart image upload and the partner-approval routes', () => {
-    const image = new File(['image'], 'cover.png', { type: 'image/png' });
-
-    uploadActivityImage(image);
+  // La subida de portada se fue con `B2-03`: no hay `POST /admin/activity-images`,
+  // la imagen es la de la línea de acción y la resuelve el frontend.
+  it('uses the partner-approval routes', () => {
     getPendingActivities({ page: 0, status: 'ignored' });
     approveActivity(31);
     returnActivity(32, 'Completa la descripción.');
 
-    const uploadBody = client.post.mock.calls[0][1];
-    expect(client.post.mock.calls[0][0]).toBe('/admin/activity-images');
-    expect(uploadBody).toBeInstanceOf(FormData);
-    expect(uploadBody.get('image')).toBe(image);
     expect(client.get).toHaveBeenCalledWith('/admin/activities/pending', { params: { page: 0 } });
     expect(client.patch).toHaveBeenNthCalledWith(1, '/admin/activities/31/approve');
     expect(client.patch).toHaveBeenNthCalledWith(2, '/admin/activities/32/return', {

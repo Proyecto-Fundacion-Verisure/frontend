@@ -7,7 +7,6 @@ import {
   getAdminActivity,
   publishActivity,
   updateActivity,
-  uploadActivityImage,
 } from '../../api/activitiesApi';
 import { createOrgActivity } from '../../api/orgApi';
 import { AuthContext } from '../auth/AuthContext';
@@ -18,7 +17,6 @@ vi.mock('../../api/activitiesApi', () => ({
   getAdminActivity: vi.fn(),
   publishActivity: vi.fn(),
   updateActivity: vi.fn(),
-  uploadActivityImage: vi.fn(),
 }));
 
 vi.mock('../../api/orgApi', () => ({
@@ -87,7 +85,6 @@ beforeEach(() => {
   getAdminActivity.mockReset();
   publishActivity.mockReset();
   updateActivity.mockReset();
-  uploadActivityImage.mockReset();
   createOrgActivity.mockReset();
 });
 
@@ -152,14 +149,15 @@ describe('ActivityFormPage', () => {
     expect(await screen.findByRole('heading', { name: /tu borrador está guardado/i })).toBeInTheDocument();
   });
 
-  it('creates partner drafts through /org without exposing the admin upload', async () => {
+  it('creates partner drafts through /org, and nobody gets a cover control', async () => {
     createOrgActivity.mockResolvedValue({ data: { id: 51, status: 'DRAFT' }, status: 201 });
     const user = userEvent.setup();
     renderPartnerForm();
     await fillValidForm(user);
 
+    // Ni subida ni URL: la portada sale de la línea de acción.
     expect(screen.queryByLabelText(/^imagen de portada$/i)).not.toBeInTheDocument();
-    expect(screen.getByLabelText(/url de imagen/i)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/url de imagen/i)).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /guardar borrador/i }));
 
     await waitFor(() => expect(createOrgActivity).toHaveBeenCalledWith(expect.objectContaining({

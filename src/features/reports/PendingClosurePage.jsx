@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getPendingActivityClosures } from '../../api/closuresApi';
 import { Button, EmptyState, Pagination, Spinner, Table } from '../../components/ui';
+import { formatDate } from '../../utils/dates';
 
 const PAGE_SIZE = 10;
 
@@ -59,7 +60,7 @@ export default function PendingClosurePage() {
     {
       key: 'endDate',
       label: 'Finalización',
-      render: (item) => item.endDate ? new Date(item.endDate).toLocaleDateString('es-ES') : '—',
+      render: (item) => formatDate(item.endDate),
     },
     {
       key: 'expectedHours',

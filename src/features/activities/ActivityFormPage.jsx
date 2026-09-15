@@ -5,7 +5,6 @@ import {
   getAdminActivity,
   publishActivity,
   updateActivity,
-  uploadActivityImage,
 } from '../../api/activitiesApi';
 import {
   createOrgActivity,
@@ -26,11 +25,7 @@ const initialValues = {
   startDate: '',
   endDate: '',
   registrationDeadline: '',
-  imageUrl: '',
 };
-
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png']);
 
 function toISOString(localValue) {
   if (!localValue) return '';
@@ -58,7 +53,6 @@ function toFormValues(activity) {
     startDate: toLocalDateTime(activity.startDate),
     endDate: toLocalDateTime(activity.endDate),
     registrationDeadline: toLocalDateTime(activity.registrationDeadline),
-    imageUrl: activity.imageUrl ?? activity.image ?? '',
   };
 }
 
@@ -104,13 +98,6 @@ function validate(values) {
   return errors;
 }
 
-function validateImage(imageFile) {
-  if (!imageFile) return null;
-  if (!ALLOWED_IMAGE_TYPES.has(imageFile.type)) return 'La imagen debe ser JPG o PNG.';
-  if (imageFile.size > MAX_IMAGE_SIZE) return 'La imagen no puede superar los 5 MB.';
-  return null;
-}
-
 function buildPayload(values) {
   return {
     title: values.title.trim(),
@@ -122,7 +109,6 @@ function buildPayload(values) {
     startDate: toISOString(values.startDate),
     endDate: toISOString(values.endDate),
     registrationDeadline: toISOString(values.registrationDeadline),
-    imageUrl: values.imageUrl.trim() || null,
   };
 }
 
@@ -135,7 +121,6 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
   const requestInProgress = useRef(false);
   const { values, setValues, handleChange } = useForm(initialValues);
   const [errors, setErrors] = useState({});
-  const [imageFile, setImageFile] = useState(null);
   const [touched, setTouched] = useState({});
   const [requestStatus, setRequestStatus] = useState(isEditMode ? 'loading' : 'idle');
   const [activity, setActivity] = useState(null);
@@ -177,8 +162,6 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
 
   const validateForm = () => {
     const nextErrors = validate(values);
-    const imageError = validateImage(imageFile);
-    if (imageError) nextErrors.image = imageError;
     setErrors(nextErrors);
     setTouched(Object.keys(initialValues).reduce((acc, key) => ({ ...acc, [key]: true }), {}));
     return Object.keys(nextErrors).length === 0;
@@ -192,20 +175,9 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
     setErrorMessage(error?.message || 'No hemos podido completar la operación. Inténtalo de nuevo.');
   };
 
-  const buildRequestPayload = async () => {
-    const payload = buildPayload(values);
-    if (imageFile && !isPartner) {
-      const { data } = await uploadActivityImage(imageFile);
-      if (!data?.url) throw new Error('La respuesta de subida no incluye la URL de la imagen.');
-      payload.imageUrl = data.url;
-      setValues((current) => ({ ...current, imageUrl: data.url }));
-    }
-    return payload;
-  };
-
   const createDraft = async () => {
     const createRequest = isPartner ? createOrgActivity : createActivity;
-    const { data: createdActivity } = await createRequest(await buildRequestPayload());
+    const { data: createdActivity } = await createRequest(buildPayload(values));
     if (!createdActivity?.id) throw new Error('La respuesta no incluye el identificador de la actividad.');
     setActivity(createdActivity);
     return createdActivity;
@@ -220,7 +192,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
     setErrorMessage('');
     try {
       if (isEditMode) {
-        const payload = await buildRequestPayload();
+        const payload = buildPayload(values);
         const updateRequest = isPartner ? updateOrgActivity : updateActivity;
         const { data: updatedActivity } = await updateRequest(activityId, payload);
         setActivity(updatedActivity ?? { ...activity, ...payload });
@@ -268,7 +240,6 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
 
   const resetForm = () => {
     setValues(initialValues);
-    setImageFile(null);
     setErrors({});
     setTouched({});
     setActivity(null);
@@ -418,7 +389,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
             <option value="desoledad">Desoledad</option>
             <option value="educar">Educar para proteger</option>
             <option value="acoso">Protegidos ante el acoso</option>
-            <option value="medio_ambiente">Medio ambiente</option>
+            <option value="medioambiente">Medio ambiente</option>
           </Select>
         </div>
 
@@ -439,37 +410,11 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
           <Input type="number" min="1" label="Máximo de participantes" required {...fieldProps('maxParticipants')} />
         </div>
 
+        {/* Aquí estaba el control de portada. `B2-03` decidió que la imagen es
+            la de la línea de acción, que ya se elige arriba, así que no hay nada
+            que subir ni que escribir. */}
         <div className="activity-form__grid">
           <Input type="number" min="1" label="Horas estimadas por persona" required {...fieldProps('hours')} />
-          {isPartner ? (
-            <Input label="URL de imagen de portada" placeholder="https://..." {...fieldProps('imageUrl')} />
-          ) : (
-            <div className={errors.image ? 'field field--error' : 'field'}>
-              <label className="field__label" htmlFor="activity-image">Imagen de portada</label>
-              <input
-                id="activity-image"
-                className="field__control"
-                type="file"
-                accept="image/jpeg,image/png"
-                onChange={(event) => {
-                  const file = event.target.files?.[0] ?? null;
-                  setImageFile(file);
-                  const imageError = validateImage(file);
-                  setErrors((current) => {
-                    const next = { ...current };
-                    if (imageError) next.image = imageError;
-                    else delete next.image;
-                    return next;
-                  });
-                }}
-                aria-describedby={errors.image ? 'activity-image-error' : undefined}
-                aria-invalid={Boolean(errors.image)}
-              />
-              <small>JPG o PNG, máximo 5 MB.</small>
-              {values.imageUrl && <small>Imagen actual: {values.imageUrl}</small>}
-              {errors.image && <span id="activity-image-error" className="field__error" role="alert">{errors.image}</span>}
-            </div>
-          )}
         </div>
 
         <div className="activity-form__grid activity-form__grid--dates">

@@ -2,15 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cancelRegistration, getMyRegistrations } from '../../api/registrationsApi';
 import { Badge, Button, Card, EmptyState, Modal, Spinner } from '../../components/ui';
-
-function formatDate(value) {
-  if (!value) return '—';
-  try {
-    return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(value));
-  } catch {
-    return String(value);
-  }
-}
+import { formatDate } from '../../utils/dates';
 
 function RegistrationCard({ item, onCancel, isCancelling }) {
   const [isModalOpen, setIsModalOpen] = useState(false);

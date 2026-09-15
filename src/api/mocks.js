@@ -2,8 +2,15 @@
  * Interruptor de mocks, en dos niveles.
  *
  * Mientras haya módulos sin backend, apagar los mocks tiene que poder hacerse
- * módulo a módulo: inscripciones ya está integrado, pero dashboard, propuestas,
- * catálogo y rol entidad no tienen backend todavía y necesitan seguir en falso.
+ * módulo a módulo: login, inscripciones y catálogo ya están integrados, pero
+ * dashboard, propuestas y rol entidad no tienen backend todavía y necesitan
+ * seguir en falso.
+ *
+ * El catálogo tiene clave propia, `CATALOG`, separada de `ACTIVITY`: `B2-07`
+ * entregó `GET /api/activities` y `GET /api/activities/{id}`, pero el listado de
+ * administración y el de la entidad (`B2-05`, `B2-13`) siguen sin backend. Con
+ * una sola clave para las dos cosas, encender el catálogo mandaría
+ * `/admin/activities` y `/org/activities` contra endpoints que no existen.
  *
  *   VITE_USE_MOCKS=false                 apaga todos los módulos
  *   VITE_USE_REGISTRATION_MOCKS=false    apaga solo ese, dejando el resto
@@ -33,7 +40,7 @@
  * remockearlos; solo su propia variable de módulo, que sigue siendo la
  * escotilla para trabajar con el backend apagado.
  */
-const INTEGRATED = new Set(['AUTH', 'REGISTRATION']);
+const INTEGRATED = new Set(['AUTH', 'REGISTRATION', 'CATALOG']);
 
 export const isMockEnabled = (module) => {
   if (!import.meta.env.DEV) return false;

@@ -24,6 +24,7 @@ import MyVolunteeringPage from '../features/registrations/MyVolunteeringPage';
 import NotFoundPage from '../features/not-found/NotFoundPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
 import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
+import { FavoritesProvider } from '../features/favorites/FavoritesContext';
 import RegistrationsTablePage from '../features/registrations/RegistrationsTablePage';
 import { DEMO_REGISTRATIONS_PATH } from '../constants/demoActivity';
 import CertificatePage from '../features/reports/CertificatePage';
@@ -45,7 +46,18 @@ export default function AppRouter() {
       <Route path="/closes" element={<Navigate to="/admin/activities/pending-closure" replace />} />
       <Route path="/account-status" element={<PublicLayout><AccountStatusPage /></PublicLayout>} />
       <Route element={<ProtectedRoute />}>
-        <Route element={<AppLayout />}>
+        {/* Un solo proveedor de favoritos por encima de `AppLayout`, que pinta el
+            `Outlet`: así el corazón del catálogo (tramo EMPLOYEE) y los dos de la
+            ficha (tramo ADMIN+EMPLOYEE) comparten estado, y navegar de uno a otro
+            no pierde lo que se acaba de pulsar. No hace ninguna petición al
+            montarse, así que sobrarle al rol entidad no cuesta nada. */}
+        <Route
+          element={
+            <FavoritesProvider>
+              <AppLayout />
+            </FavoritesProvider>
+          }
+        >
           <Route element={<RoleRoute roles={['ADMIN', 'EMPLOYEE']} />}>
             <Route path="/closures/:closureId" element={<ReportFormPage />} />
             <Route path="/activities/:activityId" element={<ActivityDetailPage />} />

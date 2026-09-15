@@ -3,10 +3,31 @@ import { favoriteActivity, unfavoriteActivity } from '../../api/favoritesApi';
 
 export const FavoritesContext = createContext(null);
 
+const isAlreadyInDesiredState = (err, wanted) => (
+  wanted ? err?.status === 409 : err?.status === 404
+);
+
 export function FavoritesProvider({ children }) {
   const [overrides, setOverrides] = useState({});
-  const pendingRef = useRef(new Set());
-  const [, forceUpdate] = useState(0);
+
+  // Quién tiene una petición en vuelo. Tiene que ser **estado**, no una `ref`:
+  // el corazón se pinta desde el contexto, y tocar una `ref` no vuelve a
+  // renderizar a quien lo consume. Con `ref` el spinner se quedaba encendido
+  // para siempre al terminar bien —y `HeartButton` se deshabilita mientras
+  // carga, así que el corazón quedaba muerto.
+  //
+  // La `ref` sigue aquí, en paralelo, solo para el cierre de reentrada: `useState`
+  // no se aplica hasta el siguiente render, y dos clics seguidos entrarían los dos.
+  const [pendingIds, setPendingIds] = useState(() => new Set());
+  const pendingRef = useRef(pendingIds);
+
+  const setPending = useCallback((key, isBusy) => {
+    const next = new Set(pendingRef.current);
+    if (isBusy) next.add(key);
+    else next.delete(key);
+    pendingRef.current = next;
+    setPendingIds(next);
+  }, []);
 
   const getFavorite = useCallback(
     (activityId, fallback) => {
@@ -17,7 +38,10 @@ export function FavoritesProvider({ children }) {
     [overrides]
   );
 
-  const isPending = useCallback((activityId) => pendingRef.current.has(String(activityId)), []);
+  const isPending = useCallback(
+    (activityId) => pendingIds.has(String(activityId)),
+    [pendingIds]
+  );
 
   const toggleFavorite = useCallback(
     async (activityId, currentFavorited) => {
@@ -25,8 +49,7 @@ export function FavoritesProvider({ children }) {
       if (pendingRef.current.has(key)) return;
       const nextValue = !currentFavorited;
       setOverrides((prev) => ({ ...prev, [key]: nextValue }));
-      pendingRef.current.add(key);
-      forceUpdate((x) => x + 1);
+      setPending(key, true);
       try {
         if (nextValue) {
           await favoriteActivity(activityId);
@@ -34,14 +57,18 @@ export function FavoritesProvider({ children }) {
           await unfavoriteActivity(activityId);
         }
       } catch (err) {
+        // El backend y el corazón ya coinciden: marcar algo que ya era favorito
+        // devuelve 409 ALREADY_FAVORITED, y desmarcar algo que ya no lo era, 404.
+        // En los dos casos el corazón está donde el usuario quería, así que
+        // revertirlo sería devolverle un estado que no es el del servidor.
+        if (isAlreadyInDesiredState(err, nextValue)) return;
         setOverrides((prev) => ({ ...prev, [key]: currentFavorited }));
         throw err;
       } finally {
-        pendingRef.current.delete(key);
-        forceUpdate((x) => x + 1);
+        setPending(key, false);
       }
     },
-    []
+    [setPending]
   );
 
   const setFavorite = useCallback((activityId, value) => {
