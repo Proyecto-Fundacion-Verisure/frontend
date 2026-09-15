@@ -18,9 +18,9 @@ export const ACTIVITY_LINES = [
     description: "Tres personas protegidas por un escudo y sostenidas por dos manos.",
   },
   {
-    value: "medio_ambiente",
+    value: "medioambiente",
     label: "Medio ambiente",
-    image: "/images/04-medio_ambiente-linea-de-accion.png",
+    image: "/images/04-medioambiente-linea-de-accion.png",
     description: "Tres personas rodeadas y sostenidas por manos, con una planta creciendo sobre ellas.",
   },
 ];

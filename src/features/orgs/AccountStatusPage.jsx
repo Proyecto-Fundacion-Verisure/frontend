@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card, Button, Modal, Pagination, Spinner, EmptyState } from '../../components/ui';
+import { formatDateTime } from '../../utils/dates';
 import {
   getPendingOrganizations,
   approveOrganization,
@@ -190,11 +191,7 @@ function AdminAccountStatusPage() {
                 <div className="account-status__field">
                   <span className="account-status__label">Solicitado el</span>
                   <span className="account-status__value">
-                    {new Date(org.requestedAt).toLocaleDateString('es-ES', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
+                    {formatDateTime(org.requestedAt, { day: 'numeric', month: 'long', year: 'numeric' })}
                   </span>
                 </div>
               </div>

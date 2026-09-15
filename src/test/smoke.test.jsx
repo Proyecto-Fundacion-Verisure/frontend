@@ -36,7 +36,7 @@ describe('smoke — recorrido público, empleado, administrador', () => {
   it('empleado: catálogo carga actividades (demo data)', async () => {
     getPublishedActivities.mockResolvedValue({
       data: [
-        { id: 1, title: 'Acompañamiento a mayores', line: 'desoledad', mode: 'PRESENCIAL', capacity: 20, registeredCount: 8, organizationName: 'Org', favoritedByMe: true },
+        { id: 1, title: 'Acompañamiento a mayores', line: 'desoledad', mode: 'PRESENCIAL', spots: 20, occupiedSpots: 8, partnerName: 'Org', favoritedByMe: true },
       ],
       headers: { 'x-total-count': '1' },
     });

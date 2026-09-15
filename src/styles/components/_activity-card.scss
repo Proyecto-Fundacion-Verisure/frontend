@@ -51,6 +51,18 @@
   overflow: hidden;
 }
 
+.activity-card__dates {
+  color: $color-navy;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  margin: 0;
+}
+
+.activity-card__dates-label {
+  color: $color-muted;
+  font-weight: $font-weight-regular;
+}
+
 .activity-card__description {
   color: $color-muted;
   font-size: $font-size-sm;

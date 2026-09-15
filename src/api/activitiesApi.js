@@ -4,12 +4,14 @@ import { isMockEnabled as isModuleMockEnabled } from './mocks';
 
 // Ids, títulos y entidades copiados de `ActivitySeeder` del backend.
 //
-// El catálogo sigue mockeado porque `GET /api/activities` es de BE2 y no existe
-// todavía, pero el módulo de inscripciones ya es real: `RegistrationsProvider`
-// cruza estos ids con los que devuelve `/registrations/me` para marcar el «ya
-// inscrito», y `RegisterButton` manda el id a `POST /registrations` de verdad.
-// Con ids inventados el corazón se pintaba mal e inscribirse daba 404. Cuando
-// llegue `B2-07`, este bloque desaparece.
+// El catálogo ya no pasa por aquí: `B2-07` entregó `GET /api/activities` y
+// `GET /api/activities/{id}`, y el módulo `CATALOG` va contra el backend real.
+// Lo que queda alimenta el listado de administración (`B2-05`), el de la entidad
+// colaboradora (`B2-13`) y la cancelación, que siguen sin backend.
+//
+// Los ids son los de la semilla, y eso importa: `RegistrationsProvider` los cruza
+// con los que devuelve `/registrations/me`, y `RegisterButton` manda el id a
+// `POST /registrations` de verdad. Con ids inventados, inscribirse daba 404.
 //
 // Los nombres de campo siguen siendo los del mock —`capacity`, `organizationName`,
 // `image`— y no los del contrato —`spots`, `partnerName`, `imageUrl`—: renombrarlos
@@ -55,7 +57,7 @@ const MOCK_ACTIVITIES = [
     registeredCount: 0,
     organizationName: 'Cruz Roja Valencia',
     location: 'Valencia',
-    image: '/images/04-voluntariado-linea-de-accion.png',
+    image: '/images/04-medioambiente-linea-de-accion.png',
     favoritedByMe: true,
     favoriteCount: 14,
     status: 'PUBLISHED',
@@ -70,7 +72,7 @@ const MOCK_ACTIVITIES = [
     registeredCount: 0,
     organizationName: 'Banco de Alimentos',
     location: 'Valencia',
-    image: '/images/04-voluntariado-linea-de-accion.png',
+    image: '/images/04-medioambiente-linea-de-accion.png',
     favoritedByMe: false,
     favoriteCount: 8,
     status: 'PUBLISHED',
@@ -108,8 +110,24 @@ const MOCK_ACTIVITIES = [
   },
 ];
 
-function mockGetPublishedActivities(params = {}) {
-  let results = [...MOCK_ACTIVITIES];
+// El catálogo ya va contra el backend; esto solo se usa con
+// `VITE_USE_CATALOG_MOCKS=true`, que es la escotilla para trabajar con el backend
+// apagado. Emite los nombres del contrato —`spots`, `occupiedSpots`,
+// `partnerName`, `imageUrl`— porque es lo que pintan la tarjeta y la ficha desde
+// que se integraron. `MOCK_ACTIVITIES` se queda con los del mock viejo, que es lo
+// que siguen esperando las pantallas de administración y de la entidad.
+const toCatalogShape = ({ capacity, registeredCount, organizationName, image, favoriteCount, ...rest }) => ({
+  ...rest,
+  spots: capacity,
+  occupiedSpots: registeredCount,
+  partnerName: organizationName,
+  imageUrl: image,
+});
+
+const CATALOG_VISIBLE_STATUSES = new Set(['PUBLISHED', 'FULL', 'IN_PROGRESS', 'FINISHED']);
+
+function mockGetCatalog(params = {}) {
+  let results = MOCK_ACTIVITIES.filter((a) => CATALOG_VISIBLE_STATUSES.has(a.status));
 
   if (params.line) {
     results = results.filter((a) => a.line === params.line);
@@ -120,7 +138,7 @@ function mockGetPublishedActivities(params = {}) {
   const page = Math.max(0, Number(params.page) || 0);
   const size = Number(params.size) || 12;
   const start = page * size;
-  const paged = results.slice(start, start + size);
+  const paged = results.slice(start, start + size).map(toCatalogShape);
 
   return Promise.resolve({
     data: {
@@ -131,6 +149,18 @@ function mockGetPublishedActivities(params = {}) {
       totalPages: Math.ceil(results.length / size),
     },
   });
+}
+
+function mockGetCatalogDetail(id) {
+  const activity = MOCK_ACTIVITIES.find(
+    (a) => String(a.id) === String(id) && CATALOG_VISIBLE_STATUSES.has(a.status),
+  );
+  if (!activity) {
+    return Promise.reject(
+      new ApiError({ message: 'No se ha encontrado el recurso solicitado.', status: 404 }),
+    );
+  }
+  return Promise.resolve({ data: toCatalogShape(activity) });
 }
 
 function mockGetAdminActivities(params = {}) {
@@ -191,6 +221,8 @@ function mockGetPartnerActivities(params = {}) {
   });
 }
 
+// Ya no la usa la ficha pública, que va contra el backend. Se queda porque
+// `mockGetAdminActivity` construye su respuesta a partir de ella.
 function mockGetActivityDetail(id) {
   const activity = MOCK_ACTIVITIES.find((a) => String(a.id) === String(id));
   if (!activity) {
@@ -239,7 +271,10 @@ function mockCancelActivity(id) {
   return Promise.resolve({ status: 204 });
 }
 
+// Dos interruptores, no uno: el catálogo ya tiene backend y el listado de
+// administración y el de la entidad no. Ver el comentario de `src/api/mocks.js`.
 const isMockEnabled = () => isModuleMockEnabled('ACTIVITY');
+const isCatalogMockEnabled = () => isModuleMockEnabled('CATALOG');
 
 const pickParams = (params = {}, allowed = []) => Object.fromEntries(
   Object.entries(params).filter(([key, value]) => (
@@ -252,15 +287,15 @@ export const getAdminActivities = (params) =>
     ? mockGetAdminActivities(params)
     : client.get('/admin/activities', { params: pickParams(params, ['status', 'page']) });
 export const getActivities = (params = {}) => (
-  isMockEnabled()
-    ? mockGetPublishedActivities(params)
+  isCatalogMockEnabled()
+    ? mockGetCatalog(params)
     : client.get('/activities', {
       params: pickParams(params, ['line', 'mode', 'from', 'to', 'page', 'size']),
     })
 );
 export const getPublishedActivities = getActivities;
 export const getActivityDetail = (id) =>
-  isMockEnabled() ? mockGetActivityDetail(id) : client.get(`/activities/${id}`);
+  isCatalogMockEnabled() ? mockGetCatalogDetail(id) : client.get(`/activities/${id}`);
 export const getAdminActivity = (id) =>
   isMockEnabled() ? mockGetAdminActivity(id) : client.get(`/admin/activities/${id}`);
 export const createActivity = (data) => client.post('/admin/activities', data);
@@ -269,13 +304,11 @@ export const publishActivity = (id) => client.patch(`/admin/activities/${id}/pub
 export const cancelActivity = (id) =>
   isMockEnabled() ? mockCancelActivity(id) : client.patch(`/admin/activities/${id}/cancel`);
 
-export const uploadActivityImage = (image) => {
-  const body = new FormData();
-  body.append('image', image);
-  return client.post('/admin/activity-images', body, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-};
+// `uploadActivityImage` vivía aquí y llamaba a `POST /admin/activity-images`, que
+// nunca llegó a existir en el backend. `B2-03` decidió que las portadas no se
+// suben ni se editan: son la imagen de la línea de acción, que resuelve el
+// frontend con `getLineByValue`. La subida de archivos que sí queda es la
+// evidencia del cierre, que va por `FileStorageService`.
 
 export const getPendingActivities = (params = {}) => (
   client.get('/admin/activities/pending', { params: pickParams(params, ['page']) })

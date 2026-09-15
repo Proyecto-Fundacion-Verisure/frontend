@@ -18,7 +18,7 @@ export const ORG_DASHBOARD_MOCK_DATA = Object.freeze({
   distributionByLine: [
     { id: 'desoledad', label: 'Desoledad', value: 820 },
     { id: 'educar', label: 'Educar para proteger', value: 640 },
-    { id: 'medio_ambiente', label: 'Medio ambiente', value: 540 },
+    { id: 'medioambiente', label: 'Medio ambiente', value: 540 },
     { id: 'acoso', label: 'Protegidos ante el acoso', value: 450 },
   ],
 });

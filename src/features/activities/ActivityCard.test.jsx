@@ -8,14 +8,49 @@ const baseActivity = {
   description: 'Visitas semanales a personas mayores en soledad.',
   line: 'desoledad',
   mode: 'PRESENCIAL',
-  capacity: 20,
-  registeredCount: 8,
-  organizationName: 'Fundación Solitaria',
-  image: '/images/01.png',
+  spots: 20,
+  occupiedSpots: 8,
+  partnerName: 'Fundación Solitaria',
   favoritedByMe: true,
 };
 
 describe('ActivityCard', () => {
+  // El filtro del catálogo acota la fecha de inicio: sin verla en la tarjeta, los
+  // resultados cambian y nada lo explica.
+  it('enseña el rango de fechas y las horas', () => {
+    render(<ActivityCard activity={{ ...baseActivity, startDate: '2026-03-02', endDate: '2026-03-27', hours: 20 }} />);
+
+    expect(screen.getByText(/2 mar 2026 — 27 mar 2026/)).toBeInTheDocument();
+    expect(screen.getByText(/20 h/)).toBeInTheDocument();
+  });
+
+  it('no repite la fecha cuando empieza y acaba el mismo día', () => {
+    render(<ActivityCard activity={{ ...baseActivity, startDate: '2026-03-02', endDate: '2026-03-02' }} />);
+
+    expect(screen.getByText(/2 mar 2026/)).toBeInTheDocument();
+    expect(screen.queryByText(/—/)).not.toBeInTheDocument();
+  });
+
+  it('calla si no hay fechas, en vez de pintar un guion suelto', () => {
+    render(<ActivityCard activity={baseActivity} />);
+
+    expect(screen.queryByText(/Fechas:/)).not.toBeInTheDocument();
+  });
+
+  // La portada no viene en la respuesta: es la imagen de la línea de acción.
+  it('pinta la portada de la línea de acción, que el backend ya no manda', () => {
+    const { container } = render(<ActivityCard activity={baseActivity} />);
+
+    expect(container.querySelector('.activity-card__image img'))
+      .toHaveAttribute('src', '/images/01-desoledad-linea-de-accion.png');
+  });
+
+  it('deja el hueco cuando la línea no se reconoce', () => {
+    render(<ActivityCard activity={{ ...baseActivity, line: 'inventada' }} />);
+
+    expect(screen.getByRole('img', { name: /sin imagen disponible/i })).toBeInTheDocument();
+  });
+
   it('muestra título, badges, organización y plazas ocupadas', () => {
     render(<ActivityCard activity={baseActivity} />);
 
@@ -44,7 +79,7 @@ describe('ActivityCard', () => {
   });
 
   it('muestra distintivo Completa cuando plazas llenas o estado FULL', () => {
-    render(<ActivityCard activity={{ ...baseActivity, capacity: 10, registeredCount: 10 }} />);
+    render(<ActivityCard activity={{ ...baseActivity, spots: 10, occupiedSpots: 10 }} />);
     expect(screen.getByText('Completa')).toBeInTheDocument();
 
     const { rerender } = { rerender: () => {} };

@@ -3,16 +3,12 @@ import { Link, useParams } from 'react-router-dom';
 import { getActivityDetail } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
+import { useFavoritesOptional } from '../favorites/FavoritesContext';
 import { useAuth } from '../auth/AuthContext';
 import { Badge, Button, Card, EmptyState, HeartButton, ProgressBar, Spinner } from '../../components/ui';
 import RegisterButton from '../registrations/RegisterButton';
-
-const LINE_LABELS = {
-  desoledad: 'Desoledad',
-  educar: 'Educar para proteger',
-  acoso: 'Protegidos ante el acoso',
-  medio_ambiente: 'Medio ambiente',
-};
+import { getLineByValue } from '../../constants/activityLines';
+import { formatDate, formatDateRange } from '../../utils/dates';
 
 export default function ActivityDetailPage() {
   const { activityId } = useParams();
@@ -23,6 +19,7 @@ export default function ActivityDetailPage() {
   const auth = useAuth();
   const canParticipate = !auth?.user || auth.user.role === 'EMPLOYEE';
   const registrationsCtx = useRegistrationsOptional();
+  const favoritesCtx = useFavoritesOptional();
   const ctxRegistration = registrationsCtx ? registrationsCtx.getForActivity(activityId) : null;
   const currentRegistration = registrationsCtx ? ctxRegistration : localRegistration;
 
@@ -108,12 +105,27 @@ export default function ActivityDetailPage() {
 
   if (!activity) return null;
 
-  const occupied = Number(activity.registeredCount) || 0;
-  const total = Number(activity.capacity) || 0;
-  const lineLabel = LINE_LABELS[activity.line] || activity.line;
+  const occupied = Number(activity.occupiedSpots) || 0;
+  const total = Number(activity.spots) || 0;
+  // Igual que en la tarjeta: la portada sale de la línea de acción, que es lo que
+  // decidió `B2-03`. El backend ya no manda `imageUrl`.
+  const lineInfo = getLineByValue(activity.line);
+  const lineLabel = lineInfo?.label ?? activity.line;
+  const dateRange = activity.startDate || activity.endDate
+    ? formatDateRange(activity.startDate, activity.endDate)
+    : null;
   const displayLocation = activity.location || activity.address || activity.city || null;
   const isFull = activity.status === 'FULL' || activity.status === 'COMPLETA' || (total > 0 && occupied >= total);
-  const favoritedByMe = Boolean(activity.favoritedByMe);
+  const favoritedByMe = favoritesCtx
+    ? favoritesCtx.getFavorite(activity.id, activity.favoritedByMe)
+    : Boolean(activity.favoritedByMe);
+  const isFavoritePending = favoritesCtx ? favoritesCtx.isPending(activity.id) : false;
+  // Los dos corazones de la página —cabecera y panel— comparten este manejador y
+  // el estado del contexto, así que pulsar uno mueve el otro. El fallo lo deshace
+  // el proveedor; aquí solo se captura la promesa.
+  const handleToggleFavorite = favoritesCtx
+    ? () => favoritesCtx.toggleFavorite(activity.id, favoritedByMe).catch(() => {})
+    : undefined;
   const isEnrolled = Boolean(currentRegistration);
 
   return (
@@ -132,13 +144,15 @@ export default function ActivityDetailPage() {
               <HeartButton
                 active={favoritedByMe}
                 aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+                onClick={handleToggleFavorite}
+                isLoading={isFavoritePending}
               />
             )}
           </div>
 
           <Card className="activity-detail__card">
-            {activity.image && (
-              <img src={activity.image} alt={activity.title} className="activity-detail__image" />
+            {lineInfo && (
+              <img src={lineInfo.image} alt={lineInfo.description} className="activity-detail__image" />
             )}
             <div className="activity-detail__badges">
               {lineLabel && <Badge variant="info">{lineLabel}</Badge>}
@@ -152,9 +166,24 @@ export default function ActivityDetailPage() {
               )}
             </div>
             <p className="activity-detail__description">{activity.description}</p>
-            {activity.organizationName && (
+            {activity.partnerName && (
               <p className="activity-detail__meta">
-                <strong>Organización:</strong> {activity.organizationName}
+                <strong>Organización:</strong> {activity.partnerName}
+              </p>
+            )}
+            {dateRange && (
+              <p className="activity-detail__meta">
+                <strong>Fechas:</strong> {dateRange}
+              </p>
+            )}
+            {activity.hours ? (
+              <p className="activity-detail__meta">
+                <strong>Dedicación:</strong> {activity.hours} h
+              </p>
+            ) : null}
+            {activity.registrationDeadline && (
+              <p className="activity-detail__meta">
+                <strong>Plazo de inscripción:</strong> hasta el {formatDate(activity.registrationDeadline)}
               </p>
             )}
             {total > 0 && (
@@ -192,10 +221,19 @@ export default function ActivityDetailPage() {
               </p>
             )}
             {!isEnrolled && !isFull && <p className="activity-detail__panel-meta">Plazas disponibles.</p>}
+            {/* El plazo también aquí: es lo que decide si el botón de abajo sigue
+                vivo, y sin la fecha «Plazo cerrado» parece un error. */}
+            {activity.registrationDeadline && (
+              <p className="activity-detail__panel-meta">
+                Plazo de inscripción: hasta el {formatDate(activity.registrationDeadline)}
+              </p>
+            )}
             {!isEnrolled && <RegisterButton activity={activity} onSuccess={(data) => setLocalRegistration(data)} />}
             <HeartButton
               active={favoritedByMe}
               aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+              onClick={handleToggleFavorite}
+              isLoading={isFavoritePending}
             />
           </Card>
         </aside>}

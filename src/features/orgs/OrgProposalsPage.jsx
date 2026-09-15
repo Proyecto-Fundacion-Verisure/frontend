@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getOrgProposals } from '../../api/orgApi';
 import { Badge, Button, EmptyState, Pagination, Spinner, Table } from '../../components/ui';
+import { formatDateTime } from '../../utils/dates';
 
 const STATUS_BADGES = {
   DRAFT: { label: 'Borrador', variant: 'neutral' },
@@ -59,7 +60,7 @@ export default function OrgProposalsPage() {
     {
       key: 'createdAt',
       label: 'Fecha',
-      render: (item) => item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-ES') : '—',
+      render: (item) => formatDateTime(item.createdAt),
     },
     {
       key: 'actions',

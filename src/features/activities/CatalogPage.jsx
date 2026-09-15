@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getPublishedActivities } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
+import { useFavoritesOptional } from '../favorites/FavoritesContext';
 import { Button, EmptyState, Input, Pagination, Select, Spinner } from '../../components/ui';
 import ActivityCard from './ActivityCard';
 
@@ -13,7 +14,7 @@ const LINE_OPTIONS = [
   { value: 'desoledad', label: 'Desoledad' },
   { value: 'educar', label: 'Educar para proteger' },
   { value: 'acoso', label: 'Protegidos ante el acoso' },
-  { value: 'medio_ambiente', label: 'Medio ambiente' },
+  { value: 'medioambiente', label: 'Medio ambiente' },
 ];
 
 const MODE_OPTIONS = [
@@ -38,8 +39,16 @@ export default function CatalogPage() {
   const [error, setError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
   const [localEnrolledIds, setLocalEnrolledIds] = useState(() => new Set());
+  // «Reintentar» no puede llamar a una función de carga aparte sin duplicar la
+  // que ya hace el efecto: se limita a mover este contador, que está entre sus
+  // dependencias.
+  const [reloadToken, setReloadToken] = useState(0);
   const registrationsCtx = useRegistrationsOptional();
   const enrolledIds = registrationsCtx ? registrationsCtx.enrolledIds : localEnrolledIds;
+  // Opcional por el mismo motivo que las inscripciones: los tests montan la
+  // página suelta. Sin proveedor, el corazón se pinta con lo que diga el servidor
+  // y no responde al clic.
+  const favoritesCtx = useFavoritesOptional();
 
   const rawPage = Number(searchParams.get('page'));
   const page = Number.isInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
@@ -73,30 +82,6 @@ export default function CatalogPage() {
     },
     [updateParams],
   );
-
-  const fetchActivities = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const params = { page: page - 1, size: LIMIT };
-      if (line) params.line = line;
-      if (mode) params.mode = mode;
-      if (from) params.from = from;
-      if (to) params.to = to;
-      const response = await getPublishedActivities(params);
-      const data = response.data?.content ?? response.data;
-      setActivities(Array.isArray(data) ? data : []);
-      const total =
-        response.headers?.['x-total-count'] ??
-        response.data?.totalElements ??
-        (Array.isArray(data) ? data.length : 0);
-      setTotalCount(Number(total) || 0);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, line, mode, from, to]);
 
   useEffect(() => {
     if (registrationsCtx) return;
@@ -150,7 +135,7 @@ export default function CatalogPage() {
     return () => {
       cancelled = true;
     };
-  }, [page, line, mode, from, to]);
+  }, [page, line, mode, from, to, reloadToken]);
 
   const totalPages = Math.max(1, Math.ceil(totalCount / LIMIT));
 
@@ -178,7 +163,7 @@ export default function CatalogPage() {
         <div className="catalog__error" role="alert">
           {error.message || 'Ha ocurrido un error al cargar el catálogo.'}
         </div>
-        <Button onClick={fetchActivities}>Reintentar</Button>
+        <Button onClick={() => setReloadToken((token) => token + 1)}>Reintentar</Button>
       </section>
     );
   }
@@ -206,15 +191,19 @@ export default function CatalogPage() {
             </option>
           ))}
         </Select>
+        {/* «Empieza desde/hasta» y no «Desde/Hasta»: el backend acota la fecha de
+            inicio con los dos extremos incluidos (`a.startDate >= :from and
+            a.startDate <= :to`), no las actividades que se solapen con el rango.
+            Los parámetros de la URL siguen siendo `from` y `to`. */}
         <Input
           type="date"
-          label="Desde"
+          label="Empieza desde"
           value={from}
           onChange={(event) => updateParams({ from: event.target.value })}
         />
         <Input
           type="date"
-          label="Hasta"
+          label="Empieza hasta"
           value={to}
           min={from || undefined}
           onChange={(event) => updateParams({ to: event.target.value })}
@@ -226,14 +215,28 @@ export default function CatalogPage() {
       ) : (
         <>
           <div className="catalog__grid">
-            {activities.map((activity) => (
-              <ActivityCard
-                key={activity.id}
-                activity={activity}
-                isEnrolled={enrolledIds.has(activity.id)}
-                linkTo={`/activities/${activity.id}`}
-              />
-            ))}
+            {activities.map((activity) => {
+              const favorited = favoritesCtx
+                ? favoritesCtx.getFavorite(activity.id, activity.favoritedByMe)
+                : Boolean(activity.favoritedByMe);
+              return (
+                <ActivityCard
+                  key={activity.id}
+                  activity={activity}
+                  isEnrolled={enrolledIds.has(activity.id)}
+                  linkTo={`/activities/${activity.id}`}
+                  favoritedByMe={favorited}
+                  isFavoritePending={favoritesCtx ? favoritesCtx.isPending(activity.id) : false}
+                  onToggleFavorite={
+                    favoritesCtx
+                      // El fallo ya lo deshace el proveedor revirtiendo el corazón;
+                      // aquí solo hay que evitar que la promesa quede sin capturar.
+                      ? () => favoritesCtx.toggleFavorite(activity.id, favorited).catch(() => {})
+                      : undefined
+                  }
+                />
+              );
+            })}
           </div>
 
           <Pagination

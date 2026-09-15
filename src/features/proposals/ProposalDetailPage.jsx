@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { getProposal, rejectProposal } from '../../api/proposalsApi';
 import { Badge, Button, Card, EmptyState, Spinner } from '../../components/ui';
 import AcceptProposalButton, { getActivityDraftPath } from './AcceptProposalButton';
+import { formatDateTime } from '../../utils/dates';
 
 const STATUS_BADGE = {
   NEW: { variant: 'primary', label: 'Nueva' },
@@ -14,17 +15,8 @@ const LINE_LABELS = {
   desoledad: 'Desoledad',
   educar: 'Educar para proteger',
   acoso: 'Protegidos ante el acoso',
-  medio_ambiente: 'Medio ambiente',
+  medioambiente: 'Medio ambiente',
 };
-
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  return new Date(dateStr).toLocaleDateString('es-ES', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-}
 
 export default function ProposalDetailPage() {
   const { proposalId } = useParams();
@@ -156,7 +148,7 @@ export default function ProposalDetailPage() {
           </div>
           <div>
             <dt>Fecha</dt>
-            <dd>{formatDate(proposal.createdAt)}</dd>
+            <dd>{formatDateTime(proposal.createdAt)}</dd>
           </div>
         </dl>
         <div className="proposal-detail__description">

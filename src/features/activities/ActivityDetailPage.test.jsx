@@ -57,9 +57,9 @@ describe('ActivityDetailPage', () => {
         description: 'Visitas semanales.',
         line: 'desoledad',
         mode: 'PRESENCIAL',
-        capacity: 20,
-        registeredCount: 8,
-        organizationName: 'Fundación Solitaria',
+        spots: 20,
+        occupiedSpots: 8,
+        partnerName: 'Fundación Solitaria',
         location: 'Madrid',
       },
     });
@@ -78,8 +78,8 @@ describe('ActivityDetailPage', () => {
         description: 'Detalle recargable.',
         line: 'educar',
         mode: 'ONLINE',
-        capacity: 10,
-        registeredCount: 2,
+        spots: 10,
+        occupiedSpots: 2,
       },
     });
     renderDetail('42');
@@ -95,8 +95,8 @@ describe('ActivityDetailPage', () => {
         description: 'Visitas semanales.',
         line: 'desoledad',
         mode: 'PRESENCIAL',
-        capacity: 20,
-        registeredCount: 8,
+        spots: 20,
+        occupiedSpots: 8,
         favoritedByMe: true,
       },
     });
@@ -116,8 +116,8 @@ describe('ActivityDetailPage', () => {
         title: 'Acompañamiento a mayores',
         description: 'Visitas semanales.',
         favoritedByMe: false,
-        capacity: 10,
-        registeredCount: 2,
+        spots: 10,
+        occupiedSpots: 2,
       },
     });
     renderDetail('1');
@@ -135,8 +135,8 @@ describe('ActivityDetailPage', () => {
         title: 'Acompañamiento a mayores',
         description: 'Visitas semanales.',
         favoritedByMe: false,
-        capacity: 10,
-        registeredCount: 2,
+        spots: 10,
+        occupiedSpots: 2,
         registration: { id: 999, status: 'CONFIRMED' },
         myRegistration: { id: 999, status: 'CONFIRMED' },
       },
@@ -154,8 +154,8 @@ describe('ActivityDetailPage', () => {
         id: 1,
         title: 'Acompañamiento a mayores',
         description: 'Visitas semanales.',
-        capacity: 10,
-        registeredCount: 5,
+        spots: 10,
+        occupiedSpots: 5,
       },
     });
     getMyRegistrations.mockResolvedValue({
@@ -170,7 +170,7 @@ describe('ActivityDetailPage', () => {
 
   it('no muestra inscripción si está cancelada', async () => {
     getActivityDetail.mockResolvedValue({
-      data: { id: 1, title: 'Actividad', description: 'Desc', capacity: 10, registeredCount: 2 },
+      data: { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 },
     });
     getMyRegistrations.mockResolvedValue({
       data: [{ id: 102, activityId: 1, status: 'CANCELLED' }],
@@ -182,7 +182,7 @@ describe('ActivityDetailPage', () => {
 
   it('renderiza panel lateral sticky con accesibilidad', async () => {
     getActivityDetail.mockResolvedValue({
-      data: { id: 1, title: 'Actividad', description: 'Desc', capacity: 10, registeredCount: 2 },
+      data: { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 },
     });
     renderDetail('1');
     await screen.findByRole('heading', { name: /actividad/i });
@@ -192,7 +192,7 @@ describe('ActivityDetailPage', () => {
 
   it('muestra aforo completo pero permite ver detalle', async () => {
     getActivityDetail.mockResolvedValue({
-      data: { id: 2, title: 'Taller lleno', description: 'Completo', capacity: 10, registeredCount: 10, status: 'FULL' },
+      data: { id: 2, title: 'Taller lleno', description: 'Completo', spots: 10, occupiedSpots: 10, status: 'FULL' },
     });
     getMyRegistrations.mockResolvedValue({ data: [] });
     renderDetail('2');
@@ -204,7 +204,7 @@ describe('ActivityDetailPage', () => {
 
   it('no muestra contador de favoritos en ningún caso', async () => {
     getActivityDetail.mockResolvedValue({
-      data: { id: 1, title: 'Actividad', description: 'Desc', favoritedByMe: true, capacity: 5, registeredCount: 1 },
+      data: { id: 1, title: 'Actividad', description: 'Desc', favoritedByMe: true, spots: 5, occupiedSpots: 1 },
     });
     renderDetail('1');
     await screen.findByRole('heading', { name: /actividad/i });
@@ -217,7 +217,7 @@ describe('ActivityDetailPage', () => {
   // H12 — Modal explicativo antes de confirmar
   it('muestra modal con una explicación amigable antes de confirmar', async () => {
     getActivityDetail.mockResolvedValue({
-      data: { id: 1, title: 'Actividad', description: 'Desc', capacity: 10, registeredCount: 2 },
+      data: { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 },
     });
     renderDetail('1');
     await screen.findByRole('heading', { name: /actividad/i });
@@ -234,7 +234,7 @@ describe('ActivityDetailPage', () => {
 
   it('confirmar envía una sola solicitud', async () => {
     getActivityDetail.mockResolvedValue({
-      data: { id: 1, title: 'Actividad', description: 'Desc', capacity: 10, registeredCount: 2 },
+      data: { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 },
     });
     createRegistration.mockResolvedValue({ data: { registrationId: 200, activityId: 1, status: 'WAITLISTED', accepted: false, queuePosition: 3 } });
     renderDetail('1');
@@ -252,7 +252,7 @@ describe('ActivityDetailPage', () => {
 
   it('cancelar no llama a la API', async () => {
     getActivityDetail.mockResolvedValue({
-      data: { id: 1, title: 'Actividad', description: 'Desc', capacity: 10, registeredCount: 2 },
+      data: { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 },
     });
     renderDetail('1');
     await screen.findByRole('heading', { name: /actividad/i });
@@ -266,7 +266,7 @@ describe('ActivityDetailPage', () => {
 
   it('gestiona foco del modal y confirma', async () => {
     getActivityDetail.mockResolvedValue({
-      data: { id: 1, title: 'Actividad', description: 'Desc', capacity: 10, registeredCount: 2 },
+      data: { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 },
     });
     createRegistration.mockResolvedValue({ data: { registrationId: 201, activityId: 1, status: 'WAITLISTED', accepted: false } });
     renderDetail('1');

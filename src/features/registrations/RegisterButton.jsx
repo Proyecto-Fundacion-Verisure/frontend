@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { createRegistration } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from './RegistrationsContext';
 import { Button } from '../../components/ui';
+import { isPastLocalDate } from '../../utils/dates';
 import RegistrationInfoModal from './RegistrationInfoModal';
 
 export default function RegisterButton({ activity, children = 'Solicitar inscripción', disabled = false, onSuccess, ...props }) {
@@ -12,12 +13,12 @@ export default function RegisterButton({ activity, children = 'Solicitar inscrip
   const [error, setError] = useState(null);
   const submittingRef = useRef(false);
 
+  // El propio día del plazo todavía admite inscripciones, igual que en el backend
+  // (`SpotServiceImpl`: `LocalDate.now().isAfter(deadline)`). Comparar instantes
+  // en vez de días naturales cerraba la inscripción un día antes.
   const isDeadlinePassed = useMemo(() => {
     const raw = activity?.registrationDeadline ?? activity?.deadline ?? activity?.inscriptionDeadline;
-    if (!raw) return false;
-    const deadline = new Date(raw);
-    if (Number.isNaN(deadline.getTime())) return false;
-    return deadline < new Date();
+    return isPastLocalDate(raw);
   }, [activity]);
 
   const handleOpen = useCallback(() => {

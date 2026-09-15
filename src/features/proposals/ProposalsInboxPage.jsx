@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getProposals, rejectProposal } from '../../api/proposalsApi';
 import { Badge, Button, EmptyState, Pagination, Select, Spinner, Table } from '../../components/ui';
 import { getActivityDraftPath } from './AcceptProposalButton';
+import { formatDateTime } from '../../utils/dates';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'Todas' },
@@ -21,15 +22,8 @@ const LINE_LABELS = {
   desoledad: 'Desoledad',
   educar: 'Educar para proteger',
   acoso: 'Protegidos ante el acoso',
-  medio_ambiente: 'Medio ambiente',
+  medioambiente: 'Medio ambiente',
 };
-
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  return new Date(dateStr).toLocaleDateString('es-ES', {
-    day: 'numeric', month: 'short', year: 'numeric',
-  });
-}
 
 export default function ProposalsInboxPage() {
   const [proposals, setProposals] = useState([]);
@@ -136,7 +130,7 @@ export default function ProposalsInboxPage() {
     {
       key: 'createdAt',
       label: 'Fecha',
-      render: (row) => formatDate(row.createdAt),
+      render: (row) => formatDateTime(row.createdAt),
     },
     {
       key: 'actions',
