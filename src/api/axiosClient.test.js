@@ -113,7 +113,6 @@ describe('axiosClient', () => {
     });
     expect(window.localStorage.getItem('accessToken')).toBe('previous-token');
     expect(onUnauthorized).not.toHaveBeenCalled();
-
     window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, onUnauthorized);
   });
 

@@ -1,8 +1,8 @@
 import client from './axiosClient';
 import { ApiError } from './apiError';
-import { isMockEnabled } from './mocks';
+import { isDevelopmentMockEnabled as isModuleMockEnabled } from './mockConfig';
 
-const useDevelopmentMocks = () => isMockEnabled('PROPOSAL');
+const isDevelopmentMockEnabled = () => isModuleMockEnabled('PROPOSAL');
 
 const MOCK_PROPOSALS = [
   {
@@ -101,6 +101,13 @@ function mockRejectProposal(id) {
   return Promise.resolve({ data: { id: Number(id), status: 'REJECTED' } });
 }
 
+function mockGetProposal(id) {
+  const proposal = MOCK_PROPOSALS.find((item) => item.id === Number(id));
+  return proposal
+    ? Promise.resolve({ data: { ...proposal } })
+    : Promise.reject(new ApiError({ message: 'No se ha encontrado la propuesta.', status: 404 }));
+}
+
 function mockAcceptProposal(id) {
   const proposal = MOCK_PROPOSALS.find((p) => p.id === Number(id));
   if (proposal) proposal.status = 'ACCEPTED';
@@ -117,15 +124,21 @@ const pickAdminParams = (params = {}) => Object.fromEntries(
 );
 
 export const getProposals = (params = {}) =>
-  useDevelopmentMocks()
+  isDevelopmentMockEnabled()
     ? mockGetProposals(params)
     : client.get('/admin/proposals', { params: pickAdminParams(params) });
 
-export const getProposal = (id) => client.get(`/admin/proposals/${id}`);
+export const getProposal = (id) => (
+  isDevelopmentMockEnabled() ? mockGetProposal(id) : client.get(`/admin/proposals/${id}`)
+);
 
-export const acceptProposal = (id) => client.post(`/admin/proposals/${id}/accept`);
+export const acceptProposal = (id) => (
+  isDevelopmentMockEnabled() ? mockAcceptProposal(id) : client.post(`/admin/proposals/${id}/accept`)
+);
 
-export const rejectProposal = (id) => client.patch(`/admin/proposals/${id}/reject`);
+export const rejectProposal = (id) => (
+  isDevelopmentMockEnabled() ? mockRejectProposal(id) : client.patch(`/admin/proposals/${id}/reject`)
+);
 
 function validateProposal(data) {
   const fieldErrors = {};
@@ -177,4 +190,4 @@ function mockCreateProposal(data) {
 }
 
 export const createProposal = (data) =>
-  useDevelopmentMocks() ? mockCreateProposal(data) : client.post('/proposals', data);
+  isDevelopmentMockEnabled() ? mockCreateProposal(data) : client.post('/proposals', data);

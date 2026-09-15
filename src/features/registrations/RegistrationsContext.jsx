@@ -13,7 +13,7 @@ export function RegistrationsProvider({ children }) {
     setError(null);
     try {
       const res = await getMyRegistrations();
-      const payload = res.data ?? res;
+      const payload = res.data?.content ?? res.data ?? res;
       setRegistrations(Array.isArray(payload) ? payload : []);
     } catch (err) {
       setError(err);
@@ -35,13 +35,21 @@ export function RegistrationsProvider({ children }) {
     // RegistrationResponse del 201, que llama `id` a lo mismo. El deduplicado
     // anterior solo miraba `registrationId` en el recién llegado, así que con
     // datos reales no descartaba nunca.
-    const newId = registrationResponse.registrationId ?? registrationResponse.id;
-    if (newId === undefined || newId === null) return;
+    const responseId = registrationResponse.registrationId ?? registrationResponse.id;
+    if (responseId === undefined || responseId === null) return;
+    const responseActivityId = registrationResponse.activityId ?? registrationResponse.activity?.id;
     setRegistrations((prev) => {
       const list = Array.isArray(prev) ? [...prev] : [];
-      const exists = list.some((r) => String(r.registrationId ?? r.id) === String(newId));
+      const exists = list.some((registration) => {
+        const registrationId = registration.registrationId ?? registration.id;
+        const activityId = registration.activityId ?? registration.activity?.id;
+        return (responseId != null && String(registrationId) === String(responseId))
+          || (responseActivityId != null
+            && String(activityId) === String(responseActivityId)
+            && registration.status !== 'CANCELLED');
+      });
       if (exists) return prev;
-      return [...list, registrationResponse];
+      return [...list, { ...registrationResponse, registrationId: responseId }];
     });
   }, []);
 

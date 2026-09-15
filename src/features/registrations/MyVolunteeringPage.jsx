@@ -16,10 +16,11 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const activity = item.activity ?? {};
   const title = activity.title ?? `Actividad ${activity.id ?? ''}`;
-  const partner = activity.partner ?? '';
-  const startDate = activity.startDate ?? '';
-  const endDate = activity.endDate ?? '';
-  const hours = activity.hours ?? null;
+  const partner = activity.partner ?? activity.organizationName ?? '';
+  const startDate = activity.startDate ?? activity.start ?? '';
+  const endDate = activity.endDate ?? activity.end ?? '';
+  const hours = activity.hours ?? activity.estimatedHours ?? null;
+  const registrationId = item.registrationId ?? item.id;
 
   const showQueue = item.queuePosition !== null && item.queuePosition !== undefined;
   const closureId = item.closureId ?? null;
@@ -53,12 +54,12 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
     setIsModalOpen(false);
   };
   const handleConfirm = async () => {
-    await onCancel(item.registrationId);
+    await onCancel(registrationId);
     setIsModalOpen(false);
   };
 
   return (
-    <Card className="my-volunteering__card" data-testid={`registration-${item.registrationId}`}>
+    <Card className="my-volunteering__card" data-testid={`registration-${registrationId}`}>
       <div className="my-volunteering__card-header">
         <h3 className="my-volunteering__card-title">{title}</h3>
         <Badge variant="neutral">{statusLabel}</Badge>
@@ -68,25 +69,27 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
         {formatDate(startDate)} — {formatDate(endDate)} {hours ? `· ${hours} h` : ''}
       </p>
       {showQueue && <p className="my-volunteering__queue">Posición en cola: {item.queuePosition}</p>}
-      {showAccepted && <p className="my-volunteering__accepted" data-testid={`accepted-${item.registrationId}`}>{acceptedLabel}</p>}
+      {showAccepted && typeof item.accepted === 'boolean' && (
+        <p className="my-volunteering__accepted" data-testid={`accepted-${registrationId}`}>{acceptedLabel}</p>
+      )}
       {(() => {
         if (!hasClosure && !activityClosed && item.status === 'PENDING_CLOSURE') {
           return (
-            <Link to={`/closures/new?registrationId=${item.registrationId}`} className="button button--primary button--small" data-testid={`action-enviar-${item.registrationId}`}>
+            <Link to={`/closures/new?registrationId=${registrationId}`} className="button button--primary button--small" data-testid={`action-enviar-${registrationId}`}>
               Cerrar tu participación
             </Link>
           );
         }
         if (hasClosure && activityClosed) {
           return (
-            <Link to={`/closures/${closureId}/certificate`} className="button button--primary button--small" data-testid={`action-cert-${item.registrationId}`}>
+            <Link to={`/closures/${closureId}/certificate`} className="button button--primary button--small" data-testid={`action-cert-${registrationId}`}>
               Descargar certificado
             </Link>
           );
         }
         if (hasClosure && !activityClosed) {
           return (
-            <Link to={`/closures/${closureId}`} className="button button--secondary button--small" data-testid={`action-ver-${item.registrationId}`}>
+            <Link to={`/closures/${closureId}`} className="button button--secondary button--small" data-testid={`action-ver-${registrationId}`}>
               Ver cierre
             </Link>
           );
@@ -99,7 +102,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
             variant="secondary"
             size="small"
             onClick={handleOpen}
-            data-testid={`cancel-${item.registrationId}`}
+            data-testid={`cancel-${registrationId}`}
             disabled={isCancelling}
           >
             Cancelar inscripción
@@ -111,7 +114,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
             description="¿Seguro que quieres cancelar tu inscripción? Esta acción no se puede deshacer."
             footer={
               <>
-                <Button variant="secondary" onClick={handleClose} disabled={isCancelling} data-testid={`modal-cancel-${item.registrationId}`}>
+                <Button variant="secondary" onClick={handleClose} disabled={isCancelling} data-testid={`modal-cancel-${registrationId}`}>
                   Volver
                 </Button>
                 <Button
@@ -119,7 +122,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
                   onClick={handleConfirm}
                   isLoading={isCancelling}
                   disabled={isCancelling}
-                  data-testid={`confirm-cancel-${item.registrationId}`}
+                  data-testid={`confirm-cancel-${registrationId}`}
                 >
                   Confirmar baja
                 </Button>
@@ -147,7 +150,7 @@ export default function MyVolunteeringPage() {
     setError(null);
     try {
       const res = await getMyRegistrations();
-      const payload = res.data ?? res;
+      const payload = res.data?.content ?? res.data ?? res;
       const items = Array.isArray(payload) ? payload : [];
       setActive(items.filter((item) => item.status !== 'CLOSED' && !item.activityClosed));
       setClosed(items.filter((item) => item.status === 'CLOSED' || item.activityClosed));
@@ -269,10 +272,10 @@ export default function MyVolunteeringPage() {
           <div className="my-volunteering__grid">
             {activeList.map((item) => (
               <RegistrationCard
-                key={item.registrationId}
+                key={item.registrationId ?? item.id}
                 item={item}
                 onCancel={handleCancel}
-                isCancelling={cancellingId === item.registrationId}
+                isCancelling={cancellingId === (item.registrationId ?? item.id)}
               />
             ))}
           </div>
@@ -288,7 +291,7 @@ export default function MyVolunteeringPage() {
         ) : (
           <div className="my-volunteering__grid">
             {closedList.map((item) => (
-              <RegistrationCard key={item.registrationId} item={item} />
+              <RegistrationCard key={item.registrationId ?? item.id} item={item} />
             ))}
           </div>
         )}

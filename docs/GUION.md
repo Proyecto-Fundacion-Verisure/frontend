@@ -17,7 +17,7 @@
 * **Ensayo 1 — 2026-09-06 18:00:** 7:42 (exceso +0:42), bloque PARTNER 2:18. Ajuste: quitar slide CIF y preloguear ADMIN.
 * **Ensayo 2 — 2026-09-06 19:30:** 7:03 (ok), bloque PARTNER 2:01, transiciones limpias.
 
-**Contingencia (ver `docs/CONTINGENCIA.md`):** Correo 24h no llega → `scripts/restore-demo.js` + `public/demo-data.json` + captura `AccountStatusPage`; Red cae → `isMockEnabled` DEV (mocks 300ms, sin `failRate`), `dist/` offline; Datos corruptos → `localStorage.clear(); location.reload()` o `npm run demo:reset` (idempotente).
+**Contingencia (ver `docs/CONTINGENCIA.md`):** Correo 24h no llega → `scripts/restore-demo.js` + `public/demo-data.json` + captura `AccountStatusPage`; red caída → reiniciar con `VITE_USE_MOCKS=true`; datos corruptos → `localStorage.clear(); location.reload()` o `npm run demo:reset`.
 
 **Reparto en demo:** Fabileoruf habla problema/conclusiones, Elena navega y explica decisiones técnicas (3 roles, `queuePosition` directo, `accepted`).
 

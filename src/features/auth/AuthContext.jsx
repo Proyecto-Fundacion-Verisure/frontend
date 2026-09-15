@@ -8,7 +8,11 @@ import {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosClient, { AUTH_UNAUTHORIZED_EVENT, clearSession } from '../../api/axiosClient';
-import { login as loginRequest, logout as logoutRequest } from '../../api/authApi';
+import {
+  getCurrentUser,
+  login as loginRequest,
+  logout as logoutRequest,
+} from '../../api/authApi';
 
 export const AuthContext = createContext(null);
 
@@ -30,6 +34,44 @@ function getStoredUser() {
 export function AuthProvider({ children }) {
   const navigate = useNavigate();
   const [user, setUser] = useState(getStoredUser);
+  const [isInitializing, setIsInitializing] = useState(
+    () => Boolean(storage?.getItem('accessToken')),
+  );
+
+  useEffect(() => {
+    const accessToken = storage?.getItem('accessToken');
+    if (!accessToken) {
+      setIsInitializing(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    Promise.resolve()
+      .then(() => getCurrentUser())
+      .then(({ data }) => {
+        if (cancelled || !data) return;
+        setUser((cachedUser) => {
+          const validatedUser = { ...cachedUser, ...data };
+          storage?.setItem('user', JSON.stringify(validatedUser));
+          return validatedUser;
+        });
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        if (error?.status === 401 || error?.status === 403) {
+          clearSession();
+          setUser(null);
+          navigate('/login', { replace: true, state: { sessionExpired: true } });
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setIsInitializing(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
 
   const login = useCallback(async (credentials) => {
     const { data } = await loginRequest(credentials);
@@ -43,6 +85,7 @@ export function AuthProvider({ children }) {
     storage?.setItem('user', JSON.stringify(authenticatedUser));
     axiosClient.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
     setUser(authenticatedUser);
+    setIsInitializing(false);
     return authenticatedUser;
   }, []);
 
@@ -52,12 +95,14 @@ export function AuthProvider({ children }) {
 
     clearSession();
     setUser(null);
+    setIsInitializing(false);
     navigate('/login', { replace: true });
   }, [navigate]);
 
   useEffect(() => {
     const handleUnauthorized = () => {
       setUser(null);
+      setIsInitializing(false);
       navigate('/login', { replace: true, state: { sessionExpired: true } });
     };
 
@@ -69,8 +114,9 @@ export function AuthProvider({ children }) {
     user,
     login,
     logout,
+    isInitializing,
     isAuthenticated: Boolean(user),
-  }), [login, logout, user]);
+  }), [isInitializing, login, logout, user]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

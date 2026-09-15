@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getOrgDashboard } from '../../api/orgApi';
 import { Card, EmptyState, Spinner, Button } from '../../components/ui';
 import BarChart from '../dashboard/BarChart';
@@ -34,22 +34,40 @@ export default function OrgDashboardPage() {
   const [requestState, setRequestState] = useState({ status: 'loading', data: null, error: null });
   const [retryKey, setRetryKey] = useState(0);
 
-  const load = useCallback(async () => {
+  useEffect(() => {
     let active = true;
     setRequestState((current) => ({ ...current, status: 'loading', error: null }));
-    try {
-      const { data } = await getOrgDashboard();
-      if (active) setRequestState({ status: 'success', data, error: null });
-    } catch (error) {
-      if (active && !error?.isCanceled) setRequestState({ status: 'error', data: null, error });
-    }
-    return () => { active = false; };
+    getOrgDashboard().then(
+      ({ data, status }) => {
+        if (!active) return;
+        if (status === 403) {
+          setRequestState({
+            status: 'error',
+            data: null,
+            error: { message: data?.message, status: 403 },
+          });
+          return;
+        }
+        setRequestState({ status: 'success', data, error: null });
+      },
+      (error) => {
+        if (active && !error?.isCanceled) {
+          setRequestState({
+            status: 'error',
+            data: null,
+            error: {
+              message: error?.message,
+              status: error?.status,
+              code: error?.code,
+            },
+          });
+        }
+      },
+    );
+    return () => {
+      active = false;
+    };
   }, [retryKey]);
-
-  useEffect(() => {
-    const cleanup = load();
-    return () => { if (typeof cleanup === 'function') cleanup(); };
-  }, [load]);
 
   const dashboardData = requestState.data ?? {};
   const metrics = dashboardData.kpis ?? dashboardData;

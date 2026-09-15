@@ -1,10 +1,11 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import LandingPage from '../features/landing/LandingPage';
 import LoginPage from '../features/auth/LoginPage';
+import EmailVerificationPage from '../features/auth/EmailVerificationPage';
 import DashboardPage from '../features/dashboard/DashboardPage';
 import CatalogPage from '../features/activities/CatalogPage';
 import ActivitiesListPage from '../features/activities/ActivitiesListPage';
-import { getPartnerActivities } from '../api/activitiesApi';
+import { getOrgActivities } from '../api/orgApi';
 import UiShowcase from '../components/ui/UiShowcase/UiShowcase';
 import PublicLayout from '../components/layout/PublicLayout/PublicLayout';
 import ProtectedRoute from './ProtectedRoute';
@@ -24,8 +25,8 @@ import MyVolunteeringPage from '../features/registrations/MyVolunteeringPage';
 import NotFoundPage from '../features/not-found/NotFoundPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
 import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
+import { FavoritesProvider } from '../features/favorites/FavoritesContext';
 import RegistrationsTablePage from '../features/registrations/RegistrationsTablePage';
-import { DEMO_REGISTRATIONS_PATH } from '../constants/demoActivity';
 import CertificatePage from '../features/reports/CertificatePage';
 import PendingClosurePage from '../features/reports/PendingClosurePage';
 import ReportFormPage from '../features/reports/ReportFormPage';
@@ -36,12 +37,13 @@ export default function AppRouter() {
     <Routes>
       <Route path="/" element={<PublicLayout><LandingPage /></PublicLayout>} />
       <Route path="/login" element={<PublicLayout><LoginPage /></PublicLayout>} />
+      <Route path="/verify-email" element={<PublicLayout><EmailVerificationPage /></PublicLayout>} />
       <Route path="/proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
       <Route path="/new-proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
       <Route path="/register-organization" element={<PublicLayout><OrgRegisterPage /></PublicLayout>} />
       {import.meta.env.DEV && <Route path="/ui-kit" element={<UiShowcase />} />}
       <Route path="/explore" element={<Navigate to="/activities" replace />} />
-      <Route path="/inscriptions" element={<Navigate to={DEMO_REGISTRATIONS_PATH} replace />} />
+      <Route path="/inscriptions" element={<Navigate to="/admin/registrations" replace />} />
       <Route path="/closes" element={<Navigate to="/admin/activities/pending-closure" replace />} />
       <Route path="/account-status" element={<PublicLayout><AccountStatusPage /></PublicLayout>} />
       <Route element={<ProtectedRoute />}>
@@ -56,6 +58,7 @@ export default function AppRouter() {
             <Route path="/proposals/:proposalId" element={<ProposalDetailPage />} />
             <Route path="/activities/new" element={<ActivityFormPage />} />
             <Route path="/activities/:activityId/registrations" element={<RegistrationsTablePage />} />
+            <Route path="/admin/registrations" element={<RegistrationsTablePage />} />
             <Route path="/activities/:activityId/edit" element={<ActivityFormPage backPath="/admin/activities" />} />
             <Route path="/admin/activities" element={<ActivitiesListPage />} />
             <Route path="/admin/account-status" element={<AccountStatusPage />} />
@@ -66,9 +69,11 @@ export default function AppRouter() {
             <Route path="/closures/:closureId/certificate" element={<CertificatePage />} />
             <Route
               element={
-                <RegistrationsProvider>
-                  <Outlet />
-                </RegistrationsProvider>
+                <FavoritesProvider>
+                  <RegistrationsProvider>
+                    <Outlet />
+                  </RegistrationsProvider>
+                </FavoritesProvider>
               }
             >
               <Route path="/activities" element={<CatalogPage />} />
@@ -83,17 +88,19 @@ export default function AppRouter() {
               path="/org/activities"
               element={
                 <ActivitiesListPage
-                  fetchData={getPartnerActivities}
+                  fetchData={getOrgActivities}
                   showCreateButton={true}
                   createPath="/org/activities/new"
                   showPartnerColumn={false}
                   showRegistrationsLink={false}
                   title="Mis proyectos"
                   eyebrow="Entidad colaboradora"
+                  editPath="/org/activities/:activityId/edit"
                 />
               }
             />
             <Route path="/org/activities/new" element={<ActivityFormPage backPath="/org/activities" />} />
+            <Route path="/org/activities/:activityId/edit" element={<ActivityFormPage backPath="/org/activities" />} />
             <Route path="/org/reports" element={<OrgImpactPage />} />
             <Route path="/org/proposals" element={<OrgProposalsPage />} />
             <Route path="/org/proposals/new" element={<OrgProposalFormPage />} />

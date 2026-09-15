@@ -1,11 +1,11 @@
 # Contingencia — Fallo correo / red / datos durante la demostración
 
-**Principio:** Demo 100% frontend con `isMockEnabled = DEV && MODE !== 'test'` (mocks 300ms, deterministas). No depende de backend real ni de red externa.
+**Principio:** Demo 100% frontend con `VITE_USE_MOCKS=true` (mocks deterministas). No depende de backend real ni de red externa.
 
 | Fallo | Síntoma | Contingencia inmediata (≤15s) | Evidencia |
 |-------|---------|-------------------------------|-----------|
 | **Correo de verificación no llega** (PARTNER) | `AccountStatusPage` sigue `PENDING_VERIFICATION` | 1. Mostrar `public/demo-data.json` con `org-1` pendiente <br>2. `localStorage.setItem('user', JSON.stringify({role:'PARTNER',status:'PENDING_APPROVAL'}))` simulado <br>3. Captura de `AccountStatusPage` | `orgApi.js`, `scripts/restore-demo.js` |
-| **Red / API caída** (`VITE_API_URL` no responde) | `ApiError 401/500` en `CatalogPage` | 1. Recargar con `?mock=1` (DEV) → `isMockEnabled` activo <br>2. Fallback a `dist/` precompilado (`npm run build` previo) servido con `npx serve dist` <br>3. Mostrar `docs/DEMO.md` tabla datos definitivos | `axiosClient` interceptor `ApiError`, `dist/` versionado |
+| **Red / API caída** (`VITE_API_URL` no responde) | `ApiError 401/500` en `CatalogPage` | 1. Reiniciar Vite con `VITE_USE_MOCKS=true npm run dev` <br>2. Fallback a `dist/` precompilado con mocks <br>3. Mostrar `docs/DEMO.md` | `axiosClient`, `dist/` |
 | **Datos corruptos / cola desincronizada** | `queuePosition` NaN o lista vacía inesperada | 1. Consola: `localStorage.clear(); location.reload()` <br>2. Terminal: `npm run demo:reset` <br>3. `npm run smoke` | `scripts/restore-demo.js`, `RegistrationsContext` |
 | **Fallo Heart / favorito** | `404/409` al alternar | Revierte optimista (`FavoritesContext` guarda `prev`), muestra `En lista de espera` sin `favoriteCount`, `aria-pressed` | `FavoriteHeart.test` 7 tests |
 | **Plazo cerrado / DEADLINE_PASSED 409** | `RegisterButton` muestra `Plazo cerrado` | Ya contemplado: `RegisterButton` detecta `registrationDeadline` y `409 DEADLINE_PASSED` → oculta acción obsoleta tras `fetchData()` | `MyVolunteeringPage` 12 tests |
@@ -15,6 +15,7 @@
 **Pre-demo check (2 min antes):**
 ```bash
 npm ci && npm run demo:reset && npm run smoke
+VITE_USE_MOCKS=true npm run dev
 # Verificar 3 usuarios: admin@verisure.com / empleado@verisure.com / ong@fundacion.org
 ```
 
