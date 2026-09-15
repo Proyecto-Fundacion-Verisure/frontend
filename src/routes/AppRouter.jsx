@@ -29,7 +29,7 @@ import RegistrationsTablePage from '../features/registrations/RegistrationsTable
 import { DEMO_REGISTRATIONS_PATH } from '../constants/demoActivity';
 import CertificatePage from '../features/reports/CertificatePage';
 import PendingClosurePage from '../features/reports/PendingClosurePage';
-import ReportFormPage from '../features/reports/ReportFormPage';
+import ClosureFormPage from '../features/reports/ClosureFormPage';
 import ActivityClosurePage from '../features/reports/ActivityClosurePage';
 
 export default function AppRouter() {
@@ -59,7 +59,7 @@ export default function AppRouter() {
           }
         >
           <Route element={<RoleRoute roles={['ADMIN', 'EMPLOYEE']} />}>
-            <Route path="/closures/:closureId" element={<ReportFormPage />} />
+            <Route path="/closures/:closureId" element={<ClosureFormPage />} />
             <Route path="/activities/:activityId" element={<ActivityDetailPage />} />
           </Route>
           <Route element={<RoleRoute roles={['ADMIN']} />}>
@@ -86,7 +86,7 @@ export default function AppRouter() {
               <Route path="/activities" element={<CatalogPage />} />
               <Route path="/my-activities" element={<MyVolunteeringPage />} />
               <Route path="/my-volunteering" element={<MyVolunteeringPage />} />
-              <Route path="/closures/new" element={<ReportFormPage />} />
+              <Route path="/closures/new" element={<ClosureFormPage />} />
             </Route>
           </Route>
           <Route element={<RoleRoute roles={['PARTNER']} />}>

@@ -6,6 +6,8 @@ const STATUS_MESSAGES = {
   403: 'No tienes permiso para realizar esta acción.',
   404: 'No se ha encontrado el recurso solicitado.',
   409: 'La operación entra en conflicto con el estado actual.',
+  413: 'El archivo adjunto excede el tamaño máximo permitido.',
+  415: 'El tipo de archivo adjunto no está permitido.',
   422: 'Revisa los datos introducidos.',
   429: 'Se han realizado demasiadas solicitudes. Inténtalo más tarde.',
   500: 'Ha ocurrido un error en el servidor. Inténtalo más tarde.',

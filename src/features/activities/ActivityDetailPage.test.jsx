@@ -215,7 +215,7 @@ describe('ActivityDetailPage', () => {
   });
 
   // H12 — Modal explicativo antes de confirmar
-  it('muestra modal con una explicación amigable antes de confirmar', async () => {
+it('muestra modal con explicación de lista de espera antes de confirmar', async () => {
     getActivityDetail.mockResolvedValue({
       data: { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 },
     });
