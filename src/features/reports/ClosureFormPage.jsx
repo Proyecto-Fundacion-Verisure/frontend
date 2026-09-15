@@ -90,6 +90,7 @@ export default function ClosureFormPage() {
   const [requestState, setRequestState] = useState(isDetail ? 'loading' : 'idle');
   const [closure, setClosure] = useState(null);
   const [requestError, setRequestError] = useState('');
+  const [loadStatus, setLoadStatus] = useState(null);
   const [submitStatus, setSubmitStatus] = useState(null);
 
   // En la corrección el id no viaja en la ruta: viene del cierre ya cargado.
@@ -107,6 +108,7 @@ export default function ClosureFormPage() {
     if (!closureId) return;
     setRequestState('loading');
     setRequestError('');
+    setLoadStatus(null);
     try {
       const { data } = await getClosure(closureId);
       setClosure(data);
@@ -114,6 +116,7 @@ export default function ClosureFormPage() {
       setRequestState('idle');
       setSubmitStatus(null);
     } catch (error) {
+      setLoadStatus(error?.status ?? null);
       setRequestError(error?.message || 'No hemos podido cargar el cierre.');
       setRequestState('error');
     }
@@ -137,6 +140,10 @@ export default function ClosureFormPage() {
   const showsDeviation = referenceHours !== null
     && Number.isFinite(enteredHours)
     && enteredHours < referenceHours;
+
+  // Nota de devolución del administrador (contrato: `adminNote`, con `returnNote`
+  // como reserva). Solo se muestra cuando el estado es RETURNED.
+  const returnedNote = closure?.adminNote ?? closure?.returnNote ?? '';
 
   const updateValue = (event) => {
     const { name, value, checked, type } = event.target;
@@ -208,11 +215,22 @@ export default function ClosureFormPage() {
   }
 
   if (isDetail && requestState === 'error') {
+    const isForbidden = loadStatus === 403;
+    const isNotFound = loadStatus === 404;
     return (
-      <section className="report-form-page">
-        <h1>No hemos podido cargar el cierre</h1>
+      <section className="report-form-page" aria-labelledby="closure-load-error">
+        <h1 id="closure-load-error">
+          {isNotFound
+            ? 'No hemos encontrado este cierre'
+            : isForbidden
+              ? 'No tienes permiso para consultar este cierre'
+              : 'No hemos podido cargar el cierre'}
+        </h1>
         <p role="alert">{requestError}</p>
-        <Button onClick={loadClosure}>Reintentar</Button>
+        {!isForbidden && !isNotFound && <Button onClick={loadClosure}>Reintentar</Button>}
+        <Link className="button button--secondary button--medium" to="/my-volunteering">
+          Volver a mis voluntariados
+        </Link>
       </section>
     );
   }
@@ -233,6 +251,17 @@ export default function ClosureFormPage() {
           ? 'Revisa las horas realizadas y tu valoración. Al enviar, actualizas el cierre enviado.'
           : 'Indica las horas realizadas y tu valoración de la experiencia.'}
       </p>
+
+      {/* Nota administrativa: solo en estado RETURNED, solo lectura. Se mantiene
+          visible mientras la persona corrige y reenvía desde la misma ruta. */}
+      {isDetail && closure?.status === 'RETURNED' && returnedNote && (
+        <aside className="closure-form__returned" aria-labelledby="closure-returned-title">
+          <h2 id="closure-returned-title" className="closure-form__returned-title">
+            Cierre devuelto por la administración
+          </h2>
+          <p className="closure-form__returned-note" data-testid="closure-returned-note">{returnedNote}</p>
+        </aside>
+      )}
 
       {errors.registrationId && <p role="alert">{errors.registrationId}</p>}
       <form onSubmit={handleSubmit} noValidate>

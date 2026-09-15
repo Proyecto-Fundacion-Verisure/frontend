@@ -3,6 +3,14 @@ export const ActivityClosureStatus = Object.freeze({
   CLOSED: 'CLOSED',
 });
 
+// Estado del detalle del cierre de participación (GET /api/closures/{id}).
+// `RETURNED` marca que la administración devolvió el cierre con una nota.
+export const ClosureStatus = Object.freeze({
+  PENDING: 'PENDING',
+  RETURNED: 'RETURNED',
+  CLOSED: 'CLOSED',
+});
+
 export function makeCreateClosureRequest(overrides = {}) {
   return {
     registrationId: 104,
@@ -22,6 +30,8 @@ export function makeClosureDetail(overrides = {}) {
     rating: 5,
     comment: 'Gran experiencia.',
     evidenceUrl: null,
+    status: null,
+    adminNote: null,
     ...overrides,
   };
 }

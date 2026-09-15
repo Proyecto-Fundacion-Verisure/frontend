@@ -354,6 +354,98 @@ describe('employee closure page', () => {
     expect(alert.closest('.field')).toBeTruthy();
     expect(screen.getByRole('button', { name: /enviar cierre/i })).toBeEnabled();
   });
+
+  it('shows the admin note while correcting a RETURNED closure, read-only', async () => {
+    getClosure.mockResolvedValue({
+      data: {
+        closureId: 501,
+        registrationId: 104,
+        actualHours: 6,
+        rating: 5,
+        comment: 'Gran experiencia.',
+        status: 'RETURNED',
+        adminNote: 'Faltan las horas del día 12.',
+      },
+    });
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/501']}>
+        <Routes>
+          <Route path="/closures/:closureId" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: /devuelto por la administración/i })).toBeInTheDocument();
+    const note = screen.getByTestId('closure-returned-note');
+    expect(note).toHaveTextContent('Faltan las horas del día 12.');
+    expect(screen.queryByRole('textbox', { name: /nota/i })).not.toBeInTheDocument();
+
+    await user.clear(screen.getByLabelText(/horas realizadas/i));
+    await user.type(screen.getByLabelText(/horas realizadas/i), '7');
+
+    expect(screen.getByTestId('closure-returned-note')).toHaveTextContent('Faltan las horas del día 12.');
+  });
+
+  it('does not show the admin note when the closure is not RETURNED', async () => {
+    getClosure.mockResolvedValue({
+      data: {
+        closureId: 501,
+        registrationId: 104,
+        actualHours: 6,
+        rating: 5,
+        status: 'PENDING',
+        adminNote: 'Nunca debería mostrarse.',
+      },
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/closures/501']}>
+        <Routes>
+          <Route path="/closures/:closureId" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: /corregir tu cierre/i })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /devuelto por la administración/i })).not.toBeInTheDocument();
+    expect(screen.queryByText('Nunca debería mostrarse.')).not.toBeInTheDocument();
+  });
+
+  it('shows a dedicated message when the closure is not found (404)', async () => {
+    getClosure.mockRejectedValue(presets.notFound());
+
+    render(
+      <MemoryRouter initialEntries={['/closures/999']}>
+        <Routes>
+          <Route path="/closures/:closureId" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: /no hemos encontrado este cierre/i })).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(/no se ha encontrado/i);
+    expect(screen.getByRole('link', { name: /volver a mis voluntariados/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /reintentar/i })).not.toBeInTheDocument();
+  });
+
+  it('shows a dedicated message when the user cannot consult the closure (403)', async () => {
+    getClosure.mockRejectedValue(presets.forbidden());
+
+    render(
+      <MemoryRouter initialEntries={['/closures/501']}>
+        <Routes>
+          <Route path="/closures/:closureId" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: /no tienes permiso para consultar este cierre/i })).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(/no tienes permiso/i);
+    expect(screen.getByRole('link', { name: /volver a mis voluntariados/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /reintentar/i })).not.toBeInTheDocument();
+  });
 });
 
 describe('administrative activity closure pages', () => {
