@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -10,6 +10,7 @@ import {
   submitClosure,
 } from '../../api/closuresApi';
 import { presets } from '../../test/fixtures/apiErrors';
+import { makeActivityClosure } from '../../test/fixtures/closures';
 import ActivityClosurePage from './ActivityClosurePage';
 import ClosureFormPage from './ClosureFormPage';
 
@@ -449,23 +450,80 @@ describe('employee closure page', () => {
 });
 
 describe('administrative activity closure pages', () => {
-  const activityClosure = {
-    activityId: 41,
-    collaborationRating: null,
-    closingNotes: '',
-    lessonsLearned: '',
-    status: 'DRAFT',
-    expectedHours: 30,
-    reportedHours: 24,
-    confirmedVolunteers: 5,
-    closedParticipations: 4,
-    evidenceCount: 2,
-  };
+  it('opens directly and reloads, showing the contrast table with deviation', async () => {
+    getActivityClosure.mockResolvedValue({
+      data: makeActivityClosure({
+        activityId: 41,
+        expectedHours: 30,
+        reportedHours: 24,
+        confirmedVolunteers: 5,
+        closedParticipations: 4,
+        evidenceCount: 2,
+      }),
+    });
 
-  it('saves current values before finalizing the activity closure', async () => {
-    getActivityClosure.mockResolvedValue({ data: activityClosure });
-    saveActivityClosure.mockResolvedValue({ data: { ...activityClosure, collaborationRating: 5 } });
-    finalizeActivityClosure.mockResolvedValue({ data: { ...activityClosure, status: 'CLOSED' } });
+    const { unmount } = render(
+      <MemoryRouter initialEntries={['/admin/activities/41/closure']}>
+        <Routes>
+          <Route path="/admin/activities/:activityId/closure" element={<ActivityClosurePage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: /cierre de la actividad/i })).toBeInTheDocument();
+    expect(getActivityClosure).toHaveBeenCalledTimes(1);
+    expect(getActivityClosure).toHaveBeenCalledWith('41');
+
+    const table = screen.getByRole('table', { name: /contraste previsto frente a reportado/i });
+    expect(within(table).getByText('Horas de voluntariado')).toBeInTheDocument();
+    expect(within(table).getByText('30 h')).toBeInTheDocument();
+    expect(within(table).getByText('24 h')).toBeInTheDocument();
+    expect(screen.getByTestId('closure-deviation-hours')).toHaveTextContent('-20 %');
+    expect(screen.getByTestId('closure-deviation-volunteers')).toHaveTextContent('-20 %');
+    expect(screen.getByTestId('closure-deviation-evidence')).toHaveTextContent('-50 %');
+
+    // Recarga: un nuevo montaje vuelve a pedir el cierre de la misma actividad.
+    unmount();
+    render(
+      <MemoryRouter initialEntries={['/admin/activities/41/closure']}>
+        <Routes>
+          <Route path="/admin/activities/:activityId/closure" element={<ActivityClosurePage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    expect(await screen.findByRole('heading', { name: /cierre de la actividad/i })).toBeInTheDocument();
+    expect(getActivityClosure).toHaveBeenCalledTimes(2);
+  });
+
+  it('preloads an existing draft so it can be corrected', async () => {
+    getActivityClosure.mockResolvedValue({
+      data: makeActivityClosure({
+        collaborationRating: 4,
+        closingNotes: 'Buen resultado.',
+        lessonsLearned: 'Repetir el formato el próximo año.',
+      }),
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/admin/activities/41/closure']}>
+        <Routes>
+          <Route path="/admin/activities/:activityId/closure" element={<ActivityClosurePage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await screen.findByRole('heading', { name: /cierre de la actividad/i });
+    expect(screen.getByLabelText(/valoración de la colaboración/i)).toHaveValue(4);
+    expect(screen.getByLabelText(/notas de cierre/i)).toHaveValue('Buen resultado.');
+    expect(screen.getByLabelText(/lecciones aprendidas/i)).toHaveValue('Repetir el formato el próximo año.');
+    expect(screen.getByRole('button', { name: /guardar borrador/i })).toBeEnabled();
+  });
+
+  it('saves the draft repeatedly without losing the submitted data', async () => {
+    getActivityClosure.mockResolvedValue({ data: makeActivityClosure({ activityId: 41 }) });
+    saveActivityClosure.mockResolvedValue({
+      data: makeActivityClosure({ activityId: 41, collaborationRating: 5 }),
+    });
     const user = userEvent.setup();
 
     render(
@@ -476,16 +534,98 @@ describe('administrative activity closure pages', () => {
       </MemoryRouter>,
     );
 
-    await user.type(await screen.findByLabelText(/valoración de la colaboración/i), '5');
-    await user.type(screen.getByLabelText(/notas de cierre/i), 'Buen resultado');
-    await user.click(screen.getByRole('button', { name: /finalizar cierre/i }));
+    await screen.findByRole('heading', { name: /cierre de la actividad/i });
+    await user.type(screen.getByLabelText(/valoración de la colaboración/i), '5');
+    await user.click(screen.getByRole('button', { name: /guardar borrador/i }));
+    expect(await screen.findByText('Cierre guardado.')).toBeInTheDocument();
+    expect(saveActivityClosure).toHaveBeenCalledTimes(1);
 
-    await waitFor(() => expect(saveActivityClosure).toHaveBeenCalledWith('41', {
+    await user.type(screen.getByLabelText(/notas de cierre/i), 'Buen resultado');
+    await user.click(screen.getByRole('button', { name: /guardar borrador/i }));
+    expect(await screen.findByText('Cierre guardado.')).toBeInTheDocument();
+    expect(saveActivityClosure).toHaveBeenCalledTimes(2);
+    expect(saveActivityClosure).toHaveBeenLastCalledWith('41', {
       collaborationRating: 5,
       closingNotes: 'Buen resultado',
       lessonsLearned: undefined,
+    });
+  });
+
+  it('asks for confirmation before finalizing and only then saves and closes', async () => {
+    getActivityClosure.mockResolvedValue({ data: makeActivityClosure({ activityId: 41 }) });
+    saveActivityClosure.mockResolvedValue({
+      data: makeActivityClosure({ activityId: 41, collaborationRating: 5, status: 'DRAFT' }),
+    });
+    finalizeActivityClosure.mockResolvedValue({
+      data: makeActivityClosure({ activityId: 41, collaborationRating: 5, status: 'CLOSED' }),
+    });
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/admin/activities/41/closure']}>
+        <Routes>
+          <Route path="/admin/activities/:activityId/closure" element={<ActivityClosurePage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await screen.findByRole('heading', { name: /cierre de la actividad/i });
+    await user.type(screen.getByLabelText(/valoración de la colaboración/i), '5');
+    await user.click(screen.getByRole('button', { name: /finalizar cierre/i }));
+
+    expect(await screen.findByRole('dialog', { name: /finalizar cierre de actividad/i })).toBeInTheDocument();
+    expect(saveActivityClosure).not.toHaveBeenCalled();
+    expect(finalizeActivityClosure).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole('button', { name: /volver/i }));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(saveActivityClosure).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole('button', { name: /finalizar cierre/i }));
+    await user.click(await screen.findByRole('button', { name: /^finalizar$/i }));
+
+    await waitFor(() => expect(saveActivityClosure).toHaveBeenCalledWith('41', {
+      collaborationRating: 5,
+      closingNotes: undefined,
+      lessonsLearned: undefined,
     }));
     expect(finalizeActivityClosure).toHaveBeenCalledWith('41');
-    expect(await screen.findByText('Actividad cerrada.')).toBeInTheDocument();
+    expect(await screen.findByTestId('activity-closure-status')).toHaveTextContent('Actividad cerrada.');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /guardar borrador/i })).not.toBeInTheDocument();
+  });
+
+  it('shows a dedicated message when the activity closure is not found (404)', async () => {
+    getActivityClosure.mockRejectedValue(presets.notFound());
+
+    render(
+      <MemoryRouter initialEntries={['/admin/activities/999/closure']}>
+        <Routes>
+          <Route path="/admin/activities/:activityId/closure" element={<ActivityClosurePage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: /no hemos encontrado esta actividad para cerrar/i })).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(/no se ha encontrado/i);
+    expect(screen.getByRole('link', { name: /volver a cierres pendientes/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /reintentar/i })).not.toBeInTheDocument();
+  });
+
+  it('shows a dedicated message when the user cannot close the activity (403)', async () => {
+    getActivityClosure.mockRejectedValue(presets.forbidden());
+
+    render(
+      <MemoryRouter initialEntries={['/admin/activities/41/closure']}>
+        <Routes>
+          <Route path="/admin/activities/:activityId/closure" element={<ActivityClosurePage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: /no tienes permiso para cerrar esta actividad/i })).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(/no tienes permiso/i);
+    expect(screen.getByRole('link', { name: /volver a cierres pendientes/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /reintentar/i })).not.toBeInTheDocument();
   });
 });

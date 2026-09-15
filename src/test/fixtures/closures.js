@@ -39,6 +39,7 @@ export function makeClosureDetail(overrides = {}) {
 export function makeActivityClosure(overrides = {}) {
   return {
     activityId: 4,
+    activityTitle: 'Jornada de voluntariado ambiental',
     collaborationRating: null,
     closingNotes: null,
     lessonsLearned: null,
