@@ -5,15 +5,19 @@ import RegistrationDecisionActions from './RegistrationDecisionActions';
 import CancelRegistrationAction from './CancelRegistrationAction';
 import useRegistrations from './useRegistrations';
 
-const SECTIONS = [
-  { key: 'unreviewed', title: 'Sin revisar' },
-  { key: 'accepted-waitlist', title: 'Aceptadas en cola' },
+const WORK_SECTIONS = [
+  { key: 'waitlisted', title: 'En cola' },
   { key: 'confirmed', title: 'Confirmadas' },
+];
+
+const HISTORY_SECTIONS = [
   { key: 'pending-report', title: 'Pendientes de cierre' },
   { key: 'closed', title: 'Cerradas' },
   { key: 'rejected', title: 'Rechazadas' },
   { key: 'cancelled', title: 'Canceladas' },
 ];
+
+const ALL_SECTIONS = [...WORK_SECTIONS, ...HISTORY_SECTIONS];
 
 const STATUS_BADGES = {
   unreviewed: { label: 'Sin revisar', variant: 'warning' },
@@ -43,10 +47,8 @@ function getRegistrations(payload) {
   return Array.isArray(payload?.content) ? payload.content : [];
 }
 
-// Los cuatro primeros son RegistrationRow tal cual lo declara el contrato. Antes
-// aquí había cascadas contra `person.name`, `employee.name`, `annualHours` y
-// media docena más de nombres que no existen en ninguna parte: hacían creer que
-// el backend servía varias formas, y tapaban un campo mal leído con un guion.
+// Columnas base: Persona, Departamento, Organización, Horas del año, Estado.
+// Las acciones se deciden por fila, no por sección.
 const BASE_COLUMNS = [
   { key: 'person', label: 'Persona', render: (registration) => registration.userName },
   {
@@ -74,10 +76,55 @@ const BASE_COLUMNS = [
   },
 ];
 
+// Columnas con acciones que se deciden por fila según el estado.
+function buildColumnsWithActions({ decision, acceptRegistration, rejectRegistration, cancelRegistration }) {
+  return [
+    ...BASE_COLUMNS,
+    {
+      key: 'actions',
+      label: 'Acciones',
+      render: (registration) => {
+        const isUnreviewed = registration.status === 'WAITLISTED' && !registration.accepted;
+        if (isUnreviewed) {
+          return (
+            <RegistrationDecisionActions
+              registration={registration}
+              decision={decision}
+              onAccept={acceptRegistration}
+              onReject={rejectRegistration}
+            />
+          );
+        }
+        const isCancellable = ['WAITLISTED', 'CONFIRMED', 'PENDING_CLOSURE'].includes(registration.status);
+        if (isCancellable) {
+          return (
+            <CancelRegistrationAction
+              registration={registration}
+              decision={decision}
+              onCancel={cancelRegistration}
+            />
+          );
+        }
+        return null;
+      },
+    },
+  ];
+}
+
+// Total de una sección agrupa: "En cola" incluye sin revisar y aceptadas.
+function getWaitlistedCount(grouped) {
+  return (grouped['unreviewed'] ?? []).length + (grouped['accepted-waitlist'] ?? []).length;
+}
+
+function getUnreviewedCount(grouped) {
+  return (grouped['unreviewed'] ?? []).length;
+}
+
 export default function RegistrationsTablePage() {
   const { activityId } = useParams();
   const { state } = useLocation();
   const [page, setPage] = useState(1);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const {
     board,
     counts,
@@ -120,35 +167,21 @@ export default function RegistrationsTablePage() {
     result[key] = [...(result[key] ?? []), registration];
     return result;
   }, {});
-  const unreviewedColumns = [
-    ...BASE_COLUMNS,
-    {
-      key: 'actions',
-      label: 'Acciones',
-      render: (registration) => (
-        <RegistrationDecisionActions
-          registration={registration}
-          decision={decision}
-          onAccept={acceptRegistration}
-          onReject={rejectRegistration}
-        />
-      ),
-    },
-  ];
-  const cancellableColumns = [
-    ...BASE_COLUMNS,
-    {
-      key: 'actions',
-      label: 'Acciones',
-      render: (registration) => (
-        <CancelRegistrationAction
-          registration={registration}
-          decision={decision}
-          onCancel={cancelRegistration}
-        />
-      ),
-    },
-  ];
+
+  const columnsWithActions = buildColumnsWithActions({
+    decision,
+    acceptRegistration,
+    rejectRegistration,
+    cancelRegistration,
+  });
+
+  const waitlistedTotal = getWaitlistedCount(grouped);
+  const unreviewedTotal = getUnreviewedCount(grouped);
+  const confirmedTotal = (grouped['confirmed'] ?? []).length;
+  const historyTotal = HISTORY_SECTIONS.reduce(
+    (sum, section) => sum + (grouped[section.key] ?? []).length,
+    0,
+  );
 
   return (
     <section className="registrations-page" aria-labelledby="registrations-title">
@@ -157,20 +190,15 @@ export default function RegistrationsTablePage() {
           <Link className="registrations-page__back" to="/admin/activities">← Volver a actividades</Link>
           <p className="registrations-page__eyebrow">Administración</p>
           <h1 id="registrations-title">Inscripciones</h1>
-          {/* El título lo trae el enlace de origen: la respuesta es un Page de
-              Spring y ahí no viaja la actividad. Cuando BE2 entregue
-              GET /api/activities/{id} esto puede pasar a ser una petición. */}
           <p>{state?.activityTitle ?? `Actividad ${activityId}`}</p>
         </div>
         <div className="registrations-page__totals">
           <strong>{totalElements} inscripciones</strong>
           {counts && (
-            // De toda la actividad, no de esta página: por eso van en su propia ruta.
-            <dl className="registrations-page__counts">
-              <div><dt>Confirmadas</dt><dd>{counts.confirmed}</dd></div>
-              <div><dt>En cola</dt><dd>{counts.waitlisted}</dd></div>
-              <div><dt>Sin revisar</dt><dd>{counts.unreviewed}</dd></div>
-            </dl>
+            <p className="registrations-page__summary">
+              Confirmadas {counts.confirmed} · En cola {counts.waitlisted}
+              {counts.unreviewed > 0 && `, de las que ${counts.unreviewed} sin revisar`}
+            </p>
           )}
         </div>
       </header>
@@ -182,25 +210,58 @@ export default function RegistrationsTablePage() {
         />
       ) : (
         <div className="registrations-page__sections">
-          {SECTIONS.map((section) => {
-            const rows = grouped[section.key] ?? [];
-            if (!rows.length) return null;
+          {WORK_SECTIONS.map((section) => {
+            const sectionKey = section.key === 'waitlisted' ? null : section.key;
+            const rows = section.key === 'waitlisted'
+              ? [...(grouped['unreviewed'] ?? []), ...(grouped['accepted-waitlist'] ?? [])]
+              : (grouped[sectionKey] ?? []);
             return (
               <section className="registrations-page__section" key={section.key}>
                 <h2>{section.title} <span>{rows.length}</span></h2>
                 <Table
                   caption={`${section.title} de la actividad`}
-                  columns={section.key === 'unreviewed'
-                    ? unreviewedColumns
-                    : ['accepted-waitlist', 'confirmed', 'pending-report'].includes(section.key)
-                      ? cancellableColumns
-                      : BASE_COLUMNS}
+                  columns={columnsWithActions}
                   data={rows}
                   rowKey="registrationId"
                 />
               </section>
             );
           })}
+
+          <section className="registrations-page__section registrations-page__section--history">
+            <button
+              type="button"
+              className="registrations-page__history-toggle"
+              onClick={() => setHistoryOpen((prev) => !prev)}
+              aria-expanded={historyOpen}
+              aria-controls="registrations-history"
+            >
+              <span className="registrations-page__history-chevron" aria-hidden="true">
+                {historyOpen ? '▾' : '▸'}
+              </span>
+              Historial ({historyTotal})
+            </button>
+            {historyOpen && (
+              <div id="registrations-history" className="registrations-page__history-content">
+                {HISTORY_SECTIONS.map((section) => {
+                  const rows = grouped[section.key] ?? [];
+                  return (
+                    <section className="registrations-page__section registrations-page__section--terminal" key={section.key}>
+                      <h3>{section.title} <span>{rows.length}</span></h3>
+                      <Table
+                        caption={`${section.title} de la actividad`}
+                        columns={columnsWithActions}
+                        data={rows}
+                        rowKey="registrationId"
+                        emptyMessage={`No hay inscripciones ${section.title.toLowerCase()}.`}
+                      />
+                    </section>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
           <Pagination
             page={page}
             totalPages={totalPages}
