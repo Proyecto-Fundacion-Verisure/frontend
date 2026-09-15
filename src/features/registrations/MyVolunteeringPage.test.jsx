@@ -84,6 +84,11 @@ const closedItems = [
   },
 ];
 
+const futureActiveItem = {
+  ...activeItems[0],
+  activity: { ...activeItems[0].activity, startDate: '2099-01-01', endDate: '2099-01-02' },
+};
+
 beforeEach(() => {
   getMyRegistrations.mockReset();
 });
@@ -170,8 +175,8 @@ describe('MyVolunteeringPage', () => {
   });
 
   it('actualiza posición tras promoción o cancelación', async () => {
-    const first = { ...activeItems[0], queuePosition: 3, accepted: false };
-    const promoted = { ...activeItems[0], queuePosition: 2, accepted: true };
+    const first = { ...futureActiveItem, queuePosition: 3, accepted: false };
+    const promoted = { ...futureActiveItem, queuePosition: 2, accepted: true };
     getMyRegistrations.mockResolvedValueOnce({ data: [first] });
     getMyRegistrations.mockResolvedValueOnce({ data: [promoted] });
     cancelRegistration.mockResolvedValue({ data: { registrationId: 999, status: 'CANCELLED' } });
@@ -189,7 +194,7 @@ describe('MyVolunteeringPage', () => {
   });
 
   it('cancelar modal no modifica datos', async () => {
-    getMyRegistrations.mockResolvedValue({ data: [activeItems[0]] });
+    getMyRegistrations.mockResolvedValue({ data: [futureActiveItem] });
     renderPage();
     await screen.findByText('Acompañamiento a mayores');
     const user = userEvent.setup();
@@ -235,7 +240,7 @@ describe('MyVolunteeringPage', () => {
   });
 
   it('trata DEADLINE_PASSED y NOT_OWNER sin cambiar interfaz', async () => {
-    getMyRegistrations.mockResolvedValue({ data: [activeItems[0]] });
+    getMyRegistrations.mockResolvedValue({ data: [futureActiveItem] });
     renderPage();
     await screen.findByText('Acompañamiento a mayores');
     const user = userEvent.setup();

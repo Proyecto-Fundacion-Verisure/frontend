@@ -42,6 +42,8 @@ export const httpErrors = {
 export const domainErrors = {
   alreadyRegistered: () =>
     createApiError({ status: 409, code: 'ALREADY_REGISTERED', message: 'Ya estás inscrito en esta actividad.' }),
+  activityNotFinished: () =>
+    createApiError({ status: 409, code: 'ACTIVITY_NOT_FINISHED', message: 'La actividad todavía no ha finalizado.' }),
   registrationNotConfirmed: () =>
     createApiError({ status: 409, code: 'REGISTRATION_NOT_CONFIRMED', message: 'La inscripción no está confirmada.' }),
   activityNotClosed: () =>

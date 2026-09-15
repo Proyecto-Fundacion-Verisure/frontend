@@ -78,9 +78,10 @@ export default function CatalogPage() {
 
   const handlePageChange = useCallback(
     (newPage) => {
-      updateParams({ page: String(newPage) }, { resetPage: false });
+      const resolved = typeof newPage === 'function' ? newPage(page) : newPage;
+      updateParams({ page: String(resolved) }, { resetPage: false });
     },
-    [updateParams],
+    [updateParams, page],
   );
 
   useEffect(() => {

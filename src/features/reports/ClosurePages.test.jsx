@@ -9,8 +9,9 @@ import {
   saveActivityClosure,
   submitClosure,
 } from '../../api/closuresApi';
+import { presets } from '../../test/fixtures/apiErrors';
 import ActivityClosurePage from './ActivityClosurePage';
-import ReportFormPage from './ReportFormPage';
+import ClosureFormPage from './ClosureFormPage';
 
 vi.mock('../../api/closuresApi', () => ({
   finalizeActivityClosure: vi.fn(),
@@ -23,10 +24,12 @@ vi.mock('../../api/closuresApi', () => ({
 
 beforeEach(() => vi.clearAllMocks());
 
-describe('employee closure pages', () => {
-  it('submits the contract request with optional evidence', async () => {
+describe('employee closure page', () => {
+  it('sends a new closure with optional evidence and treats 201 as creation', async () => {
     const evidence = new File(['proof'], 'proof.pdf', { type: 'application/pdf' });
+    getClosure.mockResolvedValue({ data: {} });
     submitClosure.mockResolvedValue({
+      status: 201,
       data: { closureId: 501, actualHours: 6, rating: 5, comment: 'Todo bien.' },
     });
     const user = userEvent.setup();
@@ -34,7 +37,7 @@ describe('employee closure pages', () => {
     render(
       <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
         <Routes>
-          <Route path="/closures/new" element={<ReportFormPage />} />
+          <Route path="/closures/new" element={<ClosureFormPage />} />
         </Routes>
       </MemoryRouter>,
     );
@@ -54,22 +57,196 @@ describe('employee closure pages', () => {
       evidenceConsent: true,
     }, evidence));
     expect(await screen.findByRole('heading', { name: /detalle del cierre/i })).toBeInTheDocument();
+    expect(screen.getByTestId('closure-created-notice')).toHaveTextContent(/cierre enviado/i);
   });
 
-  it('loads a closure by the backend-generated frontend route', async () => {
-    getClosure.mockResolvedValue({ data: { closureId: 501, actualHours: 4, rating: 4 } });
+  it('preloads the submitted hours and corrects it as 200 without duplicating the closure', async () => {
+    getClosure.mockResolvedValue({
+      data: { closureId: 501, registrationId: 104, actualHours: 6, rating: 5, comment: 'Gran experiencia.' },
+    });
+    submitClosure.mockResolvedValue({
+      status: 200,
+      data: { closureId: 501, registrationId: 104, actualHours: 4, rating: 5, comment: 'Gran experiencia.' },
+    });
+    const user = userEvent.setup();
 
     render(
       <MemoryRouter initialEntries={['/closures/501']}>
         <Routes>
-          <Route path="/closures/:closureId" element={<ReportFormPage />} />
+          <Route path="/closures/:closureId" element={<ClosureFormPage />} />
         </Routes>
       </MemoryRouter>,
     );
 
-    expect(await screen.findByRole('heading', { name: /detalle del cierre/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /corregir tu cierre/i })).toBeInTheDocument();
     expect(getClosure).toHaveBeenCalledWith('501');
-    expect(screen.getByText('4 de 5')).toBeInTheDocument();
+    expect(screen.getByLabelText(/horas realizadas/i)).toHaveValue(6);
+
+    await user.clear(screen.getByLabelText(/horas realizadas/i));
+    await user.type(screen.getByLabelText(/horas realizadas/i), '4');
+    await user.click(screen.getByRole('button', { name: /guardar corrección/i }));
+
+    await waitFor(() => expect(submitClosure).toHaveBeenCalledWith({
+      registrationId: 104,
+      actualHours: 4,
+      rating: 5,
+      comment: 'Gran experiencia.',
+      evidenceConsent: false,
+    }, null));
+
+    expect(await screen.findByTestId('closure-updated-notice')).toHaveTextContent(/501/);
+    expect(screen.getByTestId('closure-updated-notice')).not.toHaveTextContent(/cierre enviado/i);
+    expect(screen.getAllByRole('heading', { name: /detalle del cierre/i })).toHaveLength(1);
+    expect(screen.getByText('5 de 5')).toBeInTheDocument();
+  });
+
+  it('warns when hours are reduced but still lets the correction be sent', async () => {
+    getClosure.mockResolvedValue({
+      data: { closureId: 501, registrationId: 104, actualHours: 8, rating: 5 },
+    });
+    submitClosure.mockResolvedValue({
+      status: 200,
+      data: { closureId: 501, registrationId: 104, actualHours: 5, rating: 5 },
+    });
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/501']}>
+        <Routes>
+          <Route path="/closures/:closureId" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    const hoursInput = await screen.findByLabelText(/horas realizadas/i);
+    await user.clear(hoursInput);
+    await user.type(hoursInput, '5');
+
+    expect(screen.getByText(/por debajo de las 8 h/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /guardar corrección/i })).toBeEnabled();
+
+    await user.click(screen.getByRole('button', { name: /guardar corrección/i }));
+    await waitFor(() => expect(submitClosure).toHaveBeenCalledWith(expect.objectContaining({
+      registrationId: 104,
+      actualHours: 5,
+    }), null));
+  });
+
+  it('does not block when entering more hours than the previous submission', async () => {
+    getClosure.mockResolvedValue({
+      data: { closureId: 501, registrationId: 104, actualHours: 4, rating: 4 },
+    });
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/501']}>
+        <Routes>
+          <Route path="/closures/:closureId" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    const hoursInput = await screen.findByLabelText(/horas realizadas/i);
+    await user.clear(hoursInput);
+    await user.type(hoursInput, '10');
+    expect(screen.queryByText(/por debajo de las/i)).not.toBeInTheDocument();
+  });
+
+  it('shows the error codes of the closure contract when submission fails', async () => {
+    submitClosure.mockRejectedValue(presets.registrationNotConfirmed());
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
+        <Routes>
+          <Route path="/closures/new" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await user.type(screen.getByLabelText(/horas realizadas/i), '6');
+    await user.selectOptions(screen.getByRole('combobox', { name: /valoración/i }), '5');
+    await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/debe estar confirmada/i);
+  });
+
+  it('shows CLOSURE_ALREADY_CLOSED as a non-blocking inline error', async () => {
+    submitClosure.mockRejectedValue(presets.closureAlreadyClosed());
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
+        <Routes>
+          <Route path="/closures/new" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await user.type(screen.getByLabelText(/horas realizadas/i), '6');
+    await user.selectOptions(screen.getByRole('combobox', { name: /valoración/i }), '5');
+    await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/ya está completado/i);
+    expect(screen.getByRole('button', { name: /enviar cierre/i })).toBeEnabled();
+  });
+
+  it('shows ACTIVITY_NOT_FINISHED when the activity has not ended yet', async () => {
+    submitClosure.mockRejectedValue(presets.activityNotFinished());
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
+        <Routes>
+          <Route path="/closures/new" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await user.type(screen.getByLabelText(/horas realizadas/i), '6');
+    await user.selectOptions(screen.getByRole('combobox', { name: /valoración/i }), '5');
+    await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/no ha finalizado/i);
+  });
+
+  it('rejects an oversized evidence file on the client before sending (413)', async () => {
+    const tooBig = new File([new ArrayBuffer(11 * 1024 * 1024)], 'big.pdf', { type: 'application/pdf' });
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
+        <Routes>
+          <Route path="/closures/new" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await user.upload(screen.getByLabelText(/evidencia \(opcional\)/i), tooBig);
+    await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
+
+    expect(await screen.findByText(/no puede superar los 10 MB/i)).toBeInTheDocument();
+    expect(submitClosure).not.toHaveBeenCalled();
+  });
+
+  it('shows a 415 payload error returned by the server (unsupported media type)', async () => {
+    submitClosure.mockRejectedValue(presets.unsupportedMedia());
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
+        <Routes>
+          <Route path="/closures/new" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await user.type(screen.getByLabelText(/horas realizadas/i), '6');
+    await user.selectOptions(screen.getByRole('combobox', { name: /valoración/i }), '5');
+    await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/no permitido/i);
+    expect(screen.getByRole('button', { name: /enviar cierre/i })).toBeEnabled();
   });
 });
 

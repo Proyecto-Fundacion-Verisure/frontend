@@ -21,13 +21,14 @@ function mockGetCertificate(closureId) {
 }
 
 export const getClosure = (closureId) => client.get(`/closures/${closureId}`);
+// El multipart no se fija a mano: si resolvemos el `Content-Type`, el navegador
+// no añade su `boundary` y el servidor no puede delimitar las partes (`request` +
+// `evidence`). Sin cabecera, axios deja que el navegador la genere con el límite.
 export const submitClosure = (request, evidence = null) => {
   const body = new FormData();
   body.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
   if (evidence) body.append('evidence', evidence);
-  return client.post('/closures', body, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  return client.post('/closures', body);
 };
 export const getCertificate = (closureId) =>
   isMockEnabled() ? mockGetCertificate(closureId) : client.get(`/closures/${closureId}/certificate`);

@@ -57,14 +57,17 @@ describe('OrgDashboardPage', () => {
   });
 
 it('renders a forbidden state when the API returns 403', async () => {
-    getOrgDashboard.mockRejectedValue({ message: 'No tienes permiso.', status: 403 });
+    const forbidden = new Error('No tienes permiso.');
+    forbidden.status = 403;
+    getOrgDashboard.mockRejectedValueOnce(forbidden);
     renderPage();
 
     await waitFor(() => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
-    const alerts = screen.getAllByRole('alert');
-    throw new Error(JSON.stringify(alerts.map((a) => a.textContent)));
+    expect(await screen.findByRole('heading', { name: /acceso restringido/i })).toBeInTheDocument();
+    expect(screen.getByText(/no tienes permiso para consultar el panel de tu entidad/i)).toBeInTheDocument();
+    expect(screen.queryByRole('list', { name: 'Indicadores de la entidad' })).not.toBeInTheDocument();
   });
 
   it('shows an error with retry and succeeds on second attempt', async () => {

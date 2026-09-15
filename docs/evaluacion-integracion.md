@@ -57,8 +57,8 @@ Se confunden con facilidad porque en el frontend viven en la misma carpeta y en 
 
 | Endpoint | Pantalla |
 |---|---|
-| `POST /api/closures` | `ReportFormPage` |
-| `GET /api/closures/{id}` | `ReportFormPage` |
+| `POST /api/closures` | `ClosureFormPage` |
+| `GET /api/closures/{id}` | `ClosureFormPage` |
 | `GET /api/closures/{id}/certificate` | `CertificatePage` |
 
 **Cierre de actividad · lo rellena la Fundación · `B1-04`**
@@ -89,7 +89,7 @@ En el frontend el login ya autentica de verdad. El interruptor de mocks vive en 
 |---|---|---|
 | **«Mis voluntariados»** · `MyVolunteeringPage` | `/registrations/me` · `cancel` | **sí** |
 | **Tablero de inscripciones** · `RegistrationsTablePage` | `/admin/registrations` · `/counts` · `accept` · `reject` · `cancel` | **sí** · el filtro `activityId` es opcional |
-| Cierre de participación · `ReportFormPage` | `POST /api/closures` | parcial · la evidencia no se guarda |
+| Cierre de participación · `ClosureFormPage` | `POST /api/closures` | parcial · la evidencia no se guarda |
 | Certificado · `CertificatePage` | `/closures/{id}/certificate` | **no** · `B1-06` |
 | Cola de cierres y cierre de actividad · `ReportsQueuePage`, `ActivityClosurePage` | `/admin/activities/*/closure*` | **no** · `B1-04` |
 | Catálogo, ficha, propuestas, dashboard, rol entidad | — | **no** |

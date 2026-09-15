@@ -62,7 +62,7 @@ describe('ActivitiesListPage', () => {
     getAdminActivities.mockReturnValue(new Promise(() => {}));
     renderPage();
 
-    expect(screen.getByRole('status', { name: /cargando actividades/i })).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: /cargando proyectos/i })).toBeInTheDocument();
   });
 
   it('renders the administrative data including favorite counts', async () => {
