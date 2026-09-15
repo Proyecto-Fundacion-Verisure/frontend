@@ -47,11 +47,6 @@ describe('guardas de rutas', () => {
     expect(screen.getByRole('heading', { name: 'Contenido privado' })).toBeInTheDocument();
   });
 
-  it('admite una entidad autenticada cuando el backend no envía status', () => {
-    renderGuard({ user: { role: 'PARTNER' }, roles: ['PARTNER'] });
-    expect(screen.getByRole('heading', { name: 'Contenido privado' })).toBeInTheDocument();
-  });
-
   it('devuelve una entidad no activa a estado de cuenta', () => {
     renderGuard({ user: { role: 'PARTNER', status: 'PENDING_APPROVAL' }, roles: ['PARTNER'] });
     expect(screen.getByRole('heading', { name: 'Estado de cuenta' })).toBeInTheDocument();

@@ -41,17 +41,6 @@ beforeEach(() => {
 });
 
 describe('useRegistrations', () => {
-  it('loads the general board without requesting activity-specific counts', async () => {
-    getActivityRegistrations.mockResolvedValue({ data: INITIAL_BOARD });
-
-    const { result } = renderHook(() => useRegistrations(undefined));
-
-    await waitFor(() => expect(result.current.board).toEqual(INITIAL_BOARD));
-    expect(getActivityRegistrations).toHaveBeenCalledWith(undefined, { page: 0 });
-    expect(getRegistrationCounts).not.toHaveBeenCalled();
-    expect(result.current.counts).toBeNull();
-  });
-
   it('loads the board and reloads it after accepting', async () => {
     const refreshedBoard = page([{ registrationId: 10, userName: 'Ana Torres', status: 'CONFIRMED', accepted: true }]);
     getActivityRegistrations

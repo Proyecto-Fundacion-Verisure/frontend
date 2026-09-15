@@ -1,4 +1,3 @@
-@use "sass:map";
 @use "../abstracts" as *;
 
 .landing {
@@ -184,9 +183,9 @@
 
 .landing-access__grid {
   display: grid;
-  gap: map.get($spacing, '5');
+  gap: map-get($spacing, '5');
   grid-template-columns: repeat(2, 1fr);
-  margin-top: map.get($spacing, '10');
+  margin-top: map-get($spacing, '10');
 }
 .landing-access__card {
   background: $color-surface;
@@ -234,7 +233,7 @@
 .landing-access__list {
   color: $color-muted;
   display: grid;
-  gap: map.get($spacing, '1');
+  gap: map-get($spacing, '1');
   list-style: none;
   margin: 0 0 space("6");
   padding-left: space("5");
@@ -254,14 +253,14 @@
 
 .landing-access__steps {
   display: grid;
-  gap: map.get($spacing, '2');
+  gap: map-get($spacing, '2');
   list-style: none;
   margin: 0 0 space("6");
   padding-left: space("3");
 }
 .landing-access__steps li {
   display: flex;
-  gap: map.get($spacing, '3');
+  gap: map-get($spacing, '3');
 }
 .landing-access__steps span {
   align-items: center;
@@ -282,7 +281,7 @@
 .landing-access__steps p {
   color: $color-muted;
   font-size: $font-size-sm;
-  margin: map.get($spacing, '1') 0 0;
+  margin: map-get($spacing, '1') 0 0;
 }
 
 @media (max-width: 63.99rem) {

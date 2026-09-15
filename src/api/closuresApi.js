@@ -1,8 +1,7 @@
 import client from './axiosClient';
-import { isDevelopmentMockEnabled as isModuleMockEnabled } from './mockConfig';
-import { normalizeCertificate, normalizeRequestResult } from './normalizers';
+import { isMockEnabled as isModuleMockEnabled } from './mocks';
 
-const isDevelopmentMockEnabled = () => isModuleMockEnabled('CLOSURE');
+const isMockEnabled = () => isModuleMockEnabled('CLOSURE');
 
 function mockGetCertificate(closureId) {
   return Promise.resolve({
@@ -21,27 +20,8 @@ function mockGetCertificate(closureId) {
   });
 }
 
-const mockParticipationClosures = new Map();
-const mockActivityClosures = new Map();
-
-export const getClosure = (closureId) => {
-  if (!isDevelopmentMockEnabled()) return client.get(`/closures/${closureId}`);
-  const closure = mockParticipationClosures.get(String(closureId));
-  return closure
-    ? Promise.resolve({ data: closure })
-    : Promise.reject(Object.assign(new Error('Cierre no encontrado.'), { status: 404 }));
-};
+export const getClosure = (closureId) => client.get(`/closures/${closureId}`);
 export const submitClosure = (request, evidence = null) => {
-  if (isDevelopmentMockEnabled()) {
-    const closure = {
-      id: Date.now(),
-      ...request,
-      evidenceName: evidence?.name ?? null,
-      createdAt: new Date().toISOString(),
-    };
-    mockParticipationClosures.set(String(closure.id), closure);
-    return Promise.resolve({ data: closure, status: 201 });
-  }
   const body = new FormData();
   body.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
   if (evidence) body.append('evidence', evidence);
@@ -50,12 +30,7 @@ export const submitClosure = (request, evidence = null) => {
   });
 };
 export const getCertificate = (closureId) =>
-  normalizeRequestResult(
-    isDevelopmentMockEnabled()
-      ? mockGetCertificate(closureId)
-      : client.get(`/closures/${closureId}/certificate`),
-    normalizeCertificate,
-  );
+  isMockEnabled() ? mockGetCertificate(closureId) : client.get(`/closures/${closureId}/certificate`);
 
 const MOCK_PENDING_ACTIVITY_CLOSURES = [
   {
@@ -95,35 +70,13 @@ function mockGetPendingActivityClosures({ page = 0 } = {}) {
 
 // Admin closures
 export const getPendingActivityClosures = ({ page } = {}) => (
-  isDevelopmentMockEnabled()
+  isMockEnabled()
     ? mockGetPendingActivityClosures({ page })
     : client.get(
       '/admin/activities/pending-closure',
       { params: page === undefined || page === null ? {} : { page } },
     )
 );
-export const getActivityClosure = (activityId) => {
-  if (!isDevelopmentMockEnabled()) return client.get(`/admin/activities/${activityId}/closure`);
-  return Promise.resolve({
-    data: mockActivityClosures.get(String(activityId)) ?? {
-      activityId: Number(activityId),
-      status: 'DRAFT',
-      participants: [],
-    },
-  });
-};
-export const saveActivityClosure = (activityId, data) => {
-  if (!isDevelopmentMockEnabled()) return client.put(`/admin/activities/${activityId}/closure`, data);
-  const closure = { activityId: Number(activityId), status: 'DRAFT', ...data };
-  mockActivityClosures.set(String(activityId), closure);
-  return Promise.resolve({ data: closure });
-};
-export const finalizeActivityClosure = (activityId) => {
-  if (!isDevelopmentMockEnabled()) return client.patch(`/admin/activities/${activityId}/closure/finalize`);
-  const closure = {
-    ...(mockActivityClosures.get(String(activityId)) ?? { activityId: Number(activityId) }),
-    status: 'FINALIZED',
-  };
-  mockActivityClosures.set(String(activityId), closure);
-  return Promise.resolve({ data: closure });
-};
+export const getActivityClosure = (activityId) => client.get(`/admin/activities/${activityId}/closure`);
+export const saveActivityClosure = (activityId, data) => client.put(`/admin/activities/${activityId}/closure`, data);
+export const finalizeActivityClosure = (activityId) => client.patch(`/admin/activities/${activityId}/closure/finalize`);

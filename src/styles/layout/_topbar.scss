@@ -1,4 +1,3 @@
-@use 'sass:map';
 @use '../abstracts/variables' as *;
 @use '../abstracts/mixins' as *;
 
@@ -9,10 +8,10 @@
   border-bottom: 1px solid $color-border;
   align-items: center;
   color: $color-navy-light;
-  gap: map.get($spacing, '4');
+  gap: map-get($spacing, '4');
   justify-content: space-between;
   min-height: 4rem;
-  padding: 0 map.get($spacing, '6');
+  padding: 0 map-get($spacing, '6');
 }
 
 .topbar__content { 
@@ -34,7 +33,7 @@
 .topbar__user-menu {
   align-items: center;
   display: flex;
-  gap: map.get($spacing, '4');
+  gap: map-get($spacing, '4');
   margin-left: auto;
 }
 
@@ -89,16 +88,16 @@
   cursor: pointer;
   display: inline-flex;
   font: inherit;
-  gap: map.get($spacing, '2');
+  gap: map-get($spacing, '2');
   min-height: $control-height;
-  padding: 0 map.get($spacing, '3');
+  padding: 0 map-get($spacing, '3');
   transition: background-color $transition-fast;
 
   &:hover { background: $color-navy-light; }
 }
 
 @media (max-width: 35.99rem) {
-  .topbar { padding-inline: map.get($spacing, '4'); }
+  .topbar { padding-inline: map-get($spacing, '4'); }
   .topbar__user-info,
   .topbar__logout span { display: none; }
 }

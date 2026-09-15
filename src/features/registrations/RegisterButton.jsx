@@ -15,9 +15,7 @@ export default function RegisterButton({ activity, children = 'Solicitar inscrip
   const isDeadlinePassed = useMemo(() => {
     const raw = activity?.registrationDeadline ?? activity?.deadline ?? activity?.inscriptionDeadline;
     if (!raw) return false;
-    const deadline = /^\d{4}-\d{2}-\d{2}$/.test(raw)
-      ? new Date(`${raw}T23:59:59.999`)
-      : new Date(raw);
+    const deadline = new Date(raw);
     if (Number.isNaN(deadline.getTime())) return false;
     return deadline < new Date();
   }, [activity]);

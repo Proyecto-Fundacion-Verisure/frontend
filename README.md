@@ -42,10 +42,12 @@ Las variables que Vite expone al navegador deben empezar por `VITE_`. `.env.loca
 | --- | --- | --- |
 | `VITE_API_URL` | `http://localhost:8080/api` | URL base de Axios. |
 | `VITE_APP_ORIGIN` | `http://localhost:5173` | Origen local que debe admitir el CORS del backend. |
-| `VITE_USE_MOCKS` | `false` | Usa `true` únicamente para la demo local. El valor predeterminado prueba la integración real. |
-| `VITE_USE_<MODULO>_MOCKS` | sin definir | Permite activar explícitamente un único módulo aunque el modo demo global esté apagado. |
+| `VITE_USE_MOCKS` | `true` | Activa en desarrollo los mocks locales de todos los módulos. Usa `false` para integración real. |
+| `VITE_USE_<MODULO>_MOCKS` | `false` | Activa o apaga los mocks de un solo módulo, y **manda sobre la global**. Módulos: `AUTH`, `REGISTRATION`, `ACTIVITY`, `CLOSURE`, `PROPOSAL`, `ORG`, `DASHBOARD`. |
 
-El interruptor vive en `src/api/mockConfig.js`. En producción nunca se habilitan mocks. En desarrollo, una variable ausente tampoco los activa: así un fallo de integración no queda oculto por accidente. Las variables por módulo (`AUTH`, `REGISTRATION`, `ACTIVITY`, `CLOSURE`, `PROPOSAL`, `ORG`, `DASHBOARD` y `FAVORITE`) son útiles para trabajar de forma aislada cuando un endpoint todavía no está disponible.
+El interruptor vive en `src/api/mocks.js` y tiene dos niveles a propósito: la integración con el backend va módulo a módulo, así que hace falta poder apagar login e inscripciones —ya integrados— sin tumbar dashboard, propuestas, catálogo y rol entidad, que todavía no tienen backend.
+
+Los módulos ya integrados no dependen de la global: la lista `INTEGRATED` de `mocks.js` los manda al backend real aunque `VITE_USE_MOCKS` esté encendida. Esa lista existe porque el estado de integración no debe vivir solo en un `.env`, donde una reescritura que olvide una línea devuelve el módulo al mock sin que nada avise. Su variable de módulo sigue mandando sobre la lista, así que `VITE_USE_AUTH_MOCKS=true` continúa sirviendo para trabajar con el backend apagado.
 
 Después de cambiar una variable hay que reiniciar Vite. Los mocks nunca se habilitan en producción ni en los tests: el interruptor exige `import.meta.env.DEV` y descarta `MODE === 'test'`, donde cada test monta los suyos con `vi.mock`.
 
@@ -105,7 +107,7 @@ npm ci && npm run demo:reset && npm run smoke # = test:run + build
 # o en navegador: localStorage.clear(); location.reload()
 ```
 
-`scripts/restore-demo.js` es idempotente (N ejecuciones sin duplicar). Los mocks solo se activan de forma explícita con `VITE_USE_MOCKS=true` y no tienen fallos aleatorios. Ver `docs/DEMO.md` para la prueba de humo.
+`scripts/restore-demo.js` es idempotente (N ejecuciones sin duplicar). `isMockEnabled = DEV && MODE !== 'test'` con delays 300ms y sin `failRate` aleatorio para demo estable. Ver `docs/DEMO.md` para prueba de humo 3 min (público → empleado → admin) en Chrome/Firefox 1440px y 390px.
 
 ### Convención de nombres
 
@@ -126,7 +128,7 @@ Los tests se colocan junto a la unidad probada y usan `*.test.jsx` o `*.test.js`
 
 Algunas rutas son compartidas: `/closures/:closureId` y `/activities/:activityId` están disponibles para `ADMIN` y `EMPLOYEE`. En desarrollo también existe `/ui-kit` para el muestrario de componentes, y hay redirecciones de compatibilidad: `/explore` → `/activities`, `/inscriptions` → `/activities/6/registrations` y `/closes` → `/admin/activities/pending-closure`.
 
-Las cuentas de entidad pueden estar en `PENDING_VERIFICATION`, `PENDING_APPROVAL`, `ACTIVE` o `REJECTED`. En integración real el backend no emite JWT a una cuenta no activa; si `status` no está presente en el usuario autenticado, el frontend considera válida la sesión que el backend acaba de autorizar.
+Las cuentas de entidad pueden estar en `PENDING_VERIFICATION`, `PENDING_APPROVAL`, `ACTIVE` o `REJECTED`. Una sesión `PARTNER` no activa se conserva para mostrar el estado de la cuenta; no se trata como una sesión anónima.
 
 ### Cuentas locales
 
@@ -189,7 +191,7 @@ Los errores de validación por campo se muestran junto al control correspondient
 
 Hay dos capas diferentes:
 
-- Los mocks de desarrollo permiten recorrer los flujos sin levantar el backend. Se activan de forma explícita con `VITE_USE_MOCKS=true`; también se puede activar un módulo concreto con `VITE_USE_<MODULO>_MOCKS=true`.
+- Los mocks de desarrollo permiten recorrer los flujos sin levantar todo el backend. Se activan con `VITE_USE_MOCKS=true`, y se apagan módulo a módulo con `VITE_USE_<MODULO>_MOCKS=false`.
 - Los fixtures y mocks de `src/test/` se usan únicamente con Vitest; no forman parte del bundle de producción. Incluyen usuarios `ADMIN`, `EMPLOYEE` y `PARTNER`, estados de cuenta de entidad y respuestas de los principales dominios.
 - La integración real requiere que `VITE_API_URL` apunte al backend. Hoy están integrados el login y el módulo de inscripciones —«Mis voluntariados» y el tablero—; el resto sigue en mocks hasta que su backend exista.
 

@@ -1,4 +1,3 @@
-@use "sass:map";
 @use "../abstracts" as *;
 
 .proposal-page {
@@ -203,9 +202,9 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: map.get($spacing, "3");
-  margin: map.get($spacing, "6") 0;
-  padding: map.get($spacing, "6");
+  gap: map-get($spacing, "3");
+  margin: map-get($spacing, "6") 0;
+  padding: map-get($spacing, "6");
   background-color: $color-background;
   border: 1px solid $color-border;
   border-radius: $radius-lg;

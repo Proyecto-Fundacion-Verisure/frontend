@@ -4,8 +4,7 @@ import { getActivityDetail } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
 import { useAuth } from '../auth/AuthContext';
-import { useFavoritesOptional } from '../favorites/FavoritesContext';
-import { AuthenticatedImage, Badge, Button, Card, EmptyState, HeartButton, ProgressBar, Spinner } from '../../components/ui';
+import { Badge, Button, Card, EmptyState, HeartButton, ProgressBar, Spinner } from '../../components/ui';
 import RegisterButton from '../registrations/RegisterButton';
 
 const LINE_LABELS = {
@@ -20,12 +19,10 @@ export default function ActivityDetailPage() {
   const [activity, setActivity] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [favoriteError, setFavoriteError] = useState('');
   const [localRegistration, setLocalRegistration] = useState(null);
   const auth = useAuth();
   const canParticipate = !auth?.user || auth.user.role === 'EMPLOYEE';
   const registrationsCtx = useRegistrationsOptional();
-  const favorites = useFavoritesOptional();
   const ctxRegistration = registrationsCtx ? registrationsCtx.getForActivity(activityId) : null;
   const currentRegistration = registrationsCtx ? ctxRegistration : localRegistration;
 
@@ -111,27 +108,12 @@ export default function ActivityDetailPage() {
 
   if (!activity) return null;
 
-  const hasOccupancy = activity.registeredCount !== null
-    && activity.registeredCount !== undefined
-    && Number.isFinite(Number(activity.registeredCount));
-  const occupied = hasOccupancy ? Number(activity.registeredCount) : 0;
+  const occupied = Number(activity.registeredCount) || 0;
   const total = Number(activity.capacity) || 0;
   const lineLabel = LINE_LABELS[activity.line] || activity.line;
   const displayLocation = activity.location || activity.address || activity.city || null;
-  const isFull = activity.status === 'FULL'
-    || activity.status === 'COMPLETA'
-    || (total > 0 && hasOccupancy && occupied >= total);
-  const favoritedByMe = favorites?.getFavorite(activity.id, activity.favoritedByMe)
-    ?? Boolean(activity.favoritedByMe);
-  const isFavoritePending = favorites?.isPending(activity.id) ?? false;
-  const toggleFavorite = favorites ? async () => {
-    setFavoriteError('');
-    try {
-      await favorites.toggleFavorite(activity.id, favoritedByMe);
-    } catch (requestError) {
-      setFavoriteError(requestError?.message || 'No hemos podido actualizar tus favoritos.');
-    }
-  } : undefined;
+  const isFull = activity.status === 'FULL' || activity.status === 'COMPLETA' || (total > 0 && occupied >= total);
+  const favoritedByMe = Boolean(activity.favoritedByMe);
   const isEnrolled = Boolean(currentRegistration);
 
   return (
@@ -139,8 +121,6 @@ export default function ActivityDetailPage() {
       <Link to="/activities" className="activity-detail__back">
         ← Volver al catálogo
       </Link>
-
-      {favoriteError && <div className="catalog__error" role="alert">{favoriteError}</div>}
 
       <div className="activity-detail__layout">
         <div className="activity-detail__main">
@@ -152,15 +132,13 @@ export default function ActivityDetailPage() {
               <HeartButton
                 active={favoritedByMe}
                 aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
-                onClick={toggleFavorite}
-                isLoading={isFavoritePending}
               />
             )}
           </div>
 
           <Card className="activity-detail__card">
             {activity.image && (
-              <AuthenticatedImage src={activity.image} alt={activity.title} className="activity-detail__image" />
+              <img src={activity.image} alt={activity.title} className="activity-detail__image" />
             )}
             <div className="activity-detail__badges">
               {lineLabel && <Badge variant="info">{lineLabel}</Badge>}
@@ -179,28 +157,20 @@ export default function ActivityDetailPage() {
                 <strong>Organización:</strong> {activity.organizationName}
               </p>
             )}
-            {total > 0 && hasOccupancy && (
+            {total > 0 && (
               <ProgressBar value={occupied} max={total} label="Plazas ocupadas" showValue={false} valueLabel={`${occupied} de ${total}`} />
             )}
-            {total > 0 && (
-              <p className="activity-detail__meta">
-                {hasOccupancy ? `${occupied} de ${total} plazas` : `${total} plazas disponibles en total`}
-              </p>
-            )}
+            {total > 0 && <p className="activity-detail__meta">{occupied} de {total} plazas</p>}
           </Card>
         </div>
 
         {canParticipate && <aside className="activity-detail__side" aria-label="Panel de inscripción">
           <Card className="activity-detail__panel">
             <h2 className="activity-detail__panel-title">Inscripción</h2>
-            {total > 0 && hasOccupancy && (
+            {total > 0 && (
               <ProgressBar value={occupied} max={total} label="Plazas ocupadas" showValue={false} valueLabel={`${occupied} de ${total}`} />
             )}
-            {total > 0 && (
-              <p className="activity-detail__panel-meta">
-                {hasOccupancy ? `${occupied} de ${total} plazas` : `${total} plazas en total`}
-              </p>
-            )}
+            {total > 0 && <p className="activity-detail__panel-meta">{occupied} de {total} plazas</p>}
             {isFull && !isEnrolled && <p className="activity-detail__panel-meta">Actividad completa — puedes solicitar entrar en lista de espera.</p>}
             {isEnrolled && (
               <p className="activity-detail__panel-meta">
@@ -216,9 +186,7 @@ export default function ActivityDetailPage() {
             {isEnrolled && currentRegistration?.queuePosition != null && (
               <p className="activity-detail__panel-meta">Posición en cola: {currentRegistration.queuePosition}</p>
             )}
-            {isEnrolled
-              && currentRegistration?.status === 'WAITLISTED'
-              && typeof currentRegistration.accepted === 'boolean' && (
+            {isEnrolled && currentRegistration?.status === 'WAITLISTED' && (
               <p className="activity-detail__panel-meta" data-testid="accepted-status">
                 {currentRegistration.accepted ? 'Aceptada' : 'Pendiente de revisión'}
               </p>
@@ -228,8 +196,6 @@ export default function ActivityDetailPage() {
             <HeartButton
               active={favoritedByMe}
               aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
-              onClick={toggleFavorite}
-              isLoading={isFavoritePending}
             />
           </Card>
         </aside>}

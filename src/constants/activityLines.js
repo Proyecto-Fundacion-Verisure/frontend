@@ -20,7 +20,7 @@ export const ACTIVITY_LINES = [
   {
     value: "medio_ambiente",
     label: "Medio ambiente",
-    image: "/images/04-voluntariado-linea-de-accion.png",
+    image: "/images/04-medio_ambiente-linea-de-accion.png",
     description: "Tres personas rodeadas y sostenidas por manos, con una planta creciendo sobre ellas.",
   },
 ];

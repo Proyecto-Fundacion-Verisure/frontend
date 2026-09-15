@@ -10,7 +10,6 @@ import {
 import {
   createOrgActivity,
   submitOrgActivity,
-  getOrgActivity,
   updateOrgActivity,
 } from '../../api/orgApi';
 import { useAuth } from '../auth/AuthContext';
@@ -27,20 +26,23 @@ const initialValues = {
   startDate: '',
   endDate: '',
   registrationDeadline: '',
-  location: '',
   imageUrl: '',
 };
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png']);
 
-function toDateInput(value) {
+function toISOString(localValue) {
+  if (!localValue) return '';
+  return new Date(localValue).toISOString();
+}
+
+function toLocalDateTime(value) {
   if (!value) return '';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '';
-  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
-    ? value
-    : date.toISOString().slice(0, 10);
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return localDate.toISOString().slice(0, 16);
 }
 
 function toFormValues(activity) {
@@ -53,10 +55,9 @@ function toFormValues(activity) {
       activity.maxParticipants ?? activity.spots ?? activity.capacity ?? '',
     ),
     hours: String(activity.hours ?? ''),
-    startDate: toDateInput(activity.startDate),
-    endDate: toDateInput(activity.endDate),
-    registrationDeadline: toDateInput(activity.registrationDeadline),
-    location: activity.location ?? '',
+    startDate: toLocalDateTime(activity.startDate),
+    endDate: toLocalDateTime(activity.endDate),
+    registrationDeadline: toLocalDateTime(activity.registrationDeadline),
     imageUrl: activity.imageUrl ?? activity.image ?? '',
   };
 }
@@ -87,8 +88,8 @@ function validate(values) {
   if (values.startDate && values.endDate) {
     const start = new Date(values.startDate);
     const end = new Date(values.endDate);
-    if (end < start) {
-      errors.endDate = 'La fecha de fin no puede ser anterior a la de inicio.';
+    if (end <= start) {
+      errors.endDate = 'La fecha de fin debe ser posterior a la de inicio.';
     }
   }
 
@@ -115,13 +116,12 @@ function buildPayload(values) {
     title: values.title.trim(),
     description: values.description.trim(),
     line: values.line,
-    mode: values.modality.toUpperCase(),
-    spots: Number(values.maxParticipants),
+    modality: values.modality,
+    maxParticipants: Number(values.maxParticipants),
     hours: Number(values.hours),
-    startDate: values.startDate,
-    endDate: values.endDate,
-    registrationDeadline: values.registrationDeadline,
-    location: values.location.trim() || null,
+    startDate: toISOString(values.startDate),
+    endDate: toISOString(values.endDate),
+    registrationDeadline: toISOString(values.registrationDeadline),
     imageUrl: values.imageUrl.trim() || null,
   };
 }
@@ -151,8 +151,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
       setRequestStatus('loading');
       setErrorMessage('');
       try {
-        const loadRequest = isPartner ? getOrgActivity : getAdminActivity;
-        const { data } = await loadRequest(activityId);
+        const { data } = await getAdminActivity(activityId);
         if (cancelled) return;
         setActivity(data);
         setValues(toFormValues(data));
@@ -174,7 +173,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
     return () => {
       cancelled = true;
     };
-  }, [activityId, isEditMode, isPartner, reloadKey, setValues]);
+  }, [activityId, isEditMode, reloadKey, setValues]);
 
   const validateForm = () => {
     const nextErrors = validate(values);
@@ -436,7 +435,6 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
             <option value="">Selecciona una modalidad</option>
             <option value="presencial">Presencial</option>
             <option value="online">Online</option>
-            <option value="mixto">Mixto</option>
           </Select>
           <Input type="number" min="1" label="Máximo de participantes" required {...fieldProps('maxParticipants')} />
         </div>
@@ -474,12 +472,10 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
           )}
         </div>
 
-        <Input label="Ubicación" placeholder="Ciudad, dirección u Online" {...fieldProps('location')} />
-
         <div className="activity-form__grid activity-form__grid--dates">
-          <Input type="date" label="Fecha de inicio" required {...fieldProps('startDate')} />
-          <Input type="date" label="Fecha de fin" required {...fieldProps('endDate')} />
-          <Input type="date" label="Fecha límite de inscripción" required {...fieldProps('registrationDeadline')} />
+          <Input type="datetime-local" label="Fecha y hora de inicio" required {...fieldProps('startDate')} />
+          <Input type="datetime-local" label="Fecha y hora de fin" required {...fieldProps('endDate')} />
+          <Input type="datetime-local" label="Fecha límite de inscripción" required {...fieldProps('registrationDeadline')} />
         </div>
 
         {errorMessage && <p className="activity-form__error" role="alert">{errorMessage}</p>}

@@ -157,16 +157,14 @@ export default function RegistrationsTablePage() {
           <Link className="registrations-page__back" to="/admin/activities">← Volver a actividades</Link>
           <p className="registrations-page__eyebrow">Administración</p>
           <h1 id="registrations-title">Inscripciones</h1>
-          <p>
-            {state?.activityTitle
-              ?? board?.activity?.title
-              ?? board?.activityTitle
-              ?? (activityId ? `Actividad ${activityId}` : 'Todas las actividades')}
-          </p>
+          {/* El título lo trae el enlace de origen: la respuesta es un Page de
+              Spring y ahí no viaja la actividad. Cuando BE2 entregue
+              GET /api/activities/{id} esto puede pasar a ser una petición. */}
+          <p>{state?.activityTitle ?? `Actividad ${activityId}`}</p>
         </div>
         <div className="registrations-page__totals">
           <strong>{totalElements} inscripciones</strong>
-          {activityId && counts && (
+          {counts && (
             // De toda la actividad, no de esta página: por eso van en su propia ruta.
             <dl className="registrations-page__counts">
               <div><dt>Confirmadas</dt><dd>{counts.confirmed}</dd></div>

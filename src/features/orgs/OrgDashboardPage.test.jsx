@@ -56,16 +56,15 @@ describe('OrgDashboardPage', () => {
     expect(screen.queryByRole('list', { name: 'Indicadores de la entidad' })).not.toBeInTheDocument();
   });
 
-  it('renders a forbidden state when the API returns 403', async () => {
-    getOrgDashboard.mockResolvedValue({
-      data: { message: 'No tienes permiso.' },
-      status: 403,
-    });
+it('renders a forbidden state when the API returns 403', async () => {
+    getOrgDashboard.mockRejectedValue({ message: 'No tienes permiso.', status: 403 });
     renderPage();
 
-    expect(await screen.findByRole('heading', { name: /acceso restringido/i })).toBeInTheDocument();
-    expect(screen.getByRole('alert')).toHaveTextContent(/acceso restringido/i);
-    expect(screen.getByRole('alert')).toHaveTextContent(/no tienes permiso/i);
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+    const alerts = screen.getAllByRole('alert');
+    throw new Error(JSON.stringify(alerts.map((a) => a.textContent)));
   });
 
   it('shows an error with retry and succeeds on second attempt', async () => {

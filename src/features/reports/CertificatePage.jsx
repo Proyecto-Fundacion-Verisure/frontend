@@ -13,13 +13,11 @@ const LINE_LABELS = {
 
 function formatDate(value) {
   if (!value) return '—';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
   return new Intl.DateTimeFormat('es-ES', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-  }).format(date);
+  }).format(new Date(value));
 }
 
 export default function CertificatePage() {
@@ -76,11 +74,6 @@ export default function CertificatePage() {
   const fullName = certificate.fullName ?? certificate.volunteerName;
   const partnerName = certificate.partner?.name ?? certificate.partnerName;
   const line = certificate.line?.toLowerCase();
-  const period = certificate.startDate
-    ? `${formatDate(certificate.startDate)} — ${formatDate(certificate.endDate)}`
-    : certificate.endDate
-      ? `Hasta el ${formatDate(certificate.endDate)}`
-      : '—';
 
   return (
     <section className="certificate-page" aria-labelledby="certificate-title">
@@ -99,15 +92,15 @@ export default function CertificatePage() {
           <h1 id="certificate-title">Certificado de voluntariado</h1>
           <p className="certificate__name">{fullName}</p>
           <p className="certificate__statement">
-            ha participado en la actividad <strong>{certificate.activityTitle}</strong>
-            {partnerName && <>, organizada junto a <strong>{partnerName}</strong></>}
-            {line && <> dentro de la línea de acción <strong>{LINE_LABELS[line] ?? certificate.line}</strong></>}.
+            ha participado en la actividad <strong>{certificate.activityTitle}</strong>,
+            organizada junto a <strong>{partnerName}</strong> dentro de la línea de acción
+            {' '}<strong>{LINE_LABELS[line] ?? certificate.line}</strong>.
           </p>
 
           <dl className="certificate__details">
             <div>
               <dt>Periodo de participación</dt>
-              <dd>{period}</dd>
+              <dd>{formatDate(certificate.startDate)} — {formatDate(certificate.endDate)}</dd>
             </div>
             <div className="certificate__hours">
             <dt>Horas realizadas</dt>
@@ -122,7 +115,7 @@ export default function CertificatePage() {
 
         <footer className="certificate__footer">
           <span>Fundación Verisure</span>
-          {certificate.reference && <span>Referencia: <strong>{certificate.reference}</strong></span>}
+          <span>Referencia: <strong>{certificate.reference}</strong></span>
         </footer>
       </article>
     </section>

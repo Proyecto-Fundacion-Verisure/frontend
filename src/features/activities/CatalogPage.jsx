@@ -3,7 +3,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getPublishedActivities } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
-import { useFavoritesOptional } from '../favorites/FavoritesContext';
 import { Button, EmptyState, Input, Pagination, Select, Spinner } from '../../components/ui';
 import ActivityCard from './ActivityCard';
 
@@ -37,11 +36,9 @@ export default function CatalogPage() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [favoriteError, setFavoriteError] = useState('');
   const [totalCount, setTotalCount] = useState(0);
   const [localEnrolledIds, setLocalEnrolledIds] = useState(() => new Set());
   const registrationsCtx = useRegistrationsOptional();
-  const favorites = useFavoritesOptional();
   const enrolledIds = registrationsCtx ? registrationsCtx.enrolledIds : localEnrolledIds;
 
   const rawPage = Number(searchParams.get('page'));
@@ -224,38 +221,19 @@ export default function CatalogPage() {
         />
       </div>
 
-      {favoriteError && <div className="catalog__error" role="alert">{favoriteError}</div>}
-
       {activities.length === 0 ? (
         <EmptyState title="No hay actividades" description="No se encontraron actividades con los filtros seleccionados." />
       ) : (
         <>
           <div className="catalog__grid">
-            {activities.map((activity) => {
-              const favoritedByMe = favorites?.getFavorite(
-                activity.id,
-                activity.favoritedByMe,
-              ) ?? Boolean(activity.favoritedByMe);
-              return (
-                <ActivityCard
-                  key={activity.id}
-                  activity={{ ...activity, favoritedByMe }}
-                  isEnrolled={enrolledIds.has(activity.id)}
-                  linkTo={`/activities/${activity.id}`}
-                  isFavoritePending={favorites?.isPending(activity.id) ?? false}
-                  onToggleFavorite={favorites ? async () => {
-                    setFavoriteError('');
-                    try {
-                      await favorites.toggleFavorite(activity.id, favoritedByMe);
-                    } catch (requestError) {
-                      setFavoriteError(
-                        requestError?.message || 'No hemos podido actualizar tus favoritos.',
-                      );
-                    }
-                  } : undefined}
-                />
-              );
-            })}
+            {activities.map((activity) => (
+              <ActivityCard
+                key={activity.id}
+                activity={activity}
+                isEnrolled={enrolledIds.has(activity.id)}
+                linkTo={`/activities/${activity.id}`}
+              />
+            ))}
           </div>
 
           <Pagination

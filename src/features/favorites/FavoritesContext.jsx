@@ -6,7 +6,7 @@ export const FavoritesContext = createContext(null);
 export function FavoritesProvider({ children }) {
   const [overrides, setOverrides] = useState({});
   const pendingRef = useRef(new Set());
-  const [pendingVersion, forceUpdate] = useState(0);
+  const [, forceUpdate] = useState(0);
 
   const getFavorite = useCallback(
     (activityId, fallback) => {
@@ -56,7 +56,7 @@ export function FavoritesProvider({ children }) {
       setFavorite,
       overrides,
     }),
-    [getFavorite, isPending, toggleFavorite, setFavorite, overrides, pendingVersion]
+    [getFavorite, isPending, toggleFavorite, setFavorite, overrides]
   );
 
   return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;
