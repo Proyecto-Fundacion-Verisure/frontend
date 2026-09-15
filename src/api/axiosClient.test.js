@@ -97,7 +97,7 @@ describe('axiosClient', () => {
     expect(onUnauthorized).toHaveBeenCalledOnce();
   });
 
-  it('does not treat invalid login credentials as an expired session', async () => {
+  it('keeps the session untouched when the login itself answers 401', async () => {
     window.localStorage.setItem('accessToken', 'previous-token');
     const onUnauthorized = vi.fn();
     window.addEventListener(AUTH_UNAUTHORIZED_EVENT, onUnauthorized, { once: true });
@@ -107,6 +107,7 @@ describe('axiosClient', () => {
     });
 
     await expect(request).rejects.toMatchObject({
+      name: 'ApiError',
       message: 'Credenciales no válidas.',
       status: 401,
     });

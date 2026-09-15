@@ -1,9 +1,10 @@
 import client from './axiosClient';
 import { getDashboardMockData } from '../assets/mock/data/dashboard';
-import { isDevelopmentMockEnabled } from './mockConfig';
+import { isDevelopmentMockEnabled as isModuleMockEnabled } from './mockConfig';
 
 const DASHBOARD_FILTERS = ['year', 'line'];
 const YEAR_FILTER = ['year'];
+const isDevelopmentMockEnabled = () => isModuleMockEnabled('DASHBOARD');
 
 export function sanitizeDashboardParams(params = {}, allowed = DASHBOARD_FILTERS) {
   return allowed.reduce((result, key) => {

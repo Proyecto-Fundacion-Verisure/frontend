@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import MyVolunteeringPage from './MyVolunteeringPage';
 import { cancelRegistration, getMyRegistrations } from '../../api/registrationsApi';
 
@@ -22,10 +22,24 @@ function renderPage() {
   );
 }
 
+// Las fechas van relativas a hoy a propósito. La versión anterior de este fichero
+// las tenía fijas, y el día que el calendario alcanzó a `startDate` tres pruebas
+// se cayeron solas: la actividad había empezado y el botón de cancelar dejó de
+// pintarse. Una fixture con fecha fija caduca.
+const isoDaysFromToday = (days) => {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date.toLocaleDateString('sv');
+};
+
+const STARTS_IN_A_WEEK = isoDaysFromToday(7);
+const STARTS_TODAY = isoDaysFromToday(0);
+const STARTED_YESTERDAY = isoDaysFromToday(-1);
+
 const activeItems = [
   {
     registrationId: 101,
-    activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: '2026-09-10', endDate: '2026-09-17', hours: 8 },
+    activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: STARTS_IN_A_WEEK, endDate: isoDaysFromToday(14), hours: 8 },
     status: 'WAITLISTED',
     queuePosition: 3,
     accepted: false,
@@ -71,12 +85,8 @@ const closedItems = [
 ];
 
 beforeEach(() => {
-  vi.useFakeTimers({ shouldAdvanceTime: true });
-  vi.setSystemTime(new Date('2026-09-01T12:00:00Z'));
   getMyRegistrations.mockReset();
 });
-
-afterEach(() => vi.useRealTimers());
 
 describe('MyVolunteeringPage', () => {
   it('muestra carga inicial', () => {
@@ -191,6 +201,19 @@ describe('MyVolunteeringPage', () => {
     expect(screen.getByText('Posición en cola: 3')).toBeInTheDocument();
   });
 
+  it('deja cancelar el mismo día de inicio, como hace el backend', async () => {
+    // El backend usa `LocalDate.now().isAfter(startDate)`: el propio día de inicio
+    // todavía se puede cancelar. La pantalla comparaba con `new Date()` y se
+    // adelantaba un día, ocultando el botón a quien aún estaba a tiempo.
+    const startsToday = { registrationId: 203, activity: { id: 12, title: 'Empieza hoy', partner: 'P', startDate: STARTS_TODAY, endDate: isoDaysFromToday(3), hours: 2 }, status: 'CONFIRMED', queuePosition: null, accepted: true };
+    const startedYesterday = { registrationId: 204, activity: { id: 13, title: 'Empezó ayer', partner: 'P', startDate: STARTED_YESTERDAY, endDate: isoDaysFromToday(3), hours: 2 }, status: 'CONFIRMED', queuePosition: null, accepted: true };
+    getMyRegistrations.mockResolvedValue({ data: [startsToday, startedYesterday] });
+    renderPage();
+    await screen.findByText('Empieza hoy');
+    expect(screen.getByTestId('cancel-203')).toBeInTheDocument();
+    expect(screen.queryByTestId('cancel-204')).not.toBeInTheDocument();
+  });
+
   it('ejecuta un solo PATCH al confirmar y oculta acción tras fecha de inicio', async () => {
     const future = { registrationId: 201, activity: { id: 10, title: 'Futura', partner: 'P', startDate: '2099-01-01', endDate: '2099-01-02', hours: 2 }, status: 'WAITLISTED', queuePosition: 2, accepted: false };
     const past = { registrationId: 202, activity: { id: 11, title: 'Pasada', partner: 'P', startDate: '2020-01-01', endDate: '2020-01-02', hours: 2 }, status: 'WAITLISTED', queuePosition: 2, accepted: false };
@@ -216,8 +239,9 @@ describe('MyVolunteeringPage', () => {
     renderPage();
     await screen.findByText('Acompañamiento a mayores');
     const user = userEvent.setup();
-    // DEADLINE_PASSED 409
-    cancelRegistration.mockRejectedValueOnce({ status: 409, code: 'DEADLINE_PASSED', message: 'Plazo cerrado' });
+    // DEADLINE_PASSED es 400, no 409. El 409 del contrato es ALREADY_REGISTERED,
+    // que cancelar no devuelve nunca.
+    cancelRegistration.mockRejectedValueOnce({ status: 400, code: 'DEADLINE_PASSED', message: 'Plazo cerrado' });
     await user.click(screen.getByTestId('cancel-101'));
     await screen.findByText(/¿Seguro que quieres cancelar/);
     await user.click(screen.getByTestId('confirm-cancel-101'));

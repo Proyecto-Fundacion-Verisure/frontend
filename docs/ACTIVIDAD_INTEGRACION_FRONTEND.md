@@ -10,7 +10,7 @@
 | Actividad GitHub | [#202](https://github.com/Proyecto-Fundacion-Verisure/frontend/issues/202) |
 | Estado | Finalizada en frontend; pendiente de disponibilidad contractual en backend |
 | Horas previstas | 16 h de trabajo manual |
-| Horas utilizadas | 0 h 30 min de ejecución asistida, aproximadamente |
+| Horas utilizadas | 0 h 45 min de ejecución asistida, aproximadamente |
 
 > Las horas utilizadas corresponden al tiempo técnico registrado durante esta sesión y no deben contabilizarse como dedicación humana del equipo. La previsión representa el esfuerzo manual equivalente para analizar, implementar, probar y documentar el mismo alcance.
 
@@ -84,16 +84,16 @@ Dejar el frontend preparado para consumir el contrato real del backend, eliminar
 
 | Bloque | Horas previstas (manuales) | Horas utilizadas (sesión asistida) |
 | --- | ---: | ---: |
-| Auditoría de contratos y rutas | 3 h | 0 h 08 min |
-| Adaptación de API, normalizadores y mocks | 4 h | 0 h 08 min |
-| Autenticación, actividades, favoritos e imágenes | 4 h | 0 h 06 min |
-| Inscripciones, cierres, propuestas y navegación | 3 h | 0 h 04 min |
-| Pruebas, compilación y documentación | 2 h | 0 h 04 min |
-| **Total** | **16 h** | **0 h 30 min** |
+| Auditoría de contratos y rutas | 3 h | 0 h 10 min |
+| Adaptación de API, normalizadores y mocks | 4 h | 0 h 12 min |
+| Autenticación, actividades, favoritos e imágenes | 4 h | 0 h 08 min |
+| Inscripciones, cierres, propuestas y navegación | 3 h | 0 h 05 min |
+| Integración con los cambios recientes de `dev`, pruebas, compilación y documentación | 2 h | 0 h 10 min |
+| **Total** | **16 h** | **0 h 45 min** |
 
 ## Validación realizada
 
-- `npm run test -- --run`: 50 archivos y 278 pruebas superadas.
+- `npm run test -- --run`: 51 archivos y 286 pruebas superadas.
 - `npm run build`: compilación de producción finalizada correctamente.
 - `git diff --check`: sin errores de espacios ni marcadores de conflicto.
 - Revisión del repositorio backend en modo de solo lectura: sin modificaciones realizadas.

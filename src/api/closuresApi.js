@@ -1,6 +1,8 @@
 import client from './axiosClient';
-import { isDevelopmentMockEnabled } from './mockConfig';
+import { isDevelopmentMockEnabled as isModuleMockEnabled } from './mockConfig';
 import { normalizeCertificate, normalizeRequestResult } from './normalizers';
+
+const isDevelopmentMockEnabled = () => isModuleMockEnabled('CLOSURE');
 
 function mockGetCertificate(closureId) {
   return Promise.resolve({

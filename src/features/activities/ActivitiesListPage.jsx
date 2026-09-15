@@ -179,6 +179,9 @@ export default function ActivitiesListPage({
             <Link
               className="button button--secondary button--small"
               to={`/activities/${activity.id}/registrations`}
+              // El tablero no puede pedir el título: su respuesta es un Page de
+              // inscripciones. Se lo pasamos desde aquí, que ya lo tenemos.
+              state={{ activityTitle: activity.title }}
             >
               Inscripciones
             </Link>

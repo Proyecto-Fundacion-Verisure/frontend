@@ -1,6 +1,8 @@
 import client from './axiosClient';
 import { ApiError } from './apiError';
-import { isDevelopmentMockEnabled } from './mockConfig';
+import { isDevelopmentMockEnabled as isModuleMockEnabled } from './mockConfig';
+
+const isDevelopmentMockEnabled = () => isModuleMockEnabled('PROPOSAL');
 
 const MOCK_PROPOSALS = [
   {

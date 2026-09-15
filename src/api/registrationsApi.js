@@ -1,11 +1,14 @@
 import client from './axiosClient';
-import { isDevelopmentMockEnabled } from './mockConfig';
+import { ApiError } from './apiError';
+import { isDevelopmentMockEnabled as isModuleMockEnabled } from './mockConfig';
 import { normalizeRegistration, normalizeRequestResult } from './normalizers';
+
+const isDevelopmentMockEnabled = () => isModuleMockEnabled('REGISTRATION');
 
 const MOCK_MY_REGISTRATIONS_ACTIVE = [
   {
     registrationId: 101,
-    activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: '2027-09-10', endDate: '2027-09-17', hours: 8 },
+    activity: { id: 5, title: 'Refuerzo escolar', partner: 'Educamos Juntos', startDate: '2027-09-10', endDate: '2027-09-17', hours: 8 },
     status: 'WAITLISTED',
     accepted: false,
     queuePosition: 3,
@@ -14,7 +17,7 @@ const MOCK_MY_REGISTRATIONS_ACTIVE = [
   },
   {
     registrationId: 102,
-    activity: { id: 2, title: 'Taller educativo', partner: 'Educamos Juntos', startDate: '2027-09-12', endDate: '2027-09-13', hours: 6 },
+    activity: { id: 6, title: 'Mentoría online para jóvenes', partner: 'Educamos Juntos', startDate: '2027-09-12', endDate: '2027-09-13', hours: 6 },
     status: 'CONFIRMED',
     accepted: true,
     queuePosition: null,
@@ -23,7 +26,7 @@ const MOCK_MY_REGISTRATIONS_ACTIVE = [
   },
   {
     registrationId: 103,
-    activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
+    activity: { id: 9, title: 'Charlas de prevención', partner: 'Prevención Total', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
     status: 'PENDING_CLOSURE',
     accepted: true,
     queuePosition: null,
@@ -35,7 +38,7 @@ const MOCK_MY_REGISTRATIONS_ACTIVE = [
 const MOCK_MY_REGISTRATIONS_CLOSED = [
   {
     registrationId: 104,
-    activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
+    activity: { id: 7, title: 'Limpieza de playas', partner: 'Cruz Roja Valencia', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
     status: 'CLOSED',
     accepted: true,
     queuePosition: null,
@@ -49,11 +52,22 @@ const MOCK_MY_REGISTRATIONS = [
   ...MOCK_MY_REGISTRATIONS_CLOSED,
 ];
 
+// Forma de RegistrationRow: el campo es `userName`, no `name`.
 const MOCK_ACTIVITY_REGISTRATIONS = [
-  { registrationId: 201, name: 'Ana Torres', department: 'Tecnología', organization: 'VERISURE_ES', yearHours: 12, status: 'WAITLISTED', accepted: false, queuePosition: 2 },
-  { registrationId: 202, name: 'Luis Martín', department: 'Personas', organization: 'VERISURE_GROUP', yearHours: 8, status: 'WAITLISTED', accepted: true, queuePosition: 1 },
-  { registrationId: 203, name: 'Marta Ruiz', department: 'Operaciones', organization: 'VERISURE_ES', yearHours: 16, status: 'CONFIRMED', accepted: true },
+  { registrationId: 201, userName: 'Ana Torres', department: 'Tecnología', organization: 'VERISURE_ES', yearHours: 12, status: 'WAITLISTED', accepted: false, queuePosition: 2 },
+  { registrationId: 202, userName: 'Luis Martín', department: 'Personas', organization: 'VERISURE_GROUP', yearHours: 8, status: 'WAITLISTED', accepted: true, queuePosition: 1 },
+  { registrationId: 203, userName: 'Marta Ruiz', department: 'Operaciones', organization: 'VERISURE_ES', yearHours: 16, status: 'CONFIRMED', accepted: true },
 ];
+
+function mockGetRegistrationCounts() {
+  return Promise.resolve({
+    data: {
+      confirmed: MOCK_ACTIVITY_REGISTRATIONS.filter((r) => r.status === 'CONFIRMED').length,
+      waitlisted: MOCK_ACTIVITY_REGISTRATIONS.filter((r) => r.status === 'WAITLISTED').length,
+      unreviewed: MOCK_ACTIVITY_REGISTRATIONS.filter((r) => r.status === 'WAITLISTED' && !r.accepted).length,
+    },
+  });
+}
 
 function mockGetMyRegistrations() {
   return Promise.resolve({ data: MOCK_MY_REGISTRATIONS });
@@ -72,20 +86,6 @@ function mockGetActivityRegistrations(activityId) {
   });
 }
 
-function mockGetRegistrationCounts() {
-  const confirmed = MOCK_ACTIVITY_REGISTRATIONS.filter(
-    (registration) => registration.status === 'CONFIRMED',
-  ).length;
-  const waitlisted = MOCK_ACTIVITY_REGISTRATIONS.filter(
-    (registration) => registration.status === 'WAITLISTED',
-  ).length;
-  const unreviewed = MOCK_ACTIVITY_REGISTRATIONS.filter(
-    (registration) => registration.status === 'WAITLISTED' && !registration.accepted,
-  ).length;
-
-  return Promise.resolve({ data: { confirmed, waitlisted, unreviewed } });
-}
-
 function findMockRegistration(registrationId) {
   return MOCK_ACTIVITY_REGISTRATIONS.find(
     (registration) => String(registration.registrationId) === String(registrationId),
@@ -94,7 +94,7 @@ function findMockRegistration(registrationId) {
 
 function mockAcceptRegistration(registrationId) {
   const registration = findMockRegistration(registrationId);
-  if (!registration) return Promise.reject(new Error('Inscripción no encontrada.'));
+  if (!registration) return Promise.reject(new ApiError({ message: 'Inscripción no encontrada.', status: 404, code: 'NOT_FOUND' }));
   const hasSpot = !MOCK_ACTIVITY_REGISTRATIONS.some((item) => item.status === 'CONFIRMED');
   Object.assign(registration, {
     accepted: true,
@@ -105,14 +105,14 @@ function mockAcceptRegistration(registrationId) {
 
 function mockRejectRegistration(registrationId) {
   const registration = findMockRegistration(registrationId);
-  if (!registration) return Promise.reject(new Error('Inscripción no encontrada.'));
+  if (!registration) return Promise.reject(new ApiError({ message: 'Inscripción no encontrada.', status: 404, code: 'NOT_FOUND' }));
   Object.assign(registration, { accepted: false, status: 'REJECTED' });
   return Promise.resolve({ data: { ...registration } });
 }
 
 function mockCancelRegistration(registrationId) {
   const registration = findMockRegistration(registrationId);
-  if (!registration) return Promise.reject(new Error('Inscripción no encontrada.'));
+  if (!registration) return Promise.reject(new ApiError({ message: 'Inscripción no encontrada.', status: 404, code: 'NOT_FOUND' }));
   registration.status = 'CANCELLED';
 
   const promoted = MOCK_ACTIVITY_REGISTRATIONS

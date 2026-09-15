@@ -1,5 +1,7 @@
 import client from './axiosClient';
-import { isDevelopmentMockEnabled } from './mockConfig';
+import { isDevelopmentMockEnabled as isModuleMockEnabled } from './mockConfig';
+
+const isDevelopmentMockEnabled = () => isModuleMockEnabled('FAVORITE');
 
 export const favoriteActivity = (activityId) => (
   isDevelopmentMockEnabled()

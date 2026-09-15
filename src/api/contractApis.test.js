@@ -26,6 +26,7 @@ import {
   createRegistration,
   getActivityRegistrations,
   getMyRegistrations,
+  getRegistrationCounts,
   rejectRegistration,
 } from './registrationsApi';
 import {
@@ -158,6 +159,7 @@ describe('registration and favorite API contracts', () => {
     createRegistration(21);
     getMyRegistrations();
     getActivityRegistrations(21, { status: 'WAITLISTED', page: 0 });
+    getRegistrationCounts(21);
     acceptRegistration(4);
     rejectRegistration(5);
     cancelRegistration(6, 'Cambio de disponibilidad');
@@ -166,6 +168,10 @@ describe('registration and favorite API contracts', () => {
     expect(client.get).toHaveBeenNthCalledWith(1, '/registrations/me');
     expect(client.get).toHaveBeenNthCalledWith(2, '/admin/registrations', {
       params: { activityId: 21, status: 'WAITLISTED', page: 0 },
+    });
+    // Los contadores van en su propia ruta y activityId es obligatorio.
+    expect(client.get).toHaveBeenNthCalledWith(3, '/admin/registrations/counts', {
+      params: { activityId: 21 },
     });
     expect(client.patch).toHaveBeenNthCalledWith(1, '/registrations/4/accept');
     expect(client.patch).toHaveBeenNthCalledWith(2, '/registrations/5/reject');

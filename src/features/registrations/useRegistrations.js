@@ -3,12 +3,14 @@ import {
   acceptRegistration as acceptRegistrationRequest,
   cancelRegistration as cancelRegistrationRequest,
   getActivityRegistrations,
+  getRegistrationCounts,
   rejectRegistration as rejectRegistrationRequest,
 } from '../../api/registrationsApi';
 
 export default function useRegistrations(activityId, page = 0) {
   const pendingDecisions = useRef(new Set());
   const [board, setBoard] = useState(null);
+  const [counts, setCounts] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
@@ -19,8 +21,18 @@ export default function useRegistrations(activityId, page = 0) {
     else setLoading(true);
     setError(null);
     try {
-      const { data } = await getActivityRegistrations(activityId, { page });
+      // Los contadores son de toda la actividad y el tablero es de una página, así
+      // que van en peticiones distintas. Un fallo suyo no puede tumbar el tablero:
+      // sin cifras la pantalla se lee igual, sin filas no.
+      const countsRequest = activityId
+        ? getRegistrationCounts(activityId).catch(() => null)
+        : Promise.resolve(null);
+      const [{ data }, countsResult] = await Promise.all([
+        getActivityRegistrations(activityId, { page }),
+        countsRequest,
+      ]);
       setBoard(data);
+      setCounts(countsResult?.data ?? null);
       return data;
     } catch (requestError) {
       setError(requestError);
@@ -75,6 +87,7 @@ export default function useRegistrations(activityId, page = 0) {
 
   return {
     board,
+    counts,
     loading,
     refreshing,
     error,

@@ -1,8 +1,10 @@
 import client from './axiosClient';
 import { registerPartner, resendVerification } from './authApi';
 import { getOrgDashboardMockData } from '../assets/mock/data/orgDashboard';
-import { isDevelopmentMockEnabled } from './mockConfig';
+import { isDevelopmentMockEnabled as isModuleMockEnabled } from './mockConfig';
 import { normalizeActivity, normalizeRequestResult, serializeActivityRequest } from './normalizers';
+
+const isDevelopmentMockEnabled = () => isModuleMockEnabled('ORG');
 
 function simulateRequest({ data, delay = 300, failRate = 0 } = {}) {
   return new Promise((resolve, reject) => {

@@ -28,7 +28,7 @@ export default function CancelRegistrationAction({ registration, decision, onCan
     }
   };
 
-  const personName = registration.person?.name ?? registration.employee?.name ?? registration.user?.name ?? registration.name ?? '';
+  const personName = registration.userName ?? '';
   return (
     <>
       <Button

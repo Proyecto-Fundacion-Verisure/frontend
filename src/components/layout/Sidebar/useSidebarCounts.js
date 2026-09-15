@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../features/auth/AuthContext';
 import { getPendingOrganizations } from '../../../api/orgApi';
-
 export function useSidebarCounts() {
   const { user } = useAuth();
   const [pendingAccounts, setPendingAccounts] = useState(0);
