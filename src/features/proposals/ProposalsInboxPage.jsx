@@ -141,6 +141,7 @@ export default function ProposalsInboxPage() {
             <>
               <Button
                 size="small"
+                variant="danger"
                 onClick={() => handleReject(row.id)}
                 aria-label={`Rechazar propuesta de ${row.organizationName}`}
               >
