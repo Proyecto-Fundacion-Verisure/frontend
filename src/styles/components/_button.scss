@@ -9,6 +9,7 @@
   gap: space("2");
   justify-content: center;
   min-height: $control-height;
+  min-width: 7rem;
   border: 0;
   border-radius: $radius-md;
   cursor: pointer;
@@ -40,8 +41,6 @@
   &--primary {
     background: $color-coral;
     color: $color-surface;
-    margin-top: 10px;
-    margin-left: 10px;
     &:hover:not(:disabled) {
       background: #ff8179;
     }
@@ -73,7 +72,7 @@
     color: $color-surface;
 
     &:hover:not(:disabled) {
-      background: #9b2c2c;
+      background: $color-navy-light;
     }
   }
 }
