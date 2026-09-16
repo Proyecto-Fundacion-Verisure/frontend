@@ -33,7 +33,9 @@ export default function AcceptProposalButton({ proposalId, onAccepted }) {
 
       setStatus('accepted');
       onAccepted?.(activity);
-      navigate(getActivityDraftPath(activity.id));
+      // El 201 trae una actividad a medio rellenar a propósito (§6.4): el
+      // formulario avisa de que título, fechas y horas son marcadores.
+      navigate(getActivityDraftPath(activity.id), { state: { fromProposal: true } });
     } catch (error) {
       if (error?.status === 409 || error?.code === 'PROPOSAL_ALREADY_DECIDED') {
         setStatus('conflict');

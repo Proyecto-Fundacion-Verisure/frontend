@@ -113,7 +113,7 @@ describe('activity API contract', () => {
     getActivityDetail(12);
     getAdminActivity(12);
     getPublishedActivities({ line: 'educar', page: 2, size: 12, q: 'ignored' });
-    getAdminActivities({ status: 'DRAFT', page: 0, size: 50 });
+    getAdminActivities({ status: 'DRAFT', page: 0, size: 10, sort: 'ignored' });
     createActivity({ title: 'Nueva' });
     updateActivity(12, { title: 'Editada' });
     publishActivity(12);
@@ -125,7 +125,7 @@ describe('activity API contract', () => {
       params: { line: 'educar', page: 2, size: 12 },
     });
     expect(client.get).toHaveBeenNthCalledWith(4, '/admin/activities', {
-      params: { status: 'DRAFT', page: 0 },
+      params: { status: 'DRAFT', page: 0, size: 10 },
     });
     expect(client.post).toHaveBeenCalledWith('/admin/activities', { title: 'Nueva' });
     expect(client.put).toHaveBeenCalledWith('/admin/activities/12', { title: 'Editada' });
@@ -136,11 +136,11 @@ describe('activity API contract', () => {
   // La subida de portada se fue con `B2-03`: no hay `POST /admin/activity-images`,
   // la imagen es la de la línea de acción y la resuelve el frontend.
   it('uses the partner-approval routes', () => {
-    getPendingActivities({ page: 0, status: 'ignored' });
+    getPendingActivities({ page: 0, size: 10, status: 'ignored' });
     approveActivity(31);
     returnActivity(32, 'Completa la descripción.');
 
-    expect(client.get).toHaveBeenCalledWith('/admin/activities/pending', { params: { page: 0 } });
+    expect(client.get).toHaveBeenCalledWith('/admin/activities/pending', { params: { page: 0, size: 10 } });
     expect(client.patch).toHaveBeenNthCalledWith(1, '/admin/activities/31/approve');
     expect(client.patch).toHaveBeenNthCalledWith(2, '/admin/activities/32/return', {
       note: 'Completa la descripción.',
@@ -229,14 +229,14 @@ describe('proposal and partner API contracts', () => {
     const proposal = { organizationName: 'Entidad' };
 
     createProposal(proposal);
-    getProposals({ status: 'NEW', page: 0, size: 50 });
+    getProposals({ status: 'NEW', page: 0, size: 1, sort: 'ignored' });
     getProposal(9);
     acceptProposal(9);
     rejectProposal(10);
 
     expect(client.post).toHaveBeenNthCalledWith(1, '/proposals', proposal);
     expect(client.get).toHaveBeenNthCalledWith(1, '/admin/proposals', {
-      params: { status: 'NEW', page: 0 },
+      params: { status: 'NEW', page: 0, size: 1 },
     });
     expect(client.get).toHaveBeenNthCalledWith(2, '/admin/proposals/9');
     expect(client.post).toHaveBeenNthCalledWith(2, '/admin/proposals/9/accept');
@@ -253,7 +253,7 @@ describe('proposal and partner API contracts', () => {
     getPendingOrganizations({ status: 'PENDING', page: 0 });
     approveOrganization(7);
     rejectOrganization(8);
-    getOrgActivities({ status: 'DRAFT', page: 0, size: 50 });
+    getOrgActivities({ status: 'DRAFT', page: 0, size: 10, sort: 'ignored' });
     createOrgActivity(activity);
     updateOrgActivity(4, activity);
     submitOrgActivity(4);
@@ -269,7 +269,7 @@ describe('proposal and partner API contracts', () => {
     expect(client.patch).toHaveBeenNthCalledWith(1, '/admin/org-accounts/7/approve');
     expect(client.patch).toHaveBeenNthCalledWith(2, '/admin/org-accounts/8/reject');
     expect(client.get).toHaveBeenNthCalledWith(2, '/org/activities', {
-      params: { status: 'DRAFT', page: 0 },
+      params: { status: 'DRAFT', page: 0, size: 10 },
     });
     expect(client.post).toHaveBeenNthCalledWith(3, '/org/activities', activity);
     expect(client.put).toHaveBeenCalledWith('/org/activities/4', activity);

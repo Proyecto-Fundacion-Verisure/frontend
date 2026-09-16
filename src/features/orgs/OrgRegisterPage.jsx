@@ -1,8 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { createOrganization, resendOrganizationRegistrationEmail } from '../../api/orgApi';
+import { createOrganization } from '../../api/orgApi';
 import useForm from '../../hooks/useForm';
 import { Button, Input, Modal } from '../../components/ui';
+
+// El backend nombra `name` lo que el formulario llama `organizationName`. Los
+// `fields` de un 400 se traducen aquí para que caigan sobre su input.
+const API_FIELD_NAMES = { name: 'organizationName' };
+
+// Los dos 409 del alta son del correo: `CIF_ALREADY_REGISTERED` es «este correo
+// ya tiene cuenta en esa entidad» y `EMAIL_ALREADY_REGISTERED` «este correo ya
+// está en cualquier cuenta». Los dos se pintan sobre el campo de correo.
+const EMAIL_CONFLICTS = new Set(['CIF_ALREADY_REGISTERED', 'EMAIL_ALREADY_REGISTERED']);
 
 const initialValues = {
   organizationName: '',
@@ -14,8 +23,6 @@ const initialValues = {
   confirmPassword: '',
   consent: false,
 };
-
-const RESEND_COOLDOWN_SECONDS = 5;
 
 function isValidCif(value) {
   return /^[A-Z0-9]{9}$/i.test(value.trim());
@@ -49,16 +56,7 @@ export default function OrgRegisterPage() {
   const [touched, setTouched] = useState({});
   const [status, setStatus] = useState('idle');
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [resendStatus, setResendStatus] = useState('idle');
-  const [resendCooldown, setResendCooldown] = useState(0);
-
-  useEffect(() => {
-    if (resendCooldown <= 0) return undefined;
-    const timer = setInterval(() => {
-      setResendCooldown((seconds) => Math.max(seconds - 1, 0));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [resendCooldown]);
+  const [submitError, setSubmitError] = useState('');
 
   const validateField = (name) => {
     const fieldErrors = validate(values);
@@ -86,6 +84,7 @@ export default function OrgRegisterPage() {
     if (Object.keys(nextErrors).length) return;
 
     setStatus('loading');
+    setSubmitError('');
     try {
       await createOrganization({
         name: values.organizationName.trim(),
@@ -94,16 +93,25 @@ export default function OrgRegisterPage() {
         email: values.email.trim().toLowerCase(),
         phone: values.phone.trim(),
         password: values.password,
+        consent: values.consent,
       });
       setStatus('idle');
-      setResendStatus('idle');
-      setResendCooldown(0);
       setIsSuccessModalOpen(true);
     } catch (err) {
-      const apiErrors = err?.fieldErrors;
+      let apiErrors = err?.fieldErrors;
+      if (apiErrors) {
+        apiErrors = Object.fromEntries(Object.entries(apiErrors).map(([field, message]) => (
+          [API_FIELD_NAMES[field] ?? field, message]
+        )));
+      } else if (EMAIL_CONFLICTS.has(err?.code)) {
+        apiErrors = { email: err.message };
+      }
       if (apiErrors) {
         setErrors(apiErrors);
         setTouched(Object.keys(apiErrors).reduce((acc, k) => ({ ...acc, [k]: true }), {}));
+        setSubmitError('Revisa los campos marcados.');
+      } else {
+        setSubmitError(err?.message || 'No hemos podido crear la cuenta. Inténtalo de nuevo.');
       }
       setStatus('error');
     }
@@ -112,18 +120,6 @@ export default function OrgRegisterPage() {
   const handleGoHome = () => {
     setIsSuccessModalOpen(false);
     navigate('/');
-  };
-
-  const handleResendEmail = async () => {
-    if (resendCooldown > 0 || resendStatus === 'loading') return;
-    setResendStatus('loading');
-    try {
-      await resendOrganizationRegistrationEmail(values.email.trim().toLowerCase());
-      setResendStatus('idle');
-      setResendCooldown(RESEND_COOLDOWN_SECONDS);
-    } catch (err) {
-      setResendStatus('error');
-    }
   };
 
   const fieldProps = (name) => ({
@@ -188,9 +184,9 @@ export default function OrgRegisterPage() {
             </p>
           )}
 
-          {status === 'error' && (
+          {status === 'error' && submitError && (
             <p className="org-register-form__error" role="alert">
-              No hemos podido crear la cuenta. Inténtalo de nuevo.
+              {submitError}
             </p>
           )}
 
@@ -217,31 +213,29 @@ export default function OrgRegisterPage() {
       <Modal
         isOpen={isSuccessModalOpen}
         onClose={handleGoHome}
-        title="Solicitud enviada"
-        description="Tu solicitud de registro ha sido enviada a la Fundación Verisure."
+        title="Solicitud recibida"
+        description="Tu solicitud de registro ha llegado a la Fundación Verisure."
         closeOnBackdrop={false}
         footer={
-          <>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleResendEmail}
-              isLoading={resendStatus === 'loading'}
-              loadingLabel="Reenviando…"
-              disabled={resendCooldown > 0}
-            >
-              {resendCooldown > 0 ? `Reenviar correo (${resendCooldown}s)` : 'Reenviar correo'}
-            </Button>
-            <Button type="button" size="large" onClick={handleGoHome}>
-              Volver al inicio
-            </Button>
-          </>
+          <Button type="button" size="large" onClick={handleGoHome}>
+            Volver al inicio
+          </Button>
         }
       >
+        {/* Sin «reenviar correo»: la verificación por correo (`B1-15`/`B1-16`)
+            todavía no existe en el backend, y prometerla aquí sería mentir.
+            Tampoco se nombra la entidad: el 201 devuelve un `UserResponse` sin
+            ella, y con un CIF que ya existía la cuenta se cuelga de la entidad
+            de siempre, no de la que se acaba de escribir. */}
         <p>
-          Te hemos enviado un correo a <strong>{values.email.trim()}</strong> para
-          que quede constancia de tu solicitud. Revisa tu bandeja de entrada antes de cerrar esta pestaña. En cuanto la fundación la revise y apruebe,
-          te avisaremos por correo electrónico en un plazo de 24-48 horas.
+          Hemos recibido tu solicitud de cuenta para el CIF{' '}
+          <strong>{values.cif.trim().toUpperCase()}</strong>. Si la entidad ya estaba
+          registrada, tu cuenta queda vinculada a ella con el nombre que ya tenía.
+        </p>
+        <p>
+          La Fundación la revisará y se pondrá en contacto contigo en{' '}
+          <strong>{values.email.trim()}</strong> cuando esté activa. Hasta entonces no
+          podrás iniciar sesión.
         </p>
       </Modal>
     </section>

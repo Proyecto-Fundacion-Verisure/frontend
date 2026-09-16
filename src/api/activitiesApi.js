@@ -4,10 +4,12 @@ import { isMockEnabled as isModuleMockEnabled } from './mocks';
 
 // Ids, títulos y entidades copiados de `ActivitySeeder` del backend.
 //
-// El catálogo ya no pasa por aquí: `B2-07` entregó `GET /api/activities` y
-// `GET /api/activities/{id}`, y el módulo `CATALOG` va contra el backend real.
-// Lo que queda alimenta el listado de administración (`B2-05`), el de la entidad
-// colaboradora (`B2-13`) y la cancelación, que siguen sin backend.
+// Ya no hay ningún módulo de actividades sin backend: `CATALOG` (`B2-07`) y
+// `ACTIVITY` (`B2-05`, el listado de administración y la cancelación) van contra
+// el backend real. Este mock se queda como escotilla para trabajar con el
+// backend apagado, `VITE_USE_CATALOG_MOCKS=true` o `VITE_USE_ACTIVITY_MOCKS=true`.
+// Las actividades de la entidad (`B2-13`) viven en `orgApi.js`, con su propia
+// clave `ORG_ACTIVITY`.
 //
 // Los ids son los de la semilla, y eso importa: `RegistrationsProvider` los cruza
 // con los que devuelve `/registrations/me`, y `RegisterButton` manda el id a
@@ -185,42 +187,6 @@ function mockGetAdminActivities(params = {}) {
   });
 }
 
-function getPartnerOrganizationName() {
-  try {
-    const serializedUser = localStorage.getItem('user');
-    if (!serializedUser) return null;
-    const user = JSON.parse(serializedUser);
-    return user?.organization ?? user?.name ?? null;
-  } catch {
-    return null;
-  }
-}
-
-function mockGetPartnerActivities(params = {}) {
-  const partnerName = getPartnerOrganizationName();
-  let results = partnerName
-    ? MOCK_ACTIVITIES.filter((a) => a.organizationName === partnerName)
-    : [...MOCK_ACTIVITIES];
-
-  if (params.status) {
-    results = results.filter((activity) => activity.status === params.status);
-  }
-  const page = Math.max(0, Number(params.page) || 0);
-  const size = Number(params.size) || 10;
-  const start = page * size;
-  const content = results.slice(start, start + size);
-
-  return Promise.resolve({
-    data: {
-      content,
-      number: page,
-      size,
-      totalElements: results.length,
-      totalPages: Math.ceil(results.length / size),
-    },
-  });
-}
-
 // Ya no la usa la ficha pública, que va contra el backend. Se queda porque
 // `mockGetAdminActivity` construye su respuesta a partir de ella.
 function mockGetActivityDetail(id) {
@@ -271,8 +237,8 @@ function mockCancelActivity(id) {
   return Promise.resolve({ status: 204 });
 }
 
-// Dos interruptores, no uno: el catálogo ya tiene backend y el listado de
-// administración y el de la entidad no. Ver el comentario de `src/api/mocks.js`.
+// Dos interruptores, no uno: el catálogo y el listado de administración se
+// integraron por separado y cada uno tiene su escotilla. Ver `src/api/mocks.js`.
 const isMockEnabled = () => isModuleMockEnabled('ACTIVITY');
 const isCatalogMockEnabled = () => isModuleMockEnabled('CATALOG');
 
@@ -285,7 +251,7 @@ const pickParams = (params = {}, allowed = []) => Object.fromEntries(
 export const getAdminActivities = (params) =>
   isMockEnabled()
     ? mockGetAdminActivities(params)
-    : client.get('/admin/activities', { params: pickParams(params, ['status', 'page']) });
+    : client.get('/admin/activities', { params: pickParams(params, ['status', 'page', 'size']) });
 export const getActivities = (params = {}) => (
   isCatalogMockEnabled()
     ? mockGetCatalog(params)
@@ -311,14 +277,12 @@ export const cancelActivity = (id) =>
 // evidencia del cierre, que va por `FileStorageService`.
 
 export const getPendingActivities = (params = {}) => (
-  client.get('/admin/activities/pending', { params: pickParams(params, ['page']) })
+  client.get('/admin/activities/pending', { params: pickParams(params, ['page', 'size']) })
 );
 export const approveActivity = (id) => client.patch(`/admin/activities/${id}/approve`);
 export const returnActivity = (id, note) => (
   client.patch(`/admin/activities/${id}/return`, { note })
 );
 
-export const getPartnerActivities = (params = {}) =>
-  isMockEnabled()
-    ? mockGetPartnerActivities(params)
-    : client.get('/org/activities', { params: pickParams(params, ['status', 'page']) });
+// `getPartnerActivities` vivía aquí y era un segundo camino hacia
+// `/org/activities`. El único es `getOrgActivities`, en `orgApi.js`.

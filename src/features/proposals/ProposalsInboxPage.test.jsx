@@ -11,19 +11,19 @@ vi.mock('../../api/proposalsApi', () => ({
 }));
 
 const NEW_PROPOSAL = {
-  id: 1, organizationName: 'Fundación Solitaria', line: 'desoledad',
+  id: 1, partnerName: 'Fundación Solitaria', suggestedLine: 'desoledad',
   description: 'Acompañamiento a personas mayores.', status: 'NEW',
   createdAt: '2026-08-20T10:00:00.000Z',
 };
 
 const ACCEPTED_PROPOSAL = {
-  id: 2, organizationName: 'Educamos Juntos', line: 'educar',
+  id: 2, partnerName: 'Educamos Juntos', suggestedLine: 'educar',
   description: 'Talleres de refuerzo escolar.', status: 'ACCEPTED',
   createdAt: '2026-08-10T09:15:00.000Z',
 };
 
 const REJECTED_PROPOSAL = {
-  id: 3, organizationName: 'Ayuda Directa', line: 'desoledad',
+  id: 3, partnerName: 'Ayuda Directa', suggestedLine: 'desoledad',
   description: 'Donación de alimentos.', status: 'REJECTED',
   createdAt: '2026-08-01T16:45:00.000Z',
 };
@@ -84,9 +84,21 @@ describe('ProposalsInboxPage', () => {
     const row = await screen.findByText('Ayuda Directa');
     const tr = row.closest('tr');
     expect(within(tr).getByText('Rechazada')).toBeInTheDocument();
-    expect(within(tr).getByText('—')).toBeInTheDocument();
+    expect(within(tr).getAllByText('—').length).toBeGreaterThan(0);
     expect(within(tr).queryByText('Rechazar')).not.toBeInTheDocument();
     expect(within(tr).queryByText('Ver actividad')).not.toBeInTheDocument();
+  });
+
+  it('paints a proposal from the public form, without partner, as «Sin entidad»', async () => {
+    getProposals.mockResolvedValue({
+      data: { content: [{ ...NEW_PROPOSAL, id: 9, partnerName: null, suggestedLine: null, estimatedVolunteers: 4 }], totalPages: 1 },
+    });
+    renderPage();
+
+    const row = await screen.findByText('Sin entidad');
+    const tr = row.closest('tr');
+    expect(within(tr).getByText('4')).toBeInTheDocument();
+    expect(within(tr).getByRole('button', { name: /rechazar propuesta de sin entidad/i })).toBeInTheDocument();
   });
 
   it('shows empty state when there are no proposals', async () => {

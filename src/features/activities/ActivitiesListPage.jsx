@@ -6,12 +6,27 @@ import CancelActivityButton from './CancelActivityButton';
 import { formatDate } from '../../utils/dates';
 import PartnerActivityReviewActions from './PartnerActivityReviewActions';
 
+// Lo que cambia entre el inventario de administración (`/admin/activities`) y
+// la cola de revisión (`/admin/activities/pending`): la cola no filtra por
+// estado —todo está en `PENDING_APPROVAL`— y es la única que aprueba o
+// devuelve. El listado de la entidad ya no pasa por aquí: es `OrgActivitiesPage`.
 const DEFAULT_COLUMNS_CONFIG = {
   showPartnerColumn: true,
   showRegistrationsLink: true,
+  showFavoritesColumn: true,
+  showReviewActions: false,
+  showStatusFilter: true,
 };
 
+export const PENDING_REVIEW_PATH = '/admin/activities/pending';
+
 const PAGE_SIZE = 10;
+
+// Cancelar solo tiene sentido en lo que está vivo. El backend rechaza
+// `FINISHED` (409 `ACTIVITY_FINISHED`), `CANCELLED` (409
+// `ACTIVITY_NOT_EDITABLE`) y `PENDING_APPROVAL` (eso se devuelve, no se
+// cancela); un `DRAFT` sí se puede cancelar.
+const CANCELLABLE_STATUSES = new Set(['DRAFT', 'PUBLISHED', 'FULL', 'IN_PROGRESS']);
 
 const STATUS_OPTIONS = [
   { value: '', label: 'Todos los estados' },
@@ -24,7 +39,8 @@ const STATUS_OPTIONS = [
   { value: 'CANCELLED', label: 'Cancelada' },
 ];
 
-const STATUS_BADGES = {
+// Compartidas con `OrgActivitiesPage`: los estados son los mismos siete.
+export const ACTIVITY_STATUS_BADGES = {
   DRAFT: { label: 'Borrador', variant: 'neutral' },
   PENDING_APPROVAL: { label: 'Pendiente', variant: 'warning' },
   PUBLISHED: { label: 'Publicada', variant: 'success' },
@@ -54,7 +70,11 @@ export default function ActivitiesListPage({
   showCreateButton = true,
   showPartnerColumn = DEFAULT_COLUMNS_CONFIG.showPartnerColumn,
   showRegistrationsLink = DEFAULT_COLUMNS_CONFIG.showRegistrationsLink,
+  showFavoritesColumn = DEFAULT_COLUMNS_CONFIG.showFavoritesColumn,
+  showReviewActions = DEFAULT_COLUMNS_CONFIG.showReviewActions,
+  showStatusFilter = DEFAULT_COLUMNS_CONFIG.showStatusFilter,
   title = 'Proyectos',
+  emptyDescription = null,
   eyebrow = 'Administración',
   createPath = '/activities/new',
 }) {
@@ -73,7 +93,9 @@ export default function ActivitiesListPage({
     const loadActivities = async () => {
       setRequestState({ status: 'loading', error: null });
       try {
-        const params = { page: page - 1 };
+        // `size` va explícito: la pantalla pagina de 10 en 10 y el backend
+        // sirve 20 por defecto; sin él, el recuento y las páginas no cuadran.
+        const params = { page: page - 1, size: PAGE_SIZE };
         if (statusFilter) params.status = statusFilter;
 
         const response = await fetchData(params);
@@ -119,7 +141,7 @@ export default function ActivitiesListPage({
       key: 'status',
       label: 'Estado',
       render: (activity) => {
-        const badge = STATUS_BADGES[activity.status];
+        const badge = ACTIVITY_STATUS_BADGES[activity.status];
         return badge
           ? <Badge variant={badge.variant}>{badge.label}</Badge>
           : activity.status ?? '—';
@@ -138,34 +160,41 @@ export default function ActivitiesListPage({
         ?? activity.maxParticipants
         ?? '—',
     },
-    {
+    ...(showFavoritesColumn ? [{
       key: 'favoriteCount',
       label: 'Favoritos',
       render: (activity) => activity.favoriteCount ?? activity.favoritesCount ?? 0,
-    },
+    }] : []),
     {
       key: 'actions',
       label: 'Acciones',
       render: (activity) => (
         <div className="activities-list__actions">
-          {activity.status === 'PENDING_APPROVAL' ? (
+          {activity.status === 'PENDING_APPROVAL' && (showReviewActions ? (
             <PartnerActivityReviewActions
               activity={activity}
               onReviewed={(result) => {
-                setNotice(result === 'approved'
-                  ? 'El proyecto se ha aprobado correctamente.'
-                  : 'El proyecto se ha devuelto a la entidad.');
+                setNotice({
+                  approved: 'La propuesta se ha aprobado y ya está en el catálogo.',
+                  returned: 'La propuesta se ha devuelto a la entidad.',
+                  stale: 'Otra persona ya había revisado esta propuesta. La lista se ha actualizado.',
+                }[result] ?? '');
                 setReloadKey((current) => current + 1);
               }}
             />
-          ) : activity.status === 'DRAFT' ? (
+          ) : (
+            <Link className="button button--primary button--small" to={PENDING_REVIEW_PATH}>
+              Revisar
+            </Link>
+          ))}
+          {activity.status === 'DRAFT' && (
             <Link
               className="button button--secondary button--small"
               to={`/activities/${activity.id}/edit`}
             >
               Editar
             </Link>
-          ) : null}
+          )}
           {showRegistrationsLink && (
             <Link
               className="button button--secondary button--small"
@@ -177,7 +206,7 @@ export default function ActivitiesListPage({
               Inscripciones
             </Link>
           )}
-          {activity.status !== 'PENDING_APPROVAL' && (
+          {CANCELLABLE_STATUSES.has(activity.status) && (
             <CancelActivityButton
               activity={activity}
               onCancelled={() => {
@@ -208,13 +237,15 @@ export default function ActivitiesListPage({
         )}
       </header>
 
-      <div className="activities-list__toolbar">
-        <Select label="Filtrar por estado" value={statusFilter} onChange={handleStatusChange}>
-          {STATUS_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
-          ))}
-        </Select>
-      </div>
+      {showStatusFilter && (
+        <div className="activities-list__toolbar">
+          <Select label="Filtrar por estado" value={statusFilter} onChange={handleStatusChange}>
+            {STATUS_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </Select>
+        </div>
+      )}
 
       {notice && <p className="activities-list__notice" role="status">{notice}</p>}
 
@@ -242,8 +273,8 @@ export default function ActivitiesListPage({
       {requestState.status === 'success' && activities.length === 0 && (
         <EmptyState
           title={`No hay ${titleLower}`}
-          description={`No se encontraron ${titleLower} con los filtros seleccionados.`}
-          action={(
+          description={emptyDescription ?? `No se encontraron ${titleLower} con los filtros seleccionados.`}
+          action={showStatusFilter ? (
             <Button
               variant="secondary"
               onClick={() => {
@@ -253,7 +284,7 @@ export default function ActivitiesListPage({
             >
               Limpiar filtros
             </Button>
-          )}
+          ) : null}
         />
       )}
 

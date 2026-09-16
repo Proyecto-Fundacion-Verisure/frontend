@@ -28,6 +28,14 @@ export default function Modal({
   const descriptionId = useId();
   const dialogRef = useRef(null);
 
+  // `onClose` suele ser una arrow inline que cambia en cada render. Si el
+  // efecto dependiera de ella, se rearmaría con cada tecla escrita en un campo
+  // del modal y volvería a enfocar el primer elemento (la × de cerrar), y no se
+  // podía escribir una palabra seguida. Se leen desde una ref y el efecto solo
+  // depende de `isOpen`.
+  const latest = useRef({ onClose, closeDisabled });
+  latest.current = { onClose, closeDisabled };
+
   useEffect(() => {
     if (!isOpen) return undefined;
 
@@ -48,8 +56,8 @@ export default function Modal({
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         event.preventDefault();
-        if (closeDisabled) return;
-        onClose?.();
+        if (latest.current.closeDisabled) return;
+        latest.current.onClose?.();
         return;
       }
 
@@ -82,7 +90,7 @@ export default function Modal({
       }
       previouslyFocused?.focus?.();
     };
-  }, [isOpen, onClose, closeDisabled]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

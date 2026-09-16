@@ -8,7 +8,7 @@ import {
   publishActivity,
   updateActivity,
 } from '../../api/activitiesApi';
-import { createOrgActivity } from '../../api/orgApi';
+import { createOrgActivity, getOrgActivities, updateOrgActivity } from '../../api/orgApi';
 import { AuthContext } from '../auth/AuthContext';
 import ActivityFormPage from './ActivityFormPage';
 
@@ -21,6 +21,7 @@ vi.mock('../../api/activitiesApi', () => ({
 
 vi.mock('../../api/orgApi', () => ({
   createOrgActivity: vi.fn(),
+  getOrgActivities: vi.fn(),
   submitOrgActivity: vi.fn(),
   updateOrgActivity: vi.fn(),
 }));
@@ -57,27 +58,28 @@ const EDIT_ACTIVITY = {
   id: 12,
   title: 'Mentoría digital',
   description: 'Acompañamiento para reducir la brecha digital.',
-  line: 'EDUCAR',
-  modality: 'PRESENCIAL',
-  maxParticipants: 15,
+  line: 'educar',
+  mode: 'PRESENCIAL',
+  location: 'Madrid',
+  spots: 15,
   hours: 3,
-  startDate: '2026-10-10T09:00:00Z',
-  endDate: '2026-10-10T12:00:00Z',
-  registrationDeadline: '2026-10-08T21:59:00Z',
-  imageUrl: 'https://example.com/activity.jpg',
+  startDate: '2026-10-10',
+  endDate: '2026-10-10',
+  registrationDeadline: '2026-10-08',
   status: 'DRAFT',
+  partnerName: null,
 };
 
 async function fillValidForm(user) {
   await user.type(screen.getByLabelText(/título/i), 'Taller de code');
   await user.selectOptions(screen.getByLabelText(/línea/i), 'educar');
   await user.type(screen.getByLabelText(/descripción/i), 'Un taller para aprender a programar');
-  await user.selectOptions(screen.getByLabelText(/modalidad/i), 'presencial');
-  await user.type(screen.getByLabelText(/máximo de participantes/i), '15');
+  await user.selectOptions(screen.getByLabelText(/modalidad/i), 'PRESENCIAL');
+  await user.type(screen.getByLabelText(/^plazas/i), '15');
   await user.type(screen.getByLabelText(/horas estimadas/i), '3');
-  await user.type(screen.getByLabelText(/fecha y hora de inicio/i), '2026-09-10T10:00');
-  await user.type(screen.getByLabelText(/fecha y hora de fin/i), '2026-09-10T13:00');
-  await user.type(screen.getByLabelText(/fecha límite de inscripción/i), '2026-09-08T23:59');
+  await user.type(screen.getByLabelText(/fecha de inicio/i), '2026-09-10');
+  await user.type(screen.getByLabelText(/fecha de fin/i), '2026-09-10');
+  await user.type(screen.getByLabelText(/fecha límite de inscripción/i), '2026-09-08');
 }
 
 beforeEach(() => {
@@ -86,6 +88,8 @@ beforeEach(() => {
   publishActivity.mockReset();
   updateActivity.mockReset();
   createOrgActivity.mockReset();
+  getOrgActivities.mockReset();
+  updateOrgActivity.mockReset();
 });
 
 describe('ActivityFormPage', () => {
@@ -96,10 +100,10 @@ describe('ActivityFormPage', () => {
     expect(screen.getByLabelText(/línea/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/descripción/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/modalidad/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/máximo de participantes/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^plazas/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/horas estimadas/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/fecha y hora de inicio/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/fecha y hora de fin/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/fecha de inicio/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/fecha de fin/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/fecha límite de inscripción/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /guardar borrador/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /^publicar actividad$/i })).toBeInTheDocument();
@@ -122,11 +126,11 @@ describe('ActivityFormPage', () => {
     renderForm();
 
     await fillValidForm(user);
-    await user.clear(screen.getByLabelText(/fecha y hora de fin/i));
-    await user.type(screen.getByLabelText(/fecha y hora de fin/i), '2026-09-09T10:00');
+    await user.clear(screen.getByLabelText(/fecha de fin/i));
+    await user.type(screen.getByLabelText(/fecha de fin/i), '2026-09-09');
     await user.click(screen.getByRole('button', { name: /guardar borrador/i }));
 
-    expect(await screen.findByText(/la fecha de fin debe ser posterior/i)).toBeInTheDocument();
+    expect(await screen.findByText(/la fecha de fin no puede ser anterior/i)).toBeInTheDocument();
     expect(createActivity).not.toHaveBeenCalled();
   });
 
@@ -139,12 +143,19 @@ describe('ActivityFormPage', () => {
     await user.click(screen.getByRole('button', { name: /guardar borrador/i }));
 
     await waitFor(() => expect(createActivity).toHaveBeenCalledTimes(1));
-    expect(createActivity).toHaveBeenCalledWith(expect.objectContaining({
+    // Exactamente `CreateActivityRequest`: fechas `YYYY-MM-DD`, `mode` y `spots`.
+    expect(createActivity).toHaveBeenCalledWith({
       title: 'Taller de code',
+      description: 'Un taller para aprender a programar',
       line: 'educar',
-      maxParticipants: 15,
+      mode: 'PRESENCIAL',
+      location: null,
+      startDate: '2026-09-10',
+      endDate: '2026-09-10',
+      registrationDeadline: '2026-09-08',
       hours: 3,
-    }));
+      spots: 15,
+    });
     expect(publishActivity).not.toHaveBeenCalled();
     expect(await screen.findByRole('heading', { name: /tu borrador está guardado/i })).toBeInTheDocument();
   });
@@ -242,8 +253,10 @@ describe('ActivityFormPage', () => {
     expect(getAdminActivity).toHaveBeenCalledWith('12');
     expect(screen.getByLabelText(/título/i)).toHaveValue('Mentoría digital');
     expect(screen.getByLabelText(/línea/i)).toHaveValue('educar');
-    expect(screen.getByLabelText(/modalidad/i)).toHaveValue('presencial');
-    expect(screen.getByLabelText(/máximo de participantes/i)).toHaveValue(15);
+    expect(screen.getByLabelText(/modalidad/i)).toHaveValue('PRESENCIAL');
+    expect(screen.getByLabelText(/lugar/i)).toHaveValue('Madrid');
+    expect(screen.getByLabelText(/^plazas/i)).toHaveValue(15);
+    expect(screen.getByLabelText(/fecha de inicio/i)).toHaveValue('2026-10-10');
     expect(screen.getByLabelText(/horas estimadas/i)).toHaveValue(3);
     expect(screen.queryByRole('button', { name: /publicar actividad/i })).not.toBeInTheDocument();
   });
@@ -261,11 +274,78 @@ describe('ActivityFormPage', () => {
 
     await waitFor(() => expect(updateActivity).toHaveBeenCalledWith('12', expect.objectContaining({
       title: 'Mentoría avanzada',
-      maxParticipants: 15,
+      mode: 'PRESENCIAL',
+      location: 'Madrid',
+      spots: 15,
       hours: 3,
+      startDate: '2026-10-10',
     })));
     expect(createActivity).not.toHaveBeenCalled();
     expect(await screen.findByRole('heading', { name: /la actividad se ha actualizado/i })).toBeInTheDocument();
+  });
+
+  it('edits a partner draft from the list row without calling the admin detail', async () => {
+    const row = {
+      id: 901,
+      title: 'Taller de memoria',
+      line: 'desoledad',
+      mode: 'PRESENCIAL',
+      location: 'Barcelona',
+      startDate: '2026-11-10',
+      endDate: '2026-11-10',
+      registrationDeadline: '2026-11-03',
+      hours: 3,
+      spots: 6,
+      occupiedSpots: 0,
+      status: 'DRAFT',
+      reviewNote: 'Concreta el lugar.',
+    };
+    updateOrgActivity.mockResolvedValue({ data: row });
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={[{ pathname: '/org/activities/901/edit', state: { activity: row } }]}>
+        <AuthContext.Provider value={{ user: { role: 'PARTNER', status: 'ACTIVE' } }}>
+          <Routes>
+            <Route path="/org/activities/:activityId/edit" element={<ActivityFormPage backPath="/org/activities" />} />
+          </Routes>
+        </AuthContext.Provider>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByLabelText(/título/i)).toHaveValue('Taller de memoria');
+    expect(getAdminActivity).not.toHaveBeenCalled();
+    expect(getOrgActivities).not.toHaveBeenCalled();
+    expect(screen.getByText(/comentario de la fundación/i)).toBeInTheDocument();
+    expect(screen.getByText('Concreta el lugar.')).toBeInTheDocument();
+    expect(screen.getByText(/volver a escribir la descripción/i)).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText(/descripción/i), 'Ejercicios de memoria para mayores.');
+    await user.click(screen.getByRole('button', { name: /guardar cambios/i }));
+
+    await waitFor(() => expect(updateOrgActivity).toHaveBeenCalledWith('901', expect.objectContaining({
+      description: 'Ejercicios de memoria para mayores.',
+      spots: 6,
+    })));
+    expect(updateActivity).not.toHaveBeenCalled();
+  });
+
+  it('looks the partner draft up in the list when entered by URL', async () => {
+    getOrgActivities.mockResolvedValue({
+      data: { content: [{ id: 7, title: 'Otra' }, { id: 901, title: 'Por URL', status: 'DRAFT' }], totalPages: 1 },
+    });
+    render(
+      <MemoryRouter initialEntries={['/org/activities/901/edit']}>
+        <AuthContext.Provider value={{ user: { role: 'PARTNER', status: 'ACTIVE' } }}>
+          <Routes>
+            <Route path="/org/activities/:activityId/edit" element={<ActivityFormPage backPath="/org/activities" />} />
+          </Routes>
+        </AuthContext.Provider>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByLabelText(/título/i)).toHaveValue('Por URL');
+    expect(getOrgActivities).toHaveBeenCalledWith({ page: 0, size: 50 });
+    expect(getAdminActivity).not.toHaveBeenCalled();
   });
 
   it('shows the forbidden state returned by the administrative endpoint', async () => {

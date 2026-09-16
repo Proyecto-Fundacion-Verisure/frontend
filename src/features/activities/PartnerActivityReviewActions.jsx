@@ -7,13 +7,23 @@ export default function PartnerActivityReviewActions({ activity, onReviewed }) {
   const [note, setNote] = useState('');
   const [state, setState] = useState({ status: 'idle', error: '' });
 
+  // 409 `ACTIVITY_NOT_PENDING_APPROVAL`: otra persona decidió antes (dos
+  // pestañas). La actividad ya no está en la cola, así que no hay error que
+  // arreglar aquí: se avisa y la lista se recarga.
+  const isStale = (error) => error?.code === 'ACTIVITY_NOT_PENDING_APPROVAL';
+
   const approve = async () => {
     setState({ status: 'approving', error: '' });
     try {
       await approveActivity(activity.id);
       onReviewed?.('approved');
     } catch (error) {
-      setState({ status: 'idle', error: error?.message || 'No se pudo aprobar la actividad.' });
+      if (isStale(error)) {
+        setState({ status: 'idle', error: '' });
+        onReviewed?.('stale');
+        return;
+      }
+      setState({ status: 'idle', error: error?.message || 'No se pudo aprobar la propuesta.' });
     }
   };
 
@@ -29,7 +39,15 @@ export default function PartnerActivityReviewActions({ activity, onReviewed }) {
       setIsReturnOpen(false);
       onReviewed?.('returned');
     } catch (error) {
-      setState({ status: 'idle', error: error?.message || 'No se pudo devolver la actividad.' });
+      if (isStale(error)) {
+        setState({ status: 'idle', error: '' });
+        setIsReturnOpen(false);
+        onReviewed?.('stale');
+        return;
+      }
+      // Incluye el 400 del backend si la nota llegara vacía pese al corte de
+      // arriba: se pinta dentro del modal, bajo el campo.
+      setState({ status: 'idle', error: error?.message || 'No se pudo devolver la propuesta.' });
     }
   };
 
@@ -58,7 +76,7 @@ export default function PartnerActivityReviewActions({ activity, onReviewed }) {
       <Modal
         isOpen={isReturnOpen}
         onClose={() => state.status !== 'returning' && setIsReturnOpen(false)}
-        title="Devolver actividad"
+        title="Devolver propuesta"
         description="Explica a la entidad qué información debe corregir."
         footer={(
           <>
