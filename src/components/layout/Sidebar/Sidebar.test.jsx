@@ -14,12 +14,16 @@ function renderSidebar(role) {
 }
 
 describe('Sidebar PARTNER navigation', () => {
-  it('renders exactly three links for PARTNER role', () => {
+  it('renders only the partner links', () => {
     renderSidebar('PARTNER');
 
-    expect(screen.getByText('Mis proyectos')).toBeInTheDocument();
-    expect(screen.getByText('Cierres')).toBeInTheDocument();
+    // La entidad propone actividades, no las publica: su pantalla es «Mis
+    // propuestas», repartida en pendientes y aprobadas. Los cierres son de la
+    // Fundación y de la plantilla, no de la entidad.
+    expect(screen.getByText('Nueva propuesta')).toBeInTheDocument();
     expect(screen.getByText('Mis propuestas')).toBeInTheDocument();
+    expect(screen.queryByText('Mis proyectos')).not.toBeInTheDocument();
+    expect(screen.queryByText('Cierres')).not.toBeInTheDocument();
   });
 
   it('does not render admin-only links for PARTNER', () => {
@@ -31,6 +35,15 @@ describe('Sidebar PARTNER navigation', () => {
 });
 
 describe('Sidebar ADMIN navigation', () => {
+  it('links the review queue next to the closures queue', () => {
+    renderSidebar('ADMIN');
+
+    expect(screen.getByRole('link', { name: /revisión de propuestas/i })).toHaveAttribute(
+      'href',
+      '/admin/activities/pending',
+    );
+  });
+
   it('links Nuevo proyecto to the registered admin route', () => {
     renderSidebar('ADMIN');
 

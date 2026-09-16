@@ -105,6 +105,27 @@
   margin: space('4') 0 0;
 }
 
+// El comentario con el que la Fundación devolvió la actividad, y el aviso de
+// que la descripción no se recupera al editar.
+.activity-form__review-note,
+.activity-form__notice {
+  border-radius: $radius-md;
+  margin: 0 0 space('4');
+  padding: space('4');
+}
+
+.activity-form__review-note {
+  background: $color-warning-light;
+  border: 1px solid $color-warning;
+  color: $color-warning;
+}
+
+.activity-form__notice {
+  background: $color-info-light;
+  border: 1px solid $color-info;
+  color: $color-info;
+}
+
 .activity-form-page--success,
 .activity-form--success {
   max-width: 42rem;

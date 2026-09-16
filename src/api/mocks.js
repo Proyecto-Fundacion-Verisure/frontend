@@ -2,15 +2,19 @@
  * Interruptor de mocks, en dos niveles.
  *
  * Mientras haya módulos sin backend, apagar los mocks tiene que poder hacerse
- * módulo a módulo: login, inscripciones y catálogo ya están integrados, pero
- * dashboard, propuestas y rol entidad no tienen backend todavía y necesitan
- * seguir en falso.
+ * módulo a módulo: login, inscripciones, catálogo, actividades, alta de entidad,
+ * actividades y propuestas de la entidad y bandeja de propuestas ya están
+ * integrados, pero dashboard, cierre, cuentas de entidad y el formulario público
+ * de propuestas no tienen backend todavía y necesitan seguir en falso.
  *
- * El catálogo tiene clave propia, `CATALOG`, separada de `ACTIVITY`: `B2-07`
- * entregó `GET /api/activities` y `GET /api/activities/{id}`, pero el listado de
- * administración y el de la entidad (`B2-05`, `B2-13`) siguen sin backend. Con
- * una sola clave para las dos cosas, encender el catálogo mandaría
- * `/admin/activities` y `/org/activities` contra endpoints que no existen.
+ * Las claves van por backend, no por fichero. `orgApi.js` reparte cuatro:
+ * `ORG_REGISTER` (alta), `ORG_ACTIVITY` (actividades de la entidad),
+ * `ORG_PROPOSAL` (propuestas de la entidad) y `ORG` (cuentas de entidad y
+ * dashboard, que siguen sin controlador). Y `proposalsApi.js` dos:
+ * `PROPOSAL_INBOX` (bandeja y detalle del admin) y `PROPOSAL` (el formulario
+ * público de la landing, `POST /api/proposals`, sin controlador). Con una sola
+ * clave, encender lo integrado mandaría `/admin/org-accounts`, `/org/dashboard` y
+ * `/proposals` contra endpoints que no existen y devuelven 404.
  *
  *   VITE_USE_MOCKS=false                 apaga todos los módulos
  *   VITE_USE_REGISTRATION_MOCKS=false    apaga solo ese, dejando el resto
@@ -40,7 +44,16 @@
  * remockearlos; solo su propia variable de módulo, que sigue siendo la
  * escotilla para trabajar con el backend apagado.
  */
-const INTEGRATED = new Set(['AUTH', 'REGISTRATION', 'CATALOG']);
+const INTEGRATED = new Set([
+  'AUTH',
+  'REGISTRATION',
+  'CATALOG',
+  'ACTIVITY',
+  'ORG_REGISTER',
+  'ORG_ACTIVITY',
+  'ORG_PROPOSAL',
+  'PROPOSAL_INBOX',
+]);
 
 export const isMockEnabled = (module) => {
   if (!import.meta.env.DEV) return false;

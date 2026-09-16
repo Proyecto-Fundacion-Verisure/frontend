@@ -1,5 +1,6 @@
 import {
   LayoutDashboard,
+  ClipboardCheck,
   ClipboardList,
   FileText,
   Compass,
@@ -49,6 +50,12 @@ export const NAV_SECTIONS_BY_ROLE = {
           badgeKey: "inscriptions",
         },
         {
+          path: "/admin/activities/pending",
+          label: "Revisión de propuestas",
+          icon: ClipboardCheck,
+          badgeKey: "pendingReview",
+        },
+        {
           path: "/admin/activities/pending-closure",
           label: "Cierres",
           icon: CheckCircle2,
@@ -91,27 +98,19 @@ export const NAV_SECTIONS_BY_ROLE = {
     {
       section: "Gestión",
       items: [
+        // La entidad no publica actividades: propone. Lo que rellena en
+        // `/org/activities` es una propuesta de actividad que la Fundación
+        // aprueba o devuelve, y solo al aprobarla pasa al catálogo.
         {
           path: "/org/activities/new",
-          label: "Nuevo proyecto",
+          label: "Nueva propuesta",
           icon: CirclePlus,
           variant: "cta",
         },
         {
           path: "/org/activities",
-          label: "Mis proyectos",
-          icon: ClipboardList,
-        },
-        {
-          path: "/org/proposals",
           label: "Mis propuestas",
-          icon: FileText,
-          badgeKey: "proposals",
-        },
-        {
-          path: "/org/reports",
-          label: "Cierres",
-          icon: CheckCircle2,
+          icon: ClipboardList,
         },
       ],
     },

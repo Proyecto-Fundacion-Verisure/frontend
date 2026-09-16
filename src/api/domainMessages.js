@@ -13,7 +13,11 @@ export const MENSAJES = Object.freeze({
   CLOSURE_ALREADY_CLOSED: 'El cierre de esta participación ya está completado.',
   ACTIVITY_FINISHED: 'La actividad ya ha finalizado y no admite esta acción.',
   ACTIVITY_NOT_EDITABLE: 'La actividad no se puede editar en su estado actual.',
-  CIF_ALREADY_REGISTERED: 'Ya existe una entidad registrada con este CIF.',
+  // Los dos 409 del alta hablan del correo, no del CIF: un CIF que ya existe no
+  // es un error, la cuenta nueva se cuelga de la entidad que ya había (§6.1).
+  CIF_ALREADY_REGISTERED: 'Este correo ya tiene una cuenta en esta entidad.',
+  EMAIL_ALREADY_REGISTERED: 'Este correo ya está registrado. Inicia sesión o usa otro.',
+  ACTIVITY_NOT_PENDING_APPROVAL: 'La actividad ya no está pendiente de revisión.',
   PROPOSAL_ALREADY_DECIDED: 'La propuesta ya ha sido aceptada o rechazada.',
   VERIFICATION_EXPIRED: 'El enlace de verificación ha caducado. Solicita uno nuevo.',
   RATE_LIMIT_EXCEEDED: 'Se han realizado demasiadas solicitudes. Inténtalo más tarde.',

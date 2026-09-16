@@ -3,8 +3,8 @@ import LandingPage from '../features/landing/LandingPage';
 import LoginPage from '../features/auth/LoginPage';
 import DashboardPage from '../features/dashboard/DashboardPage';
 import CatalogPage from '../features/activities/CatalogPage';
-import ActivitiesListPage from '../features/activities/ActivitiesListPage';
-import { getPartnerActivities } from '../api/activitiesApi';
+import ActivitiesListPage, { PENDING_REVIEW_PATH } from '../features/activities/ActivitiesListPage';
+import { getPendingActivities } from '../api/activitiesApi';
 import UiShowcase from '../components/ui/UiShowcase/UiShowcase';
 import PublicLayout from '../components/layout/PublicLayout/PublicLayout';
 import ProtectedRoute from './ProtectedRoute';
@@ -14,8 +14,7 @@ import OrgRegisterPage from '../features/orgs/OrgRegisterPage';
 import ActivityFormPage from '../features/activities/ActivityFormPage';
 import OrgImpactPage from '../features/orgs/OrgImpactPage';
 import OrgDashboardPage from '../features/orgs/OrgDashboardPage';
-import OrgProposalsPage from '../features/orgs/OrgProposalsPage';
-import OrgProposalFormPage from '../features/orgs/OrgProposalFormPage';
+import OrgActivitiesPage from '../features/orgs/OrgActivitiesPage';
 import ProposalsInboxPage from '../features/proposals/ProposalsInboxPage';
 import ProposalDetailPage from '../features/proposals/ProposalDetailPage';
 import AccountStatusPage from '../features/orgs/AccountStatusPage';
@@ -70,6 +69,24 @@ export default function AppRouter() {
             <Route path="/activities/:activityId/registrations" element={<RegistrationsTablePage />} />
             <Route path="/activities/:activityId/edit" element={<ActivityFormPage backPath="/admin/activities" />} />
             <Route path="/admin/activities" element={<ActivitiesListPage />} />
+            {/* La cola de revisión: lo que las entidades han propuesto y espera
+                decisión. Es una cola, no un inventario: sin filtro de estado y
+                en orden ascendente, lo que más lleva esperando primero. */}
+            <Route
+              path={PENDING_REVIEW_PATH}
+              element={(
+                <ActivitiesListPage
+                  fetchData={getPendingActivities}
+                  title="Propuestas pendientes de revisión"
+                  eyebrow="Administración"
+                  showCreateButton={false}
+                  showStatusFilter={false}
+                  showRegistrationsLink={false}
+                  showReviewActions={true}
+                  emptyDescription="Ninguna entidad tiene propuestas esperando decisión."
+                />
+              )}
+            />
             <Route path="/admin/account-status" element={<AccountStatusPage />} />
             <Route path="/admin/activities/pending-closure" element={<PendingClosurePage />} />
             <Route path="/admin/activities/:activityId/closure" element={<ActivityClosurePage />} />
@@ -91,24 +108,16 @@ export default function AppRouter() {
           </Route>
           <Route element={<RoleRoute roles={['PARTNER']} />}>
             <Route path="/org/dashboard" element={<OrgDashboardPage />} />
-            <Route
-              path="/org/activities"
-              element={
-                <ActivitiesListPage
-                  fetchData={getPartnerActivities}
-                  showCreateButton={true}
-                  createPath="/org/activities/new"
-                  showPartnerColumn={false}
-                  showRegistrationsLink={false}
-                  title="Mis proyectos"
-                  eyebrow="Entidad colaboradora"
-                />
-              }
-            />
+            <Route path="/org/activities" element={<OrgActivitiesPage />} />
             <Route path="/org/activities/new" element={<ActivityFormPage backPath="/org/activities" />} />
+            <Route path="/org/activities/:activityId/edit" element={<ActivityFormPage backPath="/org/activities" />} />
             <Route path="/org/reports" element={<OrgImpactPage />} />
-            <Route path="/org/proposals" element={<OrgProposalsPage />} />
-            <Route path="/org/proposals/new" element={<OrgProposalFormPage />} />
+            {/* `/org/proposals` (la propuesta de cuatro campos que la Fundación
+                completa) salió del backoffice de la entidad: con cuenta, la
+                entidad propone la actividad entera en `/org/activities` y ese
+                camino queda para el formulario público de la landing. */}
+            <Route path="/org/proposals" element={<Navigate to="/org/activities" replace />} />
+            <Route path="/org/proposals/new" element={<Navigate to="/org/activities/new" replace />} />
           </Route>
         </Route>
       </Route>

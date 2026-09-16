@@ -57,6 +57,33 @@
 
 .activities-list__activity-title { color: $color-navy; }
 
+// Los dos bloques de «Mis proyectos» de la entidad.
+.activities-list__group + .activities-list__group {
+  margin-top: space('8');
+}
+
+.activities-list__group-title {
+  color: $color-navy;
+  font-size: $font-size-lg;
+  margin: 0 0 space('3');
+
+  span {
+    color: $color-muted;
+    font-weight: normal;
+  }
+}
+
+.activities-list__group-empty {
+  color: $color-muted;
+  margin: 0;
+}
+
+.activities-list__review-note {
+  color: $color-warning;
+  font-size: $font-size-sm;
+  margin: space('1') 0 0;
+}
+
 .activities-list__actions {
   display: flex;
   flex-wrap: wrap;

@@ -2,21 +2,29 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../../features/auth/AuthContext';
 import { getPendingOrganizations } from '../../../api/orgApi';
 import { getRegistrationCounts } from '../../../api/registrationsApi';
+import { getPendingActivities } from '../../../api/activitiesApi';
+import { getProposals } from '../../../api/proposalsApi';
 import { DEMO_ACTIVITY_ID } from '../../../constants/demoActivity';
 
-// Cifras que todavía no puede dar nadie: propuestas y cierres no tienen backend.
-// `inscriptions` salía de aquí con un 5 fijo que no correspondía a nada, y ahora
-// viene de `/admin/registrations/counts`. El rol EMPLOYEE no pinta ningún globo,
-// así que su entrada tampoco llegaba a verse.
+// La única cifra que todavía no puede dar nadie: los cierres no tienen backend.
+// `inscriptions`, `proposals` y `pendingReview` vienen de sus endpoints; si uno
+// falla, el globo se queda en 0 y el menú se pinta igual: una cifra de adorno no
+// puede tumbar la navegación. El rol EMPLOYEE no pinta ningún globo.
 const COUNTS_BY_ROLE = {
-  ADMIN: { proposals: 3, closes: 2 },
-  PARTNER: { proposals: 1, closes: 4 },
+  ADMIN: { closes: 2 },
+  PARTNER: {},
 };
+
+// `totalElements` de la primera página con `size: 1`: el recuento sin traer filas.
+const countOf = (request) => request
+  .then((res) => Number(res.data?.totalElements ?? res.data?.length ?? 0) || 0);
 
 export function useSidebarCounts() {
   const { user } = useAuth();
   const [pendingAccounts, setPendingAccounts] = useState(0);
   const [unreviewed, setUnreviewed] = useState(0);
+  const [newProposals, setNewProposals] = useState(0);
+  const [pendingReview, setPendingReview] = useState(0);
 
   useEffect(() => {
     if (user?.role !== 'ADMIN') return;
@@ -43,6 +51,24 @@ export function useSidebarCounts() {
     return () => { cancelled = true; };
   }, [user?.role]);
 
+  useEffect(() => {
+    if (user?.role !== 'ADMIN') return;
+    let cancelled = false;
+    countOf(getProposals({ status: 'NEW', page: 0, size: 1 }))
+      .then((count) => { if (!cancelled) setNewProposals(count); })
+      .catch(() => {});
+    countOf(getPendingActivities({ page: 0, size: 1 }))
+      .then((count) => { if (!cancelled) setPendingReview(count); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [user?.role]);
+
   const staticCounts = COUNTS_BY_ROLE[user?.role] ?? {};
-  return { ...staticCounts, pendingAccounts, inscriptions: unreviewed };
+  return {
+    ...staticCounts,
+    pendingAccounts,
+    inscriptions: unreviewed,
+    proposals: newProposals,
+    pendingReview,
+  };
 }

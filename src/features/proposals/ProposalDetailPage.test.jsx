@@ -30,12 +30,11 @@ function renderDetail(proposalId = '1') {
 
 const baseProposal = {
   id: 1,
-  organizationName: 'Fundación Solitaria',
-  cif: 'G12345678',
+  partnerName: 'Fundación Solitaria',
   contactName: 'María García',
   email: 'maria@solitaria.org',
   phone: '600 111 222',
-  line: 'desoledad',
+  suggestedLine: 'desoledad',
   description: 'Acompañamiento semanal a personas mayores.',
   estimatedVolunteers: 8,
   status: 'NEW',
@@ -54,7 +53,9 @@ describe('ProposalDetailPage', () => {
     renderDetail('1');
 
     expect(await screen.findByRole('heading', { name: /fundación solitaria/i })).toBeInTheDocument();
-    expect(screen.getByText('G12345678')).toBeInTheDocument();
+    // Sin CIF: `ProposalDetailResponse` no lo lleva. Entran beneficiarios y consentimiento.
+    expect(screen.queryByText('G12345678')).not.toBeInTheDocument();
+    expect(screen.getByText('Personas beneficiarias')).toBeInTheDocument();
     expect(screen.getByText('María García')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'maria@solitaria.org' })).toHaveAttribute('href', 'mailto:maria@solitaria.org');
     expect(screen.getByRole('link', { name: '600 111 222' })).toHaveAttribute('href', 'tel:600 111 222');
@@ -70,7 +71,7 @@ describe('ProposalDetailPage', () => {
     expect(await screen.findByRole('heading', { name: /fundación solitaria/i })).toBeInTheDocument();
     expect(getProposal).toHaveBeenCalledWith('2');
     unmount();
-    getProposal.mockResolvedValue({ data: { ...baseProposal, id: 2, organizationName: 'Educamos Juntos' } });
+    getProposal.mockResolvedValue({ data: { ...baseProposal, id: 2, partnerName: 'Educamos Juntos' } });
     renderDetail('2');
     expect(await screen.findByRole('heading', { name: /educamos juntos/i })).toBeInTheDocument();
   });

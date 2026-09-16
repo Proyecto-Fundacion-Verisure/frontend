@@ -32,6 +32,7 @@ export default function ProposalsInboxPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [actionError, setActionError] = useState('');
 
   const fetchProposals = useCallback(async () => {
     setLoading(true);
@@ -57,14 +58,21 @@ export default function ProposalsInboxPage() {
 
   useEffect(() => { setPage(1); }, [statusFilter]);
 
+  // 204 sin cuerpo: no hay nada que leer, se recarga la lista. El 409
+  // `PROPOSAL_ALREADY_DECIDED` llega traducido en `message`.
   const handleReject = async (id) => {
+    setActionError('');
     try {
       await rejectProposal(id);
       fetchProposals();
-    } catch {
-      // error silently — the user can retry
+    } catch (err) {
+      setActionError(err?.message || 'No se pudo rechazar la propuesta.');
     }
   };
+
+  // Nula cuando la propuesta llegó por el formulario público de una
+  // organización sin cuenta: la fila se pinta igual.
+  const partnerLabel = (row) => row.partnerName ?? 'Sin entidad';
 
   if (loading) {
     return (
@@ -97,27 +105,27 @@ export default function ProposalsInboxPage() {
 
   const columns = [
     {
-      key: 'organizationName',
+      key: 'partnerName',
       label: 'Organización',
       render: (row) => (
         <Link to={`/proposals/${row.id}`} className="proposals-inbox__link">
-          {row.organizationName}
+          {partnerLabel(row)}
         </Link>
       ),
     },
     {
-      key: 'line',
-      label: 'Línea',
-      render: (row) => row.line ? <Badge variant="info">{LINE_LABELS[row.line] || row.line}</Badge> : '—',
+      key: 'suggestedLine',
+      label: 'Línea sugerida',
+      render: (row) => row.suggestedLine
+        ? <Badge variant="info">{LINE_LABELS[row.suggestedLine] || row.suggestedLine}</Badge>
+        : '—',
     },
+    // `ProposalRow` no lleva la descripción (está en el detalle). Lo que sí
+    // viaja, y decide si interesa, es el voluntariado estimado.
     {
-      key: 'description',
-      label: 'Descripción',
-      render: (row) => (
-        <span title={row.description}>
-          {row.description?.length > 60 ? `${row.description.slice(0, 60)}…` : row.description}
-        </span>
-      ),
+      key: 'estimatedVolunteers',
+      label: 'Voluntariado',
+      render: (row) => row.estimatedVolunteers ?? '—',
     },
     {
       key: 'status',
@@ -142,14 +150,14 @@ export default function ProposalsInboxPage() {
               <Button
                 size="small"
                 onClick={() => handleReject(row.id)}
-                aria-label={`Rechazar propuesta de ${row.organizationName}`}
+                aria-label={`Rechazar propuesta de ${partnerLabel(row)}`}
               >
                 Rechazar
               </Button>
               <Link
                 className="button button--primary button--small"
                 to={`/proposals/${row.id}`}
-                aria-label={`Revisar propuesta de ${row.organizationName}`}
+                aria-label={`Revisar propuesta de ${partnerLabel(row)}`}
               >
                 Revisar
               </Link>
@@ -187,6 +195,10 @@ export default function ProposalsInboxPage() {
           </Select>
         </div>
       </div>
+
+      {actionError && (
+        <p className="proposals-inbox__error" role="alert">{actionError}</p>
+      )}
 
       {proposals.length === 0 ? (
         <EmptyState

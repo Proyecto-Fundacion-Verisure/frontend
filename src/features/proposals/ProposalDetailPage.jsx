@@ -100,7 +100,10 @@ export default function ProposalDetailPage() {
   if (!proposal) return null;
 
   const badge = STATUS_BADGE[proposal.status];
-  const lineLabel = LINE_LABELS[proposal.line] || proposal.line;
+  const lineLabel = LINE_LABELS[proposal.suggestedLine] || proposal.suggestedLine;
+  // `partnerName` y los tres datos de contacto son nulos en las propuestas que
+  // llegaron por el formulario público de una organización sin cuenta.
+  const partnerName = proposal.partnerName ?? 'Sin entidad';
 
   return (
     <section className="proposal-detail" aria-labelledby="proposal-detail-title">
@@ -108,7 +111,7 @@ export default function ProposalDetailPage() {
         ← Volver a la bandeja
       </Link>
       <div className="proposal-detail__header">
-        <h1 id="proposal-detail-title">{proposal.organizationName}</h1>
+        <h1 id="proposal-detail-title">{partnerName}</h1>
         {badge && <Badge variant={badge.variant}>{badge.label}</Badge>}
       </div>
 
@@ -116,39 +119,43 @@ export default function ProposalDetailPage() {
         <dl className="proposal-detail__meta">
           <div>
             <dt>Organización</dt>
-            <dd>{proposal.organizationName}</dd>
-          </div>
-          <div>
-            <dt>CIF</dt>
-            <dd>{proposal.cif}</dd>
+            <dd>{partnerName}</dd>
           </div>
           <div>
             <dt>Persona de contacto</dt>
-            <dd>{proposal.contactName}</dd>
+            <dd>{proposal.contactName ?? '—'}</dd>
           </div>
           <div>
             <dt>Correo</dt>
             <dd>
-              <a href={`mailto:${proposal.email}`}>{proposal.email}</a>
+              {proposal.email ? <a href={`mailto:${proposal.email}`}>{proposal.email}</a> : '—'}
             </dd>
           </div>
           <div>
             <dt>Teléfono</dt>
             <dd>
-              <a href={`tel:${proposal.phone}`}>{proposal.phone}</a>
+              {proposal.phone ? <a href={`tel:${proposal.phone}`}>{proposal.phone}</a> : '—'}
             </dd>
           </div>
           <div>
-            <dt>Línea</dt>
-            <dd>{lineLabel ? <Badge variant="info">{lineLabel}</Badge> : '—'}</dd>
+            <dt>Línea sugerida</dt>
+            <dd>{lineLabel ? <Badge variant="info">{lineLabel}</Badge> : 'Sin definir'}</dd>
           </div>
           <div>
             <dt>Voluntarios estimados</dt>
             <dd>{proposal.estimatedVolunteers ?? '—'}</dd>
           </div>
           <div>
+            <dt>Personas beneficiarias</dt>
+            <dd>{proposal.scope ?? '—'}</dd>
+          </div>
+          <div>
             <dt>Fecha</dt>
             <dd>{formatDateTime(proposal.createdAt)}</dd>
+          </div>
+          <div>
+            <dt>Consentimiento</dt>
+            <dd>{proposal.consentAt ? formatDateTime(proposal.consentAt) : '—'}</dd>
           </div>
         </dl>
         <div className="proposal-detail__description">
