@@ -26,9 +26,12 @@ function isSessionExpiry(error) {
   return isUnauthorized && !isLoginAttempt;
 }
 
+// Sin `Content-Type` por defecto: axios ya pone `application/json` cuando el
+// cuerpo es un objeto. Fijarlo aquí rompía el multipart de `POST /closures`,
+// porque con esa cabecera axios serializa el `FormData` a JSON en vez de dejar
+// que el navegador mande `multipart/form-data` con su `boundary`.
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? '/api',
-  headers: { 'Content-Type': 'application/json' },
   timeout: 15_000,
 });
 

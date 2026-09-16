@@ -3,8 +3,8 @@
  *
  * Mientras haya módulos sin backend, apagar los mocks tiene que poder hacerse
  * módulo a módulo: login, inscripciones, catálogo, actividades, alta de entidad,
- * actividades y propuestas de la entidad y bandeja de propuestas ya están
- * integrados, pero dashboard, cierre, cuentas de entidad y el formulario público
+ * actividades y propuestas de la entidad, bandeja de propuestas y cierres ya
+ * están integrados, pero dashboard, cuentas de entidad y el formulario público
  * de propuestas no tienen backend todavía y necesitan seguir en falso.
  *
  * Las claves van por backend, no por fichero. `orgApi.js` reparte cuatro:
@@ -53,6 +53,7 @@ const INTEGRATED = new Set([
   'ORG_ACTIVITY',
   'ORG_PROPOSAL',
   'PROPOSAL_INBOX',
+  'CLOSURE',
 ]);
 
 export const isMockEnabled = (module) => {

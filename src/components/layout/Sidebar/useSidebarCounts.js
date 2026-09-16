@@ -4,16 +4,12 @@ import { getPendingOrganizations } from '../../../api/orgApi';
 import { getRegistrationCounts } from '../../../api/registrationsApi';
 import { getPendingActivities } from '../../../api/activitiesApi';
 import { getProposals } from '../../../api/proposalsApi';
+import { getPendingActivityClosures } from '../../../api/closuresApi';
 import { DEMO_ACTIVITY_ID } from '../../../constants/demoActivity';
 
-// La única cifra que todavía no puede dar nadie: los cierres no tienen backend.
-// `inscriptions`, `proposals` y `pendingReview` vienen de sus endpoints; si uno
-// falla, el globo se queda en 0 y el menú se pinta igual: una cifra de adorno no
-// puede tumbar la navegación. El rol EMPLOYEE no pinta ningún globo.
-const COUNTS_BY_ROLE = {
-  ADMIN: { closes: 2 },
-  PARTNER: {},
-};
+// Todas las cifras vienen de sus endpoints; si uno falla, el globo se queda en
+// 0 y el menú se pinta igual: una cifra de adorno no puede tumbar la
+// navegación. Solo el rol ADMIN pinta globos.
 
 // `totalElements` de la primera página con `size: 1`: el recuento sin traer filas.
 const countOf = (request) => request
@@ -25,6 +21,7 @@ export function useSidebarCounts() {
   const [unreviewed, setUnreviewed] = useState(0);
   const [newProposals, setNewProposals] = useState(0);
   const [pendingReview, setPendingReview] = useState(0);
+  const [closes, setCloses] = useState(0);
 
   useEffect(() => {
     if (user?.role !== 'ADMIN') return;
@@ -60,15 +57,17 @@ export function useSidebarCounts() {
     countOf(getPendingActivities({ page: 0, size: 1 }))
       .then((count) => { if (!cancelled) setPendingReview(count); })
       .catch(() => {});
+    countOf(getPendingActivityClosures({ page: 0, size: 1 }))
+      .then((count) => { if (!cancelled) setCloses(count); })
+      .catch(() => {});
     return () => { cancelled = true; };
   }, [user?.role]);
 
-  const staticCounts = COUNTS_BY_ROLE[user?.role] ?? {};
   return {
-    ...staticCounts,
     pendingAccounts,
     inscriptions: unreviewed,
     proposals: newProposals,
     pendingReview,
+    closes,
   };
 }

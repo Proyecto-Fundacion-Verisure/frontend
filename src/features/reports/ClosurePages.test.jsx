@@ -43,7 +43,7 @@ describe('employee closure page', () => {
     getClosure.mockResolvedValue({ data: {} });
     submitClosure.mockResolvedValue({
       status: 201,
-      data: { closureId: 501, actualHours: 6, rating: 5, comment: 'Todo bien.' },
+      data: { id: 501, actualHours: 6, rating: 5, comment: 'Todo bien.' },
     });
     const user = userEvent.setup();
 
@@ -75,11 +75,11 @@ describe('employee closure page', () => {
 
   it('preloads the submitted hours and corrects it as 200 without duplicating the closure', async () => {
     getClosure.mockResolvedValue({
-      data: { closureId: 501, registrationId: 104, actualHours: 6, rating: 5, comment: 'Gran experiencia.' },
+      data: { id: 501, registrationId: 104, actualHours: 6, rating: 5, comment: 'Gran experiencia.' },
     });
     submitClosure.mockResolvedValue({
       status: 200,
-      data: { closureId: 501, registrationId: 104, actualHours: 4, rating: 5, comment: 'Gran experiencia.' },
+      data: { id: 501, registrationId: 104, actualHours: 4, rating: 5, comment: 'Gran experiencia.' },
     });
     const user = userEvent.setup();
 
@@ -115,11 +115,11 @@ describe('employee closure page', () => {
 
   it('warns when hours are reduced but still lets the correction be sent', async () => {
     getClosure.mockResolvedValue({
-      data: { closureId: 501, registrationId: 104, actualHours: 8, rating: 5 },
+      data: { id: 501, registrationId: 104, actualHours: 8, rating: 5 },
     });
     submitClosure.mockResolvedValue({
       status: 200,
-      data: { closureId: 501, registrationId: 104, actualHours: 5, rating: 5 },
+      data: { id: 501, registrationId: 104, actualHours: 5, rating: 5 },
     });
     const user = userEvent.setup();
 
@@ -147,7 +147,7 @@ describe('employee closure page', () => {
 
   it('does not block when entering more hours than the previous submission', async () => {
     getClosure.mockResolvedValue({
-      data: { closureId: 501, registrationId: 104, actualHours: 4, rating: 4 },
+      data: { id: 501, registrationId: 104, actualHours: 4, rating: 4 },
     });
     const user = userEvent.setup();
 
@@ -287,7 +287,7 @@ describe('employee closure page', () => {
   });
 
   it('sends the closure without evidence after removing the file', async () => {
-    submitClosure.mockResolvedValue({ status: 201, data: { closureId: 1, actualHours: 6, rating: 5 } });
+    submitClosure.mockResolvedValue({ status: 201, data: { id: 1, actualHours: 6, rating: 5 } });
     const user = userEvent.setup();
 
     render(
@@ -354,64 +354,6 @@ describe('employee closure page', () => {
     expect(alert).toHaveTextContent(/tamaño máximo/i);
     expect(alert.closest('.field')).toBeTruthy();
     expect(screen.getByRole('button', { name: /enviar cierre/i })).toBeEnabled();
-  });
-
-  it('shows the admin note while correcting a RETURNED closure, read-only', async () => {
-    getClosure.mockResolvedValue({
-      data: {
-        closureId: 501,
-        registrationId: 104,
-        actualHours: 6,
-        rating: 5,
-        comment: 'Gran experiencia.',
-        status: 'RETURNED',
-        adminNote: 'Faltan las horas del día 12.',
-      },
-    });
-    const user = userEvent.setup();
-
-    render(
-      <MemoryRouter initialEntries={['/closures/501']}>
-        <Routes>
-          <Route path="/closures/:closureId" element={<ClosureFormPage />} />
-        </Routes>
-      </MemoryRouter>,
-    );
-
-    expect(await screen.findByRole('heading', { name: /devuelto por la administración/i })).toBeInTheDocument();
-    const note = screen.getByTestId('closure-returned-note');
-    expect(note).toHaveTextContent('Faltan las horas del día 12.');
-    expect(screen.queryByRole('textbox', { name: /nota/i })).not.toBeInTheDocument();
-
-    await user.clear(screen.getByLabelText(/horas realizadas/i));
-    await user.type(screen.getByLabelText(/horas realizadas/i), '7');
-
-    expect(screen.getByTestId('closure-returned-note')).toHaveTextContent('Faltan las horas del día 12.');
-  });
-
-  it('does not show the admin note when the closure is not RETURNED', async () => {
-    getClosure.mockResolvedValue({
-      data: {
-        closureId: 501,
-        registrationId: 104,
-        actualHours: 6,
-        rating: 5,
-        status: 'PENDING',
-        adminNote: 'Nunca debería mostrarse.',
-      },
-    });
-
-    render(
-      <MemoryRouter initialEntries={['/closures/501']}>
-        <Routes>
-          <Route path="/closures/:closureId" element={<ClosureFormPage />} />
-        </Routes>
-      </MemoryRouter>,
-    );
-
-    expect(await screen.findByRole('heading', { name: /corregir tu cierre/i })).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: /devuelto por la administración/i })).not.toBeInTheDocument();
-    expect(screen.queryByText('Nunca debería mostrarse.')).not.toBeInTheDocument();
   });
 
   it('shows a dedicated message when the closure is not found (404)', async () => {

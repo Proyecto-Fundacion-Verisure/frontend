@@ -45,7 +45,9 @@ function valuesFromClosure(closure) {
     actualHours: closure?.actualHours != null ? String(closure.actualHours) : '',
     rating: closure?.rating != null ? String(closure.rating) : '',
     comment: closure?.comment ?? '',
-    evidenceConsent: Boolean(closure?.evidenceConsent),
+    // La casilla vuelve a `false` al corregir: la evidencia ya enviada está
+    // guardada, y el consentimiento solo hace falta si se adjunta otra.
+    evidenceConsent: false,
   };
 }
 
@@ -126,11 +128,10 @@ export default function ClosureFormPage() {
     void loadClosure();
   }, [loadClosure]);
 
-  // Horas de referencia para el aviso de desviación: si el backend v2 acaba
-  // incorporando las previstas, se usan; si no, la referencia es lo enviado en
-  // el cierre anterior, que es justo lo que la corrección puede reducir.
+  // Horas de referencia para el aviso de desviación: lo enviado en el cierre
+  // anterior, que es justo lo que la corrección puede reducir.
   const referenceHours = useMemo(() => {
-    const hours = closure?.expectedHours ?? closure?.plannedHours ?? closure?.actualHours;
+    const hours = closure?.actualHours;
     if (hours == null || hours === '') return null;
     const parsed = Number(hours);
     return Number.isFinite(parsed) ? parsed : null;
@@ -140,10 +141,6 @@ export default function ClosureFormPage() {
   const showsDeviation = referenceHours !== null
     && Number.isFinite(enteredHours)
     && enteredHours < referenceHours;
-
-  // Nota de devolución del administrador (contrato: `adminNote`, con `returnNote`
-  // como reserva). Solo se muestra cuando el estado es RETURNED.
-  const returnedNote = closure?.adminNote ?? closure?.returnNote ?? '';
 
   const updateValue = (event) => {
     const { name, value, checked, type } = event.target;
@@ -185,12 +182,12 @@ export default function ClosureFormPage() {
       };
       const response = await submitClosure(request, evidence);
       // 201 creación · 200 corrección. El multipart de POST /closures no lleva
-      // id en la ruta: cuando corregimos, conservamos el closureId ya conocido.
+      // id en la ruta: cuando corregimos, conservamos el id ya conocido.
       const returned = response?.data ?? {};
       const keptClosure = {
         ...(closure ?? {}),
         ...returned,
-        closureId: closure?.closureId ?? returned.closureId,
+        id: closure?.id ?? returned.id,
       };
       setClosure(keptClosure);
       setSubmitStatus(Number(response?.status) === 201 ? 'created' : 'corrected');
@@ -236,7 +233,7 @@ export default function ClosureFormPage() {
   }
 
   if (requestState === 'success') return (
-    <ClosureDetail closure={closure} submitStatus={submitStatus} closureId={closure?.closureId} />
+    <ClosureDetail closure={closure} submitStatus={submitStatus} closureId={closure?.id} />
   );
 
   return (
@@ -251,17 +248,6 @@ export default function ClosureFormPage() {
           ? 'Revisa las horas realizadas y tu valoración. Al enviar, actualizas el cierre enviado.'
           : 'Indica las horas realizadas y tu valoración de la experiencia.'}
       </p>
-
-      {/* Nota administrativa: solo en estado RETURNED, solo lectura. Se mantiene
-          visible mientras la persona corrige y reenvía desde la misma ruta. */}
-      {isDetail && closure?.status === 'RETURNED' && returnedNote && (
-        <aside className="closure-form__returned" aria-labelledby="closure-returned-title">
-          <h2 id="closure-returned-title" className="closure-form__returned-title">
-            Cierre devuelto por la administración
-          </h2>
-          <p className="closure-form__returned-note" data-testid="closure-returned-note">{returnedNote}</p>
-        </aside>
-      )}
 
       {errors.registrationId && <p role="alert">{errors.registrationId}</p>}
       <form onSubmit={handleSubmit} noValidate>
