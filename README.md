@@ -1,229 +1,123 @@
 # Frontend Verisure
 
-Aplicación React para gestionar el voluntariado de Fundación Verisure: catálogo, inscripciones, propuestas, cierres, entidades colaboradoras y dashboard de impacto.
+React application for managing Fundación Verisure's volunteer program: activity catalog, registrations, proposals, closures, partner organizations, and impact dashboard.
 
-## Requisitos
+## Requirements
 
-- Node.js 20 o posterior.
-- npm 10 o posterior.
-- Backend disponible cuando se prueben flujos sin mocks.
-- Navegador actualizado: Chrome, Firefox, Edge o Safari.
+- Node.js 20 or later.
+- npm 10 or later.
+- [Backend](../backend) running when testing full flows.
+- Modern browser: Chrome, Firefox, Edge, or Safari.
 
-## Dependencias
+## Dependencies & Tools
 
-| Categoría | Paquete | Uso |
+| Category | Package | Usage |
 | --- | --- | --- |
-| Dependencias | `react` / `react-dom` ^19.1 | UI y renderizado. |
-| | `react-router-dom` ^7.5 | Enrutado, rutas protegidas y por rol. |
-| | `axios` ^1.8 | Cliente HTTP con interceptores. |
-| | `lucide-react` ^1.34 | Iconografía. |
-| | `react-error-boundary` ^6.1 | Límite de errores global. |
-| DevDependencies | `vite` ^6.3, `vitest` ^3.1 | Bundler y runner de pruebas. |
-| | `@testing-library/*`, `jsdom`, `@vitest/coverage-v8` | Pruebas de componentes e informes de cobertura. |
-| | `sass` ^1.86 | Compilación de los estilos Sass. |
+| Dependencies | ![react](https://img.shields.io/badge/react-19.1-61DAFB?logo=react&logoColor=white) | UI and rendering. |
+| | ![react-router](https://img.shields.io/badge/react--router-7.5-CA4245?logo=reactrouter&logoColor=white) | Routing, protected routes, and role-based access. |
+| | ![axios](https://img.shields.io/badge/axios-1.8-5A29E4?logo=axios&logoColor=white) | HTTP client with interceptors. |
+| | ![lucide](https://img.shields.io/badge/lucide--react-1.34-333?logo=lucide) | Iconography. |
+| | ![error-boundary](https://img.shields.io/badge/react--error--boundary-6.1-CC3333) | Global error boundary. |
+| DevDependencies | ![vite](https://img.shields.io/badge/vite-6.3-646CFF?logo=vite&logoColor=white) | Bundler and dev server. |
+| | ![vitest](https://img.shields.io/badge/vitest-3.1-729B1B?logo=vitest&logoColor=white) | Test runner. |
+| | ![testing-library](https://img.shields.io/badge/testing--library-E33332?logo=testing-library&logoColor=white) | Component tests and coverage reports. |
+| | ![sass](https://img.shields.io/badge/sass-1.86-CC6699?logo=sass&logoColor=white) | Sass stylesheet compilation. |
+| Tools | ![vscode](https://img.shields.io/badge/VS_Code-007ACC?logo=visualstudio&logoColor=white) | Code editor. |
+| Languages | ![javascript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black) | Frontend language. |
+| | ![sass](https://img.shields.io/badge/Sass-CC6699?logo=sass&logoColor=white) | Stylesheet language. |
 
-## Instalación y primer arranque
+## Installation and first run
 
 ```bash
-git clone <url-del-repositorio>
+git clone <repository-url>
 cd frontend
 npm ci
 cp .env.example .env.local
 npm run dev
 ```
 
-La aplicación queda disponible en [http://localhost:5173](http://localhost:5173). `npm ci` instala exactamente las versiones registradas en `package-lock.json` y es el comando recomendado para un entorno limpio o CI.
+The application is available at [http://localhost:5173](http://localhost:5173). `npm ci` installs the exact versions from `package-lock.json` and is the recommended command for a clean or CI environment.
 
-## Variables de entorno
+## Commands
 
-Las variables que Vite expone al navegador deben empezar por `VITE_`. `.env.local` está ignorado por Git y no debe contener secretos: cualquier valor incluido en el bundle frontend puede ser inspeccionado por una persona usuaria.
-
-| Variable | Ejemplo | Uso |
-| --- | --- | --- |
-| `VITE_API_URL` | `http://localhost:8080/api` | URL base de Axios. |
-| `VITE_APP_ORIGIN` | `http://localhost:5173` | Origen local que debe admitir el CORS del backend. |
-| `VITE_USE_MOCKS` | `true` | Activa en desarrollo los mocks locales de todos los módulos. Usa `false` para integración real. |
-| `VITE_USE_<MODULO>_MOCKS` | `false` | Activa o apaga los mocks de un solo módulo, y **manda sobre la global**. Módulos: `AUTH`, `REGISTRATION`, `ACTIVITY`, `CLOSURE`, `PROPOSAL`, `ORG`, `DASHBOARD`. |
-
-El interruptor vive en `src/api/mocks.js` y tiene dos niveles a propósito: la integración con el backend va módulo a módulo, así que hace falta poder apagar login e inscripciones —ya integrados— sin tumbar dashboard, propuestas, catálogo y rol entidad, que todavía no tienen backend.
-
-Los módulos ya integrados no dependen de la global: la lista `INTEGRATED` de `mocks.js` los manda al backend real aunque `VITE_USE_MOCKS` esté encendida. Esa lista existe porque el estado de integración no debe vivir solo en un `.env`, donde una reescritura que olvide una línea devuelve el módulo al mock sin que nada avise. Su variable de módulo sigue mandando sobre la lista, así que `VITE_USE_AUTH_MOCKS=true` continúa sirviendo para trabajar con el backend apagado.
-
-Después de cambiar una variable hay que reiniciar Vite. Los mocks nunca se habilitan en producción ni en los tests: el interruptor exige `import.meta.env.DEV` y descarta `MODE === 'test'`, donde cada test monta los suyos con `vi.mock`.
-
-## Comandos
-
-| Comando | Descripción |
+| Command | Description |
 | --- | --- |
-| `npm run dev` | Inicia Vite en modo desarrollo. |
-| `npm run build` | Genera el bundle optimizado en `dist/`. |
-| `npm test` | Abre Vitest en modo interactivo. |
-| `npm run test:run` | Ejecuta todas las pruebas una vez. |
-| `npm run test:coverage` | Ejecuta las pruebas y genera el informe de cobertura. |
-| `npm run demo:reset` | Restaura los datos de demo de forma idempotente. |
-| `npm run smoke` | Ejecuta `test:run` seguido de `build` como comprobación rápida. |
+| `npm run dev` | Starts Vite in development mode. |
+| `npm run build` | Generates the optimized bundle in `dist/`. |
+| `npm test` | Opens Vitest in interactive mode. |
+| `npm run test:run` | Runs all tests once. |
+| `npm run test:coverage` | Runs tests and generates a coverage report. |
 
-## Arquitectura
+## Architecture
 
 ```text
 src/
-├── api/          # Cliente Axios, errores y endpoints por dominio
-├── assets/       # Imágenes, iconos y datos mock usados en desarrollo
+├── api/          # Axios client, errors, and API endpoints per domain
+├── assets/       # Images and icons
 ├── components/
-│   ├── ErrorBoundary/  # Límite de errores global de la aplicación
-│   ├── layout/   # AppLayout, PublicLayout, Topbar, Sidebar y footer
-│   └── ui/       # Componentes compartidos y accesibles
-├── constants/    # Valores compartidos, como líneas de acción
-├── features/     # Pantallas y lógica agrupadas por funcionalidad
-├── hooks/        # Hooks transversales
-├── routes/       # Router, rutas protegidas y autorización por rol
-├── styles/       # Sass 7-1: abstracts, base, componentes, layout y páginas
-└── test/         # Fixtures, mocks y utilidades exclusivas de pruebas
+│   ├── ErrorBoundary/  # Global error boundary
+│   ├── layout/   # AppLayout, PublicLayout, Topbar, Sidebar, and footer
+│   └── ui/       # Shared, accessible UI components
+├── constants/    # Shared values, such as action lines
+├── features/     # Screens and logic grouped by feature
+├── hooks/        # Cross-cutting hooks
+├── routes/       # Router, protected routes, and role-based authorization
+├── styles/       # Sass 7-1: abstracts, base, components, layout, and pages
+└── test/         # Fixtures, mocks, and test-only utilities
 ```
 
-Las llamadas HTTP viven en `src/api`; una pantalla no debe llamar a Axios directamente. La lógica específica permanece dentro de su `feature` y los patrones reutilizables se llevan a `components/ui`.
+HTTP calls live in `src/api`; a screen should never call Axios directly. Feature-specific logic stays within its `feature` folder, and reusable patterns go into `components/ui`.
 
-### Módulos de funcionalidad (`src/features`)
+### Feature modules (`src/features`)
 
-| Módulo | Responsabilidad |
+| Module | Responsibility |
 | --- | --- |
-| `activities` | Catálogo, listado, detalle, alta/edición y cancelación de actividades; acciones de revisión de entidad. |
-| `auth` | Login, contexto de sesión y hook de autenticación. |
-| `dashboard` | KPIs, gráficos, ranking, exportaciones y filtros del dashboard de impacto. |
-| `favorites` | Contexto de actividades favoritas del catálogo. |
-| `landing` | Página pública de inicio y contadores de impacto. |
-| `not-found` | Página 404. |
-| `orgs` | Alta de entidad, dashboard, propuestas e impacto de la entidad colaboradora; estado de cuenta. |
-| `proposals` | Formulario, detalle, bandeja de entrada, aceptación y confirmación de propuestas. |
-| `registrations` | Inscripciones: catálogo, voluntariado propio, tabla de gestión, cancelación y decisiones. |
-| `reports` | Cierres (individual y global), certificados y formularios de reporte. |
+| `activities` | Catalog, listing, detail, create/edit and cancellation of activities; partner review actions. |
+| `auth` | Login, session context, and authentication hook. |
+| `dashboard` | KPIs, charts, rankings, exports, and impact dashboard filters. |
+| `favorites` | Favorite activities context for the catalog. |
+| `landing` | Public home page and impact counters. |
+| `not-found` | 404 page. |
+| `orgs` | Partner registration, dashboard, proposals, and impact; account status. |
+| `proposals` | Form, detail, inbox, acceptance, and confirmation of proposals. |
+| `registrations` | Registrations: catalog, personal volunteering, management table, cancellation, and decisions. |
+| `reports` | Closures (individual and global), certificates, and closure forms. |
 
-## Demo — datos definitivos y restauración idempotente
+## Routes, authentication, and roles
 
-Datos versionados en `public/demo-data.json` (4 actividades `PUBLISHED/FULL/IN_PROGRESS/FINISHED`, inscripciones `active` WAITLISTED q3/q1 + `closed` CLOSED, 2 propuestas NEW/ACCEPTED, 2 orgs pendientes) y `docs/DEMO.md`.
+`AuthContext` stores `accessToken` and `user` in `localStorage`. The Axios interceptor adds `Authorization: Bearer <token>`. On a `401`, the session is cleared and the user is redirected to `/login`. `ProtectedRoute` requires a session and `RoleRoute` restricts each area.
 
-```bash
-npm ci && npm run demo:reset && npm run smoke # = test:run + build
-# o en navegador: localStorage.clear(); location.reload()
-```
-
-`scripts/restore-demo.js` es idempotente (N ejecuciones sin duplicar). `isMockEnabled = DEV && MODE !== 'test'` con delays 300ms y sin `failRate` aleatorio para demo estable. Ver `docs/DEMO.md` para prueba de humo 3 min (público → empleado → admin) en Chrome/Firefox 1440px y 390px.
-
-### Convención de nombres
-
-Los componentes reutilizables siguen la estructura `NombreCarpeta/NombreCarpeta.jsx`, por ejemplo `Button/Button.jsx`. No se crean archivos `index.jsx`. `index.js` se reserva para exportaciones agrupadas, como `components/ui/index.js`.
-
-Los tests se colocan junto a la unidad probada y usan `*.test.jsx` o `*.test.js`.
-
-## Rutas, autenticación y roles
-
-`AuthContext` conserva `accessToken` y `user` en `localStorage`. El interceptor de Axios añade `Authorization: Bearer <token>`. Ante un `401`, limpia la sesión y devuelve a `/login`. `ProtectedRoute` exige sesión y `RoleRoute` restringe cada área.
-
-| Área | Rutas principales | Rol |
+| Area | Main routes | Role |
 | --- | --- | --- |
-| Pública | `/`, `/login`, `/new-proposal` o `/proposal`, `/register-organization`, `/account-status` | Sin sesión |
-| Fundación | `/dashboard`, `/proposals`, `/activities/:id`, `/activities/:id/registrations`, `/activities/new`, `/activities/:id/edit`, `/admin/activities`, `/admin/activities/pending-closure`, `/admin/activities/:id/closure`, `/admin/account-status` | `ADMIN` |
-| Empleado | `/activities`, `/activities/:id`, `/my-volunteering`, `/my-activities`, `/closures/new`, `/closures/:id`, `/closures/:id/certificate` | `EMPLOYEE` |
-| Entidad | `/org/dashboard`, `/org/activities`, `/org/activities/new`, `/org/proposals`, `/org/proposals/new`, `/org/reports` | `PARTNER` |
+| Public | `/`, `/login`, `/new-proposal` or `/proposal`, `/register-organization`, `/account-status` | No session |
+| Foundation | `/dashboard`, `/proposals`, `/activities/:id`, `/activities/:id/registrations`, `/activities/new`, `/activities/:id/edit`, `/admin/activities`, `/admin/activities/pending-closure`, `/admin/activities/:id/closure`, `/admin/account-status` | `ADMIN` |
+| Employee | `/activities`, `/activities/:id`, `/my-volunteering`, `/my-activities`, `/closures/new`, `/closures/:id`, `/closures/:id/certificate` | `EMPLOYEE` |
+| Partner | `/org/dashboard`, `/org/activities`, `/org/activities/new`, `/org/proposals`, `/org/proposals/new`, `/org/reports` | `PARTNER` |
 
-Algunas rutas son compartidas: `/closures/:closureId` y `/activities/:activityId` están disponibles para `ADMIN` y `EMPLOYEE`. En desarrollo también existe `/ui-kit` para el muestrario de componentes, y hay redirecciones de compatibilidad: `/explore` → `/activities`, `/inscriptions` → `/activities/6/registrations` y `/closes` → `/admin/activities/pending-closure`.
+Some routes are shared: `/closures/:closureId` and `/activities/:activityId` are available to both `ADMIN` and `EMPLOYEE`. In development, `/ui-kit` is also available for the component showcase, and there are compatibility redirects: `/explore` → `/activities`, `/inscriptions` → `/activities/6/registrations` and `/closes` → `/admin/activities/pending-closure`.
 
-Las cuentas de entidad pueden estar en `PENDING_VERIFICATION`, `PENDING_APPROVAL`, `ACTIVE` o `REJECTED`. Una sesión `PARTNER` no activa se conserva para mostrar el estado de la cuenta; no se trata como una sesión anónima.
+Partner accounts may be in `PENDING_VERIFICATION`, `PENDING_APPROVAL`, `ACTIVE`, or `REJECTED` status. A `PARTNER` session that is not active is kept to display the account status; it is not treated as an anonymous session.
 
-### Cuentas locales
+## Visual and accessibility checks
 
-El login ya autentica contra el backend real, así que **las cuentas que sirven son las de la semilla**, no las del mock. Todas comparten la contraseña `Verisure2026!`, que es un dato de demostración y no un secreto: existen solo fuera de producción, porque `UserSeeder` lleva `@Profile("!prod")`. El identificador es el correo completo.
+Before delivering a screen, test it with a keyboard and verify visible focus, labels, error messages, loading states, and empty states. Reference widths:
 
-| Correo | Rol/estado | Inicio |
+- Desktop: 1280 px and 1440 px.
+- Responsive: 390 px.
+
+There should be no accidental horizontal scroll; touch targets must be at least 44 × 44 px and text must be readable without zoom.
+
+## User Flow & Mockups
+
+The design reference is in [Figma](https://www.figma.com/design/D3nU4lVWHOTVRtTNeMyjol/Fundacion-Verisure-Voluntariado?node-id=0-1&p=f).
+
+## Authors
+
+| Name | GitHub | Role |
 | --- | --- | --- |
-| `carmen.ortega@fundacionverisure.org` | `ADMIN` | `/dashboard` |
-| `ana.gil@verisure.es` | `EMPLOYEE` | `/activities` |
-| `marta.ribas@caritasbcn.org` | `PARTNER · ACTIVE` | `/org/activities` |
-| `pau.estevez@caritasbcn.org` | `PARTNER · PENDING_VERIFICATION` | 403 `ACCOUNT_NOT_VERIFIED` |
-| `elena.vargas@aldeasinfantiles.org` | `PARTNER · PENDING_APPROVAL` | 403 `ACCOUNT_PENDING_APPROVAL` |
-| `rosa.delgado@manosunidas.org` | `PARTNER · REJECTED` | 403 `ACCOUNT_REJECTED` |
-
-Hay ocho `EMPLOYEE` más en la semilla, con el patrón `nombre.apellido@verisure.es`.
-
-#### Cuentas del mock de login
-
-Solo aplican con el backend apagado, poniendo `VITE_USE_AUTH_MOCKS=true`. El mock identifica el usuario por el comienzo del correo y **no valida la contraseña**, porque estos datos nunca salen del navegador: `admin@verisure.com` (`ADMIN`), `empleado@verisure.com` (`EMPLOYEE`), `ong@fundacion.org` (`PARTNER · ACTIVE`) y `pendiente@entidad.org` (`PARTNER · PENDING_APPROVAL`).
-
-## Contrato backend v2
-
-Los JSON usan `camelCase`. La entidad se llama `Registration` y sus rutas parten de `/api/registrations`.
-
-### Inscripciones
-
-- `POST /api/registrations` crea una inscripción.
-- `GET /api/registrations/me` devuelve `List<MyRegistrationItem>`.
-- La lista usa `closureId` y `activityClosed` para mostrar el cierre o el certificado.
-- Las decisiones administrativas y la cancelación usan `PATCH`.
-- La cancelación común es `PATCH /api/registrations/{id}/cancel`, con un motivo opcional.
-- `accepted` es un booleano separado de `RegistrationStatus`. Una solicitud puede estar aceptada administrativamente y continuar en `WAITLISTED` si no hay plaza.
-- `RegistrationStatus`: `WAITLISTED`, `CONFIRMED`, `REJECTED`, `CANCELLED`, `PENDING_CLOSURE` y `CLOSED`.
-
-### Cierres
-
-El cierre individual se envía a `POST /api/closures` como multipart, con la parte JSON `request` y la evidencia opcional `evidence`. La Fundación gestiona el cierre global de la actividad en `/api/admin/activities/{id}/closure`.
-
-### Propuestas
-
-`ProposalStatus` admite únicamente `NEW`, `ACCEPTED` y `REJECTED`. Crear una propuesta es público; listar, aceptar o rechazar requiere administración.
-
-### Dashboard
-
-`GET /api/dashboard` recibe solamente `year` y `line`. Esos mismos filtros se usan en las exportaciones:
-
-- `/api/dashboard/participations.csv`: participaciones seudonimizadas, sin nombre ni correo.
-- `/api/dashboard/partners.csv`: entidades, actividades y horas.
-- `/api/dashboard/report.pdf`: indicadores y gráficos.
-
-Las descargas se solicitan como `blob` y la interfaz libera cada `ObjectURL` después de iniciar la descarga.
-
-### Errores
-
-El interceptor transforma todas las respuestas fallidas en `ApiError`, con `status`, `code`, `fieldErrors`, `isNetworkError` e `isCanceled`. Los códigos de dominio se traducen en un único diccionario, `src/api/domainMessages.js`, para no duplicar mensajes en formularios y pantallas.
-
-Los errores de validación por campo se muestran junto al control correspondiente. Los estados `401`, `403`, `404`, `409`, `413`, `415`, `429` y `500` tienen un comportamiento explícito y recuperable cuando corresponde.
-
-## Mocks e integración real
-
-Hay dos capas diferentes:
-
-- Los mocks de desarrollo permiten recorrer los flujos sin levantar todo el backend. Se activan con `VITE_USE_MOCKS=true`, y se apagan módulo a módulo con `VITE_USE_<MODULO>_MOCKS=false`.
-- Los fixtures y mocks de `src/test/` se usan únicamente con Vitest; no forman parte del bundle de producción. Incluyen usuarios `ADMIN`, `EMPLOYEE` y `PARTNER`, estados de cuenta de entidad y respuestas de los principales dominios.
-- La integración real requiere que `VITE_API_URL` apunte al backend. Hoy están integrados el login y el módulo de inscripciones —«Mis voluntariados» y el tablero—; el resto sigue en mocks hasta que su backend exista.
-
-No se deben añadir reglas de negocio a los mocks ni inferir campos que no estén en el contrato. Si el backend cambia, primero se actualizan el contrato y los fixtures, después la implementación.
-
-## Comprobación visual y accesibilidad
-
-Antes de entregar una pantalla se recorre con teclado y se comprueban foco visible, etiquetas, mensajes de error, estados de carga y vacío. Los anchos de referencia son:
-
-- Escritorio: 1280 px y 1440 px.
-- Adaptable: 390 px.
-
-No debe aparecer desplazamiento horizontal accidental; los controles táctiles deben medir al menos 44 × 44 px y el texto debe poder leerse sin zoom.
-
-## Tests, build y entrega
-
-Antes de abrir un PR:
-
-```bash
-npm ci
-npm run test:run
-npm run build
-git diff --check
-```
-
-Flujo recomendado:
-
-1. Actualizar `dev` y crear una rama corta desde ella: `feature/<issue>-descripcion` o `fix/<issue>-descripcion`.
-2. Mantener commits pequeños con mensajes que expliquen la intención.
-3. Añadir pruebas del flujo principal y de al menos un estado límite o error.
-4. Confirmar los anchos de escritorio y 390 px cuando afecte a interfaz.
-5. Abrir un PR hacia `dev`, enlazar la issue y describir cómo se verificó.
-6. No mezclar cambios ajenos a la tarea ni subir `.env.local`, tokens, datos personales o archivos generados.
-
-El diseño funcional de referencia está en [Figma](https://www.figma.com/design/D3nU4lVWHOTVRtTNeMyjol/Fundacion-Verisure-Voluntariado?node-id=0-1&p=f).
+| Elena Almansa | [@elenaalmansacampos](https://github.com/elenaalmansacampos) | Frontend |
+| Fabiana Leonardo | [@fabileoruf](https://github.com/fabileoruf) | Frontend |
+| Ivanna Caraccio | [@IvannaRCA](https://github.com/IvannaRCA) | Frontend |
+| Andrea Tapia | [@atapiamallea](https://github.com/atapiamallea) | Backend |
+| Chiara Di Maio | [@chdimaio](https://github.com/chdimaio) | Backend |
+| Rosa Vaillant | [@rosana50factoria](https://github.com/rosana50factoria) | Backend |
