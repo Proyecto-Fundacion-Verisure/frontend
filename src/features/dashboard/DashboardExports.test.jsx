@@ -47,7 +47,7 @@ describe('DashboardExports', () => {
     expect(api.exportDashboardPdf).toHaveBeenCalledWith(filters);
     expect(downloadBlob).toHaveBeenNthCalledWith(1, expect.any(Blob), 'participations.csv');
     expect(downloadBlob).toHaveBeenNthCalledWith(2, expect.any(Blob), 'partners.csv');
-    expect(downloadBlob).toHaveBeenNthCalledWith(3, expect.any(Blob), 'report.pdf');
+    expect(downloadBlob).toHaveBeenNthCalledWith(3, expect.any(Blob), 'dashboard-report.pdf');
   });
 
   it('bloquea solo el archivo en curso y anuncia su progreso', async () => {

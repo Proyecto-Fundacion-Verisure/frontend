@@ -31,4 +31,4 @@ export const exportPartnersCsv = (params = {}, config = {}) =>
   client.get('/dashboard/partners.csv', fileConfig(params, config, YEAR_FILTER));
 
 export const exportDashboardPdf = (params = {}, config = {}) =>
-  client.get('/dashboard/report.pdf', fileConfig(params, config, YEAR_FILTER));
+  client.get('/dashboard/report.pdf', fileConfig(params, config));

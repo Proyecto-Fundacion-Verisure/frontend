@@ -29,7 +29,7 @@ const EXPORTS = [
     id: 'report',
     title: 'Informe visual',
     format: 'PDF',
-    filename: 'report.pdf',
+    filename: 'dashboard-report.pdf',
     description: 'Resumen de los indicadores y gráficos con los filtros activos.',
     request: exportDashboardPdf,
     optional: true,
