@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button, Input, Modal } from '../../components/ui';
+import { useNavigate } from 'react-router-dom';
+import { Button, Input } from '../../components/ui';
 import { useAuth } from './AuthContext';
 import { getRoleHomePath } from '../../routes/routeAccess';
 
@@ -17,12 +17,10 @@ function LoginForm() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const [formError, setFormError] = useState('');
   const [pendingLink, setPendingLink] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showForgotModal, setShowForgotModal] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,25 +79,6 @@ function LoginForm() {
         error={fieldErrors.password}
       />
 
-      <div className="login-form__row">
-        <label className="login-form__checkbox">
-          <input
-            type="checkbox"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
-          <span>Recordar sesión</span>
-        </label>
-
-        <button
-          type="button"
-          className="login-form__link"
-          onClick={() => setShowForgotModal(true)}
-        >
-          ¿Olvidaste tu contraseña?
-        </button>
-      </div>
-
       <Button
         type="submit"
         variant="primary"
@@ -111,15 +90,6 @@ function LoginForm() {
         Entrar al portal <span aria-hidden="true">→</span>
       </Button>
     </form>
-
-    <Modal
-      isOpen={showForgotModal}
-      onClose={() => setShowForgotModal(false)}
-      title="¿Olvidaste tu contraseña?"
-      size="small"
-    >
-      <p>Contacta con el administrador para restablecer tu contraseña.</p>
-    </Modal>
     </>
   );
 }
