@@ -26,10 +26,8 @@ export function useSidebarCounts() {
   useEffect(() => {
     if (user?.role !== 'ADMIN') return;
     let cancelled = false;
-    getPendingOrganizations()
-      .then((res) => {
-        if (!cancelled) setPendingAccounts(res.data.length);
-      })
+    countOf(getPendingOrganizations({ page: 0, size: 1 }))
+      .then((count) => { if (!cancelled) setPendingAccounts(count); })
       .catch(() => {});
     return () => { cancelled = true; };
   }, [user?.role]);

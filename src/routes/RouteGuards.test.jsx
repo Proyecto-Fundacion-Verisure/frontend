@@ -42,13 +42,8 @@ describe('guardas de rutas', () => {
     expect(screen.getByRole('heading', { name: 'Inicio empleado' })).toBeInTheDocument();
   });
 
-  it('admite una entidad activa cuando la ruta acepta PARTNER', () => {
-    renderGuard({ user: { role: 'PARTNER', status: 'ACTIVE' }, roles: ['PARTNER'] });
+  it('admite una entidad cuando la ruta acepta PARTNER', () => {
+    renderGuard({ user: { role: 'PARTNER' }, roles: ['PARTNER'] });
     expect(screen.getByRole('heading', { name: 'Contenido privado' })).toBeInTheDocument();
-  });
-
-  it('devuelve una entidad no activa a estado de cuenta', () => {
-    renderGuard({ user: { role: 'PARTNER', status: 'PENDING_APPROVAL' }, roles: ['PARTNER'] });
-    expect(screen.getByRole('heading', { name: 'Estado de cuenta' })).toBeInTheDocument();
   });
 });

@@ -3,18 +3,23 @@
  *
  * Mientras haya módulos sin backend, apagar los mocks tiene que poder hacerse
  * módulo a módulo: login, inscripciones, catálogo, actividades, alta de entidad,
- * actividades y propuestas de la entidad, bandeja de propuestas, cierres y
- * dashboard ya están integrados, pero cuentas de entidad y el formulario
- * público de propuestas no tienen backend todavía y necesitan seguir en falso.
+ * actividades y propuestas de la entidad, bandeja de propuestas, cierres,
+ * dashboard y cuentas de entidad ya están integrados, pero el dashboard de la
+ * entidad y el formulario público de propuestas no tienen backend todavía y
+ * necesitan seguir en falso.
  *
- * Las claves van por backend, no por fichero. `orgApi.js` reparte cuatro:
+ * Las claves van por backend, no por fichero. `orgApi.js` reparte cinco:
  * `ORG_REGISTER` (alta), `ORG_ACTIVITY` (actividades de la entidad),
- * `ORG_PROPOSAL` (propuestas de la entidad) y `ORG` (cuentas de entidad y
- * dashboard, que siguen sin controlador). Y `proposalsApi.js` dos:
- * `PROPOSAL_INBOX` (bandeja y detalle del admin) y `PROPOSAL` (el formulario
- * público de la landing, `POST /api/proposals`, sin controlador). Con una sola
- * clave, encender lo integrado mandaría `/admin/org-accounts`, `/org/dashboard` y
- * `/proposals` contra endpoints que no existen y devuelven 404.
+ * `ORG_PROPOSAL` (propuestas de la entidad), `ORG_ACCOUNT` (bandeja de cuentas
+ * del admin y reenvío de verificación) y `ORG` (el dashboard de la entidad, que
+ * sigue sin controlador). Y `proposalsApi.js` dos: `PROPOSAL_INBOX` (bandeja y
+ * detalle del admin) y `PROPOSAL` (el formulario público de la landing,
+ * `POST /api/proposals`, sin controlador). Con una sola clave, encender lo
+ * integrado mandaría `/org/dashboard` y `/proposals` contra endpoints que no
+ * existen y devuelven 404.
+ *
+ * `CLOSURE`, `DASHBOARD` y `ORG_ACCOUNT` ya no tienen mock: su clave está en
+ * `INTEGRATED` para dejar constancia, pero encenderla no haría nada.
  *
  *   VITE_USE_MOCKS=false                 apaga todos los módulos
  *   VITE_USE_REGISTRATION_MOCKS=false    apaga solo ese, dejando el resto
@@ -55,6 +60,7 @@ const INTEGRATED = new Set([
   'PROPOSAL_INBOX',
   'CLOSURE',
   'DASHBOARD',
+  'ORG_ACCOUNT',
 ]);
 
 export const isMockEnabled = (module) => {

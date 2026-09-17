@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Card, Button, Modal, Pagination, Spinner, EmptyState } from '../../components/ui';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Card, Button, Input, Modal, Pagination, Spinner, EmptyState } from '../../components/ui';
 import { formatDateTime } from '../../utils/dates';
 import {
   getPendingOrganizations,
@@ -7,74 +8,143 @@ import {
   rejectOrganization,
   resendOrganizationRegistrationEmail,
 } from '../../api/orgApi';
-import { useAuth } from '../auth/AuthContext';
+import { verifyEmail } from '../../api/authApi';
 
-const PARTNER_STATUS_COPY = {
-  PENDING_VERIFICATION: {
-    title: 'Verifica tu correo electrónico',
-    description: 'Te hemos enviado un enlace para confirmar la dirección de correo de la entidad.',
-  },
-  PENDING_APPROVAL: {
-    title: 'Cuenta pendiente de aprobación',
-    description: 'La Fundación está revisando la solicitud de tu entidad.',
-  },
-  REJECTED: {
-    title: 'Solicitud rechazada',
-    description: 'Contacta con la Fundación si necesitas más información sobre la decisión.',
-  },
-};
+// Reenvío del enlace de verificación. El backend responde 204 siempre, exista
+// o no el correo: se confirma sin decir si la cuenta existe.
+function ResendVerificationForm({ initialEmail = '' }) {
+  const [email, setEmail] = useState(initialEmail);
+  const [state, setState] = useState('idle');
+  const [emailError, setEmailError] = useState('');
 
-function PartnerAccountStatus({ user }) {
-  const [resendState, setResendState] = useState('idle');
-  const copy = PARTNER_STATUS_COPY[user.status] ?? PARTNER_STATUS_COPY.PENDING_APPROVAL;
-
-  const resend = async () => {
-    setResendState('loading');
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!email.trim()) {
+      setEmailError('Indica el correo con el que se registró la entidad.');
+      return;
+    }
+    setEmailError('');
+    setState('loading');
     try {
-      await resendOrganizationRegistrationEmail(user.email);
-      setResendState('success');
+      await resendOrganizationRegistrationEmail(email.trim());
+      setState('success');
     } catch {
-      setResendState('error');
+      setState('error');
     }
   };
 
   return (
-    <section className="account-status" aria-labelledby="partner-account-status-title">
-      <h1 id="partner-account-status-title" className="account-status__title">{copy.title}</h1>
-      <p>{copy.description}</p>
-      {user.status === 'PENDING_VERIFICATION' && (
-        <Button
-          onClick={resend}
-          isLoading={resendState === 'loading'}
-          loadingLabel="Reenviando…"
-        >
-          Reenviar correo de verificación
-        </Button>
+    <form className="account-status__resend" onSubmit={handleSubmit} noValidate>
+      <Input
+        id="resend-email"
+        type="email"
+        label="Correo de la entidad"
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+        error={emailError}
+        required
+      />
+      <Button type="submit" isLoading={state === 'loading'} loadingLabel="Reenviando…">
+        Reenviar enlace
+      </Button>
+      {state === 'success' && (
+        <p role="status">Si el correo está pendiente de verificar, te hemos enviado un enlace nuevo.</p>
       )}
-      {resendState === 'success' && <p role="status">Correo reenviado.</p>}
-      {resendState === 'error' && <p role="alert">No hemos podido reenviar el correo.</p>}
-    </section>
+      {state === 'error' && <p role="alert">No hemos podido reenviar el enlace. Inténtalo de nuevo.</p>}
+    </form>
   );
 }
 
+// `/account-status`, pública y sin mirar la sesión. Con `?token=` verifica el
+// correo (es el enlace que manda el backend); con `?pending=` explica por qué
+// el login ha dicho que no. La bandeja de la administradora es otra ruta
+// (`/admin/account-status`, `AdminAccountStatusPage`): compartir componente y
+// decidir por la sesión llevaba a una entidad a la bandeja si en el navegador
+// quedaba una sesión de admin.
 export default function AccountStatusPage() {
-  const auth = useAuth();
-  if (auth?.user?.role === 'PARTNER') return <PartnerAccountStatus user={auth.user} />;
-  if (!auth?.user) {
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token');
+  const pending = searchParams.get('pending');
+  const [verifyState, setVerifyState] = useState(token ? 'loading' : 'idle');
+  const [verifyError, setVerifyError] = useState(null);
+  // El token es de un solo uso: la segunda llamada devuelve 410 «ya utilizado».
+  // `StrictMode` monta los efectos dos veces en desarrollo, así que la petición
+  // se guarda por token y el segundo montaje reutiliza la misma promesa.
+  const verification = useRef({ token: null, promise: null });
+
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
+    if (verification.current.token !== token) {
+      verification.current = { token, promise: verifyEmail(token) };
+    }
+    verification.current.promise
+      .then(() => { if (!cancelled) setVerifyState('success'); })
+      .catch((error) => {
+        if (cancelled) return;
+        setVerifyError(error);
+        setVerifyState('error');
+      });
+    return () => { cancelled = true; };
+  }, [token]);
+
+  if (token) {
+    if (verifyState === 'loading') return <Spinner label="Verificando el correo…" />;
+    if (verifyState === 'success') {
+      return (
+        <section className="account-status" aria-labelledby="account-status-title">
+          <h1 id="account-status-title" className="account-status__title">Correo verificado</h1>
+          <p>La Fundación revisará tu solicitud y te avisará por correo cuando esté aprobada.</p>
+          <div className="account-status__actions">
+            <Link to="/login" className="button button--secondary button--medium">Ir al inicio de sesión</Link>
+          </div>
+        </section>
+      );
+    }
+    const expired = verifyError?.code === 'VERIFICATION_EXPIRED';
     return (
-      <EmptyState
-        title="Estado de la cuenta"
-        description="Inicia sesión para consultar el estado de tu entidad."
-      />
+      <section className="account-status" aria-labelledby="account-status-title">
+        <h1 id="account-status-title" className="account-status__title">
+          {expired ? 'Este enlace ya se ha usado o ha caducado' : 'No hemos podido verificar el correo'}
+        </h1>
+        <p role="alert">{verifyError?.message || 'Inténtalo de nuevo más tarde.'}</p>
+        {expired && <ResendVerificationForm />}
+      </section>
     );
   }
-  return <AdminAccountStatusPage />;
+
+  if (pending === 'verification') {
+    return (
+      <section className="account-status" aria-labelledby="account-status-title">
+        <h1 id="account-status-title" className="account-status__title">Verifica tu correo electrónico</h1>
+        <p>Te hemos enviado un enlace para confirmar la dirección de correo de la entidad. Si no lo encuentras, pide otro:</p>
+        <ResendVerificationForm />
+      </section>
+    );
+  }
+
+  if (pending === 'approval') {
+    return (
+      <section className="account-status" aria-labelledby="account-status-title">
+        <h1 id="account-status-title" className="account-status__title">Cuenta pendiente de aprobación</h1>
+        <p>Tu correo ya está verificado. La Fundación está revisando la solicitud de tu entidad y te avisará por correo.</p>
+      </section>
+    );
+  }
+
+  return (
+    <EmptyState
+      title="Estado de la cuenta"
+      description="Inicia sesión para consultar el estado de tu entidad."
+    />
+  );
 }
 
-function AdminAccountStatusPage() {
+export function AdminAccountStatusPage() {
   const [organizations, setOrganizations] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionPending, setActionPending] = useState(null);
@@ -95,6 +165,7 @@ function AdminAccountStatusPage() {
         if (!cancelled) {
           setOrganizations(Array.isArray(organizations) ? organizations : []);
           setTotalPages(Math.max(Number(res.data?.totalPages) || 1, 1));
+          setTotalElements(Number(res.data?.totalElements) || 0);
         }
       })
       .catch(() => {
@@ -124,6 +195,7 @@ function AdminAccountStatusPage() {
         await rejectOrganization(orgId);
       }
       setOrganizations((prev) => prev.filter((org) => org.id !== orgId));
+      setTotalElements((prev) => Math.max(prev - 1, 0));
     } catch {
       setError('Ha ocurrido un error al procesar la solicitud.');
     } finally {
@@ -159,7 +231,7 @@ function AdminAccountStatusPage() {
     <section className="account-status">
       <h1 className="account-status__title">Cuentas pendientes de revisión</h1>
       <p className="account-status__subtitle">
-        {organizations.length} solicitud{organizations.length !== 1 && 'es'} pendiente{organizations.length !== 1 && 's'}
+        {totalElements} solicitud{totalElements !== 1 && 'es'} pendiente{totalElements !== 1 && 's'}
       </p>
 
       <div className="account-status__list">
@@ -167,8 +239,13 @@ function AdminAccountStatusPage() {
           <Card key={org.id} className="account-status__card">
             <div className="account-status__card-main">
               <div className="account-status__card-header">
-                <h2 className="account-status__org-name">{org.organizationName ?? org.name}</h2>
-                <span className="account-status__badge badge badge--warning">Pendiente</span>
+                <h2 className="account-status__org-name">{org.organizationName}</h2>
+                {/* No se bloquea aprobar sin correo verificado; se avisa. */}
+                {org.emailVerified ? (
+                  <span className="account-status__badge badge badge--success">Correo verificado</span>
+                ) : (
+                  <span className="account-status__badge badge badge--warning">Sin verificar</span>
+                )}
               </div>
 
               <div className="account-status__card-info">
@@ -202,7 +279,7 @@ function AdminAccountStatusPage() {
                 variant="primary"
                 isLoading={actionPending === org.id}
                 loadingLabel="Procesando"
-                onClick={() => openConfirm(org.id, org.organizationName ?? org.name, 'accept')}
+                onClick={() => openConfirm(org.id, org.organizationName, 'accept')}
               >
                 Aceptar
               </Button>
@@ -210,7 +287,7 @@ function AdminAccountStatusPage() {
                 variant="danger"
                 isLoading={actionPending === org.id}
                 loadingLabel="Procesando"
-                onClick={() => openConfirm(org.id, org.organizationName ?? org.name, 'reject')}
+                onClick={() => openConfirm(org.id, org.organizationName, 'reject')}
               >
                 Rechazar
               </Button>

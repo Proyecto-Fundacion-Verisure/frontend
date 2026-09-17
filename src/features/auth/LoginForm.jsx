@@ -1,8 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Input, Modal } from '../../components/ui';
 import { useAuth } from './AuthContext';
 import { getRoleHomePath } from '../../routes/routeAccess';
+
+// Una entidad a la que el backend deniega el acceso por el estado de su cuenta
+// tiene una página que se lo explica (y, sin correo verificado, un reenvío).
+const PENDING_ACCOUNT_LINKS = {
+  ACCOUNT_NOT_VERIFIED: '/account-status?pending=verification',
+  ACCOUNT_PENDING_APPROVAL: '/account-status?pending=approval',
+};
 
 function LoginForm() {
   const { login } = useAuth();
@@ -13,6 +20,7 @@ function LoginForm() {
   const [rememberMe, setRememberMe] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const [formError, setFormError] = useState('');
+  const [pendingLink, setPendingLink] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
 
@@ -20,6 +28,7 @@ function LoginForm() {
     e.preventDefault();
     setFieldErrors({});
     setFormError('');
+    setPendingLink(null);
     setIsLoading(true);
 
     try {
@@ -30,6 +39,7 @@ function LoginForm() {
         setFieldErrors(error.fieldErrors);
       } else {
         setFormError(error.message);
+        setPendingLink(PENDING_ACCOUNT_LINKS[error.code] ?? null);
       }
     } finally {
       setIsLoading(false);
@@ -42,6 +52,12 @@ function LoginForm() {
       {formError && (
         <div className="login-form__error" role="alert">
           {formError}
+          {pendingLink && (
+            <>
+              {' '}
+              <Link to={pendingLink}>Ver el estado de tu cuenta</Link>
+            </>
+          )}
         </div>
       )}
 
