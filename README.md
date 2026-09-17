@@ -109,6 +109,8 @@ There should be no accidental horizontal scroll; touch targets must be at least 
 
 ## User Flow & Mockups
 
+![User Flow](docs/user-flow.png)
+
 The design reference is in [Figma](https://www.figma.com/design/D3nU4lVWHOTVRtTNeMyjol/Fundacion-Verisure-Voluntariado?node-id=0-1&p=f).
 
 ## Authors
