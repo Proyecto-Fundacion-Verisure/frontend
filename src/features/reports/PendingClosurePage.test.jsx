@@ -31,10 +31,10 @@ describe('PendingClosurePage', () => {
     expect(getPendingActivityClosures).toHaveBeenCalledWith({ page: 0 });
   });
 
-  it('renders the queue from the real ActivitySummary DTO without reordering', async () => {
+  it('renders the queue from the real ActivityClosureRow DTO without reordering', async () => {
     const summaries = [
-      makeActivitySummary({ activityId: 41, activityTitle: 'Mentoría laboral', endDate: '2026-07-30T17:00:00Z', expectedHours: 30, reportedHours: 24, closuresReceived: 6 }),
-      makeActivitySummary({ activityId: 42, activityTitle: 'Acompañamiento a mayores', endDate: '2026-08-14T18:00:00Z', expectedHours: 20, reportedHours: 12, closuresReceived: 3 }),
+      makeActivitySummary({ activityId: 41, title: 'Mentoría laboral', partnerName: 'Fundación Solitaria', startDate: '2026-07-01', endDate: '2026-07-30', hours: 12 }),
+      makeActivitySummary({ activityId: 42, title: 'Acompañamiento a mayores', partnerName: null, startDate: '2026-08-14', endDate: '2026-08-14', hours: 8 }),
     ];
     getPendingActivityClosures.mockResolvedValue({ data: makePage(summaries, { totalElements: 2 }) });
 
@@ -45,9 +45,10 @@ describe('PendingClosurePage', () => {
     ['Mentoría laboral', 'Acompañamiento a mayores'].forEach((title) => {
       expect(screen.getByText(title)).toBeInTheDocument();
     });
-    expect(screen.getByText('30')).toBeInTheDocument();
-    expect(screen.getByText('24')).toBeInTheDocument();
-    expect(screen.getByText('6')).toBeInTheDocument();
+    expect(screen.getByText('Fundación Solitaria')).toBeInTheDocument();
+    expect(screen.getByText('Sin entidad')).toBeInTheDocument();
+    expect(screen.getByText('12')).toBeInTheDocument();
+    expect(screen.getByText('8')).toBeInTheDocument();
     const reviewLinks = screen.getAllByRole('link', { name: /revisar cierre/i });
     expect(reviewLinks).toHaveLength(2);
     expect(reviewLinks[0]).toHaveAttribute('href', '/admin/activities/41/closure');
@@ -67,9 +68,9 @@ describe('PendingClosurePage', () => {
   it('paginates following the backend page order without reordering', async () => {
     const pageA = Array.from({ length: 10 }, (_, index) => makeActivitySummary({
       activityId: 100 + index,
-      activityTitle: `Actividad ${100 + index}`,
+      title: `Actividad ${100 + index}`,
     }));
-    const pageB = [makeActivitySummary({ activityId: 200, activityTitle: 'Actividad página dos' })];
+    const pageB = [makeActivitySummary({ activityId: 200, title: 'Actividad página dos' })];
     getPendingActivityClosures
       .mockResolvedValueOnce({ data: makePage(pageA, { totalElements: 11 }) })
       .mockResolvedValueOnce({ data: makePage(pageB, { totalElements: 11, page: 1 }) });
@@ -105,7 +106,7 @@ describe('PendingClosurePage', () => {
     getPendingActivityClosures
       .mockRejectedValueOnce(new Error('Ha ocurrido un error en el servidor.'))
       .mockResolvedValueOnce({
-        data: makePage([makeActivitySummary({ activityTitle: 'Mentoría laboral' })], { totalElements: 1 }),
+        data: makePage([makeActivitySummary({ title: 'Mentoría laboral' })], { totalElements: 1 }),
       });
     const user = userEvent.setup();
 

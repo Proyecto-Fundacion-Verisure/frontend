@@ -6,9 +6,9 @@ import { isMockEnabled } from './mocks';
 
 // Cuatro interruptores, uno por backend. `ORG_REGISTER`, `ORG_ACTIVITY` y
 // `ORG_PROPOSAL` están integrados y sus mocks se quedan como escotilla para
-// trabajar con el backend apagado; `ORG` sigue mockeado porque
-// `/admin/org-accounts` y `/org/dashboard` no tienen controlador. Ver
-// `src/api/mocks.js`.
+// trabajar con el backend apagado; las cuentas de entidad (`ORG_ACCOUNT`) van
+// siempre al backend; `ORG` sigue mockeado porque `/org/dashboard` no tiene
+// controlador. Ver `src/api/mocks.js`.
 const useDevelopmentMocks = () => isMockEnabled('ORG');
 const useRegisterMocks = () => isMockEnabled('ORG_REGISTER');
 const useActivityMocks = () => isMockEnabled('ORG_ACTIVITY');
@@ -26,41 +26,6 @@ function simulateRequest({ data, delay = 300, failRate = 0 } = {}) {
   });
 }
 
-// --- Almacén en memoria para el modo mock -----------------------------
-// Simula la tabla de organizaciones con cuentas pendientes de validar.
-let mockOrganizations = [
-  {
-    id: 'org-1',
-    organizationName: 'Cruz Roja Barcelona',
-    cif: 'Q2866001G',
-    contactName: 'Marta Solé',
-    email: 'marta.sole@cruzroja-bcn.org',
-    phone: '+34 934 12 45 67',
-    status: 'PENDING',
-    requestedAt: '2026-08-28T09:14:00Z',
-  },
-  {
-    id: 'org-2',
-    organizationName: 'Banc dels Aliments',
-    cif: 'G59198836',
-    contactName: 'Jordi Ferran',
-    email: 'jordi.ferran@bancdelsaliments.org',
-    phone: '+34 933 46 43 06',
-    status: 'PENDING',
-    requestedAt: '2026-08-29T16:40:00Z',
-  },
-  {
-    id: 'org-3',
-    organizationName: 'Fundación Ared',
-    cif: 'G80123456',
-    contactName: 'Laura Gómez',
-    email: 'laura.gomez@fundacionared.org',
-    phone: '+34 911 22 33 44',
-    status: 'PENDING',
-    requestedAt: '2026-09-01T11:05:00Z',
-  },
-];
-
 export const createOrganization = (data) => {
   if (useRegisterMocks()) {
     console.info('[MOCK] createOrganization', data);
@@ -71,62 +36,26 @@ export const createOrganization = (data) => {
       ...data,
       organizationName: data.organizationName ?? data.name,
     };
-    mockOrganizations = [newOrg, ...mockOrganizations];
     return simulateRequest({ data: { id: newOrg.id, status: 'PENDING' }, delay: 1200 });
   }
   return registerPartner(data);
 };
 
-export const resendOrganizationRegistrationEmail = (email) => {
-  if (useDevelopmentMocks()) {
-    console.info('[MOCK] resendOrganizationConfirmationEmail', email);
-    return simulateRequest({ data: { resent: true }, delay: 1000 });
-  }
-  return resendVerification(email);
-};
+export const resendOrganizationRegistrationEmail = (email) => resendVerification(email);
 
-// Devuelve las cuentas de organización pendientes de revisión por la admin.
-export const getPendingOrganizations = ({ status = 'PENDING', page = 0 } = {}) => {
-  if (useDevelopmentMocks()) {
-    console.info('[MOCK] getPendingOrganizations');
-    const pending = mockOrganizations.filter((org) => org.status === status);
-    return simulateRequest({
-      data: {
-        content: pending,
-        number: page,
-        size: pending.length,
-        totalElements: pending.length,
-        totalPages: pending.length ? 1 : 0,
-      },
-      delay: 300,
-    });
-  }
-  return client.get('/admin/org-accounts', { params: { status, page } });
-};
+// Cuentas de entidad pendientes de revisar por la administradora. `PENDING` lo
+// traduce el backend a `PENDING_VERIFICATION + PENDING_APPROVAL`.
+export const getPendingOrganizations = ({ status = 'PENDING', page = 0, size } = {}) => (
+  client.get('/admin/org-accounts', {
+    params: size === undefined || size === null ? { status, page } : { status, page, size },
+  })
+);
 
 // Acepta la cuenta: la organización pasa a poder acceder a la plataforma.
-export const approveOrganization = (id) => {
-  if (useDevelopmentMocks()) {
-    console.info('[MOCK] approveOrganization', id);
-    mockOrganizations = mockOrganizations.map((org) =>
-      org.id === id ? { ...org, status: 'ACTIVE' } : org
-    );
-    return simulateRequest({ data: { id, status: 'ACTIVE' }, delay: 300 });
-  }
-  return client.patch(`/admin/org-accounts/${id}/approve`);
-};
+export const approveOrganization = (id) => client.patch(`/admin/org-accounts/${id}/approve`);
 
 // Rechaza la cuenta. La seguridad la da la confirmación en el modal, no un motivo.
-export const rejectOrganization = (id) => {
-  if (useDevelopmentMocks()) {
-    console.info('[MOCK] rejectOrganization', id);
-    mockOrganizations = mockOrganizations.map((org) =>
-      org.id === id ? { ...org, status: 'REJECTED' } : org
-    );
-    return simulateRequest({ data: { id, status: 'REJECTED' }, delay: 300 });
-  }
-  return client.patch(`/admin/org-accounts/${id}/reject`);
-};
+export const rejectOrganization = (id) => client.patch(`/admin/org-accounts/${id}/reject`);
 
 const pickParams = (params = {}, allowed) => Object.fromEntries(
   Object.entries(params).filter(([key, value]) => (

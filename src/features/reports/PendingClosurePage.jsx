@@ -2,16 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getPendingActivityClosures } from '../../api/closuresApi';
 import { Button, EmptyState, Pagination, Spinner, Table } from '../../components/ui';
-import { formatDate } from '../../utils/dates';
-
-const PAGE_SIZE = 10;
-
-function normalizeItems(content = []) {
-  return content.map((item) => ({
-    ...item,
-    activityId: item.activityId ?? item.id,
-  }));
-}
+import { formatDateRange } from '../../utils/dates';
 
 export default function PendingClosurePage() {
   const [page, setPage] = useState(1);
@@ -24,7 +15,7 @@ export default function PendingClosurePage() {
     setState({ status: 'loading', error: null });
     try {
       const { data } = await getPendingActivityClosures({ page: page - 1 });
-      setItems(normalizeItems(data?.content));
+      setItems(data?.content ?? []);
       setTotalElements(Number(data?.totalElements) || 0);
       setTotalPages(Number(data?.totalPages) || (Array.isArray(data?.content) ? 1 : 0));
       setState({ status: 'success', error: null });
@@ -52,31 +43,21 @@ export default function PendingClosurePage() {
   }
 
   const columns = [
+    // Lo que trae `ActivityClosureRow`. Los totales (previstas, reportadas,
+    // cierres recibidos) están en el detalle, que es donde el contrato los pone.
+    { key: 'title', label: 'Actividad' },
     {
-      key: 'activity',
-      label: 'Actividad',
-      render: (item) => item.activityTitle ?? item.title ?? `Actividad ${item.activityId}`,
+      key: 'partnerName',
+      label: 'Entidad',
+      render: (item) => item.partnerName ?? 'Sin entidad',
     },
+    { key: 'line', label: 'Línea' },
     {
-      key: 'endDate',
-      label: 'Finalización',
-      render: (item) => formatDate(item.endDate),
+      key: 'dates',
+      label: 'Fechas',
+      render: (item) => formatDateRange(item.startDate, item.endDate),
     },
-    {
-      key: 'expectedHours',
-      label: 'Horas previstas',
-      render: (item) => item.expectedHours ?? item.plannedHours ?? 0,
-    },
-    {
-      key: 'reportedHours',
-      label: 'Horas reportadas',
-      render: (item) => item.reportedHours ?? 0,
-    },
-    {
-      key: 'closuresReceived',
-      label: 'Cierres recibidos',
-      render: (item) => item.closuresReceived ?? item.closureCount ?? item.closingsCount ?? 0,
-    },
+    { key: 'hours', label: 'Horas por persona' },
     {
       key: 'actions',
       label: 'Acciones',

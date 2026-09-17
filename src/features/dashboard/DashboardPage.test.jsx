@@ -44,7 +44,7 @@ describe('DashboardPage', () => {
     api.getDashboard.mockResolvedValue({ data: DASHBOARD_RESPONSE });
   });
 
-  it('muestra impacto, eficacia, distribución y demanda con los datos mock', async () => {
+  it('muestra impacto, eficacia, distribución y demanda con la respuesta del contrato', async () => {
     renderDashboard(['/dashboard?year=2026&line=desoledad']);
 
     expect(await screen.findByRole('list', { name: 'Indicadores principales de impacto' })).toBeInTheDocument();
@@ -53,7 +53,7 @@ describe('DashboardPage', () => {
       { signal: expect.any(AbortSignal) },
     );
     expect(screen.getByText('2655 h')).toBeInTheDocument();
-    expect(screen.getByText('Datos ficticios para validación')).toBeInTheDocument();
+    expect(screen.queryByText('Datos ficticios para validación')).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Impacto' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Eficacia' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Distribución' })).toBeInTheDocument();
@@ -63,6 +63,8 @@ describe('DashboardPage', () => {
     expect(screen.getByRole('img', { name: /Participación por departamento/ })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Tabla de participación por departamento' }))
       .toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /Participación por organización/ })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /Participación por línea/ })).toBeInTheDocument();
 
     const ranking = screen.getByRole('list', { name: 'Top 10 de actividades favoritas' });
     const rows = within(ranking).getAllByRole('listitem');
