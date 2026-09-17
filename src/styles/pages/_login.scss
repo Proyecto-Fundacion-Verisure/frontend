@@ -122,38 +122,6 @@
   flex-direction: column;
   gap: map-get($spacing, '5');
 
-  &__row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: $font-size-sm;
-  }
-
-  &__checkbox {
-    display: flex;
-    align-items: center;
-    gap: map-get($spacing, '2');
-    color: $color-text;
-    cursor: pointer;
-
-    input {
-      accent-color: $color-coral;
-      width: 1rem;
-      height: 1rem;
-    }
-  }
-
-  &__link {
-    color: $color-text;
-    text-decoration: none;
-    transition: color $transition-fast;
-
-    &:hover {
-      color: $color-coral;
-      text-decoration: underline;
-    }
-  }
-
   &__submit {
     margin-top: map-get($spacing, '2');
     width: 100%;
