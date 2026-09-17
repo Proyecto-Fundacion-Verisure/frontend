@@ -12,7 +12,9 @@ function setReducedMotion(matches) {
 beforeEach(() => {
   intersectionCallback = undefined;
   disconnect.mockClear();
-  window.IntersectionObserver = vi.fn((callback) => {
+  // `function` y no arrow: el componente hace `new IntersectionObserver(...)`,
+  // y desde vitest 4 un `vi.fn` con arrow function no es construible.
+  window.IntersectionObserver = vi.fn(function IntersectionObserver(callback) {
     intersectionCallback = callback;
     return { observe: vi.fn(), disconnect };
   });
