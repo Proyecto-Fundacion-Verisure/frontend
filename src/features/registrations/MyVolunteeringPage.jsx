@@ -4,6 +4,12 @@ import { cancelRegistration, getMyRegistrations } from '../../api/registrationsA
 import { Badge, Button, Card, EmptyState, Modal, Spinner } from '../../components/ui';
 import { formatDate } from '../../utils/dates';
 
+// Inscripciones vivas. El resto (`CLOSED`, `REJECTED`, `CANCELLED`) es historial:
+// ya no admite acciones, pero la persona debe poder ver que fue rechazada o
+// que se dio de baja.
+const ACTIVE_STATUSES = new Set(['WAITLISTED', 'CONFIRMED', 'PENDING_CLOSURE']);
+const isActiveRegistration = (item) => ACTIVE_STATUSES.has(item.status) && !item.activityClosed;
+
 function RegistrationCard({ item, onCancel, isCancelling }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const activity = item.activity ?? {};
@@ -25,6 +31,8 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
     CONFIRMED: 'CONFIRMADO',
     CLOSED: 'cerrado',
     PENDING_CLOSURE: 'Pendiente de cierre',
+    REJECTED: 'Rechazada',
+    CANCELLED: 'Cancelada',
   };
   const statusLabel = statusLabels[item.status] ?? item.status;
 
@@ -61,6 +69,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
       </p>
       {showQueue && <p className="my-volunteering__queue">Posición en cola: {item.queuePosition}</p>}
       {showAccepted && <p className="my-volunteering__accepted" data-testid={`accepted-${item.registrationId}`}>{acceptedLabel}</p>}
+      <div className="my-volunteering__card-actions">
       {(() => {
         if (!hasClosure && !activityClosed && item.status === 'PENDING_CLOSURE') {
           return (
@@ -122,6 +131,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
           </Modal>
         </>
       )}
+      </div>
     </Card>
   );
 }
@@ -141,8 +151,8 @@ export default function MyVolunteeringPage() {
       const res = await getMyRegistrations();
       const payload = res.data ?? res;
       const items = Array.isArray(payload) ? payload : [];
-      setActive(items.filter((item) => item.status !== 'CLOSED' && !item.activityClosed));
-      setClosed(items.filter((item) => item.status === 'CLOSED' || item.activityClosed));
+      setActive(items.filter(isActiveRegistration));
+      setClosed(items.filter((item) => !isActiveRegistration(item)));
     } catch (err) {
       setError(err);
     } finally {
@@ -271,12 +281,12 @@ export default function MyVolunteeringPage() {
         )}
       </section>
 
-      <section className="my-volunteering__block" aria-labelledby="closed-title">
-        <h2 id="closed-title" className="my-volunteering__block-title">
-          Cerradas
+      <section className="my-volunteering__block" aria-labelledby="history-title">
+        <h2 id="history-title" className="my-volunteering__block-title">
+          Historial
         </h2>
         {closedList.length === 0 ? (
-          <EmptyState title="Sin inscripciones cerradas" description="No tienes inscripciones cerradas." />
+          <EmptyState title="Sin historial" description="Aquí verás las inscripciones cerradas, rechazadas o canceladas." />
         ) : (
           <div className="my-volunteering__grid">
             {closedList.map((item) => (

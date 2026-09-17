@@ -29,7 +29,7 @@ const Button = forwardRef(function Button(
       {...props}
     >
       {isLoading && <Spinner className="button__spinner" label="" size="small" />}
-      <span>{isLoading ? loadingLabel : children}</span>
+      <span className="button__label">{isLoading ? loadingLabel : children}</span>
     </button>
   );
 });

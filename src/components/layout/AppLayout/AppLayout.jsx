@@ -5,6 +5,7 @@ import Logo from "../../../assets/images/logo-fundacion-verisure.png"
 import { useAuth } from "../../../features/auth/AuthContext";
 import { NAV_SECTIONS_BY_ROLE } from "../Sidebar/sidebarNavigation";
 import { useSidebarCounts } from "../Sidebar/useSidebarCounts";
+import { getRoleHomePath } from "../../../routes/routeAccess";
 
 export default function AppLayout() {
   const { user } = useAuth();
@@ -17,7 +18,8 @@ export default function AppLayout() {
         Saltar al contenido
       </a>
       <Topbar>
-        <Link to="/" className="topbar__brand">
+        {/* Dentro del backoffice el logo lleva al inicio del rol, no a la landing. */}
+        <Link to={getRoleHomePath(user?.role)} className="topbar__brand">
           <img src={Logo} alt="Fundación Verisure" />
         </Link>
       </Topbar>

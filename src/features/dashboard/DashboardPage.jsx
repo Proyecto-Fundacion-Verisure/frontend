@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { getDashboard } from '../../api/dashboardApi';
 import { Button, Card, EmptyState, Spinner } from '../../components/ui';
 import { ACTIVITY_LINES } from '../../constants/activityLines';
@@ -23,6 +23,8 @@ function hasDashboardData(data) {
   return hasMetric || [
     'effectiveness',
     'participationByDepartment',
+    'participationByOrganization',
+    'participationByLine',
     'distributionByMode',
     'distributionByLocation',
     'favoriteRanking',
@@ -87,34 +89,39 @@ function DistributionProgressCard({ title, items, emptyTitle }) {
   );
 }
 
-function DepartmentDistribution({ data }) {
+// Barras + tabla de «personas participantes por X». `DepartmentEntry` trae
+// `department` y no `label` ni `id`; `ParticipationEntry` (organización y
+// línea) trae `id` y `label`. Por eso `labelKey` es configurable y `BarChart`
+// cae a la etiqueta como `key` cuando no hay `id`.
+function ParticipationDistribution({ data, title, description, categoryLabel, labelKey }) {
+  const lowerTitle = title.charAt(0).toLowerCase() + title.slice(1);
   return (
     <Card as="article" className="dashboard-distribution-card dashboard-distribution-card--wide">
       <header>
-        <h3>Participación por departamento</h3>
-        <p>Número de personas voluntarias participantes en cada área.</p>
+        <h3>{title}</h3>
+        <p>{description}</p>
       </header>
       {data.length > 0 ? (
         <div className="dashboard-distribution-card__content">
           <BarChart
             data={data}
-            title="Participación por departamento"
-            description="Personas voluntarias participantes en cada departamento"
-            labelKey="department"
+            title={title}
+            description={description}
+            labelKey={labelKey}
             valueKey="participants"
           />
           <ChartTable
             data={data}
-            caption="Tabla de participación por departamento"
-            categoryLabel="Departamento"
+            caption={`Tabla de ${lowerTitle}`}
+            categoryLabel={categoryLabel}
             valueLabel="Participantes"
-            labelKey="department"
+            labelKey={labelKey}
             valueKey="participants"
           />
         </div>
       ) : (
         <EmptyState
-          title="Sin participación por departamento"
+          title={`Sin ${lowerTitle}`}
           description="No hay datos suficientes para los filtros seleccionados."
         />
       )}
@@ -188,6 +195,12 @@ export default function DashboardPage() {
   const departmentData = Array.isArray(dashboardData.participationByDepartment)
     ? dashboardData.participationByDepartment
     : [];
+  const organizationData = Array.isArray(dashboardData.participationByOrganization)
+    ? dashboardData.participationByOrganization
+    : [];
+  const lineData = Array.isArray(dashboardData.participationByLine)
+    ? dashboardData.participationByLine
+    : [];
   const modeData = Array.isArray(dashboardData.distributionByMode)
     ? dashboardData.distributionByMode
     : [];
@@ -208,14 +221,13 @@ export default function DashboardPage() {
             <span className="dashboard__demo-badge">Datos ficticios para validación</span>
           )}
         </div>
+      </header>
+      <div className="dashboard__intro-row">
+        <p className="dashboard__intro">Consulta el impacto de las participaciones cerradas y descarga los resultados.</p>
         <div className="dashboard__header-actions">
-          <Link to="/proposals" className="button button--secondary button--medium">
-            Ver propuestas recibidas
-          </Link>
           <ExportMenu filters={filters} />
         </div>
-      </header>
-      <p className="dashboard__intro">Consulta el impacto de las participaciones cerradas y descarga los resultados.</p>
+      </div>
 
       <DashboardFilters
         year={year}
@@ -282,10 +294,30 @@ export default function DashboardPage() {
             id="distribution"
             number="03"
             title="Distribución"
-            description="Cómo se reparte la participación por equipos, modalidad y ubicación."
+            description="Cómo se reparte la participación por equipos, organización, línea, modalidad y ubicación."
           >
             <div className="dashboard-distribution">
-              <DepartmentDistribution data={departmentData} />
+              <ParticipationDistribution
+                data={departmentData}
+                title="Participación por departamento"
+                description="Número de personas voluntarias participantes en cada área."
+                categoryLabel="Departamento"
+                labelKey="department"
+              />
+              <ParticipationDistribution
+                data={organizationData}
+                title="Participación por organización"
+                description="Personas voluntarias participantes de cada sociedad del grupo."
+                categoryLabel="Organización"
+                labelKey="label"
+              />
+              <ParticipationDistribution
+                data={lineData}
+                title="Participación por línea"
+                description="Personas voluntarias participantes en cada línea de acción."
+                categoryLabel="Línea de acción"
+                labelKey="label"
+              />
               <DistributionProgressCard
                 title="Por modalidad"
                 items={modeData}

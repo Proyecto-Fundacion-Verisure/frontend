@@ -25,6 +25,25 @@
     margin: 0;
   }
 
+  // La columna flex estira a los hijos: los botones de la rama pública se
+  // alinean al inicio para que no ocupen todo el ancho.
+  &__actions {
+    display: flex;
+    gap: space('3');
+  }
+
+  // Reenvío del enlace de verificación en la rama pública.
+  &__resend {
+    display: flex;
+    flex-direction: column;
+    gap: space('3');
+    max-width: 28rem;
+
+    .button {
+      align-self: flex-start;
+    }
+  }
+
   &__list {
     display: flex;
     flex-direction: column;
@@ -60,10 +79,6 @@
     font-weight: $font-weight-semibold;
     color: $color-navy;
     margin: 0;
-  }
-
-  &__badge {
-    flex-shrink: 0;
   }
 
   &__card-info {
@@ -110,7 +125,6 @@
     align-items: stretch;
     gap: space('2');
     padding-left: space('4');
-    border-left: 1px solid $color-border;
     min-width: 8rem;
     flex-shrink: 0;
 

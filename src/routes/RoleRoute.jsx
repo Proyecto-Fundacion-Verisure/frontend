@@ -6,11 +6,8 @@ export default function RoleRoute({ roles = [] }) {
   const { user } = useAuth();
 
   if (!user) return <Navigate to="/login" replace />;
-  // El backend no devuelve `status` y nunca emite token a una cuenta que no esté
-  // activa, así que su ausencia significa activa; solo bloqueamos si viene y no lo es.
-  if (user.role === 'PARTNER' && user.status !== undefined && user.status !== 'ACTIVE') {
-    return <Navigate to="/account-status" replace />;
-  }
+  // No hay que mirar el estado de la cuenta: el backend nunca emite token a una
+  // entidad que no esté `ACTIVE`, así que tener sesión ya significa activa.
 
   return roles.includes(user.role)
     ? <Outlet />

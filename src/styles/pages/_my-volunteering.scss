@@ -50,6 +50,21 @@
   margin: 0;
 }
 
+// «Ver cierre» / «Cerrar tu participación» y «Cancelar inscripción» en la
+// misma fila y a la derecha, no apilados por la columna de la tarjeta.
+.my-volunteering__card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: space('2');
+  margin-top: auto;
+
+  &:empty {
+    display: none;
+  }
+}
+
 .my-volunteering__meta {
   color: $color-muted;
   font-size: $font-size-sm;

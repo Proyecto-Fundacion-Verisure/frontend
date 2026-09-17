@@ -13,7 +13,7 @@ const EXPORT_OPTIONS = [
     title: 'Representación con gráficos',
     description: 'PDF con los KPIs y los gráficos tal y como se ven aquí',
     format: 'PDF',
-    filename: 'report.pdf',
+    filename: 'dashboard-report.pdf',
     Icon: BarChart3,
     request: exportDashboardPdf,
   },
