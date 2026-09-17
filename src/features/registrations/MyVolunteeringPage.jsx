@@ -61,6 +61,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
       </p>
       {showQueue && <p className="my-volunteering__queue">Posición en cola: {item.queuePosition}</p>}
       {showAccepted && <p className="my-volunteering__accepted" data-testid={`accepted-${item.registrationId}`}>{acceptedLabel}</p>}
+      <div className="my-volunteering__card-actions">
       {(() => {
         if (!hasClosure && !activityClosed && item.status === 'PENDING_CLOSURE') {
           return (
@@ -122,6 +123,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
           </Modal>
         </>
       )}
+      </div>
     </Card>
   );
 }

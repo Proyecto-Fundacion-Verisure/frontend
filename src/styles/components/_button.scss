@@ -8,6 +8,7 @@
   font-weight: $font-weight-semibold;
   gap: space("2");
   justify-content: center;
+  line-height: 1.25;
   min-height: $control-height;
   min-width: 7rem;
   border: 0;
@@ -46,9 +47,11 @@
     }
   }
 
+  // El contorno va en `box-shadow` y no en `border` para que el secundario
+  // mida exactamente lo mismo que el primario cuando van uno al lado del otro.
   &--secondary {
     background: transparent;
-    border: 2px solid $color-coral-dark;
+    box-shadow: inset 0 0 0 2px $color-coral-dark;
     color: $color-coral-dark;
 
     &:hover:not(:disabled) {

@@ -73,15 +73,20 @@ describe('employee closure page', () => {
     expect(screen.getByTestId('closure-created-notice')).toHaveTextContent(/cierre enviado/i);
   });
 
-  it('preloads the submitted hours and corrects it as 200 without duplicating the closure', async () => {
+  it('shows a submitted closure read-only, without a correction form', async () => {
     getClosure.mockResolvedValue({
-      data: { id: 501, registrationId: 104, actualHours: 6, rating: 5, comment: 'Gran experiencia.' },
+      data: {
+        id: 501,
+        registrationId: 104,
+        activityId: 4,
+        activityTitle: 'Jornada de voluntariado ambiental',
+        actualHours: 6,
+        rating: 5,
+        comment: 'Gran experiencia.',
+        evidenceUrl: null,
+        submittedAt: '2026-08-15T10:00:00Z',
+      },
     });
-    submitClosure.mockResolvedValue({
-      status: 200,
-      data: { id: 501, registrationId: 104, actualHours: 4, rating: 5, comment: 'Gran experiencia.' },
-    });
-    const user = userEvent.setup();
 
     render(
       <MemoryRouter initialEntries={['/closures/501']}>
@@ -91,78 +96,17 @@ describe('employee closure page', () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByRole('heading', { name: /corregir tu cierre/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /detalle del cierre/i })).toBeInTheDocument();
     expect(getClosure).toHaveBeenCalledWith('501');
-    expect(screen.getByLabelText(/horas realizadas/i)).toHaveValue(6);
-
-    await user.clear(screen.getByLabelText(/horas realizadas/i));
-    await user.type(screen.getByLabelText(/horas realizadas/i), '4');
-    await user.click(screen.getByRole('button', { name: /guardar corrección/i }));
-
-    await waitFor(() => expect(submitClosure).toHaveBeenCalledWith({
-      registrationId: 104,
-      actualHours: 4,
-      rating: 5,
-      comment: 'Gran experiencia.',
-      evidenceConsent: false,
-    }, null));
-
-    expect(await screen.findByTestId('closure-updated-notice')).toHaveTextContent(/501/);
-    expect(screen.getByTestId('closure-updated-notice')).not.toHaveTextContent(/cierre enviado/i);
-    expect(screen.getAllByRole('heading', { name: /detalle del cierre/i })).toHaveLength(1);
+    expect(screen.getByText('Jornada de voluntariado ambiental')).toBeInTheDocument();
+    expect(screen.getByText('6')).toBeInTheDocument();
     expect(screen.getByText('5 de 5')).toBeInTheDocument();
-  });
-
-  it('warns when hours are reduced but still lets the correction be sent', async () => {
-    getClosure.mockResolvedValue({
-      data: { id: 501, registrationId: 104, actualHours: 8, rating: 5 },
-    });
-    submitClosure.mockResolvedValue({
-      status: 200,
-      data: { id: 501, registrationId: 104, actualHours: 5, rating: 5 },
-    });
-    const user = userEvent.setup();
-
-    render(
-      <MemoryRouter initialEntries={['/closures/501']}>
-        <Routes>
-          <Route path="/closures/:closureId" element={<ClosureFormPage />} />
-        </Routes>
-      </MemoryRouter>,
-    );
-
-    const hoursInput = await screen.findByLabelText(/horas realizadas/i);
-    await user.clear(hoursInput);
-    await user.type(hoursInput, '5');
-
-    expect(screen.getByText(/por debajo de las 8 h/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /guardar corrección/i })).toBeEnabled();
-
-    await user.click(screen.getByRole('button', { name: /guardar corrección/i }));
-    await waitFor(() => expect(submitClosure).toHaveBeenCalledWith(expect.objectContaining({
-      registrationId: 104,
-      actualHours: 5,
-    }), null));
-  });
-
-  it('does not block when entering more hours than the previous submission', async () => {
-    getClosure.mockResolvedValue({
-      data: { id: 501, registrationId: 104, actualHours: 4, rating: 4 },
-    });
-    const user = userEvent.setup();
-
-    render(
-      <MemoryRouter initialEntries={['/closures/501']}>
-        <Routes>
-          <Route path="/closures/:closureId" element={<ClosureFormPage />} />
-        </Routes>
-      </MemoryRouter>,
-    );
-
-    const hoursInput = await screen.findByLabelText(/horas realizadas/i);
-    await user.clear(hoursInput);
-    await user.type(hoursInput, '10');
-    expect(screen.queryByText(/por debajo de las/i)).not.toBeInTheDocument();
+    expect(screen.getByText('Gran experiencia.')).toBeInTheDocument();
+    expect(screen.getByText('Sin evidencia')).toBeInTheDocument();
+    expect(screen.queryByTestId('closure-created-notice')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/horas realizadas/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /guardar corrección/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /volver a mis voluntariados/i })).toBeInTheDocument();
   });
 
   it('shows the error codes of the closure contract when submission fails', async () => {
