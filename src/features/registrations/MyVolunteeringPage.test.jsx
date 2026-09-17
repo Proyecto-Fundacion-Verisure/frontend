@@ -126,7 +126,7 @@ describe('MyVolunteeringPage', () => {
     getMyRegistrations.mockResolvedValue({ data: [...activeItems, ...closedItems] });
     renderPage();
     expect(await screen.findByRole('heading', { name: /^activas$/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /^cerradas$/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /^historial$/i })).toBeInTheDocument();
     // cada inscripción aparece en su bloque
     expect(screen.getByText('Acompañamiento a mayores')).toBeInTheDocument();
     expect(screen.getAllByText('Jornada ambiental')).toHaveLength(2);
@@ -153,7 +153,7 @@ describe('MyVolunteeringPage', () => {
     renderPage();
     await screen.findByText('Acompañamiento a mayores');
     const activeSection = screen.getByRole('heading', { name: /^activas$/i }).closest('section');
-    const closedSection = screen.getByRole('heading', { name: /^cerradas$/i }).closest('section');
+    const closedSection = screen.getByRole('heading', { name: /^historial$/i }).closest('section');
     expect(activeSection).toHaveTextContent('Acompañamiento a mayores');
     expect(closedSection).toHaveTextContent(/cerrado/i);
     // ensure active item not in closed and vice versa

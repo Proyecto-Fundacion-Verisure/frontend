@@ -3,14 +3,6 @@ export const ActivityClosureStatus = Object.freeze({
   CLOSED: 'CLOSED',
 });
 
-// Estado del detalle del cierre de participación (GET /api/closures/{id}).
-// `RETURNED` marca que la administración devolvió el cierre con una nota.
-export const ClosureStatus = Object.freeze({
-  PENDING: 'PENDING',
-  RETURNED: 'RETURNED',
-  CLOSED: 'CLOSED',
-});
-
 export function makeCreateClosureRequest(overrides = {}) {
   return {
     registrationId: 104,
@@ -22,16 +14,19 @@ export function makeCreateClosureRequest(overrides = {}) {
   };
 }
 
+// `ClosureDetailResponse` de GET /api/closures/{id}: un cierre no tiene estados
+// ni se devuelve; la administración cierra la actividad, no el cierre.
 export function makeClosureDetail(overrides = {}) {
   return {
-    closureId: 501,
+    id: 501,
     registrationId: 104,
+    activityId: 4,
+    activityTitle: 'Jornada de voluntariado ambiental',
     actualHours: 6,
     rating: 5,
     comment: 'Gran experiencia.',
     evidenceUrl: null,
-    status: null,
-    adminNote: null,
+    submittedAt: '2026-08-15T10:00:00Z',
     ...overrides,
   };
 }
@@ -54,14 +49,17 @@ export function makeActivityClosure(overrides = {}) {
   };
 }
 
+// `ActivityClosureRow` de GET /api/admin/activities/pending-closure. Los
+// totales (previstas, reportadas, cierres) van en el detalle, no en la cola.
 export function makeActivitySummary(overrides = {}) {
   return {
     activityId: 41,
-    activityTitle: 'Mentoría laboral',
-    endDate: '2026-07-30T17:00:00Z',
-    expectedHours: 30,
-    reportedHours: 24,
-    closuresReceived: 6,
+    title: 'Mentoría laboral',
+    partnerName: 'Fundación Solitaria',
+    line: 'desoledad',
+    startDate: '2026-07-01',
+    endDate: '2026-07-30',
+    hours: 12,
     ...overrides,
   };
 }

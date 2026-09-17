@@ -6,7 +6,7 @@ import { AuthContext } from '../../../features/auth/AuthContext';
 import AppLayout from './AppLayout';
 
 describe('AppLayout', () => {
-  it('enlaza el logo de la topbar con la landing page', async () => {
+  it('enlaza el logo de la topbar con el inicio del rol, no con la landing', async () => {
     const user = userEvent.setup();
 
     render(
@@ -16,11 +16,12 @@ describe('AppLayout', () => {
           logout: vi.fn(),
         }}
       >
-        <MemoryRouter initialEntries={['/dashboard']}>
+        <MemoryRouter initialEntries={['/dashboard/detalle']}>
           <Routes>
             <Route path="/" element={<h1>Landing page</h1>} />
             <Route path="/dashboard" element={<AppLayout />}>
               <Route index element={<h1>Dashboard</h1>} />
+              <Route path="detalle" element={<h1>Detalle</h1>} />
             </Route>
           </Routes>
         </MemoryRouter>
@@ -28,10 +29,11 @@ describe('AppLayout', () => {
     );
 
     const logoLink = screen.getByRole('link', { name: 'Fundación Verisure' });
-    expect(logoLink).toHaveAttribute('href', '/');
+    expect(logoLink).toHaveAttribute('href', '/dashboard');
 
     await user.click(logoLink);
 
-    expect(screen.getByRole('heading', { name: 'Landing page' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Landing page' })).not.toBeInTheDocument();
   });
 });

@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { getClosure, submitClosure } from '../../api/closuresApi';
 import { Button, Input, Select, Spinner, Textarea } from '../../components/ui';
+import { formatDateTime } from '../../utils/dates';
 
 const MAX_EVIDENCE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_EVIDENCE_TYPES = new Set(['application/pdf', 'image/jpeg', 'image/png']);
@@ -40,39 +41,39 @@ function validate(values, evidence, registrationId) {
   return errors;
 }
 
-function valuesFromClosure(closure) {
-  return {
-    actualHours: closure?.actualHours != null ? String(closure.actualHours) : '',
-    rating: closure?.rating != null ? String(closure.rating) : '',
-    comment: closure?.comment ?? '',
-    evidenceConsent: Boolean(closure?.evidenceConsent),
-  };
-}
-
-function ClosureDetail({ closure, submitStatus, closureId }) {
+// Un cierre no se corrige: `POST /closures` siempre crea y el backend rechaza
+// un segundo envío de la misma inscripción con `CLOSURE_ALREADY_CLOSED`. El
+// detalle es solo lectura, tanto recién enviado como al volver desde
+// «Mis voluntariados».
+function ClosureDetail({ closure, justCreated = false }) {
   return (
     <section className="report-form-page" aria-labelledby="closure-detail-title">
+      <Link to="/my-volunteering">← Volver a mis voluntariados</Link>
       <p className="activity-form-page__eyebrow">Cierre de participación</p>
       <h1 id="closure-detail-title">Detalle del cierre</h1>
-      {submitStatus === 'corrected' && (
-        <p className="closure-form__notice" role="status" data-testid="closure-updated-notice">
-          Cierre actualizado. Se ha conservado la identificación
-          {closureId ? ` (${closureId})` : ''} y no se ha creado otro cierre.
-        </p>
-      )}
-      {submitStatus === 'created' && (
+      {justCreated && (
         <p className="closure-form__notice" role="status" data-testid="closure-created-notice">
           Cierre enviado. Se ha registrado tu participación.
         </p>
       )}
       <dl>
+        {closure.activityTitle && <div><dt>Actividad</dt><dd>{closure.activityTitle}</dd></div>}
         <div><dt>Horas realizadas</dt><dd>{closure.actualHours ?? '—'}</dd></div>
         <div><dt>Valoración</dt><dd>{closure.rating ? `${closure.rating} de 5` : '—'}</dd></div>
         <div><dt>Comentario</dt><dd>{closure.comment || 'Sin comentario'}</dd></div>
+        <div>
+          <dt>Evidencia</dt>
+          <dd>
+            {closure.evidenceUrl
+              ? <a href={closure.evidenceUrl} target="_blank" rel="noreferrer">Ver evidencia adjunta</a>
+              : 'Sin evidencia'}
+          </dd>
+        </div>
+        {closure.submittedAt && <div><dt>Enviado el</dt><dd>{formatDateTime(closure.submittedAt)}</dd></div>}
       </dl>
-      <Link className="button button--secondary button--medium" to="/my-volunteering">
-        Volver a mis voluntariados
-      </Link>
+      <p>
+        Cuando la Fundación cierre la actividad podrás descargar tu certificado desde «Mis voluntariados».
+      </p>
     </section>
   );
 }
@@ -91,11 +92,8 @@ export default function ClosureFormPage() {
   const [closure, setClosure] = useState(null);
   const [requestError, setRequestError] = useState('');
   const [loadStatus, setLoadStatus] = useState(null);
-  const [submitStatus, setSubmitStatus] = useState(null);
 
-  // En la corrección el id no viaja en la ruta: viene del cierre ya cargado.
-  // En el envío nuevo llega como query param `registrationId`.
-  const registrationId = searchParams.get('registrationId') ?? closure?.registrationId ?? null;
+  const registrationId = searchParams.get('registrationId');
 
   // La vista previa usa una URL temporal (`URL.createObjectURL`). Esta limpieza
   // la libera al retirar el archivo y al desmontar el componente: sin ella cada
@@ -112,9 +110,7 @@ export default function ClosureFormPage() {
     try {
       const { data } = await getClosure(closureId);
       setClosure(data);
-      setValues(valuesFromClosure(data));
-      setRequestState('idle');
-      setSubmitStatus(null);
+      setRequestState('success');
     } catch (error) {
       setLoadStatus(error?.status ?? null);
       setRequestError(error?.message || 'No hemos podido cargar el cierre.');
@@ -125,25 +121,6 @@ export default function ClosureFormPage() {
   useEffect(() => {
     void loadClosure();
   }, [loadClosure]);
-
-  // Horas de referencia para el aviso de desviación: si el backend v2 acaba
-  // incorporando las previstas, se usan; si no, la referencia es lo enviado en
-  // el cierre anterior, que es justo lo que la corrección puede reducir.
-  const referenceHours = useMemo(() => {
-    const hours = closure?.expectedHours ?? closure?.plannedHours ?? closure?.actualHours;
-    if (hours == null || hours === '') return null;
-    const parsed = Number(hours);
-    return Number.isFinite(parsed) ? parsed : null;
-  }, [closure]);
-
-  const enteredHours = values.actualHours === '' ? NaN : Number(values.actualHours);
-  const showsDeviation = referenceHours !== null
-    && Number.isFinite(enteredHours)
-    && enteredHours < referenceHours;
-
-  // Nota de devolución del administrador (contrato: `adminNote`, con `returnNote`
-  // como reserva). Solo se muestra cuando el estado es RETURNED.
-  const returnedNote = closure?.adminNote ?? closure?.returnNote ?? '';
 
   const updateValue = (event) => {
     const { name, value, checked, type } = event.target;
@@ -184,16 +161,7 @@ export default function ClosureFormPage() {
         evidenceConsent: values.evidenceConsent,
       };
       const response = await submitClosure(request, evidence);
-      // 201 creación · 200 corrección. El multipart de POST /closures no lleva
-      // id en la ruta: cuando corregimos, conservamos el closureId ya conocido.
-      const returned = response?.data ?? {};
-      const keptClosure = {
-        ...(closure ?? {}),
-        ...returned,
-        closureId: closure?.closureId ?? returned.closureId,
-      };
-      setClosure(keptClosure);
-      setSubmitStatus(Number(response?.status) === 201 ? 'created' : 'corrected');
+      setClosure(response?.data ?? {});
       setRequestState('success');
     } catch (error) {
       const nextErrors = error?.fieldErrors && typeof error.fieldErrors === 'object'
@@ -235,33 +203,14 @@ export default function ClosureFormPage() {
     );
   }
 
-  if (requestState === 'success') return (
-    <ClosureDetail closure={closure} submitStatus={submitStatus} closureId={closure?.closureId} />
-  );
+  if (requestState === 'success') return <ClosureDetail closure={closure} justCreated={!isDetail} />;
 
   return (
     <section className="report-form-page" aria-labelledby="closure-form-title">
       <Link to="/my-volunteering">← Volver a mis voluntariados</Link>
       <p className="activity-form-page__eyebrow">Cierre de participación</p>
-      <h1 id="closure-form-title">
-        {isDetail ? 'Corregir tu cierre' : 'Cerrar tu participación'}
-      </h1>
-      <p>
-        {isDetail
-          ? 'Revisa las horas realizadas y tu valoración. Al enviar, actualizas el cierre enviado.'
-          : 'Indica las horas realizadas y tu valoración de la experiencia.'}
-      </p>
-
-      {/* Nota administrativa: solo en estado RETURNED, solo lectura. Se mantiene
-          visible mientras la persona corrige y reenvía desde la misma ruta. */}
-      {isDetail && closure?.status === 'RETURNED' && returnedNote && (
-        <aside className="closure-form__returned" aria-labelledby="closure-returned-title">
-          <h2 id="closure-returned-title" className="closure-form__returned-title">
-            Cierre devuelto por la administración
-          </h2>
-          <p className="closure-form__returned-note" data-testid="closure-returned-note">{returnedNote}</p>
-        </aside>
-      )}
+      <h1 id="closure-form-title">Cerrar tu participación</h1>
+      <p>Indica las horas realizadas y tu valoración de la experiencia. El cierre se envía una sola vez.</p>
 
       {errors.registrationId && <p role="alert">{errors.registrationId}</p>}
       <form onSubmit={handleSubmit} noValidate>
@@ -274,7 +223,6 @@ export default function ClosureFormPage() {
           value={values.actualHours}
           onChange={updateValue}
           error={errors.actualHours}
-          hint={showsDeviation ? `Has indicado ${enteredHours} h, por debajo de las ${referenceHours} h de tu envío anterior. Puedes continuar: el cierre se actualizará.` : undefined}
           required
         />
         <Select
@@ -355,7 +303,7 @@ export default function ClosureFormPage() {
           isLoading={requestState === 'submitting'}
           loadingLabel="Enviando cierre…"
         >
-          {isDetail ? 'Guardar corrección' : 'Enviar cierre'}
+          Enviar cierre
         </Button>
       </form>
     </section>

@@ -299,7 +299,7 @@ describe('dashboard API contract', () => {
       responseType: 'blob',
     });
     expect(client.get).toHaveBeenNthCalledWith(4, '/dashboard/report.pdf', {
-      params: { year: 2026 },
+      params: filters,
       responseType: 'blob',
     });
   });

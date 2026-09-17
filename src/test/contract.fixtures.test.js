@@ -62,7 +62,7 @@ describe('fixtures follow the current API enums and DTOs', () => {
 
   it('represents employee and activity closures as different DTOs', () => {
     const request = makeCreateClosureRequest({ registrationId: 10, actualHours: 6, rating: 5 });
-    const detail = makeClosureDetail({ closureId: 501 });
+    const detail = makeClosureDetail({ id: 501 });
     const activityClosure = makeActivityClosure({ activityId: 4 });
 
     expect(request).toMatchObject({
@@ -71,7 +71,7 @@ describe('fixtures follow the current API enums and DTOs', () => {
       rating: 5,
       evidenceConsent: true,
     });
-    expect(detail).toHaveProperty('closureId', 501);
+    expect(detail).toHaveProperty('id', 501);
     expect(activityClosure).toMatchObject({
       activityId: 4,
       status: ActivityClosureStatus.DRAFT,

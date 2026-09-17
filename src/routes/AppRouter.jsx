@@ -17,7 +17,7 @@ import OrgDashboardPage from '../features/orgs/OrgDashboardPage';
 import OrgActivitiesPage from '../features/orgs/OrgActivitiesPage';
 import ProposalsInboxPage from '../features/proposals/ProposalsInboxPage';
 import ProposalDetailPage from '../features/proposals/ProposalDetailPage';
-import AccountStatusPage from '../features/orgs/AccountStatusPage';
+import AccountStatusPage, { AdminAccountStatusPage } from '../features/orgs/AccountStatusPage';
 import ActivityDetailPage from '../features/activities/ActivityDetailPage';
 import MyVolunteeringPage from '../features/registrations/MyVolunteeringPage';
 import NotFoundPage from '../features/not-found/NotFoundPage';
@@ -35,7 +35,7 @@ export default function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<PublicLayout><LandingPage /></PublicLayout>} />
-      <Route path="/login" element={<PublicLayout><LoginPage /></PublicLayout>} />
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
       <Route path="/new-proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
       <Route path="/register-organization" element={<PublicLayout><OrgRegisterPage /></PublicLayout>} />
@@ -87,7 +87,7 @@ export default function AppRouter() {
                 />
               )}
             />
-            <Route path="/admin/account-status" element={<AccountStatusPage />} />
+            <Route path="/admin/account-status" element={<AdminAccountStatusPage />} />
             <Route path="/admin/activities/pending-closure" element={<PendingClosurePage />} />
             <Route path="/admin/activities/:activityId/closure" element={<ActivityClosurePage />} />
           </Route>
