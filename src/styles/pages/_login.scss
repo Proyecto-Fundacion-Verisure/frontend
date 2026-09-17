@@ -115,6 +115,21 @@
       text-decoration: underline;
     }
   }
+
+  &__back-link {
+    display: block;
+    margin-top: map-get($spacing, '8');
+    text-align: center;
+    font-size: $font-size-xs;
+    color: $color-muted;
+    text-decoration: none;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-text;
+      text-decoration: underline;
+    }
+  }
 }
 
 .login-form {
