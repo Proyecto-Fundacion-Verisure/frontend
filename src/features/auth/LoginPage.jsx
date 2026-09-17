@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import logo from "../../assets/images/logo-fundacion-verisure.png";
 import backgroundImage from "../../assets/images/login-background.png";
@@ -58,6 +58,10 @@ export default function LoginPage() {
                 Regístrate
               </a>
             </p>
+
+            <Link to="/" className="login-page__back-link">
+              Volver a la página de inicio
+            </Link>
           </div>
         </div>
       </div>
