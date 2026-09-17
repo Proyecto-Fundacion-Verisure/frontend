@@ -29,6 +29,14 @@
     position: relative;
   }
 
+  // La frase de contexto y el menú de exportar en la misma línea, bajo el título.
+  &__intro-row {
+    align-items: center;
+    display: flex;
+    gap: space('6');
+    justify-content: space-between;
+  }
+
   &__intro {
     color: $color-muted;
     margin: 0;
@@ -611,6 +619,7 @@
     gap: space('6');
 
     &__header,
+    &__intro-row,
     .dashboard-section-heading { flex-direction: column; gap: space('2'); }
 
     &__header-actions {

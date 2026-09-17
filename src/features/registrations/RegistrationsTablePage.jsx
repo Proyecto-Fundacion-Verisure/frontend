@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Badge, Button, EmptyState, Pagination, Spinner, Table } from '../../components/ui';
 import RegistrationDecisionActions from './RegistrationDecisionActions';
 import CancelRegistrationAction from './CancelRegistrationAction';
@@ -229,18 +230,18 @@ export default function RegistrationsTablePage() {
           })}
 
           <section className="registrations-page__section registrations-page__section--history">
-            <button
-              type="button"
-              className="registrations-page__history-toggle"
+            <Button
+              variant="secondary"
+              size="small"
               onClick={() => setHistoryOpen((prev) => !prev)}
               aria-expanded={historyOpen}
               aria-controls="registrations-history"
             >
-              <span className="registrations-page__history-chevron" aria-hidden="true">
-                {historyOpen ? '▾' : '▸'}
-              </span>
+              {historyOpen
+                ? <ChevronDown aria-hidden="true" size={16} />
+                : <ChevronRight aria-hidden="true" size={16} />}
               Historial ({historyTotal})
-            </button>
+            </Button>
             {historyOpen && (
               <div id="registrations-history" className="registrations-page__history-content">
                 {HISTORY_SECTIONS.map((section) => {

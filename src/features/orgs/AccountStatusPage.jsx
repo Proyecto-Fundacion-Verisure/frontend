@@ -240,12 +240,6 @@ export function AdminAccountStatusPage() {
             <div className="account-status__card-main">
               <div className="account-status__card-header">
                 <h2 className="account-status__org-name">{org.organizationName}</h2>
-                {/* No se bloquea aprobar sin correo verificado; se avisa. */}
-                {org.emailVerified ? (
-                  <span className="account-status__badge badge badge--success">Correo verificado</span>
-                ) : (
-                  <span className="account-status__badge badge badge--warning">Sin verificar</span>
-                )}
               </div>
 
               <div className="account-status__card-info">
@@ -269,6 +263,17 @@ export function AdminAccountStatusPage() {
                   <span className="account-status__label">Solicitado el</span>
                   <span className="account-status__value">
                     {formatDateTime(org.requestedAt, { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </span>
+                </div>
+                {/* No se bloquea aprobar sin correo verificado; se avisa. */}
+                <div className="account-status__field">
+                  <span className="account-status__label">Correo</span>
+                  <span className="account-status__value">
+                    {org.emailVerified ? (
+                      <span className="badge badge--success">Verificado</span>
+                    ) : (
+                      <span className="badge badge--warning">Sin verificar</span>
+                    )}
                   </span>
                 </div>
               </div>

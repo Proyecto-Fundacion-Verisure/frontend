@@ -81,10 +81,6 @@
     margin: 0;
   }
 
-  &__badge {
-    flex-shrink: 0;
-  }
-
   &__card-info {
     display: grid;
     grid-template-columns: 1fr;
@@ -129,7 +125,6 @@
     align-items: stretch;
     gap: space('2');
     padding-left: space('4');
-    border-left: 1px solid $color-border;
     min-width: 8rem;
     flex-shrink: 0;
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { getDashboard } from '../../api/dashboardApi';
 import { Button, Card, EmptyState, Spinner } from '../../components/ui';
 import { ACTIVITY_LINES } from '../../constants/activityLines';
@@ -221,14 +221,13 @@ export default function DashboardPage() {
             <span className="dashboard__demo-badge">Datos ficticios para validación</span>
           )}
         </div>
+      </header>
+      <div className="dashboard__intro-row">
+        <p className="dashboard__intro">Consulta el impacto de las participaciones cerradas y descarga los resultados.</p>
         <div className="dashboard__header-actions">
-          <Link to="/proposals" className="button button--secondary button--medium">
-            Ver propuestas recibidas
-          </Link>
           <ExportMenu filters={filters} />
         </div>
-      </header>
-      <p className="dashboard__intro">Consulta el impacto de las participaciones cerradas y descarga los resultados.</p>
+      </div>
 
       <DashboardFilters
         year={year}
