@@ -58,7 +58,7 @@ describe('ActivityCard', () => {
     expect(screen.getByText('Desoledad')).toBeInTheDocument();
     expect(screen.getByText('PRESENCIAL')).toBeInTheDocument();
     expect(screen.getByText('Fundación Solitaria')).toBeInTheDocument();
-    expect(screen.getByText('8 de 20 plazas')).toBeInTheDocument();
+    expect(screen.getByText('8 de 20 plazas ocupadas · 12 plazas libres')).toBeInTheDocument();
     const progress = screen.getByRole('progressbar', { name: /plazas ocupadas/i });
     expect(progress).toHaveAttribute('aria-valuenow', '8');
     expect(progress).toHaveAttribute('aria-valuemax', '20');
@@ -87,6 +87,12 @@ describe('ActivityCard', () => {
     const { unmount } = render(<ActivityCard activity={{ ...baseActivity, status: 'FULL' }} />) || {};
     // Instead of rerender complexity, just check second render contains Completa via query
     expect(screen.getAllByText('Completa').length).toBeGreaterThan(0);
+  });
+
+  it('avisa de que no quedan plazas libres y marca las actividades terminadas', () => {
+    render(<ActivityCard activity={{ ...baseActivity, spots: 5, occupiedSpots: 5, status: 'FINISHED' }} />);
+    expect(screen.getByText('5 de 5 plazas ocupadas · sin plazas libres')).toBeInTheDocument();
+    expect(screen.getByText('Finalizada')).toBeInTheDocument();
   });
 
   it('muestra Ya estás apuntado cuando isEnrolled y no usa favoriteCount', () => {

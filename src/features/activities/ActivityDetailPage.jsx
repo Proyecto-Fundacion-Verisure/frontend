@@ -8,7 +8,8 @@ import { useAuth } from '../auth/AuthContext';
 import { Badge, Button, Card, EmptyState, HeartButton, ProgressBar, Spinner } from '../../components/ui';
 import RegisterButton from '../registrations/RegisterButton';
 import { getLineByValue } from '../../constants/activityLines';
-import { formatDate, formatDateRange } from '../../utils/dates';
+import { formatDate, formatDateRange, isPastLocalDate } from '../../utils/dates';
+import { LIFECYCLE_BADGES, formatSpots, isOpenForRegistration } from './spots';
 
 export default function ActivityDetailPage() {
   const { activityId } = useParams();
@@ -116,6 +117,13 @@ export default function ActivityDetailPage() {
     : null;
   const displayLocation = activity.location || activity.address || activity.city || null;
   const isFull = activity.status === 'FULL' || activity.status === 'COMPLETA' || (total > 0 && occupied >= total);
+  const lifecycleLabel = LIFECYCLE_BADGES[activity.status] ?? null;
+  const spotsLabel = total > 0 ? formatSpots(occupied, total) : null;
+  // Con la actividad en curso o terminada, o el plazo vencido, «Plazas
+  // disponibles» junto a «Plazo cerrado» se contradice: las plazas sobran pero
+  // ya no se pueden pedir.
+  const registrationClosed = Boolean(lifecycleLabel) || isPastLocalDate(activity.registrationDeadline);
+  const isOpen = !isFull && !registrationClosed && isOpenForRegistration(activity.status);
   const favoritedByMe = favoritesCtx
     ? favoritesCtx.getFavorite(activity.id, activity.favoritedByMe)
     : Boolean(activity.favoritedByMe);
@@ -157,6 +165,10 @@ export default function ActivityDetailPage() {
             <div className="activity-detail__badges">
               {lineLabel && <Badge variant="info">{lineLabel}</Badge>}
               {activity.mode && <Badge variant="neutral">{activity.mode}</Badge>}
+              {isOpen && (
+                <Badge variant="success"><span className="badge__dot" aria-hidden="true" />Inscripción abierta</Badge>
+              )}
+              {lifecycleLabel && <Badge variant="neutral">{lifecycleLabel}</Badge>}
               {isFull && <Badge variant="danger">Completa</Badge>}
               {isEnrolled && <Badge variant="success">Ya estás apuntado</Badge>}
               {displayLocation && (
@@ -189,7 +201,7 @@ export default function ActivityDetailPage() {
             {total > 0 && (
               <ProgressBar value={occupied} max={total} label="Plazas ocupadas" showValue={false} valueLabel={`${occupied} de ${total}`} />
             )}
-            {total > 0 && <p className="activity-detail__meta">{occupied} de {total} plazas</p>}
+            {spotsLabel && <p className="activity-detail__meta">{spotsLabel}</p>}
           </Card>
         </div>
 
@@ -199,7 +211,7 @@ export default function ActivityDetailPage() {
             {total > 0 && (
               <ProgressBar value={occupied} max={total} label="Plazas ocupadas" showValue={false} valueLabel={`${occupied} de ${total}`} />
             )}
-            {total > 0 && <p className="activity-detail__panel-meta">{occupied} de {total} plazas</p>}
+            {spotsLabel && <p className="activity-detail__panel-meta">{spotsLabel}</p>}
             {isFull && !isEnrolled && <p className="activity-detail__panel-meta">Actividad completa — puedes solicitar entrar en lista de espera.</p>}
             {isEnrolled && (
               <p className="activity-detail__panel-meta">
@@ -220,7 +232,7 @@ export default function ActivityDetailPage() {
                 {currentRegistration.accepted ? 'Aceptada' : 'Pendiente de revisión'}
               </p>
             )}
-            {!isEnrolled && !isFull && <p className="activity-detail__panel-meta">Plazas disponibles.</p>}
+            {!isEnrolled && !isFull && !registrationClosed && <p className="activity-detail__panel-meta">Plazas disponibles.</p>}
             {/* El plazo también aquí: es lo que decide si el botón de abajo sigue
                 vivo, y sin la fecha «Plazo cerrado» parece un error. */}
             {activity.registrationDeadline && (

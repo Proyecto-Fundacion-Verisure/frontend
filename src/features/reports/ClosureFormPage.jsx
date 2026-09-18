@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { getClosure, submitClosure } from '../../api/closuresApi';
 import { Button, Input, Select, Spinner, Textarea } from '../../components/ui';
 import { formatDateTime } from '../../utils/dates';
+import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
 
 const MAX_EVIDENCE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_EVIDENCE_TYPES = new Set(['application/pdf', 'image/jpeg', 'image/png']);
@@ -94,6 +95,15 @@ export default function ClosureFormPage() {
   const [loadStatus, setLoadStatus] = useState(null);
 
   const registrationId = searchParams.get('registrationId');
+  // `/closures/new` cuelga de `RegistrationsProvider`, que ya trae
+  // `/registrations/me` con la actividad de cada inscripción: de ahí sale el
+  // título sin otra petición. El hook es opcional porque el detalle
+  // (`/closures/:closureId`) vive fuera del provider.
+  const registrationsContext = useRegistrationsOptional();
+  const registration = registrationsContext?.registrations?.find(
+    (item) => String(item.registrationId) === String(registrationId),
+  );
+  const activityTitle = registration?.activity?.title ?? null;
 
   // La vista previa usa una URL temporal (`URL.createObjectURL`). Esta limpieza
   // la libera al retirar el archivo y al desmontar el componente: sin ella cada
@@ -210,6 +220,9 @@ export default function ClosureFormPage() {
       <Link to="/my-volunteering">← Volver a mis voluntariados</Link>
       <p className="activity-form-page__eyebrow">Cierre de participación</p>
       <h1 id="closure-form-title">Cerrar tu participación</h1>
+      {activityTitle && (
+        <p className="closure-form__activity" data-testid="closure-activity-title">{activityTitle}</p>
+      )}
       <p>Indica las horas realizadas y tu valoración de la experiencia. El cierre se envía una sola vez.</p>
 
       {errors.registrationId && <p role="alert">{errors.registrationId}</p>}
@@ -285,7 +298,10 @@ export default function ClosureFormPage() {
           )}
           {errors.evidence && <span id="closure-evidence-error" className="field__error" role="alert">{errors.evidence}</span>}
         </div>
-        <label htmlFor="evidence-consent">
+        <label
+          className={`closure-form__consent${errors.evidenceConsent ? ' closure-form__consent--error' : ''}`}
+          htmlFor="evidence-consent"
+        >
           <input
             id="evidence-consent"
             type="checkbox"
@@ -293,18 +309,20 @@ export default function ClosureFormPage() {
             checked={values.evidenceConsent}
             onChange={updateValue}
             aria-invalid={Boolean(errors.evidenceConsent)}
-          />{' '}
-          Autorizo el tratamiento de la evidencia adjunta.
+          />
+          <span>Autorizo el tratamiento de la evidencia adjunta.</span>
         </label>
         {errors.evidenceConsent && <p role="alert">{errors.evidenceConsent}</p>}
         {requestError && <p role="alert">{requestError}</p>}
-        <Button
-          type="submit"
-          isLoading={requestState === 'submitting'}
-          loadingLabel="Enviando cierre…"
-        >
-          Enviar cierre
-        </Button>
+        <div className="closure-form__actions">
+          <Button
+            type="submit"
+            isLoading={requestState === 'submitting'}
+            loadingLabel="Enviando cierre…"
+          >
+            Enviar cierre
+          </Button>
+        </div>
       </form>
     </section>
   );

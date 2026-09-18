@@ -30,15 +30,15 @@ describe('Sidebar PARTNER navigation', () => {
     renderSidebar('PARTNER');
 
     expect(screen.queryByText('Actividades')).not.toBeInTheDocument();
-    expect(screen.queryByText('Cuentas pendientes')).not.toBeInTheDocument();
+    expect(screen.queryByText('Solicitudes pendientes')).not.toBeInTheDocument();
   });
 });
 
 describe('Sidebar ADMIN navigation', () => {
-  it('links the review queue next to the closures queue', () => {
+  it('links the review queue from the catalog section', () => {
     renderSidebar('ADMIN');
 
-    expect(screen.getByRole('link', { name: /revisión de propuestas/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /^en revisión/i })).toHaveAttribute(
       'href',
       '/admin/activities/pending',
     );
