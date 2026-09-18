@@ -31,6 +31,34 @@
     margin: 0;
   }
 
+  &__activity {
+    color: $color-navy;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    margin: 0 0 space('2');
+  }
+
+  &__consent {
+    align-items: flex-start;
+    background: $color-background;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    display: flex;
+    gap: space('3');
+    line-height: 1.45;
+    margin-top: space('5');
+    padding: space('4');
+
+    input {
+      flex-shrink: 0;
+      margin-top: 0.2em;
+    }
+
+    &--error {
+      border-color: $color-danger;
+    }
+  }
+
   &__contrast {
     margin-top: space('6');
   }

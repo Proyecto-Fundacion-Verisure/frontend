@@ -26,6 +26,9 @@ const MODE_OPTIONS = [
 
 const ALLOWED_LINES = new Set(LINE_OPTIONS.map((o) => o.value).filter(Boolean));
 const ALLOWED_MODES = new Set(MODE_OPTIONS.map((o) => o.value).filter(Boolean));
+// Hoy en formato local `YYYY-MM-DD`, como `MyVolunteeringPage`: `toISOString`
+// va en UTC y al oeste de Greenwich por la noche devolvería mañana.
+const todayIso = () => new Date().toLocaleDateString('sv');
 const normalizeDate = (value) => (
   /^\d{4}-\d{2}-\d{2}$/.test(value ?? '') && !Number.isNaN(new Date(`${value}T00:00:00`).getTime())
     ? value
@@ -58,6 +61,15 @@ export default function CatalogPage() {
   const mode = ALLOWED_MODES.has(rawMode) ? rawMode : '';
   const from = normalizeDate(searchParams.get('from'));
   const to = normalizeDate(searchParams.get('to'));
+  // El catálogo enseña todas las actividades, también las finalizadas: lo que
+  // distingue abiertas de cerradas son los distintivos de la tarjeta, no un
+  // filtro. «Solo próximas» es opcional y va apagado (`upcoming=1` lo enciende).
+  // No hay filtro de estado en el backend, pero `from` ya acota la fecha de
+  // inicio: con hoy como mínimo se quedan fuera las empezadas y las finalizadas
+  // sin romper la paginación, que sigue haciéndola el servidor. Si la persona
+  // pone su propio «Empieza desde», ese manda.
+  const upcomingOnly = searchParams.get('upcoming') === '1';
+  const effectiveFrom = from || (upcomingOnly ? todayIso() : '');
   const updateParams = useCallback(
     (patch, { resetPage = true } = {}) => {
       setSearchParams((prev) => {
@@ -66,7 +78,7 @@ export default function CatalogPage() {
           if (value) next.set(key, value);
           else next.delete(key);
         });
-        if (resetPage && ['line', 'mode', 'from', 'to'].some((key) => key in patch)) {
+        if (resetPage && ['line', 'mode', 'from', 'to', 'upcoming'].some((key) => key in patch)) {
           next.delete('page');
         }
         if (next.get('page') === '1') next.delete('page');
@@ -116,7 +128,7 @@ export default function CatalogPage() {
         const params = { page: page - 1, size: LIMIT };
         if (line) params.line = line;
         if (mode) params.mode = mode;
-        if (from) params.from = from;
+        if (effectiveFrom) params.from = effectiveFrom;
         if (to) params.to = to;
         const response = await getPublishedActivities(params);
         if (cancelled) return;
@@ -136,7 +148,7 @@ export default function CatalogPage() {
     return () => {
       cancelled = true;
     };
-  }, [page, line, mode, from, to, reloadToken]);
+  }, [page, line, mode, effectiveFrom, to, reloadToken]);
 
   const totalPages = Math.max(1, Math.ceil(totalCount / LIMIT));
 
@@ -209,10 +221,24 @@ export default function CatalogPage() {
           min={from || undefined}
           onChange={(event) => updateParams({ to: event.target.value })}
         />
+        <label className="catalog__toggle" htmlFor="catalog-upcoming-only">
+          <input
+            id="catalog-upcoming-only"
+            type="checkbox"
+            checked={upcomingOnly}
+            onChange={(event) => updateParams({ upcoming: event.target.checked ? '1' : '' })}
+          />
+          <span>Solo próximas</span>
+        </label>
       </div>
 
       {activities.length === 0 ? (
-        <EmptyState title="No hay actividades" description="No se encontraron actividades con los filtros seleccionados." />
+        <EmptyState
+          title="No hay actividades"
+          description={upcomingOnly && !from
+            ? 'No hay actividades próximas con estos filtros. Desmarca «Solo próximas» para ver también las empezadas y finalizadas.'
+            : 'No se encontraron actividades con los filtros seleccionados.'}
+        />
       ) : (
         <>
           <div className="catalog__grid">

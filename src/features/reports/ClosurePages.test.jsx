@@ -11,6 +11,7 @@ import {
 } from '../../api/closuresApi';
 import { presets } from '../../test/fixtures/apiErrors';
 import { makeActivityClosure } from '../../test/fixtures/closures';
+import { RegistrationsContext } from '../registrations/RegistrationsContext';
 import ActivityClosurePage from './ActivityClosurePage';
 import ClosureFormPage from './ClosureFormPage';
 
@@ -332,6 +333,41 @@ describe('employee closure page', () => {
     expect(screen.getByRole('alert')).toHaveTextContent(/no tienes permiso/i);
     expect(screen.getByRole('link', { name: /volver a mis voluntariados/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /reintentar/i })).not.toBeInTheDocument();
+  });
+
+  it('shows the title of the activity being closed, taken from the registrations already loaded', () => {
+    const registrations = [
+      { registrationId: 103, activity: { id: 4, title: 'Jornada ambiental' }, status: 'PENDING_CLOSURE' },
+    ];
+
+    render(
+      <RegistrationsContext.Provider value={{ registrations, loading: false, error: null }}>
+        <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
+          <Routes>
+            <Route path="/closures/new" element={<ClosureFormPage />} />
+          </Routes>
+        </MemoryRouter>
+      </RegistrationsContext.Provider>,
+    );
+
+    expect(screen.getByRole('heading', { name: /cerrar tu participación/i })).toBeInTheDocument();
+    expect(screen.getByTestId('closure-activity-title')).toHaveTextContent('Jornada ambiental');
+  });
+
+  it('keeps the submit button after the consent block, in its own actions row', () => {
+    render(
+      <MemoryRouter initialEntries={['/closures/new?registrationId=103']}>
+        <Routes>
+          <Route path="/closures/new" element={<ClosureFormPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    const consent = screen.getByLabelText(/autorizo el tratamiento/i).closest('label');
+    const submit = screen.getByRole('button', { name: /enviar cierre/i });
+    expect(consent).toHaveClass('closure-form__consent');
+    expect(submit.parentElement).toHaveClass('closure-form__actions');
+    expect(consent.compareDocumentPosition(submit) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });
 

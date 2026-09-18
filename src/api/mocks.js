@@ -1,68 +1,27 @@
 /**
- * Interruptor de mocks, en dos niveles.
+ * Interruptor de los mocks de desarrollo que quedan.
  *
- * Mientras haya módulos sin backend, apagar los mocks tiene que poder hacerse
- * módulo a módulo: login, inscripciones, catálogo, actividades, alta de entidad,
- * actividades y propuestas de la entidad, bandeja de propuestas, cierres,
- * dashboard y cuentas de entidad ya están integrados, pero el dashboard de la
- * entidad y el formulario público de propuestas no tienen backend todavía y
- * necesitan seguir en falso.
+ * Toda la aplicación va contra el backend real salvo dos pantallas que aún no
+ * tienen controlador: el dashboard de la entidad (`ORG`, `GET /org/dashboard`,
+ * en `orgApi.js`) y el formulario público de propuestas de la landing
+ * (`PROPOSAL`, `POST /api/proposals`, en `proposalsApi.js`). Los mocks de los
+ * módulos integrados se retiraron: con el backend apagado esas pantallas
+ * fallan, que es lo honesto.
  *
- * Las claves van por backend, no por fichero. `orgApi.js` reparte cinco:
- * `ORG_REGISTER` (alta), `ORG_ACTIVITY` (actividades de la entidad),
- * `ORG_PROPOSAL` (propuestas de la entidad), `ORG_ACCOUNT` (bandeja de cuentas
- * del admin y reenvío de verificación) y `ORG` (el dashboard de la entidad, que
- * sigue sin controlador). Y `proposalsApi.js` dos: `PROPOSAL_INBOX` (bandeja y
- * detalle del admin) y `PROPOSAL` (el formulario público de la landing,
- * `POST /api/proposals`, sin controlador). Con una sola clave, encender lo
- * integrado mandaría `/org/dashboard` y `/proposals` contra endpoints que no
- * existen y devuelven 404.
+ *   VITE_USE_MOCKS=false             apaga los dos
+ *   VITE_USE_ORG_MOCKS=false         apaga solo ese, dejando el otro
  *
- * `CLOSURE`, `DASHBOARD` y `ORG_ACCOUNT` ya no tienen mock: su clave está en
- * `INTEGRATED` para dejar constancia, pero encenderla no haría nada.
+ * La variable de módulo manda sobre la global.
  *
- *   VITE_USE_MOCKS=false                 apaga todos los módulos
- *   VITE_USE_REGISTRATION_MOCKS=false    apaga solo ese, dejando el resto
- *
- * La variable de módulo manda sobre la global, así que también sirve para lo
- * contrario: dejar uno encendido con todo lo demás apagado.
- *
- * Tres reglas que no se negocian por configuración:
+ * Dos reglas que no se negocian por configuración:
  *
  * - **En producción nunca hay mocks.** `import.meta.env.DEV` corta antes que
  *   cualquier variable.
  * - **En modo test tampoco, salvo que alguien lo pida por su nombre.** Los tests
  *   montan sus dobles con `vi.mock`, y un mock por debajo haría pasar pruebas que
- *   no prueban nada. La excepción es un test que prueba el mock en sí —los hay,
- *   como `proposalsApi.test.jsx`—: ese lo enciende con `vi.stubEnv` de su módulo,
- *   que es explícito y se lee en el propio fichero de test.
- * - **Un módulo ya integrado no vuelve al mock por la global.** Ver `INTEGRATED`.
+ *   no prueban nada. La excepción es un test que prueba el mock en sí, como
+ *   `proposalsApi.test.jsx`: ese lo enciende con `vi.stubEnv` de su módulo.
  */
-
-/**
- * Módulos que ya hablan con el backend de verdad.
- *
- * El estado de integración vive aquí, en el código, y no solo en un `.env`:
- * reescribir `.env.development` y olvidar una línea fue precisamente lo que
- * devolvió el login al mock, donde las cuentas reales de la semilla no existen
- * y todas respondían «Credenciales inválidas.». La global ya no puede
- * remockearlos; solo su propia variable de módulo, que sigue siendo la
- * escotilla para trabajar con el backend apagado.
- */
-const INTEGRATED = new Set([
-  'AUTH',
-  'REGISTRATION',
-  'CATALOG',
-  'ACTIVITY',
-  'ORG_REGISTER',
-  'ORG_ACTIVITY',
-  'ORG_PROPOSAL',
-  'PROPOSAL_INBOX',
-  'CLOSURE',
-  'DASHBOARD',
-  'ORG_ACCOUNT',
-]);
-
 export const isMockEnabled = (module) => {
   if (!import.meta.env.DEV) return false;
 
@@ -70,8 +29,6 @@ export const isMockEnabled = (module) => {
   if (forModule !== undefined) return forModule !== 'false';
 
   if (import.meta.env.MODE === 'test') return false;
-
-  if (INTEGRATED.has(module)) return false;
 
   return import.meta.env.VITE_USE_MOCKS !== 'false';
 };

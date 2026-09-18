@@ -135,7 +135,7 @@ describe('ActivitiesListPage', () => {
       <MemoryRouter>
         <ActivitiesListPage
           fetchData={getPendingActivities}
-          title="Propuestas pendientes de revisión"
+          title="Propuestas recibidas por el formulario público"
           showCreateButton={false}
           showStatusFilter={false}
           showRegistrationsLink={false}

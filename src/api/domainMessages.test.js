@@ -20,6 +20,12 @@ const REQUIRED_CODES = [
   'PROPOSAL_ALREADY_DECIDED',
   'VERIFICATION_EXPIRED',
   'RATE_LIMIT_EXCEEDED',
+  // Fuera del enum, pero los emite GlobalExceptionHandler.
+  'NOT_FOUND',
+  'FORBIDDEN',
+  'MALFORMED_REQUEST',
+  'PAYLOAD_TOO_LARGE',
+  'INTERNAL_ERROR',
 ];
 
 describe('MENSAJES', () => {
@@ -30,6 +36,20 @@ describe('MENSAJES', () => {
 
   it('falls back safely for unknown codes', () => {
     expect(getDomainMessage('UNKNOWN_CODE', 'Mensaje del servidor.')).toBe('Mensaje del servidor.');
+  });
+
+  it('translates the English Bean Validation defaults that the backend sends untranslated', () => {
+    expect(translateFieldErrors({
+      note: ['must not be blank'],
+      email: ['must be a well-formed email address'],
+      rating: ['must be less than or equal to 5'],
+      actualHours: ['must be greater than or equal to 1'],
+    })).toEqual({
+      note: 'Este campo es obligatorio.',
+      email: 'Introduce un correo válido.',
+      rating: 'Debe ser menor o igual que 5.',
+      actualHours: 'Debe ser mayor o igual que 1.',
+    });
   });
 
   it('translates domain codes returned as field errors', () => {
