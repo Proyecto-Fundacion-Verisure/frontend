@@ -79,58 +79,58 @@ Batería manual de extremo a extremo (frontend ↔ backend real) para el recorri
 ## Módulo B · Navegación y permisos
 
 ### B1 · Contenido del sidebar para EMPLOYEE
-- [ ] Con sesión de empleado, revisar el menú lateral.
-- [ ] **Esperado:** única sección «Voluntariado» con **«Explorar»** (`/activities`) y **«Mis voluntariados»** (`/my-activities`). No aparecen secciones de administración ni de entidad.
+- [x] Con sesión de empleado, revisar el menú lateral.
+- [x] **Esperado:** única sección «Voluntariado» con **«Explorar»** (`/activities`) y **«Mis voluntariados»** (`/my-activities`). No aparecen secciones de administración ni de entidad.
 
 ### B2 · Guardias de rol — rutas de ADMIN
-- [ ] Logueado como empleado, escribir en la URL: `/dashboard`, `/proposals`, `/admin/activities`, `/admin/account-status`, `/admin/activities/pending-closure`.
-- [ ] **Esperado:** en todos los casos redirección a `/activities` (home del rol). La red **no** debe emitir ninguna petición a `/api/admin/**` ni `/api/dashboard/**`.
+- [x] Logueado como empleado, escribir en la URL: `/dashboard`, `/proposals`, `/admin/activities`, `/admin/account-status`, `/admin/activities/pending-closure`.
+- [x] **Esperado:** en todos los casos redirección a `/activities` (home del rol). La red **no** debe emitir ninguna petición a `/api/admin/**` ni `/api/dashboard/**`.
 
 ### B3 · Guardias de rol — rutas de PARTNER
-- [ ] Escribir: `/org/activities`, `/org/dashboard`, `/org/proposals`, `/org/reports`.
-- [ ] **Esperado:** redirección a `/activities`, sin llamadas a `/api/org/**`.
+- [x] Escribir: `/org/activities`, `/org/dashboard`, `/org/proposals`, `/org/reports`.
+- [x] **Esperado:** redirección a `/activities`, sin llamadas a `/api/org/**`.
 
 ### B4 · Ruta de detalle compartida (ADMIN + EMPLOYEE)
-- [ ] `/activities/:activityId` de una actividad publicada.
-- [ ] **Esperado:** se abre la ficha. El panel de participación (inscribirse, corazón) aparece para EMPLOYEE; en la misma URL con sesión de ADMIN los controles de participación están ocultos.
+- [x] `/activities/:activityId` de una actividad publicada.
+- [x] **Esperado:** se abre la ficha. El panel de participación (inscribirse, corazón) aparece para EMPLOYEE; en la misma URL con sesión de ADMIN los controles de participación están ocultos.
 
 ### B5 · Ruta de cierre compartida (ADMIN + EMPLOYEE)
-- [ ] Con empleado, abrir `/closures/:closureId` de un cierre propio → se muestra el cierre.
+- [x] Con empleado, abrir `/closures/:closureId` de un cierre propio → se muestra el cierre.
 - [ ] Con administradora (o con otra cuenta de empleado), abrir el mismo ID → **403** «no eres el propietario».
 
 ### B6 · 404
-- [ ] Escribir una ruta inexistente `/rutas-que-no-existe`.
-- [ ] **Esperado:** página 404 sin ruptura de layout.
+- [x] Escribir una ruta inexistente `/rutas-que-no-existe`.
+- [x] **Esperado:** página 404 sin ruptura de layout.
 
 ---
 
 ## Módulo C · Catálogo de actividades (`/activities`)
 
 ### C1 · Carga inicial y visibilidad
-- [ ] Entrar en `/activities`.
-- [ ] **Esperado:** Red: `GET /api/activities` → **200**. Se listan **exclusivamente** actividades `PUBLISHED`, `FULL`, `IN_PROGRESS` o `FINISHED`. Ninguna `DRAFT`, `PENDING_APPROVAL` ni `CANCELLED`.
-- [ ] Cada tarjeta muestra título, línea de acción, modalidad, fecha, plazas ocupadas y corazón.
+- [x] Entrar en `/activities`.
+- [x] **Esperado:** Red: `GET /api/activities` → **200**. Se listan **exclusivamente** actividades `PUBLISHED`, `FULL`, `IN_PROGRESS` o `FINISHED`. Ninguna `DRAFT`, `PENDING_APPROVAL` ni `CANCELLED`.
+- [x] Cada tarjeta muestra título, línea de acción, modalidad, fecha, plazas ocupadas y corazón.
 
 ### C2 · Paginación
 - [ ] Comprobar el número de tarjetas de la primera página y pasar a la segunda.
 - [ ] **Esperado:** ninguna actividad repetida entre páginas. El contador total es consistente con el backend (`totalElements`).
 
 ### C3 · Filtro por línea de acción
-- [ ] Aplicar el filtro «Medio ambiente».
-- [ ] **Esperado:** solo actividades de esa línea; las etiquetas/imágenes cuadran. Red: `GET /api/activities?line=medioambiente`.
-- [ ] Probar las cuatro líneas, sueltas.
+- [x] Aplicar el filtro «Medio ambiente».
+- [x] **Esperado:** solo actividades de esa línea; las etiquetas/imágenes cuadran. Red: `GET /api/activities?line=medioambiente`.
+- [x] Probar las cuatro líneas, sueltas.
 
 ### C4 · Filtro por modalidad
-- [ ] Aplicar `PRESENCIAL`, `ONLINE` y `MIXTO`, sueltos.
-- [ ] **Esperado:** solo actividades de esa modalidad en cada caso. Red: `?mode=PRESENCIAL`.
+- [x] Aplicar `PRESENCIAL`, `ONLINE` y `MIXTO`, sueltos.
+- [x] **Esperado:** solo actividades de esa modalidad en cada caso. Red: `?mode=PRESENCIAL`.
 
 ### C5 · Filtro por rango de fechas
-- [ ] Rellenar `desde` y `hasta`, y solo `desde`.
-- [ ] **Esperado:** la lista filtra por `startDate`; si la semilla no tiene actividades en el rango, aparece el estado vacío con opción de reintentar.
+- [x] Rellenar `desde` y `hasta`, y solo `desde`.
+- [x] **Esperado:** la lista filtra por `startDate`; si la semilla no tiene actividades en el rango, aparece el estado vacío con opción de reintentar.
 
 ### C6 · Filtros combinados
-- [ ] Línea + modalidad + rango de fechas a la vez.
-- [ ] **Esperado:** resultado de la intersección; una sola petición por cambio de filtro (sin duplicados).
+- [x] Línea + modalidad + rango de fechas a la vez.
+- [x] **Esperado:** resultado de la intersección; una sola petición por cambio de filtro (sin duplicados).
 
 ### C7 · Limpiar filtros
 - [ ] Pulsar el botón de limpiar/quitar filtros.
@@ -141,8 +141,8 @@ Batería manual de extremo a extremo (frontend ↔ backend real) para el recorri
 - [ ] **Esperado:** se muestra un indicador de carga; no se ve la lista «a medias».
 
 ### C9 · Error de red del catálogo
-- [ ] Con el backend apagado, entrar en `/activities` (con sesión ya abierta).
-- [ ] **Esperado:** mensaje de error amigable («No se pudo cargar» o similar) con botón de reintentar; **no** hay pantalla rota ni stack trace.
+- [x] Con el backend apagado, entrar en `/activities` (con sesión ya abierta).
+- [x] **Esperado:** mensaje de error amigable («No se pudo cargar» o similar) con botón de reintentar; **no** hay pantalla rota ni stack trace.
 
 ### C10 · Una sola petición por filtro
 - [ ] En Red, filtrar y luego volver a filtrar.
@@ -153,83 +153,83 @@ Batería manual de extremo a extremo (frontend ↔ backend real) para el recorri
 ## Módulo D · Ficha de actividad (`/activities/:id`)
 
 ### D1 · Contenido de la ficha
-- [ ] Abrir la ficha de una actividad `PUBLISHED`.
-- [ ] **Esperado:** descripción completa, entidad colaboradora, fechas de inicio/fin, deadline de inscripción, modalidad, hora, plazas, línea de acción con su imagen, barra de ocupación, corazón e información de inscripción.
+- [x] Abrir la ficha de una actividad `PUBLISHED`.
+- [x] **Esperado:** descripción completa, entidad colaboradora, fechas de inicio/fin, deadline de inscripción, modalidad, hora, plazas, línea de acción con su imagen, barra de ocupación, corazón e información de inscripción.
 
 ### D2 · Ficha de una actividad no visible
-- [ ] Localizar el ID de una actividad `DRAFT` o `CANCELLED` (p.ej. vía consola/API administrativa).
-- [ ] Abrir `/activities/<ese-id>`.
-- [ ] **Esperado:** pantalla «Actividad no encontrada» (404), no un error feo. Red: `GET /api/activities/{id}` → **404**.
+- [x] Localizar el ID de una actividad `DRAFT` o `CANCELLED` (p.ej. vía consola/API administrativa).
+- [x] Abrir `/activities/<ese-id>`.
+- [x] **Esperado:** pantalla «Actividad no encontrada» (404), no un error feo. Red: `GET /api/activities/{id}` → **404**.
 
 ### D3 · Fecha límite (deadline)
-- [ ] En la semilla, el deadline de una actividad no publicada o pasada.
-- [ ] Ficha de una actividad cuyo `registrationDeadline` ya venció.
-- [ ] **Esperado:** botón de inscripción oculto o deshabilitado. El matiz del «día mismo del deadline» se valida con la prueba unitaria relevante; comportamiento visual consistente con el backend (`deadline` pasado → 400 `DEADLINE_PASSED`).
+- [x] En la semilla, el deadline de una actividad no publicada o pasada.
+- [x] Ficha de una actividad cuyo `registrationDeadline` ya venció.
+- [x] **Esperado:** botón de inscripción oculto o deshabilitado. El matiz del «día mismo del deadline» se valida con la prueba unitaria relevante; comportamiento visual consistente con el backend (`deadline` pasado → 400 `DEADLINE_PASSED`).
 
 ---
 
 ## Módulo E · Favoritos
 
 ### E1 · Marcar favorito desde la ficha
-- [ ] En la ficha de una actividad sin marcar, pulsar el corazón.
-- [ ] **Esperado:** Red: `POST /api/favorites` → **201**. El corazón se rellena al instante (pintado optimista). Volver al catálogo y recargar: sigue marcado.
+- [x] En la ficha de una actividad sin marcar, pulsar el corazón.
+- [x] **Esperado:** Red: `POST /api/favorites` → **201**. El corazón se rellena al instante (pintado optimista). Volver al catálogo y recargar: sigue marcado.
 
 ### E2 · Marcar favorito desde el catálogo
-- [ ] Pulsar el corazón de una tarjeta en `/activities`.
-- [ ] **Esperado:** `POST /api/favorites` → **201** y el corazón se marca sin recargar.
+- [x] Pulsar el corazón de una tarjeta en `/activities`.
+- [x] **Esperado:** `POST /api/favorites` → **201** y el corazón se marca sin recargar.
 
 ### E3 · Desmarcar favorito
-- [ ] Pulsar el corazón ya marcado (desde ficha o tarjeta).
-- [ ] **Esperado:** Red: `DELETE /api/favorites/{activityId}` → **204**. El corazón vuelve al vacío. Recargar lo conserva desmarcado.
+- [x] Pulsar el corazón ya marcado (desde ficha o tarjeta).
+- [x] **Esperado:** Red: `DELETE /api/favorites/{activityId}` → **204**. El corazón vuelve al vacío. Recargar lo conserva desmarcado.
 
 ### E4 · Doble clic / doble petición
-- [ ] Pulsar el corazón varias veces rápidamente.
-- [ ] **Esperado:** la UI bloquea la segunda pulsación mientras la primera está en vuelo (sin doble request inconsistente). Un `409 ALREADY_FAVORITED` (si ocurre) se trata como éxito, no revierte el corazón.
+- [x] Pulsar el corazón varias veces rápidamente.
+- [x] **Esperado:** la UI bloquea la segunda pulsación mientras la primera está en vuelo (sin doble request inconsistente). Un `409 ALREADY_FAVORITED` (si ocurre) se trata como éxito, no revierte el corazón.
 
 ### E5 · Fallo de red al marcar
 - [ ] Con el backend apagado, pulsar el corazón.
 - [ ] **Esperado:** el corazón revierte a su estado anterior (rollback del pintado optimista) y aparece un error, sin romper la pantalla.
 
 ### E6 · Persistencia al recargar
-- [ ] Tener 2–3 favoritos, recargar la página y volver a la ficha.
-- [ ] **Esperado:** los corazones siguen marcados (vienen de `favoritedByMe` de `GET /api/activities`).
+- [x] Tener 2–3 favoritos, recargar la página y volver a la ficha.
+- [x] **Esperado:** los corazones siguen marcados (vienen de `favoritedByMe` de `GET /api/activities`).
 
 ---
 
 ## Módulo F · Inscripción (registrarse)
 
 ### F1 · Inscripción en actividad con plazas
-- [ ] Ficha de una actividad `PUBLISHED` con plazas libres → pulsar «Inscribirme».
-- [ ] **Esperado:** modal de confirmación. Confirmar → Red: `POST /api/registrations` → **201**.
-- [ ] El registro se crea en `WAITLISTED` (el backend confirma según plaza). El botón cambia de estado («Ya inscrito/a» o similar) y el detalle refleja la cola/confirmación.
+- [x] Ficha de una actividad `PUBLISHED` con plazas libres → pulsar «Inscribirme».
+- [x] **Esperado:** modal de confirmación. Confirmar → Red: `POST /api/registrations` → **201**.
+- [x] El registro se crea en `WAITLISTED` (el backend confirma según plaza). El botón cambia de estado («Ya inscrito/a» o similar) y el detalle refleja la cola/confirmación.
 
 ### F2 · Inscripción en actividad completa (waitlist)
-- [ ] Ficha de una actividad `FULL` → inscribirse.
-- [ ] **Esperado:** `POST /api/registrations` → **201** con `WAITLISTED` y `queuePosition`; la UI lo indica claramente como «en cola de espera» con su posición.
+- [x] Ficha de una actividad `FULL` → inscribirse.
+- [x] **Esperado:** `POST /api/registrations` → **201** con `WAITLISTED` y `queuePosition`; la UI lo indica claramente como «en cola de espera» con su posición.
 
 ### F3 · Inscripción duplicada
 - [ ] Intentar inscribirse en una actividad donde ya hay inscripción.
 - [ ] **Esperado:** Red: `POST /api/registrations` → **409** `ALREADY_REGISTERED`, con mensaje traducido en castellano. Sin doble registro en base.
 
 ### F4 · Inscripción con deadline pasado
-- [ ] Actividad con `registrationDeadline` anterior a hoy.
-- [ ] **Esperado:** el botón no está disponible; si se fuerza, Red: **400** `DEADLINE_PASSED` con mensaje amigable.
+- [x] Actividad con `registrationDeadline` anterior a hoy.
+- [x] **Esperado:** el botón no está disponible; si se fuerza, Red: **400** `DEADLINE_PASSED` con mensaje amigable.
 
 ### F5 · Estado tras inscribirse en catálogo
-- [ ] Tras inscribirse, volver al catálogo y a la ficha.
-- [ ] **Esperado:** el detalle refleja la inscripción activa (nº de ocupadas sube si corresponde; los estados se repintan sin recarga manual).
+- [x] Tras inscribirse, volver al catálogo y a la ficha.
+- [x] **Esperado:** el detalle refleja la inscripción activa (nº de ocupadas sube si corresponde; los estados se repintan sin recarga manual).
 
 ---
 
 ## Módulo G · Mis voluntariados (`/my-activities`)
 
 ### G1 · Listado correcto
-- [ ] Entrar en `/my-activities` (y `/my-volunteering`, que es alias).
-- [ ] **Esperado:** Red: `GET /api/registrations/me` → **200**. Solo aparecen inscripciones del propio usuario.
-- [ ] Las pestañas **Activas** y **Cerradas** muestran los estados correctos según `registrationStatus`.
+- [x] Entrar en `/my-activities` (y `/my-volunteering`, que es alias).
+- [x] **Esperado:** Red: `GET /api/registrations/me` → **200**. Solo aparecen inscripciones del propio usuario.
+- [x] Las pestañas **Activas** y **Cerradas** muestran los estados correctos según `registrationStatus`.
 
 ### G2 · Botones de la fila según contrato
-- [ ] Revisar cada fila contra la tabla de combinaciones `closureId` / `activityClosed`:
+- [x] Revisar cada fila contra la tabla de combinaciones `closureId` / `activityClosed`:
 
 | `closureId` | `activityClosed` | Botón esperado |
 |---|---|---|
@@ -237,11 +237,11 @@ Batería manual de extremo a extremo (frontend ↔ backend real) para el recorri
 | con valor | `false` | «Ver mi cierre» |
 | con valor | `true` | «Descargar certificado» |
 
-- [ ] **Esperado:** cada fila pinta el botón que le corresponde; no hay botones huérfanos ni dobles.
+- [x] **Esperado:** cada fila pinta el botón que le corresponde; no hay botones huérfanos ni dobles.
 
 ### G3 · Cancelar inscripción confirmada
-- [ ] Cancelar una inscripción `CONFIRMED` cuya `startDate` es posterior a hoy.
-- [ ] **Esperado:** Red: `PATCH /api/registrations/{id}/cancel` → **200/204**. La fila desaparece de activas (status `CANCELLED`). Si había cola, la lista recarga y la primera persona en cola pasa a `CONFIRMED` (verificar, si procede, el correo «Ha quedado una plaza libre y es tuya»).
+- [x] Cancelar una inscripción `CONFIRMED` cuya `startDate` es posterior a hoy.
+- [x] **Esperado:** Red: `PATCH /api/registrations/{id}/cancel` → **200/204**. La fila desaparece de activas (status `CANCELLED`). Si había cola, la lista recarga y la primera persona en cola pasa a `CONFIRMED` (verificar, si procede, el correo «Ha quedado una plaza libre y es tuya»).
 
 ### G4 · Cancelar inscripción de actividad ya empezada
 - [ ] Intentar cancelar una inscripción con `startDate <= hoy`.
@@ -259,11 +259,11 @@ Batería manual de extremo a extremo (frontend ↔ backend real) para el recorri
 ## Módulo H · Cierre de participación
 
 ### H1 · Formulario de nuevo cierre
-- [ ] Desde «Mis voluntariados», en una fila sin `closureId`, pulsar «Cerrar tu participación».
-- [ ] **Esperado:** navega a `/closures/new?registrationId=...` con el formulario precargado con la actividad.
+- [x] Desde «Mis voluntariados», en una fila sin `closureId`, pulsar «Cerrar tu participación».
+- [x] **Esperado:** navega a `/closures/new?registrationId=...` con el formulario precargado con la actividad.
 
 ### H2 · Envío completo (con evidencia)
-- [ ] Rellenar horas reales, valoración (1–5), comentario y adjuntar un PDF/JPG/PNG ≤ 10 MB. Marcar el consentimiento de evidencia.
+- [x] Rellenar horas reales, valoración (1–5), comentario y adjuntar un PDF/JPG/PNG ≤ 10 MB. Marcar el consentimiento de evidencia.
 - [ ] **Esperado:** Red: `POST /api/closures` con `Content-Type: multipart/form-data` → **201**. Mensaje de éxito y navegación a «Mis voluntariados», donde la fila pasa a mostrar «Ver mi cierre».
 
 ### H3 · Validaciones del formulario
@@ -292,8 +292,8 @@ Batería manual de extremo a extremo (frontend ↔ backend real) para el recorri
 ## Módulo I · Certificado
 
 ### I1 · Certificado de actividad cerrada
-- [ ] En una fila con `closureId` y `activityClosed = true`, pulsar «Descargar certificado».
-- [ ] **Esperado:** navega a `/closures/:closureId/certificate` → Red: `GET /api/closures/{id}/certificate` → **200**. Se muestra el certificado imprimible con los datos del empleado, actividad, entidad, horas y departamento. La impresión genera un PDF correcto.
+- [x] En una fila con `closureId` y `activityClosed = true`, pulsar «Descargar certificado».
+- [x] **Esperado:** navega a `/closures/:closureId/certificate` → Red: `GET /api/closures/{id}/certificate` → **200**. Se muestra el certificado imprimible con los datos del empleado, actividad, entidad, horas y departamento. La impresión genera un PDF correcto.
 
 ### I2 · Certificado de actividad NO cerrada
 - [ ] En una fila con `closureId` y `activityClosed = false`, forzar la ruta `/closures/:id/certificate`.
