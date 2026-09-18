@@ -59,22 +59,28 @@ beforeEach(() => {
 describe('RegistrationsTablePage', () => {
   it('renders reviewed, unreviewed and rejected registrations in separate sections', async () => {
     getActivityRegistrations.mockResolvedValue({ data: BOARD });
+    const user = userEvent.setup();
     renderPage();
 
     expect(screen.getByRole('status', { name: /cargando inscripciones/i })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: /inscripciones/i, level: 1 })).toBeInTheDocument();
     expect(getActivityRegistrations).toHaveBeenCalledWith('8', { page: 0 });
 
-    const unreviewed = screen.getByRole('region', { name: /sin revisar de la actividad/i });
-    expect(within(unreviewed).getByText('Ana Torres')).toBeInTheDocument();
-    expect(within(unreviewed).getByText('Tecnología')).toBeInTheDocument();
-    expect(within(unreviewed).getByText('VERISURE_ES')).toBeInTheDocument();
-    expect(within(unreviewed).getByText('12')).toBeInTheDocument();
+    // «En cola» agrupa las sin revisar y las aceptadas en cola.
+    const queue = screen.getByRole('region', { name: /en cola de la actividad/i });
+    expect(within(queue).getByText('Ana Torres')).toBeInTheDocument();
+    expect(within(queue).getByText('Tecnología')).toBeInTheDocument();
+    expect(within(queue).getByText('VERISURE_ES')).toBeInTheDocument();
+    expect(within(queue).getByText('12')).toBeInTheDocument();
+    expect(within(queue).getByText('Luis Martín')).toBeInTheDocument();
+    expect(within(queue).getByText(/aceptada · en cola/i)).toBeInTheDocument();
 
-    const acceptedQueue = screen.getByRole('region', { name: /aceptadas en cola de la actividad/i });
-    expect(within(acceptedQueue).getByText('Luis Martín')).toBeInTheDocument();
-    expect(within(acceptedQueue).getByText(/aceptada · en cola/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
+    const confirmed = screen.getByRole('region', { name: /confirmadas de la actividad/i });
+    expect(within(confirmed).getByText('Marta Ruiz')).toBeInTheDocument();
+
+    // Las rechazadas solo se ven al abrir el historial.
+    await user.click(screen.getByRole('button', { name: /historial/i }));
     expect(screen.getByRole('heading', { name: /rechazadas 1/i })).toBeInTheDocument();
     expect(screen.queryByText('No mostrar')).not.toBeInTheDocument();
   });
@@ -89,11 +95,9 @@ describe('RegistrationsTablePage', () => {
 
     // Las cifras de la cabecera son de toda la actividad y no coinciden con las
     // de las secciones, que cuentan solo esta página. Es a propósito.
-    const counts = within(screen.getByRole('banner')).getByText('Confirmadas').closest('dl');
-    expect(within(counts).getByText('9')).toBeInTheDocument();
-    expect(within(counts).getByText('7')).toBeInTheDocument();
-    expect(within(counts).getByText('4')).toBeInTheDocument();
+    expect(screen.getByText(/Confirmadas 9 · En cola 7, de las que 4 sin revisar/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /en cola 2/i })).toBeInTheDocument();
   });
 
   it('still renders the board when the counts request fails', async () => {
@@ -102,9 +106,9 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     // Sin cifras la pantalla se lee igual; sin filas, no. Ojo: «Confirmadas» es
-    // también un título de sección, así que hay que mirar la lista de la cabecera.
+    // también un título de sección, así que hay que mirar el resumen de la cabecera.
     expect(await screen.findByText('Ana Torres')).toBeInTheDocument();
-    expect(document.querySelector('.registrations-page__counts')).toBeNull();
+    expect(document.querySelector('.registrations-page__summary')).toBeNull();
     expect(screen.queryByRole('heading', { name: /no hemos podido cargar/i })).not.toBeInTheDocument();
   });
 
@@ -178,8 +182,11 @@ describe('RegistrationsTablePage', () => {
     const row = (await screen.findByText('Ana Torres')).closest('tr');
     await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
 
-    expect(await screen.findByRole('heading', { name: /aceptadas en cola 1/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /en cola 1/i })).toBeInTheDocument();
     expect(screen.getByText(/aceptada · en cola/i)).toBeInTheDocument();
+    // Sin plaza en el backend no se promociona a la sección Confirmadas.
+    const confirmed = screen.getByRole('region', { name: /confirmadas de la actividad/i });
+    expect(within(confirmed).queryByText('Luis Martín')).not.toBeInTheDocument();
   });
 
   it('rejects without asking for or sending a reason', async () => {
@@ -194,8 +201,10 @@ describe('RegistrationsTablePage', () => {
     const row = (await screen.findByText('Ana Torres')).closest('tr');
     await user.click(within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i }));
 
+    await waitFor(() => expect(rejectRegistration).toHaveBeenCalledWith(1));
+    // La rechazada queda en el historial, plegado por defecto.
+    await user.click(screen.getByRole('button', { name: /historial/i }));
     expect(await screen.findByRole('heading', { name: /rechazadas 1/i })).toBeInTheDocument();
-    expect(rejectRegistration).toHaveBeenCalledWith(1);
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 
@@ -239,7 +248,11 @@ describe('RegistrationsTablePage', () => {
 
     const refreshedPerson = await screen.findByText('Luis Martín');
     expect(within(refreshedPerson.closest('tr')).getByText('Confirmada')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /sin revisar 1/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
+    // La sin revisar que el backend no promociona sigue en la cola, con su badge.
+    const queue = screen.getByRole('region', { name: /en cola de la actividad/i });
+    expect(within(queue).getByText('Ana Torres')).toBeInTheDocument();
+    expect(within(queue).getByText('Sin revisar')).toBeInTheDocument();
     expect(cancelRegistration).toHaveBeenCalledWith(3, undefined);
   });
 
