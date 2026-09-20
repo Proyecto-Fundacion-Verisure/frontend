@@ -82,7 +82,22 @@ describe('CatalogPage', () => {
   it('muestra vacío cuando no hay actividades', async () => {
     getPublishedActivities.mockResolvedValue({ data: [], headers: { 'x-total-count': '0' } });
     renderCatalog();
-    expect(await screen.findByText(/no hay actividades/i)).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /no hay actividades/i })).toBeInTheDocument();
+  });
+
+  it('muestra todas por defecto y pide solo las próximas al marcar «Solo próximas»', async () => {
+    getPublishedActivities.mockResolvedValue({ data: mockActivities, headers: { 'x-total-count': '2' } });
+    renderCatalog();
+
+    expect(await screen.findByText(/acompañamiento a mayores/i)).toBeInTheDocument();
+    expect(getPublishedActivities).toHaveBeenLastCalledWith(expect.not.objectContaining({ from: expect.anything() }));
+    expect(screen.getByLabelText(/solo próximas/i)).not.toBeChecked();
+
+    const user = userEvent.setup();
+    await user.click(screen.getByLabelText(/solo próximas/i));
+    await waitFor(() => expect(screen.getByLabelText(/solo próximas/i)).toBeChecked());
+    const today = new Date().toLocaleDateString('sv');
+    expect(getPublishedActivities).toHaveBeenLastCalledWith(expect.objectContaining({ from: today }));
   });
 
   it('renderiza la rejilla con plazas ocupadas y favoritedByMe sin favoriteCount', async () => {
@@ -91,7 +106,7 @@ describe('CatalogPage', () => {
 
     expect(await screen.findByText(/acompañamiento a mayores/i)).toBeInTheDocument();
     expect(screen.getByText(/taller educativo/i)).toBeInTheDocument();
-    expect(screen.getByText('8 de 20 plazas')).toBeInTheDocument();
+    expect(screen.getByText('8 de 20 plazas ocupadas · 12 plazas libres')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /quitar de favoritos/i })).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByRole('button', { name: /añadir a favoritos/i })).toHaveAttribute('aria-pressed', 'false');
     expect(screen.queryByText(/favoriteCount/i)).not.toBeInTheDocument();

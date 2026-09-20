@@ -77,7 +77,7 @@ export default function AppRouter() {
               element={(
                 <ActivitiesListPage
                   fetchData={getPendingActivities}
-                  title="Propuestas pendientes de revisión"
+                  title="Propuestas recibidas por el formulario público"
                   eyebrow="Administración"
                   showCreateButton={false}
                   showStatusFilter={false}

@@ -18,3 +18,14 @@
   &--danger { background: $color-danger-light; color: $color-danger; }
   &--info { background: $color-info-light; color: $color-info; }
 }
+
+// Punto de estado delante del texto («Inscripción abierta»): un color más que
+// se lee de un vistazo en la rejilla, sin depender solo del texto.
+.badge__dot {
+  background: currentColor;
+  border-radius: 50%;
+  display: inline-block;
+  height: .5rem;
+  margin-right: space('2');
+  width: .5rem;
+}

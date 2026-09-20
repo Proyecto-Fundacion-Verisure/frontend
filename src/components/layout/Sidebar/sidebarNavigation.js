@@ -30,11 +30,23 @@ export const NAV_SECTIONS_BY_ROLE = {
           variant: "cta",
         },
         { path: "/admin/activities", label: "Proyectos", icon: ClipboardList },
+        { path: "/proposals", label: "Propuestas", icon: FileText },
         {
-          path: "/proposals",
-          label: "Propuestas",
-          icon: FileText,
-          badgeKey: "proposals",
+          path: "/admin/activities/pending",
+          label: "En revisión",
+          icon: ClipboardCheck,
+          badgeKey: "pendingReview",
+        },
+      ],
+    },
+    {
+      section: "Entidades",
+      items: [
+        {
+          path: "/admin/account-status",
+          label: "Solicitudes pendientes",
+          icon: Building2,
+          badgeKey: "pendingAccounts",
         },
       ],
     },
@@ -50,27 +62,10 @@ export const NAV_SECTIONS_BY_ROLE = {
           badgeKey: "inscriptions",
         },
         {
-          path: "/admin/activities/pending",
-          label: "Revisión de propuestas",
-          icon: ClipboardCheck,
-          badgeKey: "pendingReview",
-        },
-        {
           path: "/admin/activities/pending-closure",
           label: "Cierres",
           icon: CheckCircle2,
           badgeKey: "closes",
-        },
-      ],
-    },
-    {
-      section: "Entidades",
-      items: [
-        {
-          path: "/admin/account-status",
-          label: "Cuentas pendientes",
-          icon: Building2,
-          badgeKey: "pendingAccounts",
         },
       ],
     },

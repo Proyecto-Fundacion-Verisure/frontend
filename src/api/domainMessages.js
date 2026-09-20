@@ -21,7 +21,40 @@ export const MENSAJES = Object.freeze({
   PROPOSAL_ALREADY_DECIDED: 'La propuesta ya ha sido aceptada o rechazada.',
   VERIFICATION_EXPIRED: 'El enlace de verificación ha caducado. Solicita uno nuevo.',
   RATE_LIMIT_EXCEEDED: 'Se han realizado demasiadas solicitudes. Inténtalo más tarde.',
+  // Códigos que emite `GlobalExceptionHandler` fuera del enum `ErrorCode`. Sin
+  // entrada aquí se enseñaba el `message` técnico del servidor («Error interno
+  // del servidor»). `UNAUTHORIZED` y `UNSUPPORTED_MEDIA_TYPE` quedan fuera a
+  // propósito: su mensaje cambia según el caso (credenciales vs. sesión;
+  // tipo no admitido vs. archivo vacío) y el del backend es el bueno.
+  NOT_FOUND: 'No se ha encontrado el recurso solicitado.',
+  FORBIDDEN: 'No tienes permiso para realizar esta acción.',
+  MALFORMED_REQUEST: 'La solicitud no es válida.',
+  PAYLOAD_TOO_LARGE: 'El archivo adjunto excede el tamaño máximo permitido.',
+  METHOD_NOT_ALLOWED: 'No se ha podido completar la solicitud.',
+  INTERNAL_ERROR: 'Ha ocurrido un error en el servidor. Inténtalo más tarde.',
 });
+
+// Los DTO del backend usan Bean Validation sin `message`, así que `fields` trae
+// los textos por defecto de Hibernate Validator en el idioma del `Accept-Language`
+// de la petición. Con un navegador en inglés (o un cliente sin cabecera) llegan
+// en inglés: estos son los que pueden aparecer, con su traducción.
+const VALIDATION_DEFAULTS = [
+  [/^must not be (blank|null|empty)$/i, 'Este campo es obligatorio.'],
+  [/^must be a well-formed email address$/i, 'Introduce un correo válido.'],
+  [/^must be greater than or equal to (\S+)$/i, 'Debe ser mayor o igual que $1.'],
+  [/^must be less than or equal to (\S+)$/i, 'Debe ser menor o igual que $1.'],
+  [/^must be greater than (\S+)$/i, 'Debe ser mayor que $1.'],
+  [/^must be less than (\S+)$/i, 'Debe ser menor que $1.'],
+  [/^size must be between (\d+) and (\d+)$/i, 'Debe tener entre $1 y $2 caracteres.'],
+  [/^must be a future date$/i, 'Debe ser una fecha futura.'],
+  [/^must be a date in the present or in the future$/i, 'Debe ser hoy o una fecha futura.'],
+  [/^must match "(.+)"$/i, 'El formato no es válido.'],
+];
+
+function translateValidationDefault(message) {
+  const match = VALIDATION_DEFAULTS.find(([pattern]) => pattern.test(message));
+  return match ? message.replace(match[0], match[1]) : message;
+}
 
 export function getDomainMessage(code, fallback = null) {
   return MENSAJES[code] ?? fallback;
@@ -35,7 +68,7 @@ export function translateFieldErrors(fieldErrors) {
     const list = Array.isArray(messages) ? messages : [messages];
     const translated = list
       .filter((message) => typeof message === 'string' && message.trim())
-      .map((message) => getDomainMessage(message, message));
+      .map((message) => getDomainMessage(message, translateValidationDefault(message)));
     return [field, translated.join(' ')];
   }));
 }

@@ -29,6 +29,18 @@
   margin-bottom: space('6');
 }
 
+.catalog__toggle {
+  align-items: center;
+  align-self: flex-end;
+  color: $color-navy-light;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  gap: space('2');
+  min-height: $control-height;
+}
+
 .catalog__error {
   background: $color-danger-light;
   border: 1px solid $color-danger;

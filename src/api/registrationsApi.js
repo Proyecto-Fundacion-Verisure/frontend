@@ -1,160 +1,28 @@
 import client from './axiosClient';
-import { ApiError } from './apiError';
-import { isMockEnabled as isModuleMockEnabled } from './mocks';
-
-const MOCK_MY_REGISTRATIONS_ACTIVE = [
-  {
-    registrationId: 101,
-    activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: '2026-09-10', endDate: '2026-09-17', hours: 8 },
-    status: 'WAITLISTED',
-    accepted: false,
-    queuePosition: 3,
-    closureId: null,
-    activityClosed: false,
-  },
-  {
-    registrationId: 102,
-    activity: { id: 2, title: 'Taller educativo', partner: 'Educamos Juntos', startDate: '2026-09-12', endDate: '2026-09-13', hours: 6 },
-    status: 'CONFIRMED',
-    accepted: true,
-    queuePosition: null,
-    closureId: null,
-    activityClosed: false,
-  },
-  {
-    registrationId: 103,
-    activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
-    status: 'PENDING_CLOSURE',
-    accepted: true,
-    queuePosition: null,
-    closureId: null,
-    activityClosed: false,
-  },
-];
-
-const MOCK_MY_REGISTRATIONS_CLOSED = [
-  {
-    registrationId: 104,
-    activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
-    status: 'CLOSED',
-    accepted: true,
-    queuePosition: null,
-    closureId: 501,
-    activityClosed: true,
-  },
-];
-
-const MOCK_MY_REGISTRATIONS = [
-  ...MOCK_MY_REGISTRATIONS_ACTIVE,
-  ...MOCK_MY_REGISTRATIONS_CLOSED,
-];
-
-// Forma de RegistrationRow: el campo es `userName`, no `name`.
-const MOCK_ACTIVITY_REGISTRATIONS = [
-  { registrationId: 201, userName: 'Ana Torres', department: 'Tecnología', organization: 'VERISURE_ES', yearHours: 12, status: 'WAITLISTED', accepted: false, queuePosition: 2 },
-  { registrationId: 202, userName: 'Luis Martín', department: 'Personas', organization: 'VERISURE_GROUP', yearHours: 8, status: 'WAITLISTED', accepted: true, queuePosition: 1 },
-  { registrationId: 203, userName: 'Marta Ruiz', department: 'Operaciones', organization: 'VERISURE_ES', yearHours: 16, status: 'CONFIRMED', accepted: true },
-];
-
-function mockGetRegistrationCounts() {
-  return Promise.resolve({
-    data: {
-      confirmed: MOCK_ACTIVITY_REGISTRATIONS.filter((r) => r.status === 'CONFIRMED').length,
-      waitlisted: MOCK_ACTIVITY_REGISTRATIONS.filter((r) => r.status === 'WAITLISTED').length,
-      unreviewed: MOCK_ACTIVITY_REGISTRATIONS.filter((r) => r.status === 'WAITLISTED' && !r.accepted).length,
-    },
-  });
-}
-
-function mockGetMyRegistrations() {
-  return Promise.resolve({ data: MOCK_MY_REGISTRATIONS });
-}
-
-function mockGetActivityRegistrations(activityId) {
-  const registrations = MOCK_ACTIVITY_REGISTRATIONS.map((registration) => ({ ...registration }));
-  return Promise.resolve({
-    data: {
-      content: registrations,
-      number: 0,
-      size: registrations.length,
-      totalElements: registrations.length,
-      totalPages: registrations.length ? 1 : 0,
-    },
-  });
-}
-
-function findMockRegistration(registrationId) {
-  return MOCK_ACTIVITY_REGISTRATIONS.find(
-    (registration) => String(registration.registrationId) === String(registrationId),
-  );
-}
-
-function mockAcceptRegistration(registrationId) {
-  const registration = findMockRegistration(registrationId);
-  if (!registration) return Promise.reject(new ApiError({ message: 'Inscripción no encontrada.', status: 404, code: 'NOT_FOUND' }));
-  const hasSpot = !MOCK_ACTIVITY_REGISTRATIONS.some((item) => item.status === 'CONFIRMED');
-  Object.assign(registration, {
-    accepted: true,
-    status: hasSpot ? 'CONFIRMED' : 'WAITLISTED',
-  });
-  return Promise.resolve({ data: { ...registration } });
-}
-
-function mockRejectRegistration(registrationId) {
-  const registration = findMockRegistration(registrationId);
-  if (!registration) return Promise.reject(new ApiError({ message: 'Inscripción no encontrada.', status: 404, code: 'NOT_FOUND' }));
-  Object.assign(registration, { accepted: false, status: 'REJECTED' });
-  return Promise.resolve({ data: { ...registration } });
-}
-
-function mockCancelRegistration(registrationId) {
-  const registration = findMockRegistration(registrationId);
-  if (!registration) return Promise.reject(new ApiError({ message: 'Inscripción no encontrada.', status: 404, code: 'NOT_FOUND' }));
-  registration.status = 'CANCELLED';
-
-  const promoted = MOCK_ACTIVITY_REGISTRATIONS
-    .filter((item) => item.status === 'WAITLISTED' && item.accepted)
-    .sort((first, second) => first.queuePosition - second.queuePosition)[0];
-  if (promoted) promoted.status = 'CONFIRMED';
-
-  return Promise.resolve({ data: { ...registration } });
-}
-
-const isMockEnabled = () => isModuleMockEnabled('REGISTRATION');
 
 export const createRegistration = (activityId) => client.post('/registrations', { activityId });
 
-export const getMyRegistrations = () =>
-  isMockEnabled() ? mockGetMyRegistrations() : client.get('/registrations/me');
+export const getMyRegistrations = () => client.get('/registrations/me');
 
-export const getActivityRegistrations = (activityId, { status, page } = {}) =>
-  isMockEnabled()
-    ? mockGetActivityRegistrations(activityId)
-    : client.get('/admin/registrations', {
-      params: Object.fromEntries(Object.entries({ activityId, status, page }).filter(([, value]) => (
-        value !== undefined && value !== null && value !== ''
-      ))),
-    });
+export const getActivityRegistrations = (activityId, { status, page } = {}) => (
+  client.get('/admin/registrations', {
+    params: Object.fromEntries(Object.entries({ activityId, status, page }).filter(([, value]) => (
+      value !== undefined && value !== null && value !== ''
+    ))),
+  })
+);
 
 // Los contadores van en su propia ruta y no dentro del tablero: la respuesta de
 // `/admin/registrations` es el Page de Spring, y ahí no caben tres cifras que
 // además son de toda la actividad y no de la página. `activityId` es obligatorio.
-export const getRegistrationCounts = (activityId) =>
-  isMockEnabled()
-    ? mockGetRegistrationCounts(activityId)
-    : client.get('/admin/registrations/counts', { params: { activityId } });
+export const getRegistrationCounts = (activityId) => (
+  client.get('/admin/registrations/counts', { params: { activityId } })
+);
 
-export const acceptRegistration = (registrationId) =>
-  isMockEnabled()
-    ? mockAcceptRegistration(registrationId)
-    : client.patch(`/registrations/${registrationId}/accept`);
+export const acceptRegistration = (registrationId) => client.patch(`/registrations/${registrationId}/accept`);
 
-export const rejectRegistration = (registrationId) =>
-  isMockEnabled()
-    ? mockRejectRegistration(registrationId)
-    : client.patch(`/registrations/${registrationId}/reject`);
+export const rejectRegistration = (registrationId) => client.patch(`/registrations/${registrationId}/reject`);
 
-export const cancelRegistration = (registrationId, reason) =>
-  isMockEnabled()
-    ? mockCancelRegistration(registrationId)
-    : client.patch(`/registrations/${registrationId}/cancel`, reason ? { reason } : undefined);
+export const cancelRegistration = (registrationId, reason) => (
+  client.patch(`/registrations/${registrationId}/cancel`, reason ? { reason } : undefined)
+);

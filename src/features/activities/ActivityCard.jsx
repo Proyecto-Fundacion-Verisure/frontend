@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Badge, Card, HeartButton, ProgressBar } from '../../components/ui';
 import { getLineByValue } from '../../constants/activityLines';
 import { formatDateRange } from '../../utils/dates';
+import { LIFECYCLE_BADGES, formatSpots, isOpenForRegistration } from './spots';
 
 // `favoritedByMe` llega por propiedad y manda sobre el campo del `activity`: quien
 // pinta la rejilla lo resuelve contra `FavoritesProvider`, que guarda lo que se
@@ -49,6 +50,8 @@ export default function ActivityCard({
     status === 'COMPLETA' ||
     status === 'COMPLETED' ||
     (total > 0 && occupied >= total);
+  const lifecycleLabel = LIFECYCLE_BADGES[status] ?? null;
+  const isOpen = !isFull && isOpenForRegistration(status);
 
   // El filtro del catálogo acota la fecha de inicio, así que sin verla aquí los
   // resultados cambian sin que nada lo explique.
@@ -70,6 +73,10 @@ export default function ActivityCard({
         <div className="activity-card__badges">
           {lineLabel && <Badge variant="info">{lineLabel}</Badge>}
           {mode && <Badge variant="neutral">{mode}</Badge>}
+          {isOpen && (
+            <Badge variant="success"><span className="badge__dot" aria-hidden="true" />Inscripción abierta</Badge>
+          )}
+          {lifecycleLabel && <Badge variant="neutral">{lifecycleLabel}</Badge>}
           {isFull && <Badge variant="danger">Completa</Badge>}
           {isEnrolled && <Badge variant="success">Ya estás apuntado</Badge>}
         </div>
@@ -121,7 +128,7 @@ export default function ActivityCard({
       )}
 
       <div className="activity-card__footer">
-        <span className="activity-card__organization">{total > 0 ? `${occupied} de ${total} plazas` : ''}</span>
+        <span className="activity-card__organization">{total > 0 ? formatSpots(occupied, total) : ''}</span>
         <HeartButton
           active={Boolean(favoritedByMe)}
           aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
