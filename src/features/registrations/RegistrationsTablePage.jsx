@@ -48,6 +48,21 @@ function getRegistrations(payload) {
   return Array.isArray(payload?.content) ? payload.content : [];
 }
 
+// El tablero global mezcla filas de varias actividades: la columna «Proyecto»
+// dice de cuál es cada una y lleva a su tablero propio.
+const ACTIVITY_COLUMN = {
+  key: 'activity',
+  label: 'Proyecto',
+  render: (registration) => (
+    <Link
+      to={`/activities/${registration.activityId}/registrations`}
+      state={{ activityTitle: registration.activityTitle }}
+    >
+      {registration.activityTitle}
+    </Link>
+  ),
+};
+
 // Columnas base: Persona, Departamento, Organización, Horas del año, Estado.
 // Las acciones se deciden por fila, no por sección.
 const BASE_COLUMNS = [
@@ -78,8 +93,11 @@ const BASE_COLUMNS = [
 ];
 
 // Columnas con acciones que se deciden por fila según el estado.
-function buildColumnsWithActions({ decision, acceptRegistration, rejectRegistration, cancelRegistration }) {
+function buildColumnsWithActions({
+  isGlobal, decision, acceptRegistration, rejectRegistration, cancelRegistration,
+}) {
   return [
+    ...(isGlobal ? [ACTIVITY_COLUMN] : []),
     ...BASE_COLUMNS,
     {
       key: 'actions',
@@ -121,8 +139,10 @@ function getUnreviewedCount(grouped) {
   return (grouped['unreviewed'] ?? []).length;
 }
 
+// Sin `activityId` en la ruta es el tablero global: todas las actividades.
 export default function RegistrationsTablePage() {
   const { activityId } = useParams();
+  const isGlobal = !activityId;
   const { state } = useLocation();
   const [page, setPage] = useState(1);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -170,6 +190,7 @@ export default function RegistrationsTablePage() {
   }, {});
 
   const columnsWithActions = buildColumnsWithActions({
+    isGlobal,
     decision,
     acceptRegistration,
     rejectRegistration,
@@ -191,7 +212,7 @@ export default function RegistrationsTablePage() {
           <Link className="registrations-page__back" to="/admin/activities">← Volver a actividades</Link>
           <p className="registrations-page__eyebrow">Administración</p>
           <h1 id="registrations-title">Inscripciones</h1>
-          <p>{state?.activityTitle ?? `Actividad ${activityId}`}</p>
+          <p>{isGlobal ? 'Todos los proyectos' : (state?.activityTitle ?? `Actividad ${activityId}`)}</p>
         </div>
         <div className="registrations-page__totals">
           <strong>{totalElements} inscripciones</strong>
@@ -220,7 +241,7 @@ export default function RegistrationsTablePage() {
               <section className="registrations-page__section" key={section.key}>
                 <h2>{section.title} <span>{rows.length}</span></h2>
                 <Table
-                  caption={`${section.title} de la actividad`}
+                  caption={isGlobal ? section.title : `${section.title} de la actividad`}
                   columns={columnsWithActions}
                   data={rows}
                   rowKey="registrationId"
@@ -250,7 +271,7 @@ export default function RegistrationsTablePage() {
                     <section className="registrations-page__section registrations-page__section--terminal" key={section.key}>
                       <h3>{section.title} <span>{rows.length}</span></h3>
                       <Table
-                        caption={`${section.title} de la actividad`}
+                        caption={isGlobal ? section.title : `${section.title} de la actividad`}
                         columns={columnsWithActions}
                         data={rows}
                         rowKey="registrationId"

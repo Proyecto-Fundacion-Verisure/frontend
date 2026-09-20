@@ -5,7 +5,6 @@ import { getRegistrationCounts } from '../../../api/registrationsApi';
 import { getPendingActivities } from '../../../api/activitiesApi';
 import { getProposals } from '../../../api/proposalsApi';
 import { getPendingActivityClosures } from '../../../api/closuresApi';
-import { DEMO_ACTIVITY_ID } from '../../../constants/demoActivity';
 
 // Todas las cifras vienen de sus endpoints; si uno falla, el globo se queda en
 // 0 y el menú se pinta igual: una cifra de adorno no puede tumbar la
@@ -35,10 +34,10 @@ export function useSidebarCounts() {
   useEffect(() => {
     if (user?.role !== 'ADMIN') return;
     let cancelled = false;
-    // Las sin revisar de la actividad a la que lleva el propio enlace del menú.
-    // Si falla, el globo se queda en 0 y el menú se pinta igual: una cifra de
-    // adorno no puede tumbar la navegación.
-    getRegistrationCounts(DEMO_ACTIVITY_ID)
+    // Las sin revisar de todas las actividades, que es lo que enseña el tablero
+    // global al que lleva el enlace del menú. Si falla, el globo se queda en 0 y
+    // el menú se pinta igual: una cifra de adorno no puede tumbar la navegación.
+    getRegistrationCounts()
       .then((res) => {
         if (!cancelled) setUnreviewed(res.data.unreviewed ?? 0);
       })
