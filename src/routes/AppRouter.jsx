@@ -25,7 +25,6 @@ import AppLayout from '../components/layout/AppLayout/AppLayout';
 import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
 import { FavoritesProvider } from '../features/favorites/FavoritesContext';
 import RegistrationsTablePage from '../features/registrations/RegistrationsTablePage';
-import { DEMO_REGISTRATIONS_PATH } from '../constants/demoActivity';
 import CertificatePage from '../features/reports/CertificatePage';
 import PendingClosurePage from '../features/reports/PendingClosurePage';
 import ClosureFormPage from '../features/reports/ClosureFormPage';
@@ -41,7 +40,7 @@ export default function AppRouter() {
       <Route path="/register-organization" element={<PublicLayout><OrgRegisterPage /></PublicLayout>} />
       {import.meta.env.DEV && <Route path="/ui-kit" element={<UiShowcase />} />}
       <Route path="/explore" element={<Navigate to="/activities" replace />} />
-      <Route path="/inscriptions" element={<Navigate to={DEMO_REGISTRATIONS_PATH} replace />} />
+      <Route path="/inscriptions" element={<Navigate to="/admin/registrations" replace />} />
       <Route path="/closes" element={<Navigate to="/admin/activities/pending-closure" replace />} />
       <Route path="/account-status" element={<PublicLayout><AccountStatusPage /></PublicLayout>} />
       <Route element={<ProtectedRoute />}>
@@ -66,6 +65,7 @@ export default function AppRouter() {
             <Route path="/proposals" element={<ProposalsInboxPage />} />
             <Route path="/proposals/:proposalId" element={<ProposalDetailPage />} />
             <Route path="/activities/new" element={<ActivityFormPage />} />
+            <Route path="/admin/registrations" element={<RegistrationsTablePage />} />
             <Route path="/activities/:activityId/registrations" element={<RegistrationsTablePage />} />
             <Route path="/activities/:activityId/edit" element={<ActivityFormPage backPath="/admin/activities" />} />
             <Route path="/admin/activities" element={<ActivitiesListPage />} />
