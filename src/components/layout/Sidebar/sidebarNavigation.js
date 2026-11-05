@@ -24,11 +24,21 @@ export const NAV_SECTIONS_BY_ROLE = {
       items: [
         {
           path: "/activities/new",
-          label: "Nuevo proyecto",
+          label: "Nueva actividad",
           icon: CirclePlus,
         },
-        { path: "/admin/activities", label: "Proyectos", icon: ClipboardList },
-        { path: "/proposals", label: "Propuestas", icon: FileText },
+        {
+          path: "/admin/activities",
+          label: "Actividades",
+          icon: ClipboardList,
+          matches: ["/activities/:activityId", "/activities/:activityId/edit"],
+        },
+        {
+          path: "/proposals",
+          label: "Propuestas",
+          icon: FileText,
+          matches: ["/proposals/:proposalId"],
+        },
         {
           path: "/admin/activities/pending",
           label: "En revisión",
@@ -52,18 +62,20 @@ export const NAV_SECTIONS_BY_ROLE = {
       section: "Participación",
       items: [
         {
-          // Apunta a la ruta final y no a `/inscriptions`: el menú usa NavLink y
-          // con la redirección de por medio el resaltado de activo se perdería.
+          // Apunta a la ruta final y no a `/inscriptions`: con la redirección de
+          // por medio el resaltado de activo se perdería.
           path: "/admin/registrations",
           label: "Inscripciones",
           icon: UserPlus,
           badgeKey: "inscriptions",
+          matches: ["/activities/:activityId/registrations"],
         },
         {
           path: "/admin/activities/pending-closure",
           label: "Cierres",
           icon: CheckCircle2,
           badgeKey: "closes",
+          matches: ["/admin/activities/:activityId/closure", "/closures/:closureId"],
         },
       ],
     },
@@ -72,11 +84,22 @@ export const NAV_SECTIONS_BY_ROLE = {
     {
       section: "Voluntariado",
       items: [
-        { path: "/activities", label: "Explorar", icon: Compass },
+        {
+          path: "/activities",
+          label: "Explorar",
+          icon: Compass,
+          matches: ["/activities/:activityId"],
+        },
         {
           path: "/my-activities",
           label: "Mis voluntariados",
           icon: ClipboardList,
+          matches: [
+            "/my-volunteering",
+            "/closures/new",
+            "/closures/:closureId",
+            "/closures/:closureId/certificate",
+          ],
         },
       ],
     },
@@ -103,6 +126,7 @@ export const NAV_SECTIONS_BY_ROLE = {
           path: "/org/activities",
           label: "Mis propuestas",
           icon: ClipboardList,
+          matches: ["/org/activities/:activityId/edit"],
         },
       ],
     },

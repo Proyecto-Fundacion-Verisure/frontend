@@ -139,8 +139,8 @@ describe('MyVolunteeringPage', () => {
     getMyRegistrations.mockResolvedValue({ data: [...activeItems, ...closedItems] });
     renderPage();
     await screen.findByText('Acompañamiento a mayores');
-    expect(screen.getByText('Posición en cola: 3')).toBeInTheDocument();
-    expect(screen.getByText('Posición en cola: 1')).toBeInTheDocument();
+    expect(screen.getByText('Posición en la lista de espera: 3')).toBeInTheDocument();
+    expect(screen.getByText('Posición en la lista de espera: 1')).toBeInTheDocument();
     const enviar = screen.getByTestId('action-enviar-105');
     expect(enviar).toHaveTextContent('Cerrar tu participación');
     expect(enviar).toHaveAttribute('href', '/closures/new?registrationId=105');
@@ -155,7 +155,7 @@ describe('MyVolunteeringPage', () => {
     const activeSection = screen.getByRole('heading', { name: /^activas$/i }).closest('section');
     const closedSection = screen.getByRole('heading', { name: /^historial$/i }).closest('section');
     expect(activeSection).toHaveTextContent('Acompañamiento a mayores');
-    expect(closedSection).toHaveTextContent(/cerrado/i);
+    expect(closedSection).toHaveTextContent(/cerrada/i);
     // ensure active item not in closed and vice versa
     expect(activeSection).not.toHaveTextContent('Ver cierre');
     expect(closedSection).toHaveTextContent('Descargar certificado');
@@ -170,8 +170,8 @@ describe('MyVolunteeringPage', () => {
     // 103 accepted true -> Aceptada
     expect(screen.getByTestId('accepted-103')).toHaveTextContent('Aceptada');
     // queuePosition lee directamente de backend, no calculada
-    expect(screen.getByText('Posición en cola: 3')).toBeInTheDocument();
-    expect(screen.getByText('Posición en cola: 1')).toBeInTheDocument();
+    expect(screen.getByText('Posición en la lista de espera: 3')).toBeInTheDocument();
+    expect(screen.getByText('Posición en la lista de espera: 1')).toBeInTheDocument();
   });
 
   it('actualiza posición tras promoción o cancelación', async () => {
@@ -181,13 +181,13 @@ describe('MyVolunteeringPage', () => {
     getMyRegistrations.mockResolvedValueOnce({ data: [promoted] });
     cancelRegistration.mockResolvedValue({ data: { registrationId: 999, status: 'CANCELLED' } });
     renderPage();
-    expect(await screen.findByText('Posición en cola: 3')).toBeInTheDocument();
+    expect(await screen.findByText('Posición en la lista de espera: 3')).toBeInTheDocument();
     expect(screen.getByTestId('accepted-101')).toHaveTextContent('Pendiente de revisión');
     const user = userEvent.setup();
     await user.click(screen.getByTestId('cancel-101'));
     expect(await screen.findByText(/¿Seguro que quieres cancelar/)).toBeInTheDocument();
     await user.click(screen.getByTestId('confirm-cancel-101'));
-    await waitFor(() => expect(screen.getByText('Posición en cola: 2')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Posición en la lista de espera: 2')).toBeInTheDocument());
     expect(screen.getByTestId('accepted-101')).toHaveTextContent('Aceptada');
     expect(cancelRegistration).toHaveBeenCalledWith(101);
     expect(cancelRegistration).toHaveBeenCalledTimes(1);
@@ -203,7 +203,7 @@ describe('MyVolunteeringPage', () => {
     await user.click(screen.getByTestId('modal-cancel-101'));
     expect(cancelRegistration).not.toHaveBeenCalled();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    expect(screen.getByText('Posición en cola: 3')).toBeInTheDocument();
+    expect(screen.getByText('Posición en la lista de espera: 3')).toBeInTheDocument();
   });
 
   it('deja cancelar el mismo día de inicio, como hace el backend', async () => {
@@ -251,7 +251,7 @@ describe('MyVolunteeringPage', () => {
     await screen.findByText(/¿Seguro que quieres cancelar/);
     await user.click(screen.getByTestId('confirm-cancel-101'));
     expect(await screen.findByText(/Plazo cerrado/)).toBeInTheDocument();
-    expect(screen.getByText('Posición en cola: 3')).toBeInTheDocument();
+    expect(screen.getByText('Posición en la lista de espera: 3')).toBeInTheDocument();
     // NOT_OWNER 403
     cancelRegistration.mockRejectedValueOnce({ status: 403, code: 'NOT_OWNER', message: 'No tienes permiso' });
     await user.click(screen.getByTestId('cancel-101'));

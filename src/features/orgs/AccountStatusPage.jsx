@@ -170,7 +170,7 @@ export function AdminAccountStatusPage() {
         }
       })
       .catch(() => {
-        if (!cancelled) setError('No se pudieron cargar las organizaciones pendientes.');
+        if (!cancelled) setError('No se pudieron cargar las entidades pendientes.');
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -270,7 +270,7 @@ export function AdminAccountStatusPage() {
   if (loading) {
     return (
       <div className="account-status__center">
-        <Spinner label="Cargando organizaciones pendientes" />
+        <Spinner label="Cargando entidades pendientes" />
       </div>
     );
   }
@@ -293,11 +293,11 @@ export function AdminAccountStatusPage() {
   return (
     <section className="account-status">
       <PageHeader
-        title="Cuentas pendientes de revisión"
+        title="Solicitudes pendientes"
         description={`${totalElements} solicitud${totalElements !== 1 ? 'es' : ''} pendiente${totalElements !== 1 ? 's' : ''}`}
       />
 
-      <Table caption="Cuentas pendientes de revisión" columns={columns} data={organizations} />
+      <Table caption="Solicitudes pendientes" columns={columns} data={organizations} />
 
       <Pagination
         page={page}
@@ -309,17 +309,17 @@ export function AdminAccountStatusPage() {
       <Modal
         isOpen={confirmModal.isOpen}
         onClose={closeConfirm}
-        title={confirmModal.action === 'accept' ? 'Aceptar organización' : 'Rechazar organización'}
+        title={confirmModal.action === 'accept' ? 'Aceptar entidad' : 'Rechazar entidad'}
         footer={
           <>
             <Button variant="secondary" onClick={closeConfirm}>
-              Cancelar
+              Volver
             </Button>
             <Button
               variant={confirmModal.action === 'accept' ? 'primary' : 'danger'}
               onClick={handleConfirm}
             >
-              {confirmModal.action === 'accept' ? 'Aceptar' : 'Rechazar'}
+              {confirmModal.action === 'accept' ? 'Confirmar aceptación' : 'Confirmar rechazo'}
             </Button>
           </>
         }

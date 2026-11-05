@@ -143,7 +143,7 @@ export default function LandingPage() {
               <p className="landing__eyebrow">Organización social</p>
               <h3>Explora, participa y mide tu impacto</h3>
               <p>
-                Queremos que las entidades sociales tengan un papel protagonista. Cuéntanos qué necesidades detectáis y qué iniciativas de voluntariado podrían marcar la diferencia, y trabajaremos juntos para convertir esas ideas en proyectos reales.
+                Queremos que las entidades sociales tengan un papel protagonista. Cuéntanos qué necesidades detectáis y qué iniciativas de voluntariado podrían marcar la diferencia, y trabajaremos juntos para convertir esas ideas en actividades reales.
               </p>
               <img src={colabImage} alt="Personas voluntarias colaborando en una actividad comunitaria" />
               <Link className="button button--primary button--medium" to="/register-organization">
@@ -154,7 +154,7 @@ export default function LandingPage() {
               <p className="landing__eyebrow">Iniciativas</p>
               <h3>¿Qué podemos hacer juntos?</h3>
               <ul className="landing-access__list">
-                <li>Proyectos de voluntariado adaptados a las necesidades específicas de vuestra entidad.</li>
+                <li>Actividades de voluntariado adaptadas a las necesidades específicas de vuestra entidad.</li>
                 <li>Campañas solidarias y de sensibilización.</li> 
                 <li>Recogidas de alimentos, material u otros recursos.</li>
                 <li>Acompañamiento y apoyo a colectivos en situación de vulnerabilidad.</li>

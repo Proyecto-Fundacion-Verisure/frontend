@@ -40,7 +40,7 @@ describe('PendingClosurePage', () => {
 
     renderPage();
 
-    expect(await screen.findByRole('heading', { name: /actividades pendientes de cierre/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /cierres pendientes/i })).toBeInTheDocument();
 
     ['Mentoría laboral', 'Acompañamiento a mayores'].forEach((title) => {
       expect(screen.getByText(title)).toBeInTheDocument();

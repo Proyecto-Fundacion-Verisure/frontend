@@ -504,7 +504,7 @@ describe('administrative activity closure pages', () => {
     expect(saveActivityClosure).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole('button', { name: /finalizar cierre/i }));
-    await user.click(await screen.findByRole('button', { name: /^finalizar$/i }));
+    await user.click(await screen.findByRole('button', { name: /^confirmar cierre$/i }));
 
     await waitFor(() => expect(saveActivityClosure).toHaveBeenCalledWith('41', {
       collaborationRating: 5,

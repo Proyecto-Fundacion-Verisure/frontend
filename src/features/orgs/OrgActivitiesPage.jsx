@@ -130,7 +130,9 @@ export default function OrgActivitiesPage() {
       <PageHeader
         title="Mis propuestas"
         titleId="activities-list-title"
-        description={`${activities.length} propuestas encontradas`}
+        description={activities.length === 1
+          ? '1 propuesta encontrada'
+          : `${activities.length} propuestas encontradas`}
         actions={(
           <Link className="button button--primary button--medium" to="/org/activities/new">
             Nueva propuesta →

@@ -292,7 +292,7 @@ export default function ActivityClosurePage() {
               loadingLabel="Finalizando…"
               onClick={confirmFinalize}
             >
-              Finalizar
+              Confirmar cierre
             </Button>
           </>
         )}

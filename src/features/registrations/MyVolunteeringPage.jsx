@@ -28,8 +28,8 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
 
   const statusLabels = {
     WAITLISTED: 'En lista de espera',
-    CONFIRMED: 'CONFIRMADO',
-    CLOSED: 'cerrado',
+    CONFIRMED: 'Confirmada',
+    CLOSED: 'Cerrada',
     PENDING_CLOSURE: 'Pendiente de cierre',
     REJECTED: 'Rechazada',
     CANCELLED: 'Cancelada',
@@ -75,7 +75,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
       <p className="my-volunteering__meta">
         {formatDate(startDate)} — {formatDate(endDate)} {hours ? `· ${hours} h` : ''}
       </p>
-      {showQueue && <p className="my-volunteering__queue">Posición en cola: {item.queuePosition}</p>}
+      {showQueue && <p className="my-volunteering__queue">Posición en la lista de espera: {item.queuePosition}</p>}
       {showAccepted && <p className="my-volunteering__accepted" data-testid={`accepted-${item.registrationId}`}>{acceptedLabel}</p>}
       <div className="my-volunteering__card-actions">
       {(() => {
@@ -130,7 +130,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
                   disabled={isCancelling}
                   data-testid={`confirm-cancel-${item.registrationId}`}
                 >
-                  Confirmar baja
+                  Confirmar cancelación
                 </Button>
               </>
             }
@@ -234,7 +234,7 @@ export default function MyVolunteeringPage() {
   if (bothEmpty) {
     return (
       <section className="my-volunteering" aria-labelledby="my-volunteering-title">
-        <PageHeader title="Mi voluntariado" titleId="my-volunteering-title" />
+        <PageHeader title="Mis voluntariados" titleId="my-volunteering-title" />
         <EmptyState
           title="No tienes inscripciones"
           description="Aún no te has inscrito en ninguna actividad."
@@ -250,7 +250,7 @@ export default function MyVolunteeringPage() {
 
   return (
     <section className="my-volunteering" aria-labelledby="my-volunteering-title">
-      <PageHeader title="Mi voluntariado" titleId="my-volunteering-title" />
+      <PageHeader title="Mis voluntariados" titleId="my-volunteering-title" />
       {cancelError && (
         <div className="my-volunteering__error" role="alert">
           {cancelError}

@@ -17,7 +17,7 @@ export default function RegistrationInfoModal({ isOpen, onClose, onConfirm, isSu
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={isSubmitting} data-testid="cancel-registration">
-            Cancelar
+            Volver
           </Button>
           <Button onClick={onConfirm} isLoading={isSubmitting} disabled={isSubmitting} data-testid="confirm-registration">
             Confirmar solicitud

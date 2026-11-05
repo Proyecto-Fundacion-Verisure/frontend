@@ -6,7 +6,7 @@ import CancelRegistrationAction from './CancelRegistrationAction';
 import useRegistrations from './useRegistrations';
 
 const SECTIONS = [
-  { key: 'waitlisted', title: 'En cola' },
+  { key: 'waitlisted', title: 'En lista de espera' },
   { key: 'confirmed', title: 'Confirmadas' },
   { key: 'pending-report', title: 'Pendientes de cierre' },
   { key: 'closed', title: 'Cerradas' },
@@ -16,7 +16,7 @@ const SECTIONS = [
 
 const STATUS_BADGES = {
   unreviewed: { label: 'Sin revisar', variant: 'warning' },
-  'accepted-waitlist': { label: 'Aceptada · en cola', variant: 'info' },
+  'accepted-waitlist': { label: 'Aceptada · en lista de espera', variant: 'info' },
   confirmed: { label: 'Confirmada', variant: 'success' },
   'pending-report': { label: 'Pendiente de cierre', variant: 'warning' },
   closed: { label: 'Cerrada', variant: 'neutral' },
@@ -42,11 +42,11 @@ function getRegistrations(payload) {
   return Array.isArray(payload?.content) ? payload.content : [];
 }
 
-// El tablero global mezcla filas de varias actividades: la columna «Proyecto»
+// El tablero global mezcla filas de varias actividades: la columna «Actividad»
 // dice de cuál es cada una y lleva a su tablero propio.
 const ACTIVITY_COLUMN = {
   key: 'activity',
-  label: 'Proyecto',
+  label: 'Actividad',
   render: (registration) => (
     <Link
       to={`/activities/${registration.activityId}/registrations`}
@@ -86,7 +86,7 @@ const BASE_COLUMNS = [
   },
 ];
 
-// «En cola» agrupa las sin revisar y las aceptadas.
+// «En lista de espera» agrupa las sin revisar y las aceptadas.
 function getSectionRows(grouped, sectionKey) {
   return sectionKey === 'waitlisted'
     ? [...(grouped['unreviewed'] ?? []), ...(grouped['accepted-waitlist'] ?? [])]
@@ -203,13 +203,13 @@ export default function RegistrationsTablePage() {
       <PageHeader
         title="Inscripciones"
         titleId="registrations-title"
-        description={isGlobal ? 'Todos los proyectos' : (state?.activityTitle ?? `Actividad ${activityId}`)}
+        description={isGlobal ? 'Todas las actividades' : (state?.activityTitle ?? `Actividad ${activityId}`)}
         actions={(
           <div className="registrations-page__totals">
             <strong>{totalElements} inscripciones</strong>
             {counts && (
               <p className="registrations-page__summary">
-                Confirmadas {counts.confirmed} · En cola {counts.waitlisted}
+                Confirmadas {counts.confirmed} · En lista de espera {counts.waitlisted}
                 {counts.unreviewed > 0 && `, de las que ${counts.unreviewed} sin revisar`}
               </p>
             )}

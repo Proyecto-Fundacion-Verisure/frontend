@@ -528,7 +528,7 @@ function PublishConfirmation({ isOpen, isPublishing, onClose, onConfirm, isPartn
       footer={(
         <>
           <Button variant="secondary" onClick={onClose} disabled={isPublishing}>
-            Cancelar
+            Volver
           </Button>
           <Button onClick={onConfirm} isLoading={isPublishing} loadingLabel={isPartner ? 'Enviando…' : 'Publicando…'}>
             {isPartner ? 'Confirmar envío' : 'Confirmar publicación'}

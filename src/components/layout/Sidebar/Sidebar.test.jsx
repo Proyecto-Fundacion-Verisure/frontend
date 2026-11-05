@@ -43,10 +43,10 @@ describe('Sidebar ADMIN navigation', () => {
     );
   });
 
-  it('links Nuevo proyecto to the registered admin route', () => {
+  it('links Nueva actividad to the registered admin route', () => {
     renderSidebar('ADMIN');
 
-    expect(screen.getByRole('link', { name: /nuevo proyecto/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /nueva actividad/i })).toHaveAttribute(
       'href',
       '/activities/new',
     );
@@ -59,5 +59,54 @@ describe('Sidebar ADMIN navigation', () => {
       'href',
       '/admin/registrations',
     );
+  });
+});
+
+describe('Sidebar active link', () => {
+  const activeLinks = (role, route) => {
+    const { unmount } = render(
+      <MemoryRouter initialEntries={[route]}>
+        <Sidebar sections={NAV_SECTIONS_BY_ROLE[role]} counts={{}} />
+      </MemoryRouter>,
+    );
+    const links = screen.getAllByRole('link')
+      .filter((link) => link.getAttribute('aria-current') === 'page')
+      .map((link) => link.textContent);
+    unmount();
+    return links;
+  };
+
+  it.each([
+    ['ADMIN', '/dashboard', 'Dashboard'],
+    ['ADMIN', '/activities/new', 'Nueva actividad'],
+    ['ADMIN', '/admin/activities', 'Actividades'],
+    ['ADMIN', '/activities/9', 'Actividades'],
+    ['ADMIN', '/activities/9/edit', 'Actividades'],
+    ['ADMIN', '/proposals', 'Propuestas'],
+    ['ADMIN', '/proposals/3', 'Propuestas'],
+    ['ADMIN', '/admin/activities/pending', 'En revisión'],
+    ['ADMIN', '/admin/account-status', 'Solicitudes pendientes'],
+    ['ADMIN', '/admin/registrations', 'Inscripciones'],
+    ['ADMIN', '/activities/9/registrations', 'Inscripciones'],
+    ['ADMIN', '/admin/activities/pending-closure', 'Cierres'],
+    ['ADMIN', '/admin/activities/9/closure', 'Cierres'],
+    ['ADMIN', '/closures/4', 'Cierres'],
+    ['EMPLOYEE', '/activities', 'Explorar'],
+    ['EMPLOYEE', '/activities/9', 'Explorar'],
+    ['EMPLOYEE', '/my-activities', 'Mis voluntariados'],
+    ['EMPLOYEE', '/my-volunteering', 'Mis voluntariados'],
+    ['EMPLOYEE', '/closures/new', 'Mis voluntariados'],
+    ['EMPLOYEE', '/closures/4', 'Mis voluntariados'],
+    ['EMPLOYEE', '/closures/4/certificate', 'Mis voluntariados'],
+    ['PARTNER', '/org/dashboard', 'Dashboard'],
+    ['PARTNER', '/org/activities', 'Mis propuestas'],
+    ['PARTNER', '/org/activities/new', 'Nueva propuesta'],
+    ['PARTNER', '/org/activities/9/edit', 'Mis propuestas'],
+  ])('%s en %s resalta solo «%s»', (role, route, label) => {
+    expect(activeLinks(role, route)).toEqual([label]);
+  });
+
+  it('no resalta nada en una ruta sin entrada en el menú', () => {
+    expect(activeLinks('PARTNER', '/org/reports')).toEqual([]);
   });
 });

@@ -44,7 +44,7 @@ export default function CancelRegistrationAction({ registration, decision, onCan
         onClose={close}
         closeOnBackdrop={!isCancelling}
         title="Dar de baja la inscripción"
-        description="La plaza se liberará y el backend actualizará la cola automáticamente."
+        description="La plaza se liberará y la lista de espera se actualizará automáticamente."
         footer={(
           <>
             <Button variant="secondary" disabled={isCancelling} onClick={close}>Volver</Button>
