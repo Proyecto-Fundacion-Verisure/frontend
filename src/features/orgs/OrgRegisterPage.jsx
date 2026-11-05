@@ -192,7 +192,7 @@ export default function OrgRegisterPage() {
 
           <div className="org-register-form__footer">
             <small>Los campos marcados con * son obligatorios.</small>
-            <Button type="submit" size="large" isLoading={status === 'loading'} loadingLabel="Enviando solicitud...">
+            <Button type="submit" isLoading={status === 'loading'} loadingLabel="Enviando solicitud...">
               Crear cuenta
             </Button>
           </div>
@@ -217,7 +217,7 @@ export default function OrgRegisterPage() {
         description="Tu solicitud de registro ha llegado a la Fundación Verisure."
         closeOnBackdrop={false}
         footer={
-          <Button type="button" size="large" onClick={handleGoHome}>
+          <Button type="button" onClick={handleGoHome}>
             Volver al inicio
           </Button>
         }

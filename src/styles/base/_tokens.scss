@@ -9,7 +9,9 @@
   --color-coral-dark: #b00022;
   // Rojo del logo. Solo como fondo, con `--color-on-accent` encima.
   --color-coral-solid: #ed002f;
-  --color-coral-solid-hover: #c70027;
+  --color-coral-solid-hover: #dc002b;
+  --color-coral-gradient-end: #c70027;
+  --color-coral-gradient-end-hover: #b70024;
   --color-on-accent: #ffffff;
 
   --color-surface: #ffffff;
@@ -41,6 +43,7 @@
   --shadow-sm: 0 1px 2px rgb(17 24 39 / 5%);
   --shadow-md: 0 4px 12px rgb(17 24 39 / 8%);
   --shadow-lg: 0 12px 32px rgb(17 24 39 / 12%);
+  --shadow-accent: 0 1px 2px rgb(199 0 39 / 30%), inset 0 1px 0 rgb(255 255 255 / 18%);
 }
 
 @mixin theme-dark {
@@ -51,7 +54,9 @@
   --color-coral: #ff6b7f;
   --color-coral-dark: #ff8c9b;
   --color-coral-solid: #e0002c;
-  --color-coral-solid-hover: #c70027;
+  --color-coral-solid-hover: #cf0029;
+  --color-coral-gradient-end: #b80024;
+  --color-coral-gradient-end-hover: #a90021;
   --color-on-accent: #ffffff;
 
   --color-surface: #171c26;
@@ -83,6 +88,7 @@
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%);
   --shadow-md: 0 4px 12px rgb(0 0 0 / 35%);
   --shadow-lg: 0 12px 32px rgb(0 0 0 / 45%);
+  --shadow-accent: 0 1px 2px rgb(0 0 0 / 40%), inset 0 1px 0 rgb(255 255 255 / 14%);
 }
 
 :root {

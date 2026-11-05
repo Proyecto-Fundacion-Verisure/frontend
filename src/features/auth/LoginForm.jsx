@@ -82,7 +82,6 @@ function LoginForm() {
       <Button
         type="submit"
         variant="primary"
-        size="large"
         className="login-form__submit"
         isLoading={isLoading}
         loadingLabel="Entrando..."

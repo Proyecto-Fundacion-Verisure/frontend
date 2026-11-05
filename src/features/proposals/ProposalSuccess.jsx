@@ -23,7 +23,7 @@ export default function ProposalSuccess({ onReset }) {
         Hemos recibido vuestra propuesta. El equipo de la Fundación Verisure
         la revisará y os contactará por correo.
       </p>
-      <Button size="large" onClick={onReset}>
+      <Button onClick={onReset}>
         Enviar otra propuesta
       </Button>
     </section>

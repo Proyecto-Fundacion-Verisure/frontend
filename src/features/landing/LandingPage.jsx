@@ -44,17 +44,17 @@ export default function LandingPage() {
             <strong>debemos prevenir más para mitigar menos</strong>.
           </p>
           <div className="landing-hero__actions">
-            <Link className="button button--primary button--large" to="/login">
+            <Link className="button button--primary button--medium" to="/login">
               Soy empleado
             </Link>
             <Link
-              className="button button--secondary button--large"
+              className="button button--secondary button--medium"
               to="/register-organization"
             >
               Registra tu entidad
             </Link>
             <a
-              className="button button--ghost button--large"
+              className="button button--ghost button--medium"
               href="/#propuesta"
             >
               ¿Quieres proponer un voluntariado?

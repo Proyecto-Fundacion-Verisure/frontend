@@ -286,11 +286,10 @@ export default function ProposalForm() {
             <small>Los campos marcados con * son obligatorios.</small>
             <Button
               type="submit"
-              size="large"
               isLoading={status === "loading"}
               loadingLabel="Enviando…"
             >
-              Enviar propuesta
+              Enviar
             </Button>
           </div>
         </form>
@@ -333,7 +332,7 @@ export default function ProposalForm() {
             </li>
           </ol>
           <div className="proposal-steps__cta">
-            <Link className="button button--primary button--large" to="/register-organization">
+            <Link className="button button--primary button--medium" to="/register-organization">
               Regístrate como entidad
             </Link>
           </div>

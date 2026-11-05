@@ -470,7 +470,7 @@
     padding: space('2') space('3');
   }
 
-  .button { width: 100%; }
+  .button { align-self: flex-start; }
 
   &__status {
     font-size: $font-size-sm;

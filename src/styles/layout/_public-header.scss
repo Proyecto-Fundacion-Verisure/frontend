@@ -55,10 +55,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 2.5rem;
-    padding: 0 map-get($spacing, '5');
+    min-height: $control-height;
+    padding: 0 map-get($spacing, '4');
     border: 1px solid $color-border-strong;
-    border-radius: $radius-md;
+    border-radius: $radius-control;
     background-color: $color-surface;
     color: $color-heading;
     font-family: $font-sans;
@@ -82,7 +82,6 @@
 
   @media (max-width: 38rem) {
     &__container { padding-inline: map-get($spacing, '4'); }
-    &__brand,
-    &__login-btn { min-height: 2.75rem; }
+    &__brand { min-height: 2.75rem; }
   }
 }

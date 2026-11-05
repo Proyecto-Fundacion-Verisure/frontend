@@ -366,7 +366,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
         <div className="activity-form-page__success-actions">
           {!isPublished && !isEditMode && (
             <Button onClick={handlePublishRequest}>
-              {isPartner ? 'Enviar propuesta' : 'Publicar actividad'}
+              {isPartner ? 'Enviar' : 'Publicar actividad'}
             </Button>
           )}
           {isEditMode ? (
@@ -497,7 +497,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
             </Button>
             {!isEditMode && (
               <Button type="button" onClick={handlePublishRequest} disabled={requestStatus === 'saving'}>
-                {isPartner ? 'Enviar propuesta' : 'Publicar actividad'}
+                {isPartner ? 'Enviar' : 'Publicar actividad'}
               </Button>
             )}
           </div>
