@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cancelRegistration, getMyRegistrations } from '../../api/registrationsApi';
-import { Badge, Button, Card, EmptyState, Modal, Spinner } from '../../components/ui';
+import { Badge, Button, Card, EmptyState, Modal, PageHeader, Spinner } from '../../components/ui';
 import { formatDate } from '../../utils/dates';
 
 // Inscripciones vivas. El resto (`CLOSED`, `REJECTED`, `CANCELLED`) es historial:
@@ -226,9 +226,7 @@ export default function MyVolunteeringPage() {
   if (bothEmpty) {
     return (
       <section className="my-volunteering" aria-labelledby="my-volunteering-title">
-        <h1 id="my-volunteering-title" className="my-volunteering__title">
-          Mi voluntariado
-        </h1>
+        <PageHeader title="Mi voluntariado" titleId="my-volunteering-title" />
         <EmptyState
           title="No tienes inscripciones"
           description="Aún no te has inscrito en ninguna actividad."
@@ -244,9 +242,7 @@ export default function MyVolunteeringPage() {
 
   return (
     <section className="my-volunteering" aria-labelledby="my-volunteering-title">
-      <h1 id="my-volunteering-title" className="my-volunteering__title">
-        Mi voluntariado
-      </h1>
+      <PageHeader title="Mi voluntariado" titleId="my-volunteering-title" />
       {cancelError && (
         <div className="my-volunteering__error" role="alert">
           {cancelError}

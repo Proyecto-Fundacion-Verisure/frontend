@@ -135,6 +135,7 @@ export default function AccountStatusPage() {
   return (
     <EmptyState
       title="Estado de la cuenta"
+      titleAs="h1"
       description="Inicia sesión para consultar el estado de tu entidad."
     />
   );

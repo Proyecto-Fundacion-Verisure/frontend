@@ -1,25 +1,7 @@
 @use '../abstracts' as *;
 
 .catalog {
-  max-width: $content-max-width;
-  margin: 0 auto;
-  padding: space('8') space('6') space('16');
-}
-
-.catalog__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: space('4');
-  margin-bottom: space('6');
-}
-
-.catalog__title {
-  color: $color-navy;
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  margin: 0;
+  @include page-container;
 }
 
 .catalog__filters {
@@ -27,12 +9,17 @@
   flex-wrap: wrap;
   gap: space('4');
   margin-bottom: space('6');
+
+  .field {
+    flex: 1 1 11rem;
+    width: auto;
+  }
 }
 
 .catalog__toggle {
   align-items: center;
   align-self: flex-end;
-  color: $color-navy-light;
+  color: $color-text;
   cursor: pointer;
   display: inline-flex;
   font-size: $font-size-sm;
@@ -42,19 +29,14 @@
 }
 
 .catalog__error {
-  background: $color-danger-light;
-  border: 1px solid $color-danger;
-  border-radius: $radius-md;
-  color: $color-danger;
-  padding: space('4');
-  text-align: center;
+  @include notice($color-danger, $color-danger-light);
   margin-bottom: space('4');
 }
 
 .catalog__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: space('6');
+  gap: space('5');
 }
 
 @media (max-width: 64rem) {
@@ -64,16 +46,7 @@
 }
 
 @media (max-width: 48rem) {
-  .catalog {
-    padding: space('6') space('4') space('12');
-  }
-
   .catalog__grid {
     grid-template-columns: 1fr;
-  }
-
-  .catalog__header {
-    flex-direction: column;
-    align-items: flex-start;
   }
 }

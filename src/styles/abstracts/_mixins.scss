@@ -1,5 +1,41 @@
 @use 'sass:map';
 @use 'variables' as *;
+@use 'functions' as *;
+
+// El padding lateral lo pone `.app-layout__content`.
+@mixin page-container($max-width: $content-max-width) {
+  margin: 0 auto;
+  max-width: $max-width;
+  padding-bottom: space('10');
+}
+
+@mixin eyebrow {
+  color: $color-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  margin: 0 0 space('1');
+}
+
+@mixin back-link {
+  align-items: center;
+  color: $color-muted;
+  display: inline-flex;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  min-height: $control-height;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover { color: $color-heading; }
+}
+
+@mixin notice($color, $background) {
+  background: $background;
+  border: 1px solid color-mix(in srgb, $color 30%, transparent);
+  border-radius: $radius-md;
+  color: $color;
+  padding: space('3') space('4');
+}
 
 @mixin respond-to($breakpoint) {
   $size: map.get($breakpoints, $breakpoint);
@@ -11,10 +47,10 @@
   }
 }
 
-@mixin focus-ring($color: $color-navy) {
+@mixin focus-ring($color: $color-focus) {
   &:focus-visible {
-    outline: 3px solid $color;
-    outline-offset: 3px;
+    outline: 2px solid $color;
+    outline-offset: 2px;
   }
 }
 

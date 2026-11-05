@@ -5,26 +5,22 @@
   @include disabled-control;
   align-items: center;
   display: inline-flex;
-  // Mismo peso que «Cerrar sesión» de la cabecera; todos los botones leen igual.
-  font-weight: $font-weight-regular;
+  font-weight: $font-weight-medium;
   gap: space("2");
   justify-content: center;
   line-height: 1.25;
   min-height: $control-height;
   min-width: 7rem;
+  // Los `<Link>` con `button button--primary` no llevan clase de tamaño.
+  padding: space("3") space("4");
   border: 0;
   border-radius: $radius-md;
   cursor: pointer;
   text-decoration: none;
   transition:
     background-color $transition-fast,
-    border-color $transition-fast,
-    color $transition-fast,
-    transform $transition-fast;
-
-  &:active:not(:disabled) {
-    transform: translateY(1px);
-  }
+    box-shadow $transition-fast,
+    color $transition-fast;
 
   // El contenido va en un `span`: sin esto, un icono junto al texto se alinea a
   // la línea base y queda descolgado.
@@ -37,6 +33,7 @@
   &--small {
     font-size: $font-size-sm;
     min-height: 2.25rem;
+    min-width: 0;
     padding: space("2") space("3");
   }
   &--medium {
@@ -48,41 +45,48 @@
     padding: space("3") space("6");
   }
 
-  // Un solo rojo (`$color-coral`, el de «Cerrar sesión») y un solo hover, el
-  // azul marino: se ve sin ambigüedad, mantiene el contraste con el texto
-  // blanco y es el mismo de la cabecera.
-  &--primary,
-  &--danger {
-    background: $color-coral;
-    color: $color-surface;
+  // El rojo sólido se reserva para la acción principal de cada vista.
+  &--primary {
+    background: $color-coral-solid;
+    color: $color-on-accent;
 
     &:hover:not(:disabled) {
-      background: $color-navy-light;
+      background: $color-coral-solid-hover;
+    }
+  }
+
+  // Suave porque puede repetirse en cada fila de una tabla.
+  &--danger {
+    background: $color-danger-light;
+    box-shadow: inset 0 0 0 1px $color-danger;
+    color: $color-danger;
+
+    &:hover:not(:disabled) {
+      background: $color-coral-solid-hover;
+      box-shadow: none;
+      color: $color-on-accent;
     }
   }
 
   // El contorno va en `box-shadow` y no en `border` para que el secundario
   // mida exactamente lo mismo que el primario cuando van uno al lado del otro.
   &--secondary {
-    background: transparent;
-    box-shadow: inset 0 0 0 2px $color-coral;
-    color: $color-coral;
+    background: $color-surface;
+    box-shadow: inset 0 0 0 1px $color-border-strong;
+    color: $color-heading;
 
     &:hover:not(:disabled) {
-      background: $color-navy-light;
-      box-shadow: inset 0 0 0 2px $color-navy-light;
-      color: $color-surface;
+      background: $color-surface-hover;
     }
   }
 
   &--ghost {
     background: transparent;
-    color: $color-muted;
-    text-decoration: underline;
+    color: $color-text;
 
     &:hover:not(:disabled) {
-      background: $color-navy-light;
-      color: $color-surface;
+      background: $color-surface-hover;
+      color: $color-heading;
     }
   }
 }

@@ -57,7 +57,7 @@
   text-align: center;
 
   h1 {
-    color: $color-navy;
+    color: $color-heading;
     font-size: $font-size-2xl;
     margin: 0;
   }
@@ -87,7 +87,7 @@
 
   div { padding: space('3'); }
   dt { color: $color-muted; font-size: $font-size-sm; }
-  dd { color: $color-navy; font-weight: $font-weight-semibold; margin: space('2') 0 0; }
+  dd { color: $color-heading; font-weight: $font-weight-semibold; margin: space('2') 0 0; }
 }
 
 .certificate__hours {

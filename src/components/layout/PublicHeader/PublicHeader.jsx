@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import logoVerisure from '../../../assets/images/logo-fundacion-verisure.png';
+import ThemeToggle from '../../ui/ThemeToggle/ThemeToggle';
 
 const PublicHeader = () => {
   return (
@@ -16,6 +17,7 @@ const PublicHeader = () => {
         </Link>
 
         <div className="public-header__actions">
+          <ThemeToggle />
           <Link to="/login" className="public-header__login-btn">
             Iniciar sesión
           </Link>

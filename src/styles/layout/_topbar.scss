@@ -7,7 +7,7 @@
   background-color: $color-surface;
   border-bottom: 1px solid $color-border;
   align-items: center;
-  color: $color-navy-light;
+  color: $color-text;
   gap: map-get($spacing, '4');
   justify-content: space-between;
   min-height: 4rem;
@@ -18,7 +18,7 @@
   min-width: 0;
 
   img {
-    height: 3rem;
+    height: 2.25rem;
     width: auto;
     display: block;
   }
@@ -27,24 +27,26 @@
 .topbar__brand {
   @include focus-ring($color-coral);
 
+  align-items: center;
   display: inline-flex;
+  min-height: $control-height;
 }
 
 .topbar__user-menu {
   align-items: center;
   display: flex;
-  gap: map-get($spacing, '4');
+  gap: map-get($spacing, '3');
   margin-left: auto;
 }
 
 .topbar__user-avatar {
   align-items: center;
-  border: 2px solid $color-coral;
+  background: $color-coral-50;
   border-radius: $radius-pill;
-  color: $color-coral;
+  color: $color-coral-dark;
   display: flex;
   flex-shrink: 0;
-  font-size: $font-size-lg;
+  font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
   height: 2.25rem;
   justify-content: center;
@@ -61,7 +63,8 @@
 }
 
 .topbar__user-name {
-  font-size: $font-size-md;
+  color: $color-heading;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -78,22 +81,29 @@
 }
 
 .topbar__logout {
-  @include focus-ring($color-coral);
+  @include focus-ring;
 
   align-items: center;
-  background: $color-coral;
-  border: 1px solid $color-border-strong;
+  background: transparent;
+  border: 1px solid $color-border;
   border-radius: $radius-md;
-  color: $color-surface;
+  color: $color-text;
   cursor: pointer;
   display: inline-flex;
   font: inherit;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
   gap: map-get($spacing, '2');
+  justify-content: center;
   min-height: $control-height;
+  min-width: $control-height;
   padding: 0 map-get($spacing, '3');
-  transition: background-color $transition-fast;
+  transition: background-color $transition-fast, border-color $transition-fast;
 
-  &:hover { background: $color-navy-light; }
+  &:hover {
+    background: $color-surface-hover;
+    border-color: $color-border-strong;
+  }
 }
 
 @media (max-width: 35.99rem) {

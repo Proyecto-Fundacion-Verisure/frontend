@@ -4,7 +4,7 @@ import { getPublishedActivities } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
 import { useFavoritesOptional } from '../favorites/FavoritesContext';
-import { Button, EmptyState, Input, Pagination, Select, Spinner } from '../../components/ui';
+import { Button, EmptyState, Input, PageHeader, Pagination, Select, Spinner } from '../../components/ui';
 import ActivityCard from './ActivityCard';
 
 const LIMIT = 12;
@@ -183,11 +183,7 @@ export default function CatalogPage() {
 
   return (
     <section className="catalog" aria-labelledby="catalog-title">
-      <div className="catalog__header">
-        <h1 id="catalog-title" className="catalog__title">
-          Catálogo de actividades
-        </h1>
-      </div>
+      <PageHeader title="Catálogo de actividades" titleId="catalog-title" />
 
       <div className="catalog__filters">
         <Select label="Línea" value={line} onChange={(e) => updateParams({ line: e.target.value })}>

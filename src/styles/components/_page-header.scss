@@ -1,0 +1,36 @@
+@use '../abstracts' as *;
+
+.page-header {
+  align-items: flex-start;
+  display: flex;
+  gap: space('5');
+  justify-content: space-between;
+  margin-bottom: space('6');
+
+  &__text { min-width: 0; }
+
+  &__eyebrow { @include eyebrow; }
+
+  &__title { margin: 0; }
+
+  &__description {
+    color: $color-muted;
+    margin: space('1') 0 0;
+  }
+
+  &__actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: space('3');
+  }
+}
+
+@media (max-width: 38rem) {
+  .page-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .page-header__actions > .button { width: 100%; }
+}

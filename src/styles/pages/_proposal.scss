@@ -2,52 +2,38 @@
 
 .proposal-page {
   margin: 0 auto;
-  max-width: 75rem;
-  padding: space("8") space("6") space("16");
+  max-width: $content-max-width;
+  padding: space("6") space("6") space("12");
 }
 .proposal-page__intro {
   max-width: 52rem;
 }
 .proposal-page__intro > a {
-  color: $color-navy;
-  display: inline-block;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  margin-bottom: space("10");
+  @include back-link;
+  margin-bottom: space("3");
 }
 .proposal-page__eyebrow {
-  color: $color-coral-dark;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  letter-spacing: 0.08em;
-  margin: 0 0 space("4");
-  text-transform: uppercase;
+  @include eyebrow;
 }
 .proposal-page h1 {
-  color: $color-navy;
-  font-size: clamp(2.25rem, 4vw, 3.25rem);
-  letter-spacing: -0.045em;
-  line-height: 1.1;
   margin: 0;
 }
 .proposal-page__intro > p:last-child {
   color: $color-muted;
-  font-size: $font-size-lg;
-  line-height: 1.55;
-  margin: space("4") 0 0;
+  margin: space("1") 0 0;
 }
 .proposal-page__layout {
   align-items: start;
   display: grid;
-  gap: clamp(2rem, 5vw, 4rem);
+  gap: space("8");
   grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
-  margin-top: space("10");
+  margin-top: space("6");
 }
 .proposal-form {
   background: $color-surface;
   border: 1px solid $color-border;
   border-radius: $radius-lg;
-  box-shadow: $shadow-md;
+  box-shadow: $shadow-sm;
   padding: clamp(space("5"), 4vw, space("8"));
 }
 .proposal-form__grid {
@@ -55,7 +41,7 @@
   gap: space("5") space("4");
   grid-template-columns: repeat(2, 1fr);
 }
-.proposal-form > .field {
+.proposal-form > * + * {
   margin-top: space("5");
 }
 .proposal-form__consent {
@@ -72,7 +58,6 @@
   padding: space("4");
 }
 .proposal-form__consent input {
-  accent-color: $color-coral;
   flex: 0 0 auto;
   height: 1rem;
   margin-top: 0.15rem;
@@ -121,18 +106,18 @@
 }
 .proposal-steps li > span {
   align-items: center;
-  background: $color-coral;
+  background: $color-surface-hover;
   border-radius: 50%;
-  color: $color-surface;
+  color: $color-heading;
   display: flex;
   flex: 0 0 1.75rem;
   font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-semibold;
   height: 1.75rem;
   justify-content: center;
 }
 .proposal-steps strong {
-  color: $color-navy;
+  color: $color-heading;
   display: block;
 }
 .proposal-steps p {
@@ -142,9 +127,8 @@
   margin: space("1") 0 0;
 }
 .proposal-steps__note {
-  background: $color-coral-50;
-  border-left: 2px solid $color-coral;
-  border-radius: 0 $radius-md $radius-md 0;
+  background: $color-surface-hover;
+  border-radius: $radius-md;
   padding: space("4");
 }
 .proposal-steps__cta {
@@ -157,8 +141,7 @@
 }
 .proposal-page--success > p:not(.proposal-page__eyebrow) {
   color: $color-muted;
-  font-size: $font-size-lg;
-  margin: space("5") 0 space("8");
+  margin: space("3") 0 space("6");
 }
 .proposal-accept-action {
   align-items: flex-start;

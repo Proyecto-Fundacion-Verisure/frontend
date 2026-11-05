@@ -1,8 +1,8 @@
 @use '../abstracts/variables' as *;
 
 .public-footer {
-  background-color: $color-navy;
-  border-top: 1px solid $color-navy-light;
+  background-color: $color-surface-inverse;
+  border-top: 1px solid $color-border-inverse;
 
   &__container {
     display: grid;
@@ -29,7 +29,7 @@
     font-family: $font-sans;
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
-    color: $color-surface;
+    color: $color-on-inverse;
     letter-spacing: .02em;
   }
 
@@ -39,7 +39,7 @@
     font-family: $font-sans;
     font-size: $font-size-xs;
     line-height: $line-height-normal;
-    color: rgb(255 255 255 / 78%);
+    color: $color-on-inverse-muted;
   }
 
   &__col-title {
@@ -47,7 +47,7 @@
     font-family: $font-sans;
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
-    color: $color-surface;
+    color: $color-on-inverse;
   }
 
   &__links {
@@ -62,13 +62,13 @@
   &__link {
     font-family: $font-sans;
     font-size: $font-size-xs;
-    color: rgb(255 255 255 / 78%);
+    color: $color-on-inverse-muted;
     text-decoration: none;
     transition: color $transition-fast;
 
     &:hover,
     &:focus-visible {
-      color: $color-surface;
+      color: $color-on-inverse;
     }
 
     &:focus-visible {

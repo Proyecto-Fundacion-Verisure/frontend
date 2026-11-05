@@ -1,0 +1,23 @@
+@use '../abstracts' as *;
+
+.theme-toggle {
+  @include focus-ring;
+
+  align-items: center;
+  background: transparent;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  color: $color-text;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: $control-height;
+  justify-content: center;
+  transition: background-color $transition-fast, border-color $transition-fast;
+  width: $control-height;
+
+  &:hover {
+    background: $color-surface-hover;
+    border-color: $color-border-strong;
+  }
+}

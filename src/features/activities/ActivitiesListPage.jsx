@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAdminActivities } from '../../api/activitiesApi';
-import { Badge, Button, EmptyState, Pagination, Select, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../components/ui';
 import CancelActivityButton from './CancelActivityButton';
 import { formatDate } from '../../utils/dates';
 import PartnerActivityReviewActions from './PartnerActivityReviewActions';
@@ -224,18 +224,17 @@ export default function ActivitiesListPage({
 
   return (
     <section className="activities-list" aria-labelledby="activities-list-title">
-      <header className="activities-list__header">
-        <div>
-          <p className="activities-list__eyebrow">{eyebrow}</p>
-          <h1 id="activities-list-title">{title}</h1>
-          <p>{totalElements} {titleLower} encontrados</p>
-        </div>
-        {showCreateButton && (
+      <PageHeader
+        eyebrow={eyebrow}
+        title={title}
+        titleId="activities-list-title"
+        description={`${totalElements} ${titleLower} encontrados`}
+        actions={showCreateButton && (
           <Link className="button button--primary button--medium" to={createPath}>
             Nuevo proyecto →
           </Link>
         )}
-      </header>
+      />
 
       {showStatusFilter && (
         <div className="activities-list__toolbar">

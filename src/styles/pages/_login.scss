@@ -1,4 +1,5 @@
 @use '../../styles/abstracts/variables' as *;
+@use '../../styles/abstracts/mixins' as *;
 
 .login-page {
   position: relative;
@@ -33,15 +34,15 @@
     display: flex;
     flex-direction: column;
     justify-content:flex-start;
-    background: rgba($color-surface, 0.85);
+    background: color-mix(in srgb, $color-surface 85%, transparent);
     backdrop-filter: blur(6px);
 
     &--left {
-      background: rgba($color-surface, 0.25);
+      background: color-mix(in srgb, $color-surface 80%, transparent);
     }
 
     &--right {
-      background: rgba($color-surface, 0.95);
+      background: color-mix(in srgb, $color-surface 95%, transparent);
     }
   }
 
@@ -53,9 +54,9 @@
 
   &__hero-title {
     font-size: $font-size-2xl;
-    font-weight: $font-weight-bold;
+    font-weight: $font-weight-semibold;
     line-height: $line-height-tight;
-    color: $color-navy;
+    color: $color-heading;
     margin: 0 0 map-get($spacing, '4');
   }
 
@@ -63,7 +64,7 @@
     font-family: $font-sans;
     font-size: $font-size-md;
     line-height: $line-height-normal;
-    color: $color-muted;
+    color: $color-text;
     margin: 0;
     max-width: 320px;
   }
@@ -76,8 +77,8 @@
 
   &__form-title {
     font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    color: $color-navy;
+    font-weight: $font-weight-semibold;
+    color: $color-heading;
     margin: 0 0 map-get($spacing, '2');
   }
 
@@ -88,13 +89,9 @@
   }
 
   &__session-expired {
-    background: $color-warning-light;
-    border: 1px solid $color-warning;
-    border-radius: $radius-md;
-    color: $color-warning;
+    @include notice($color-warning, $color-warning-light);
     font-size: $font-size-sm;
     margin-bottom: map-get($spacing, '4');
-    padding: map-get($spacing, '3') map-get($spacing, '4');
   }
 
   &__register {
@@ -106,21 +103,23 @@
   }
 
   &__register-link {
-    color: $color-coral;
-    font-weight: $font-weight-bold;
+    align-items: center;
+    color: $color-coral-dark;
+    display: inline-flex;
+    font-weight: $font-weight-semibold;
+    min-height: $control-height;
     text-decoration: none;
 
-    &:hover {
-      color: $color-coral-dark;
-      text-decoration: underline;
-    }
+    &:hover { text-decoration: underline; }
   }
 
   &__back-link {
-    display: block;
-    margin-top: map-get($spacing, '8');
-    text-align: center;
-    font-size: $font-size-xs;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-top: map-get($spacing, '4');
+    min-height: $control-height;
+    font-size: $font-size-sm;
     color: $color-muted;
     text-decoration: none;
     transition: color $transition-fast;
@@ -147,11 +146,7 @@
   }
 
   &__error {
-    background: $color-danger-light;
-    color: $color-danger;
-    border: 1px solid rgba($color-danger, 0.3);
-    border-radius: $radius-md;
-    padding: map-get($spacing, '3') map-get($spacing, '4');
+    @include notice($color-danger, $color-danger-light);
     font-size: $font-size-sm;
   }
 }

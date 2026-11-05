@@ -1,9 +1,7 @@
 @use '../abstracts' as *;
 
 .registrations-page {
-  margin: 0 auto;
-  max-width: $content-max-width;
-  padding: space('8') space('6') space('16');
+  @include page-container;
 }
 
 .registrations-page__header {
@@ -11,15 +9,11 @@
   display: flex;
   gap: space('5');
   justify-content: space-between;
-  margin-bottom: space('8');
+  margin-bottom: space('6');
 
-  h1 {
-    color: $color-navy;
-    font-size: $font-size-2xl;
-    margin: 0;
-  }
+  h1 { margin: 0; }
 
-  p:last-child { color: $color-muted; margin: space('2') 0 0; }
+  p:last-child { color: $color-muted; margin: space('1') 0 0; }
 }
 
 .registrations-page__totals {
@@ -27,7 +21,7 @@
   gap: space('3');
   justify-items: end;
 
-  > strong { color: $color-navy; white-space: nowrap; }
+  > strong { color: $color-heading; white-space: nowrap; }
 }
 
 // Contadores de toda la actividad, no de la página que se está viendo.
@@ -45,32 +39,24 @@
   }
 
   dd {
-    color: $color-navy;
+    color: $color-heading;
     font-size: $font-size-lg;
-    font-weight: $font-weight-bold;
+    font-variant-numeric: tabular-nums;
+    font-weight: $font-weight-semibold;
     margin: 0;
   }
 }
 
 .registrations-page__back {
-  color: $color-navy;
-  display: inline-block;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  margin-bottom: space('6');
-  text-decoration: none;
+  @include back-link;
+  margin-bottom: space('3');
 }
 
 .registrations-page__eyebrow {
-  color: $color-coral-dark;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  letter-spacing: .08em;
-  margin: 0 0 space('2');
-  text-transform: uppercase;
+  @include eyebrow;
 }
 
-.registrations-page__sections { display: grid; gap: space('8'); }
+.registrations-page__sections { display: grid; gap: space('8'); grid-template-columns: minmax(0, 1fr); }
 
 .registration-summary {
   background: $color-surface;
@@ -91,15 +77,16 @@
 }
 
 .registration-summary__card {
-  background: $color-background;
+  background: $color-surface-hover;
   border-radius: $radius-md;
   padding: space('4');
 
   dt { color: $color-muted; font-size: $font-size-sm; }
   dd {
-    color: $color-navy;
+    color: $color-heading;
     font-size: $font-size-2xl;
-    font-weight: $font-weight-bold;
+    font-variant-numeric: tabular-nums;
+    font-weight: $font-weight-semibold;
     margin: space('1') 0 0;
   }
 }
@@ -112,16 +99,19 @@
 
 .registrations-page__section h2 {
   align-items: center;
-  color: $color-navy;
+  color: $color-heading;
   display: flex;
   font-size: $font-size-xl;
   gap: space('2');
   margin: 0 0 space('3');
 
   span {
-    background: $color-background;
+    background: $color-surface-hover;
     border-radius: $radius-pill;
-    font-size: $font-size-sm;
+    color: $color-muted;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    letter-spacing: 0;
     padding: space('1') space('2');
   }
 }
@@ -156,7 +146,6 @@
 }
 
 @media (max-width: 38rem) {
-  .registrations-page { padding-inline: space('4'); }
   .registrations-page__header { align-items: flex-start; flex-direction: column; }
   .registrations-page__totals { justify-items: start; }
   .registrations-page__counts div { text-align: left; }

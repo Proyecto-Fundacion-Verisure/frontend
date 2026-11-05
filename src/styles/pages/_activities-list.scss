@@ -1,9 +1,7 @@
 @use '../abstracts' as *;
 
 .activities-list {
-  margin: 0 auto;
-  max-width: $content-max-width;
-  padding: space('8') space('6') space('16');
+  @include page-container;
 }
 
 .activities-list__header {
@@ -14,7 +12,7 @@
   margin-bottom: space('6');
 
   h1 {
-    color: $color-navy;
+    color: $color-heading;
     font-size: $font-size-2xl;
     margin: 0;
   }
@@ -26,27 +24,17 @@
 }
 
 .activities-list__eyebrow {
-  color: $color-coral-dark;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  letter-spacing: .08em;
-  margin: 0 0 space('2');
-  text-transform: uppercase;
+  @include eyebrow;
 }
 
 .activities-list__toolbar {
-  align-items: flex-end;
-  background: $color-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  display: grid;
-  gap: space('4');
-  grid-template-columns: minmax(18rem, 1fr) minmax(12rem, .35fr);
   margin-bottom: space('5');
-  padding: space('4');
+  max-width: 20rem;
 
   .field { margin: 0; }
 }
+
+.activities-list td[data-label='Inicio'] { white-space: nowrap; }
 
 .activities-list__search {
   align-items: flex-end;
@@ -55,7 +43,7 @@
   grid-template-columns: minmax(0, 1fr) auto;
 }
 
-.activities-list__activity-title { color: $color-navy; }
+.activities-list__activity-title { color: $color-heading; }
 
 // Los dos bloques de «Mis proyectos» de la entidad.
 .activities-list__group + .activities-list__group {
@@ -63,7 +51,7 @@
 }
 
 .activities-list__group-title {
-  color: $color-navy;
+  color: $color-heading;
   font-size: $font-size-lg;
   margin: 0 0 space('3');
 
@@ -91,12 +79,8 @@
 }
 
 .activities-list__notice {
-  background: $color-success-light;
-  border: 1px solid $color-success;
-  border-radius: $radius-md;
-  color: $color-success;
+  @include notice($color-success, $color-success-light);
   margin: 0 0 space('4');
-  padding: space('4');
 }
 
 .activities-list__loading {
@@ -108,12 +92,8 @@
 .activities-list__error-panel { text-align: center; }
 
 .activities-list__error {
-  background: $color-danger-light;
-  border: 1px solid $color-danger;
-  border-radius: $radius-md;
-  color: $color-danger;
+  @include notice($color-danger, $color-danger-light);
   margin: 0 0 space('4');
-  padding: space('4');
 }
 
 .activities-list__pagination {
@@ -130,12 +110,8 @@
   }
 }
 
-@media (max-width: 55rem) {
-  .activities-list__toolbar { grid-template-columns: 1fr; }
-}
-
 @media (max-width: 38rem) {
-  .activities-list { padding-inline: space('4'); }
+  .activities-list__toolbar { max-width: none; }
   .activities-list__header { align-items: stretch; flex-direction: column; }
   .activities-list__header > .button { width: 100%; }
   .activities-list__search { grid-template-columns: 1fr; }

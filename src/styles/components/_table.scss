@@ -4,19 +4,21 @@
   @include focus-ring;
   background: $color-surface;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
   max-width: 100%;
   overflow-x: auto;
 }
 
 .table {
   border-collapse: collapse;
+  font-size: $font-size-sm;
+  font-variant-numeric: tabular-nums;
   min-width: 36rem;
   width: 100%;
 
   caption {
-    color: $color-navy;
-    font-size: $font-size-lg;
+    color: $color-heading;
+    font-size: $font-size-md;
     font-weight: $font-weight-semibold;
     padding: space('4');
     text-align: left;
@@ -32,16 +34,22 @@
 
   th {
     background: $color-background;
-    color: $color-navy;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
+    color: $color-muted;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    white-space: nowrap;
   }
 
   tbody tr:last-child td { border-bottom: 0; }
-  tbody tr:hover { background: rgb(245 247 250 / 72%); }
+  tbody tr:hover { background: $color-surface-hover; }
   &__empty { color: $color-muted; padding: space('8') !important; text-align: center !important; }
 
   @media (max-width: 36rem) {
+    display: block;
+    min-width: 0;
+
+    caption, tbody { display: block; }
+    td a:not(.button) { align-items: center; display: inline-flex; min-height: $control-height; }
     thead { display: none; }
     tr { display: block; border-bottom: 2px solid $color-border; }
     td {
@@ -52,7 +60,7 @@
       &::before {
         content: attr(data-label);
         font-weight: $font-weight-semibold;
-        color: $color-navy;
+        color: $color-heading;
         text-align: left;
         margin-right: space('4');
       }
