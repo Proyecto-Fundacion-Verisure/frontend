@@ -19,9 +19,9 @@ const PublicFooter = () => {
         </div>
 
         <nav className="public-footer__col" aria-labelledby="footer-legal-heading">
-          <h3 id="footer-legal-heading" className="public-footer__col-title">
+          <h2 id="footer-legal-heading" className="public-footer__col-title">
             Legal
-          </h3>
+          </h2>
           <ul className="public-footer__links">
             <li>
               <Link to="/" className="public-footer__link">
@@ -42,9 +42,9 @@ const PublicFooter = () => {
         </nav>
 
         <div className="public-footer__col" aria-labelledby="footer-contact-heading">
-          <h3 id="footer-contact-heading" className="public-footer__col-title">
+          <h2 id="footer-contact-heading" className="public-footer__col-title">
             Contacto
-          </h3>
+          </h2>
           <ul className="public-footer__links">
             <li>
               <a href={`mailto:${CONTACT_EMAIL}`} className="public-footer__link">

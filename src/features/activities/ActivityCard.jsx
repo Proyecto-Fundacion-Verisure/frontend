@@ -81,7 +81,7 @@ export default function ActivityCard({
           {isEnrolled && <Badge variant="success">Ya estás apuntado</Badge>}
         </div>
 
-        {title && <h3 className="activity-card__title">{title}</h3>}
+        {title && <h2 className="activity-card__title">{title}</h2>}
 
         {dateRange && (
           <p className="activity-card__dates">
