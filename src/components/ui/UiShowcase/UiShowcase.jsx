@@ -45,7 +45,6 @@ export default function UiShowcase() {
         </div>
         <div className="ui-showcase__row">
           <Badge>Neutral</Badge>
-          <Badge variant="primary">Destacada</Badge>
           <Badge variant="success">Confirmada</Badge>
           <Badge variant="warning">Pendiente</Badge>
           <Badge variant="danger">Rechazada</Badge>

@@ -13,7 +13,7 @@ const STATUS_OPTIONS = [
 ];
 
 const STATUS_BADGE = {
-  NEW: { variant: 'primary', label: 'Nueva' },
+  NEW: { variant: 'info', label: 'Nueva' },
   ACCEPTED: { variant: 'success', label: 'Aceptada' },
   REJECTED: { variant: 'danger', label: 'Rechazada' },
 };

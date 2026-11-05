@@ -44,8 +44,8 @@ export const ACTIVITY_STATUS_BADGES = {
   DRAFT: { label: 'Borrador', variant: 'neutral' },
   PENDING_APPROVAL: { label: 'Pendiente', variant: 'warning' },
   PUBLISHED: { label: 'Publicada', variant: 'success' },
-  FULL: { label: 'Completa', variant: 'info' },
-  IN_PROGRESS: { label: 'En curso', variant: 'primary' },
+  FULL: { label: 'Completa', variant: 'warning' },
+  IN_PROGRESS: { label: 'En curso', variant: 'info' },
   FINISHED: { label: 'Finalizada', variant: 'neutral' },
   CANCELLED: { label: 'Cancelada', variant: 'danger' },
 };

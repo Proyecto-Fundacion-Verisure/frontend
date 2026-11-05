@@ -102,11 +102,11 @@
   }
 
   &__deviation {
-    border-radius: $radius-sm;
+    border-radius: $radius-pill;
     display: inline-block;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-    padding: space('1') space('2');
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    padding: space('1') .625rem;
 
     &--positive {
       background: $color-success-light;

@@ -35,6 +35,14 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
     CANCELLED: 'Cancelada',
   };
   const statusLabel = statusLabels[item.status] ?? item.status;
+  const statusVariants = {
+    WAITLISTED: 'warning',
+    CONFIRMED: 'success',
+    CLOSED: 'neutral',
+    PENDING_CLOSURE: 'warning',
+    REJECTED: 'danger',
+    CANCELLED: 'danger',
+  };
 
   // El backend deja cancelar hasta el día de inicio incluido: usa
   // `LocalDate.now().isAfter(startDate)`, que ese mismo día todavía es falso.
@@ -61,7 +69,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
     <Card className="my-volunteering__card" data-testid={`registration-${item.registrationId}`}>
       <div className="my-volunteering__card-header">
         <h3 className="my-volunteering__card-title">{title}</h3>
-        <Badge variant="neutral">{statusLabel}</Badge>
+        <Badge variant={statusVariants[item.status] ?? 'neutral'}>{statusLabel}</Badge>
       </div>
       {partner && <p className="my-volunteering__meta">Entidad: {partner}</p>}
       <p className="my-volunteering__meta">

@@ -21,7 +21,7 @@ const STATUS_BADGES = {
   'pending-report': { label: 'Pendiente de cierre', variant: 'warning' },
   closed: { label: 'Cerrada', variant: 'neutral' },
   rejected: { label: 'Rechazada', variant: 'danger' },
-  cancelled: { label: 'Cancelada', variant: 'neutral' },
+  cancelled: { label: 'Cancelada', variant: 'danger' },
 };
 
 function getSectionKey(registration) {
