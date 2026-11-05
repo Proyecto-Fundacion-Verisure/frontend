@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../../features/auth/AuthContext';
 import { getPendingOrganizations } from '../../../api/orgApi';
 import { getRegistrationCounts } from '../../../api/registrationsApi';
@@ -14,8 +15,14 @@ import { getPendingActivityClosures } from '../../../api/closuresApi';
 const countOf = (request) => request
   .then((res) => Number(res.data?.totalElements ?? res.data?.length ?? 0) || 0);
 
+// Las mismas cifras para lo que no es el menú: pestañas y «Requiere tu atención».
+// Un contexto propio y no el del `Outlet`: `RoleRoute` pinta otro por medio y lo corta.
+export const SidebarCountsContext = createContext({});
+
 export function useSidebarCounts() {
   const { user } = useAuth();
+  // Se recarga al navegar: tras aprobar algo y volver, las cifras deben estar al día.
+  const { pathname } = useLocation();
   const [pendingAccounts, setPendingAccounts] = useState(0);
   const [unreviewed, setUnreviewed] = useState(0);
   const [newProposals, setNewProposals] = useState(0);
@@ -29,7 +36,7 @@ export function useSidebarCounts() {
       .then((count) => { if (!cancelled) setPendingAccounts(count); })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [user?.role]);
+  }, [user?.role, pathname]);
 
   useEffect(() => {
     if (user?.role !== 'ADMIN') return;
@@ -43,7 +50,7 @@ export function useSidebarCounts() {
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [user?.role]);
+  }, [user?.role, pathname]);
 
   useEffect(() => {
     if (user?.role !== 'ADMIN') return;
@@ -58,12 +65,13 @@ export function useSidebarCounts() {
       .then((count) => { if (!cancelled) setCloses(count); })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [user?.role]);
+  }, [user?.role, pathname]);
 
   return {
     pendingAccounts,
     inscriptions: unreviewed,
     proposals: newProposals,
+    requests: pendingReview + newProposals,
     pendingReview,
     closes,
   };

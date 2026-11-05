@@ -267,37 +267,33 @@ export function AdminAccountStatusPage() {
     },
   ];
 
-  if (loading) {
-    return (
-      <div className="account-status__center">
-        <Spinner label="Cargando entidades pendientes" />
-      </div>
-    );
-  }
+  const pendingLabel = `${totalElements} ${totalElements === 1 ? 'cuenta por aprobar' : 'cuentas por aprobar'}`;
 
-  if (error) {
+  if (loading || error || organizations.length === 0) {
     return (
-      <EmptyState title="Error" description={error} />
-    );
-  }
-
-  if (organizations.length === 0) {
-    return (
-      <EmptyState
-        title="No hay cuentas pendientes"
-        description="Todas las solicitudes de registro han sido revisadas."
-      />
+      <section className="account-status">
+        <PageHeader title="Entidades" description={loading || error ? undefined : pendingLabel} />
+        {loading && (
+          <div className="account-status__center">
+            <Spinner label="Cargando entidades pendientes" />
+          </div>
+        )}
+        {!loading && error && <EmptyState title="Error" description={error} />}
+        {!loading && !error && (
+          <EmptyState
+            title="No hay cuentas pendientes"
+            description="Todas las solicitudes de registro han sido revisadas."
+          />
+        )}
+      </section>
     );
   }
 
   return (
     <section className="account-status">
-      <PageHeader
-        title="Solicitudes pendientes"
-        description={`${totalElements} solicitud${totalElements !== 1 ? 'es' : ''} pendiente${totalElements !== 1 ? 's' : ''}`}
-      />
+      <PageHeader title="Entidades" description={pendingLabel} />
 
-      <Table caption="Solicitudes pendientes" columns={columns} data={organizations} />
+      <Table caption="Cuentas por aprobar" columns={columns} data={organizations} />
 
       <Pagination
         page={page}

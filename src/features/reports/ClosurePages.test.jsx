@@ -530,7 +530,7 @@ describe('administrative activity closure pages', () => {
 
     expect(await screen.findByRole('heading', { name: /no hemos encontrado esta actividad para cerrar/i })).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent(/no se ha encontrado/i);
-    expect(screen.getByRole('link', { name: /volver a cierres pendientes/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /volver a actividades por cerrar/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /reintentar/i })).not.toBeInTheDocument();
   });
 
@@ -547,7 +547,7 @@ describe('administrative activity closure pages', () => {
 
     expect(await screen.findByRole('heading', { name: /no tienes permiso para cerrar esta actividad/i })).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent(/no tienes permiso/i);
-    expect(screen.getByRole('link', { name: /volver a cierres pendientes/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /volver a actividades por cerrar/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /reintentar/i })).not.toBeInTheDocument();
   });
 });

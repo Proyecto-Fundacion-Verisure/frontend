@@ -34,13 +34,24 @@ describe('Sidebar PARTNER navigation', () => {
 });
 
 describe('Sidebar ADMIN navigation', () => {
-  it('links the review queue from the catalog section', () => {
+  it('links the review queue as Solicitudes', () => {
     renderSidebar('ADMIN');
 
-    expect(screen.getByRole('link', { name: /^en revisión/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /^solicitudes/i })).toHaveAttribute(
       'href',
       '/admin/activities/pending',
     );
+  });
+
+  it('groups the entries under their section titles', () => {
+    renderSidebar('ADMIN');
+
+    expect(screen.getAllByRole('link').map((link) => link.textContent)).toEqual([
+      'Panel', 'Nueva actividad', 'Actividades', 'Solicitudes', 'Inscripciones', 'Entidades',
+    ]);
+    ['Análisis', 'Catálogo', 'Participación'].forEach((title) => {
+      expect(screen.getByText(title)).toBeInTheDocument();
+    });
   });
 
   it('links Nueva actividad to the registered admin route', () => {
@@ -77,20 +88,20 @@ describe('Sidebar active link', () => {
   };
 
   it.each([
-    ['ADMIN', '/dashboard', 'Dashboard'],
+    ['ADMIN', '/dashboard', 'Panel'],
     ['ADMIN', '/activities/new', 'Nueva actividad'],
     ['ADMIN', '/admin/activities', 'Actividades'],
     ['ADMIN', '/activities/9', 'Actividades'],
     ['ADMIN', '/activities/9/edit', 'Actividades'],
-    ['ADMIN', '/proposals', 'Propuestas'],
-    ['ADMIN', '/proposals/3', 'Propuestas'],
-    ['ADMIN', '/admin/activities/pending', 'En revisión'],
-    ['ADMIN', '/admin/account-status', 'Solicitudes pendientes'],
+    ['ADMIN', '/proposals', 'Solicitudes'],
+    ['ADMIN', '/proposals/3', 'Solicitudes'],
+    ['ADMIN', '/admin/activities/pending', 'Solicitudes'],
+    ['ADMIN', '/admin/account-status', 'Entidades'],
     ['ADMIN', '/admin/registrations', 'Inscripciones'],
     ['ADMIN', '/activities/9/registrations', 'Inscripciones'],
-    ['ADMIN', '/admin/activities/pending-closure', 'Cierres'],
-    ['ADMIN', '/admin/activities/9/closure', 'Cierres'],
-    ['ADMIN', '/closures/4', 'Cierres'],
+    ['ADMIN', '/admin/activities/pending-closure', 'Actividades'],
+    ['ADMIN', '/admin/activities/9/closure', 'Actividades'],
+    ['ADMIN', '/closures/4', 'Actividades'],
     ['EMPLOYEE', '/activities', 'Explorar'],
     ['EMPLOYEE', '/activities/9', 'Explorar'],
     ['EMPLOYEE', '/my-activities', 'Mis voluntariados'],

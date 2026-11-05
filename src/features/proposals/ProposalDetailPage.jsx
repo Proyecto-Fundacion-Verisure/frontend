@@ -111,7 +111,7 @@ export default function ProposalDetailPage() {
   return (
     <section className="proposal-detail" aria-labelledby="proposal-detail-title">
       <Link to="/proposals" className="proposal-detail__back">
-        ← Volver a la bandeja
+        ← Volver a solicitudes
       </Link>
       <PageHeader
         title={partnerName}
@@ -124,6 +124,10 @@ export default function ProposalDetailPage() {
           <div>
             <dt>Entidad</dt>
             <dd>{partnerName}</dd>
+          </div>
+          <div>
+            <dt>CIF</dt>
+            <dd>{proposal.cif ?? '—'}</dd>
           </div>
           <div>
             <dt>Persona de contacto</dt>

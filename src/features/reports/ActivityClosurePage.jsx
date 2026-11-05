@@ -148,7 +148,7 @@ export default function ActivityClosurePage() {
         <p role="alert">{state.error?.message || 'Inténtalo de nuevo.'}</p>
         {!isForbidden && !isNotFound && <Button onClick={load}>Reintentar</Button>}
         <Link className="button button--secondary button--medium" to="/admin/activities/pending-closure">
-          Volver a cierres pendientes
+          Volver a actividades por cerrar
         </Link>
       </section>
     );
@@ -207,7 +207,7 @@ export default function ActivityClosurePage() {
 
   return (
     <section className="report-form-page" aria-labelledby="activity-closure-title">
-      <Link to="/admin/activities/pending-closure">← Volver a cierres pendientes</Link>
+      <Link to="/admin/activities/pending-closure">← Volver a actividades por cerrar</Link>
       <PageHeader
         eyebrow="Cierre de actividad"
         title="Cierre de la actividad"

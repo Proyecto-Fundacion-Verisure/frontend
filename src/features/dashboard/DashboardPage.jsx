@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getDashboard } from '../../api/dashboardApi';
+import { AttentionPanel } from '../../components/layout/AdminSections/AdminSections';
 import { Button, Card, EmptyState, PageHeader, Spinner } from '../../components/ui';
 import { ACTIVITY_LINES } from '../../constants/activityLines';
 import BarChart from './BarChart';
@@ -214,13 +215,15 @@ export default function DashboardPage() {
   return (
     <div className="dashboard">
       <PageHeader
-        title="Dashboard de impacto"
+        title="Panel"
         description="Consulta el impacto de las participaciones cerradas y descarga los resultados."
         actions={<ExportMenu filters={filters} />}
       />
       {dashboardData.dataSource === 'mock' && (
         <span className="dashboard__demo-badge">Datos ficticios para validación</span>
       )}
+
+      <AttentionPanel />
 
       <DashboardFilters
         year={year}
