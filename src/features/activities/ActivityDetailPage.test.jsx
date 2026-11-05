@@ -67,7 +67,7 @@ describe('ActivityDetailPage', () => {
 
     expect(await screen.findByRole('heading', { name: /acompañamiento a mayores/i })).toBeInTheDocument();
     expect(screen.getByText(/visitas semanales/i)).toBeInTheDocument();
-    expect(screen.getByText('📍 Madrid')).toBeInTheDocument();
+    expect(screen.getByText('Madrid')).toBeInTheDocument();
   });
 
   it('es recargable via param activityId sin depender de state', async () => {

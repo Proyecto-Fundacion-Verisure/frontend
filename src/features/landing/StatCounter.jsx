@@ -11,7 +11,7 @@ function formatValue(value) {
   return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
-export default function StatCounter({ label, value, icon }) {
+export default function StatCounter({ label, value, icon: Icon }) {
   const elementRef = useRef(null);
   const finalValue = getNumericValue(value);
   const [displayValue, setDisplayValue] = useState(0);
@@ -54,7 +54,7 @@ export default function StatCounter({ label, value, icon }) {
 
   return (
     <p className="landing-stat" ref={elementRef}>
-      {icon && <img src={icon} alt="" width={24} height={24} className="landing-stat__icon" />}
+      {Icon && <Icon aria-hidden="true" size={24} className="landing-stat__icon" />}
       <strong aria-label={String(value)}>{formatValue(displayValue)}</strong>
       <span>{label}</span>
     </p>

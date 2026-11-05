@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { MapPin } from 'lucide-react';
 import { getActivityDetail } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
@@ -183,7 +184,8 @@ export default function ActivityDetailPage() {
               {isEnrolled && <Badge variant="success">Ya estás apuntado</Badge>}
               {displayLocation && (
                 <Badge variant="neutral">
-                  <span aria-label={`Ubicación: ${displayLocation}`}>📍 {displayLocation}</span>
+                  <MapPin aria-hidden="true" size={12} />
+                  <span aria-label={`Ubicación: ${displayLocation}`}>{displayLocation}</span>
                 </Badge>
               )}
             </div>

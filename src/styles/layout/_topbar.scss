@@ -111,3 +111,5 @@
   .topbar__user-info,
   .topbar__logout span { display: none; }
 }
+
+.topbar__logout svg { color: $color-muted; }

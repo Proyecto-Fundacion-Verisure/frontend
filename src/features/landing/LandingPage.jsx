@@ -1,8 +1,5 @@
 import { Link } from "react-router-dom";
-import handHeartIcon from '../../assets/icons/hand-heart.svg';
-import clockIcon from '../../assets/icons/clock.svg';
-import usersIcon from '../../assets/icons/users.svg';
-import buildingIcon from '../../assets/icons/building.svg';
+import { Building, Clock, HandHeart, Users } from 'lucide-react';
 import colabImage from '../../assets/images/landing-colaboration.png'
 import footerPortrait from '../../assets/images/footer-portrait.jpg'
 import StatCounter from "./StatCounter";
@@ -73,22 +70,22 @@ export default function LandingPage() {
             <StatCounter
               value="12.234"
               label="personas beneficiadas de forma directa"
-              icon={handHeartIcon}
+              icon={HandHeart}
             />
             <StatCounter
               value="598"
               label="personas voluntarias de la plantilla"
-              icon={usersIcon}
+              icon={Users}
             />
             <StatCounter
               value="2.655"
               label="horas de voluntariado dedicadas"
-              icon={clockIcon}
+              icon={Clock}
             />
             <StatCounter
               value="23"
               label="organizaciones sociales aliadas"
-              icon={buildingIcon}
+              icon={Building}
             />
           </div>
         </div>

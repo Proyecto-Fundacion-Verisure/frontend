@@ -29,7 +29,6 @@ export default function HeartButton({
         <Heart
           size={size}
           fill={active ? 'currentColor' : 'none'}
-          strokeWidth={active ? 2 : 1.8}
           aria-hidden="true"
           className="heart-button__icon"
         />
