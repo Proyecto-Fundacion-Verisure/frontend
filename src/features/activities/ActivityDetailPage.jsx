@@ -15,6 +15,12 @@ const ENROLLED_STATUS_NOTES = {
   WAITLISTED: ' — En lista de espera',
   PENDING_CLOSURE: ' — Pendiente de cierre',
   CLOSED: ' — Participación cerrada',
+  REJECTED: ' — Solicitud no aceptada',
+};
+
+const ENROLLED_BUTTON_LABELS = {
+  WAITLISTED: 'Inscripción solicitada',
+  REJECTED: 'Solicitud no aceptada',
 };
 
 export default function ActivityDetailPage() {
@@ -241,7 +247,13 @@ export default function ActivityDetailPage() {
                 Plazo de inscripción: hasta el {formatDate(activity.registrationDeadline)}
               </p>
             )}
-            {!isEnrolled && <RegisterButton className="activity-detail__register" activity={activity} onSuccess={(data) => setLocalRegistration(data)} />}
+            <RegisterButton
+              className="activity-detail__register"
+              activity={activity}
+              enrolledLabel={isEnrolled ? ENROLLED_BUTTON_LABELS[currentRegistration?.status] ?? 'Ya estás inscrito' : undefined}
+              closedLabel={lifecycleLabel ? `Actividad ${lifecycleLabel.toLowerCase()}` : undefined}
+              onSuccess={(data) => setLocalRegistration(data)}
+            />
           </Card>
         </aside>}
       </div>

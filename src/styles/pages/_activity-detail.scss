@@ -86,15 +86,21 @@
 
 .activity-detail__register {
   width: 100%;
+
+  // Neutro y sin atenuar: aquí el texto del botón es el motivo del bloqueo.
+  &.button:disabled {
+    background: $color-surface-hover;
+    border-color: $color-border;
+    box-shadow: none;
+    color: $color-text;
+    opacity: 1;
+  }
 }
 
 .register-button__closed {
-  background: $color-surface-hover;
-  border-radius: $radius-md;
-  color: $color-text;
+  color: $color-muted;
   font-size: $font-size-sm;
   margin: 0;
-  padding: space('3') space('4');
 }
 
 .activity-detail__panel-title {

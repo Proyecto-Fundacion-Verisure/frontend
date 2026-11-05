@@ -226,6 +226,46 @@ describe('ActivityDetailPage', () => {
     expect(text).not.toMatch(/favoritos.*\d+/i);
   });
 
+  describe('botón de inscripción', () => {
+    const OPEN = { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 };
+
+    async function renderButton(activity, registrations = []) {
+      getActivityDetail.mockResolvedValue({ data: { ...OPEN, ...activity } });
+      getMyRegistrations.mockResolvedValue({ data: registrations });
+      renderDetail('1');
+      await screen.findByRole('heading', { name: 'Actividad' });
+    }
+
+    it.each([
+      [{ status: 'IN_PROGRESS' }, /actividad en curso/i],
+      [{ status: 'FINISHED' }, /actividad finalizada/i],
+      [{ status: 'PUBLISHED', registrationDeadline: '2020-01-01' }, /plazo cerrado/i],
+    ])('queda bloqueado y explica el motivo con %j', async (activity, name) => {
+      await renderButton(activity);
+
+      expect(screen.getByRole('button', { name })).toBeDisabled();
+      expect(screen.getByRole('note')).toHaveTextContent(/ya no se admiten inscripciones/i);
+      expect(screen.queryByTestId('open-registration-modal')).not.toBeInTheDocument();
+    });
+
+    it.each([
+      ['CONFIRMED', /ya estás inscrito/i],
+      ['WAITLISTED', /inscripción solicitada/i],
+      ['REJECTED', /solicitud no aceptada/i],
+    ])('queda bloqueado con una inscripción %s', async (status, name) => {
+      await renderButton({ status: 'PUBLISHED' }, [{ activityId: 1, status }]);
+
+      expect(await screen.findByRole('button', { name })).toBeDisabled();
+      expect(screen.queryByRole('note')).not.toBeInTheDocument();
+    });
+
+    it('sigue activo si está completa con el plazo abierto, para la lista de espera', async () => {
+      await renderButton({ status: 'FULL', spots: 10, occupiedSpots: 10 });
+
+      expect(screen.getByRole('button', { name: /solicitar inscripción/i })).toBeEnabled();
+    });
+  });
+
   // H12 — Modal explicativo antes de confirmar
 it('muestra modal con explicación de lista de espera antes de confirmar', async () => {
     getActivityDetail.mockResolvedValue({

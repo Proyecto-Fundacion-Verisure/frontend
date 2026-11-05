@@ -5,7 +5,8 @@ import { Button } from '../../components/ui';
 import { isPastLocalDate } from '../../utils/dates';
 import RegistrationInfoModal from './RegistrationInfoModal';
 
-export default function RegisterButton({ activity, children = 'Solicitar inscripción', disabled = false, onSuccess, ...props }) {
+// Siempre visible: bloqueado, y con el motivo en su texto, cuando no se puede usar.
+export default function RegisterButton({ activity, children = 'Solicitar inscripción', enrolledLabel, closedLabel, disabled = false, onSuccess, ...props }) {
   const activityId = activity?.id ?? activity?.activityId;
   const registrationsCtx = useRegistrationsOptional();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -58,11 +59,18 @@ export default function RegisterButton({ activity, children = 'Solicitar inscrip
     }
   }, [activityId, onSuccess, registrationsCtx]);
 
-  if (isDeadlinePassed) {
+  if (enrolledLabel) {
+    return <Button {...props} disabled>{enrolledLabel}</Button>;
+  }
+
+  if (closedLabel || isDeadlinePassed) {
     return (
-      <p role="note" className="register-button__closed">
-        Plazo cerrado: Ya no se admiten inscripciones para esta actividad.
-      </p>
+      <>
+        <Button {...props} disabled>{closedLabel ?? 'Plazo cerrado'}</Button>
+        <p role="note" className="register-button__closed">
+          Ya no se admiten inscripciones para esta actividad.
+        </p>
+      </>
     );
   }
 
