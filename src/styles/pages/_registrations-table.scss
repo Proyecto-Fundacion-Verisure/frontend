@@ -44,7 +44,7 @@
   @include eyebrow;
 }
 
-.registrations-page__sections { display: grid; gap: space('8'); grid-template-columns: minmax(0, 1fr); }
+.registrations-page__sections { display: grid; gap: space('5'); grid-template-columns: minmax(0, 1fr); }
 
 .registration-summary {
   background: $color-surface;
@@ -85,24 +85,6 @@
   p { color: $color-muted; font-size: $font-size-sm; margin: space('2') 0 0; }
 }
 
-.registrations-page__section h2 {
-  align-items: center;
-  color: $color-heading;
-  display: flex;
-  font-size: $font-size-xl;
-  gap: space('2');
-  margin: 0 0 space('3');
-
-  span {
-    background: $color-surface-hover;
-    border-radius: $radius-pill;
-    color: $color-muted;
-    font-size: $font-size-xs;
-    font-weight: $font-weight-medium;
-    letter-spacing: 0;
-    padding: space('1') space('2');
-  }
-}
 
 .registrations-page--state {
   display: grid;

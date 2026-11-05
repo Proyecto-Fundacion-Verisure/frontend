@@ -11,6 +11,7 @@ export { default as ProgressBar } from './ProgressBar/ProgressBar';
 export { default as Select } from './Select/Select';
 export { default as Spinner } from './Spinner/Spinner';
 export { default as Table } from './Table/Table';
+export { default as Tabs } from './Tabs/Tabs';
 export { default as Textarea } from './Textarea/Textarea';
 export { default as ThemeToggle } from './ThemeToggle/ThemeToggle';
 export { default as UiShowcase } from './UiShowcase/UiShowcase';
