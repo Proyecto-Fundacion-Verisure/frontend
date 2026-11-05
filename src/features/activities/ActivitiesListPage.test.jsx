@@ -75,7 +75,7 @@ describe('ActivitiesListPage', () => {
     getAdminActivities.mockReturnValue(new Promise(() => {}));
     renderPage();
 
-    expect(screen.getByRole('status', { name: /cargando proyectos/i })).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: /cargando actividades/i })).toBeInTheDocument();
   });
 
   it('renders the administrative data including favorite counts', async () => {
@@ -135,7 +135,9 @@ describe('ActivitiesListPage', () => {
       <MemoryRouter>
         <ActivitiesListPage
           fetchData={getPendingActivities}
-          title="Propuestas recibidas por el formulario público"
+          title="En revisión"
+          itemLabel="propuesta"
+          itemsLabel="propuestas"
           showCreateButton={false}
           showStatusFilter={false}
           showRegistrationsLink={false}
@@ -145,6 +147,7 @@ describe('ActivitiesListPage', () => {
     );
 
     const row = (await screen.findByText('Voluntariado ambiental')).closest('tr');
+    expect(screen.getByText('1 propuesta encontrada')).toBeInTheDocument();
     expect(screen.queryByLabelText(/filtrar por estado/i)).not.toBeInTheDocument();
     expect(getPendingActivities).toHaveBeenCalledWith({ page: 0, size: 10 });
     expect(within(row).getByText('Cruz Roja Valencia')).toBeInTheDocument();
@@ -193,7 +196,7 @@ describe('ActivitiesListPage', () => {
     const user = userEvent.setup();
     renderPage();
 
-    expect(await screen.findByRole('heading', { name: /no hay proyectos/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /no hay actividades/i })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /limpiar filtros/i }));
     expect(screen.getByLabelText(/filtrar por estado/i)).toHaveValue('');
   });

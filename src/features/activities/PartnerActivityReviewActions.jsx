@@ -85,7 +85,7 @@ export default function PartnerActivityReviewActions({ activity, onReviewed }) {
               onClick={() => setIsReturnOpen(false)}
               disabled={state.status === 'returning'}
             >
-              Cancelar
+              Volver
             </Button>
             <Button
               onClick={sendBack}

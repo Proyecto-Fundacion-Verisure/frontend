@@ -29,7 +29,7 @@ const EXPORT_OPTIONS = [
   {
     id: 'partners',
     title: 'Entidades colaboradoras',
-    description: 'CSV con las organizaciones, sus actividades y sus horas',
+    description: 'CSV con las entidades, sus actividades y sus horas',
     format: 'CSV',
     filename: 'partners.csv',
     Icon: Building2,

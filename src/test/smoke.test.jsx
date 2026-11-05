@@ -68,7 +68,7 @@ describe('smoke — recorrido público, empleado, administrador', () => {
       </MemoryRouter>
     );
     expect(await screen.findByRole('heading', { name: /^activas$/i })).toBeInTheDocument();
-    expect(screen.getByText(/Posición en cola: 3/)).toBeInTheDocument();
+    expect(screen.getByText(/Posición en la lista de espera: 3/)).toBeInTheDocument();
   });
 
   it('administrador: dashboard se renderiza', async () => {

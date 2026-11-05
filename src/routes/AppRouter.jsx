@@ -77,7 +77,9 @@ export default function AppRouter() {
               element={(
                 <ActivitiesListPage
                   fetchData={getPendingActivities}
-                  title="Propuestas recibidas por el formulario público"
+                  title="En revisión"
+                  itemLabel="propuesta"
+                  itemsLabel="propuestas"
                   showCreateButton={false}
                   showStatusFilter={false}
                   showRegistrationsLink={false}

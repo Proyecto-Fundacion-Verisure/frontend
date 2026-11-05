@@ -42,7 +42,7 @@ export default function SubmitForReviewButton({ activity, onSubmitted }) {
         footer={(
           <>
             <Button variant="secondary" onClick={() => setIsOpen(false)} disabled={isSubmitting}>
-              Cancelar
+              Volver
             </Button>
             <Button onClick={submit} isLoading={isSubmitting} loadingLabel="Enviando…">
               Confirmar envío

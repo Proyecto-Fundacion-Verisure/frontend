@@ -113,7 +113,7 @@ export default function ProposalsInboxPage() {
   const columns = [
     {
       key: 'partnerName',
-      label: 'Organización',
+      label: 'Entidad',
       render: (row) => (
         <Link to={`/proposals/${row.id}`} className="proposals-inbox__link">
           {partnerLabel(row)}
@@ -190,7 +190,7 @@ export default function ProposalsInboxPage() {
   return (
     <section className="proposals-inbox" aria-labelledby="proposals-inbox-title">
       <PageHeader
-        title="Bandeja de propuestas"
+        title="Propuestas"
         titleId="proposals-inbox-title"
         actions={(
           <Select

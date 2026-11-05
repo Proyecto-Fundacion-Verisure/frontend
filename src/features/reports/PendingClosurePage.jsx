@@ -80,7 +80,7 @@ export default function PendingClosurePage() {
   return (
     <section className="pending-closures" aria-labelledby="pending-closures-title">
       <PageHeader
-        title="Actividades pendientes de cierre"
+        title="Cierres pendientes"
         titleId="pending-closures-title"
         description={`${totalElements} ${totalElements === 1 ? 'actividad pendiente' : 'actividades pendientes'}`}
       />

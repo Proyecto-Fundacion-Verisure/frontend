@@ -24,12 +24,12 @@ export const NAV_SECTIONS_BY_ROLE = {
       items: [
         {
           path: "/activities/new",
-          label: "Nuevo proyecto",
+          label: "Nueva actividad",
           icon: CirclePlus,
         },
         {
           path: "/admin/activities",
-          label: "Proyectos",
+          label: "Actividades",
           icon: ClipboardList,
           matches: ["/activities/:activityId", "/activities/:activityId/edit"],
         },

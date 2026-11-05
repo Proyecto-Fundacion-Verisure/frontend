@@ -2,7 +2,7 @@ import { Link, matchPath, useLocation } from "react-router-dom";
 
 // Solo un enlace activo: la coincidencia exacta gana y, si no la hay, el primero
 // que declare la ruta en `matches`. El prefijo de `NavLink` no sirve aquí:
-// `/admin/activities/pending` es otra entrada, no una página de «Proyectos».
+// `/admin/activities/pending` es otra entrada, no una página de «Actividades».
 function getActivePath(sections, pathname) {
   const items = sections.flatMap(({ items: sectionItems }) => sectionItems);
   const isAt = (pattern) => Boolean(matchPath({ path: pattern, end: true }, pathname));

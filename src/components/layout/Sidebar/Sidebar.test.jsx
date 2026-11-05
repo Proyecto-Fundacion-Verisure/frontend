@@ -43,10 +43,10 @@ describe('Sidebar ADMIN navigation', () => {
     );
   });
 
-  it('links Nuevo proyecto to the registered admin route', () => {
+  it('links Nueva actividad to the registered admin route', () => {
     renderSidebar('ADMIN');
 
-    expect(screen.getByRole('link', { name: /nuevo proyecto/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /nueva actividad/i })).toHaveAttribute(
       'href',
       '/activities/new',
     );
@@ -78,10 +78,10 @@ describe('Sidebar active link', () => {
 
   it.each([
     ['ADMIN', '/dashboard', 'Dashboard'],
-    ['ADMIN', '/activities/new', 'Nuevo proyecto'],
-    ['ADMIN', '/admin/activities', 'Proyectos'],
-    ['ADMIN', '/activities/9', 'Proyectos'],
-    ['ADMIN', '/activities/9/edit', 'Proyectos'],
+    ['ADMIN', '/activities/new', 'Nueva actividad'],
+    ['ADMIN', '/admin/activities', 'Actividades'],
+    ['ADMIN', '/activities/9', 'Actividades'],
+    ['ADMIN', '/activities/9/edit', 'Actividades'],
     ['ADMIN', '/proposals', 'Propuestas'],
     ['ADMIN', '/proposals/3', 'Propuestas'],
     ['ADMIN', '/admin/activities/pending', 'En revisión'],

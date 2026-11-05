@@ -73,7 +73,9 @@ export default function ActivitiesListPage({
   showFavoritesColumn = DEFAULT_COLUMNS_CONFIG.showFavoritesColumn,
   showReviewActions = DEFAULT_COLUMNS_CONFIG.showReviewActions,
   showStatusFilter = DEFAULT_COLUMNS_CONFIG.showStatusFilter,
-  title = 'Proyectos',
+  title = 'Actividades',
+  itemLabel = 'actividad',
+  itemsLabel = 'actividades',
   emptyDescription = null,
   createPath = '/activities/new',
 }) {
@@ -123,7 +125,7 @@ export default function ActivitiesListPage({
   const columns = [
     {
       key: 'title',
-      label: 'Proyecto',
+      label: 'Actividad',
       render: (activity) => (
         <strong className="activities-list__activity-title">{activity.title}</strong>
       ),
@@ -209,7 +211,7 @@ export default function ActivitiesListPage({
             <CancelActivityButton
               activity={activity}
               onCancelled={() => {
-                setNotice('El proyecto se ha cancelado correctamente.');
+                setNotice('La actividad se ha cancelado correctamente.');
                 setReloadKey((current) => current + 1);
               }}
             />
@@ -219,14 +221,14 @@ export default function ActivitiesListPage({
     },
   ];
 
-  const titleLower = title.replace(/^Mis /i, '').toLocaleLowerCase();
-
   return (
     <section className="activities-list" aria-labelledby="activities-list-title">
       <PageHeader
         title={title}
         titleId="activities-list-title"
-        description={`${totalElements} ${titleLower} encontrados`}
+        description={totalElements === 1
+          ? `1 ${itemLabel} encontrada`
+          : `${totalElements} ${itemsLabel} encontradas`}
         actions={(showStatusFilter || showCreateButton) && (
           <>
             {showStatusFilter && (
@@ -238,7 +240,7 @@ export default function ActivitiesListPage({
             )}
             {showCreateButton && (
               <Link className="button button--primary button--medium" to={createPath}>
-                Nuevo proyecto →
+                Nueva actividad →
               </Link>
             )}
           </>
@@ -248,21 +250,21 @@ export default function ActivitiesListPage({
       {notice && <p className="activities-list__notice" role="status">{notice}</p>}
 
       {requestState.status === 'loading' && (
-        <div className="activities-list__loading" aria-label={`Cargando ${titleLower}`}>
-          <Spinner label={`Cargando ${titleLower}…`} />
+        <div className="activities-list__loading" aria-label={`Cargando ${itemsLabel}`}>
+          <Spinner label={`Cargando ${itemsLabel}…`} />
         </div>
       )}
 
       {requestState.status === 'error' && requestState.error?.status === 403 && (
         <div className="activities-list__error" role="alert">
-          No tienes permiso para consultar los {titleLower}.
+          No tienes permiso para consultar las {itemsLabel}.
         </div>
       )}
 
       {requestState.status === 'error' && requestState.error?.status !== 403 && (
         <div className="activities-list__error-panel">
           <p className="activities-list__error" role="alert">
-            {requestState.error?.message || `No hemos podido cargar los ${titleLower}.`}
+            {requestState.error?.message || `No hemos podido cargar las ${itemsLabel}.`}
           </p>
           <Button onClick={() => setReloadKey((current) => current + 1)}>Reintentar</Button>
         </div>
@@ -270,8 +272,8 @@ export default function ActivitiesListPage({
 
       {requestState.status === 'success' && activities.length === 0 && (
         <EmptyState
-          title={`No hay ${titleLower}`}
-          description={emptyDescription ?? `No se encontraron ${titleLower} con los filtros seleccionados.`}
+          title={`No hay ${itemsLabel}`}
+          description={emptyDescription ?? `No se encontraron ${itemsLabel} con los filtros seleccionados.`}
           action={showStatusFilter ? (
             <Button
               variant="secondary"
@@ -288,12 +290,12 @@ export default function ActivitiesListPage({
 
       {requestState.status === 'success' && activities.length > 0 && (
         <>
-          <Table caption={`Listado de ${titleLower}`} columns={columns} data={activities} />
+          <Table caption={`Listado de ${itemsLabel}`} columns={columns} data={activities} />
           <Pagination
             page={page}
             totalPages={totalPages}
             onPageChange={setPage}
-            ariaLabel={`Paginación de ${titleLower}`}
+            ariaLabel={`Paginación de ${itemsLabel}`}
           />
         </>
       )}

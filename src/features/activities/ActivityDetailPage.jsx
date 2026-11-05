@@ -180,7 +180,7 @@ export default function ActivityDetailPage() {
             <p className="activity-detail__description">{activity.description}</p>
             {activity.partnerName && (
               <p className="activity-detail__meta">
-                <strong>Organización:</strong> {activity.partnerName}
+                <strong>Entidad:</strong> {activity.partnerName}
               </p>
             )}
             {dateRange && (
@@ -225,7 +225,7 @@ export default function ActivityDetailPage() {
               </p>
             )}
             {isEnrolled && currentRegistration?.queuePosition != null && (
-              <p className="activity-detail__panel-meta">Posición en cola: {currentRegistration.queuePosition}</p>
+              <p className="activity-detail__panel-meta">Posición en la lista de espera: {currentRegistration.queuePosition}</p>
             )}
             {isEnrolled && currentRegistration?.status === 'WAITLISTED' && (
               <p className="activity-detail__panel-meta" data-testid="accepted-status">
