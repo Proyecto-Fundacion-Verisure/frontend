@@ -109,6 +109,18 @@ describe('ActivityDetailPage', () => {
     expect(screen.queryByText(/♥.*\d+/)).not.toBeInTheDocument();
   });
 
+  it('muestra un solo corazón, dentro de la tarjeta', async () => {
+    getActivityDetail.mockResolvedValue({
+      data: { id: 1, title: 'Acompañamiento a mayores', status: 'PUBLISHED', spots: 10, occupiedSpots: 2 },
+    });
+    renderDetail('1');
+    await screen.findByRole('heading', { name: /acompañamiento a mayores/i });
+    const hearts = screen.getAllByRole('button', { name: /añadir a favoritos/i });
+    expect(hearts).toHaveLength(1);
+    expect(hearts[0].closest('.activity-detail__card')).not.toBeNull();
+    expect(screen.getByRole('button', { name: /solicitar inscripción/i })).toBeInTheDocument();
+  });
+
   it('muestra estado no favorito cuando favoritedByMe es false', async () => {
     getActivityDetail.mockResolvedValue({
       data: {

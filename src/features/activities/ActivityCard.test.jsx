@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import ActivityCard from './ActivityCard';
 
@@ -71,6 +72,13 @@ describe('ActivityCard', () => {
     expect(screen.queryByText(/favoriteCount/i)).not.toBeInTheDocument();
     // asegurar que no se muestra número de favoritos
     expect(screen.queryByText(/♥.*\d+/)).not.toBeInTheDocument();
+  });
+
+  it('deja el corazón fuera del enlace de la tarjeta', () => {
+    render(<MemoryRouter><ActivityCard activity={baseActivity} linkTo="/activities/1" /></MemoryRouter>);
+    const heart = screen.getByRole('button', { name: /quitar de favoritos/i });
+    expect(heart.closest('a')).toBeNull();
+    expect(heart).toHaveClass('activity-card__favorite');
   });
 
   it('muestra estado no favorito', () => {
