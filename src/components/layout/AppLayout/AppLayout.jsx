@@ -4,7 +4,7 @@ import Topbar from "../Topbar/Topbar";
 import Logo from "../../../assets/images/logo-fundacion-verisure.png"
 import { useAuth } from "../../../features/auth/AuthContext";
 import { NAV_SECTIONS_BY_ROLE } from "../Sidebar/sidebarNavigation";
-import { useSidebarCounts } from "../Sidebar/useSidebarCounts";
+import { SidebarCountsContext, useSidebarCounts } from "../Sidebar/useSidebarCounts";
 import { getRoleHomePath } from "../../../routes/routeAccess";
 
 export default function AppLayout() {
@@ -25,7 +25,9 @@ export default function AppLayout() {
       </Topbar>
       <Sidebar sections={sections} counts={counts} />
       <main id="main" tabIndex={-1} className="app-layout__content">
-        <Outlet />
+        <SidebarCountsContext.Provider value={counts}>
+          <Outlet />
+        </SidebarCountsContext.Provider>
       </main>
     </div>
   );

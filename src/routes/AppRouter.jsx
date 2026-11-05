@@ -4,6 +4,7 @@ import LoginPage from '../features/auth/LoginPage';
 import DashboardPage from '../features/dashboard/DashboardPage';
 import CatalogPage from '../features/activities/CatalogPage';
 import ActivitiesListPage, { PENDING_REVIEW_PATH } from '../features/activities/ActivitiesListPage';
+import { ActivitiesTabs, RequestsTabs } from '../components/layout/AdminSections/AdminSections';
 import { getPendingActivities } from '../api/activitiesApi';
 import UiShowcase from '../components/ui/UiShowcase/UiShowcase';
 import PublicLayout from '../components/layout/PublicLayout/PublicLayout';
@@ -64,11 +65,11 @@ export default function AppRouter() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/proposals" element={<ProposalsInboxPage />} />
             <Route path="/proposals/:proposalId" element={<ProposalDetailPage />} />
-            <Route path="/activities/new" element={<ActivityFormPage />} />
+            <Route path="/activities/new" element={<ActivityFormPage backPath="/admin/activities" />} />
             <Route path="/admin/registrations" element={<RegistrationsTablePage />} />
             <Route path="/activities/:activityId/registrations" element={<RegistrationsTablePage />} />
             <Route path="/activities/:activityId/edit" element={<ActivityFormPage backPath="/admin/activities" />} />
-            <Route path="/admin/activities" element={<ActivitiesListPage />} />
+            <Route path="/admin/activities" element={<ActivitiesListPage sectionTabs={<ActivitiesTabs />} />} />
             {/* La cola de revisión: lo que las entidades han propuesto y espera
                 decisión. Es una cola, no un inventario: sin filtro de estado y
                 en orden ascendente, lo que más lleva esperando primero. */}
@@ -77,12 +78,14 @@ export default function AppRouter() {
               element={(
                 <ActivitiesListPage
                   fetchData={getPendingActivities}
-                  title="En revisión"
-                  itemLabel="propuesta"
-                  itemsLabel="propuestas"
+                  title="Solicitudes"
+                  itemLabel="actividad por aprobar"
+                  itemsLabel="actividades por aprobar"
+                  sectionTabs={<RequestsTabs />}
                   showCreateButton={false}
                   showStatusFilter={false}
                   showRegistrationsLink={false}
+                  showFavoritesColumn={false}
                   showReviewActions={true}
                   emptyDescription="Ninguna entidad tiene propuestas esperando decisión."
                 />

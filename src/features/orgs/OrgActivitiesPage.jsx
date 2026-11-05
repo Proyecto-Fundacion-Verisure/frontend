@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Plus } from 'lucide-react';
 import { getOrgActivities } from '../../api/orgApi';
 import { Badge, Button, EmptyState, PageHeader, Spinner, Table } from '../../components/ui';
 import { formatDate } from '../../utils/dates';
@@ -135,7 +136,8 @@ export default function OrgActivitiesPage() {
           : `${activities.length} propuestas encontradas`}
         actions={(
           <Link className="button button--primary button--medium" to="/org/activities/new">
-            Nueva propuesta →
+            <Plus aria-hidden="true" size={16} />
+            Nueva propuesta
           </Link>
         )}
       />

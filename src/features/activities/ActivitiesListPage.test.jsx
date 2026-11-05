@@ -135,9 +135,9 @@ describe('ActivitiesListPage', () => {
       <MemoryRouter>
         <ActivitiesListPage
           fetchData={getPendingActivities}
-          title="En revisión"
-          itemLabel="propuesta"
-          itemsLabel="propuestas"
+          title="Solicitudes"
+          itemLabel="actividad por aprobar"
+          itemsLabel="actividades por aprobar"
           showCreateButton={false}
           showStatusFilter={false}
           showRegistrationsLink={false}
@@ -147,7 +147,7 @@ describe('ActivitiesListPage', () => {
     );
 
     const row = (await screen.findByText('Voluntariado ambiental')).closest('tr');
-    expect(screen.getByText('1 propuesta encontrada')).toBeInTheDocument();
+    expect(screen.getByText('1 actividad por aprobar')).toBeInTheDocument();
     expect(screen.queryByLabelText(/filtrar por estado/i)).not.toBeInTheDocument();
     expect(getPendingActivities).toHaveBeenCalledWith({ page: 0, size: 10 });
     expect(within(row).getByText('Cruz Roja Valencia')).toBeInTheDocument();

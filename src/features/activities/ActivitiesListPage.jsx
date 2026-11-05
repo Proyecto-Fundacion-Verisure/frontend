@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Plus } from 'lucide-react';
 import { getAdminActivities } from '../../api/activitiesApi';
 import { Badge, Button, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../components/ui';
 import CancelActivityButton from './CancelActivityButton';
@@ -75,6 +76,7 @@ export default function ActivitiesListPage({
   showStatusFilter = DEFAULT_COLUMNS_CONFIG.showStatusFilter,
   title = 'Actividades',
   itemLabel = 'actividad',
+  sectionTabs = null,
   itemsLabel = 'actividades',
   emptyDescription = null,
   createPath = '/activities/new',
@@ -226,9 +228,7 @@ export default function ActivitiesListPage({
       <PageHeader
         title={title}
         titleId="activities-list-title"
-        description={totalElements === 1
-          ? `1 ${itemLabel} encontrada`
-          : `${totalElements} ${itemsLabel} encontradas`}
+        description={`${totalElements} ${totalElements === 1 ? itemLabel : itemsLabel}`}
         actions={(showStatusFilter || showCreateButton) && (
           <>
             {showStatusFilter && (
@@ -240,12 +240,14 @@ export default function ActivitiesListPage({
             )}
             {showCreateButton && (
               <Link className="button button--primary button--medium" to={createPath}>
-                Nueva actividad →
+                <Plus aria-hidden="true" size={16} />
+                Nueva actividad
               </Link>
             )}
           </>
         )}
       />
+      {sectionTabs}
 
       {notice && <p className="activities-list__notice" role="status">{notice}</p>}
 

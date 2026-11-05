@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getProposals, rejectProposal } from '../../api/proposalsApi';
 import { Badge, Button, ConfirmModal, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../components/ui';
 import { getActivityDraftPath } from './AcceptProposalButton';
+import { RequestsTabs } from '../../components/layout/AdminSections/AdminSections';
 import { formatDateTime } from '../../utils/dates';
 
 const STATUS_OPTIONS = [
@@ -81,9 +82,31 @@ export default function ProposalsInboxPage() {
   // organización sin cuenta: la fila se pinta igual.
   const partnerLabel = (row) => row.partnerName ?? 'Sin entidad';
 
+  const header = (
+    <>
+      <PageHeader
+        title="Solicitudes"
+        titleId="proposals-inbox-title"
+        actions={(
+          <Select
+            label="Filtrar por estado"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            {STATUS_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </Select>
+        )}
+      />
+      <RequestsTabs />
+    </>
+  );
+
   if (loading) {
     return (
       <section className="proposals-inbox" aria-label="Cargando propuestas">
+        {header}
         <Spinner label="Cargando propuestas…" />
       </section>
     );
@@ -92,6 +115,7 @@ export default function ProposalsInboxPage() {
   if (error?.status === 403) {
     return (
       <section className="proposals-inbox">
+        {header}
         <div className="proposals-inbox__error" role="alert">
           No tienes permiso para ver las propuestas.
         </div>
@@ -102,6 +126,7 @@ export default function ProposalsInboxPage() {
   if (error) {
     return (
       <section className="proposals-inbox">
+        {header}
         <div className="proposals-inbox__error" role="alert">
           {error.message || 'Ha ocurrido un error al cargar las propuestas.'}
         </div>
@@ -189,21 +214,7 @@ export default function ProposalsInboxPage() {
 
   return (
     <section className="proposals-inbox" aria-labelledby="proposals-inbox-title">
-      <PageHeader
-        title="Propuestas"
-        titleId="proposals-inbox-title"
-        actions={(
-          <Select
-            label="Filtrar por estado"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </Select>
-        )}
-      />
+      {header}
 
       {actionError && (
         <p className="proposals-inbox__error" role="alert">{actionError}</p>

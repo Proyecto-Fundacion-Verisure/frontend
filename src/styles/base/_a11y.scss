@@ -5,6 +5,9 @@
   outline-offset: 2px;
 }
 
+// Reciben el foco por código (títulos, `main`, modales), no son controles.
+[tabindex='-1']:focus-visible { outline: none; }
+
 .sr-only {
   clip: rect(0, 0, 0, 0);
   clip-path: inset(50%);
