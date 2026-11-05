@@ -129,7 +129,6 @@ export default function ProposalForm() {
       await createProposal({
         ...values,
         estimatedVolunteers: Number(values.estimatedVolunteers) || null,
-        image: selectedLine?.image ?? null,
       });
       setStatus("success");
       reset();
@@ -300,7 +299,7 @@ export default function ProposalForm() {
               <span>1</span>
               <div>
                 <strong>Recibimos tu propuesta</strong>
-                <p>Te llega un correo de acuse al instante.</p>
+                <p>Queda registrada y llega directamente al equipo de la Fundación.</p>
               </div>
             </li>
             <li>
