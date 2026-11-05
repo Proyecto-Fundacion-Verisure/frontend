@@ -1,26 +1,19 @@
 @use '../abstracts' as *;
 
 .activity-detail {
-  max-width: $content-max-width;
-  margin: 0 auto;
-  padding: space('8') space('6') space('16');
+  @include page-container;
 }
 
 .activity-detail__back {
-  color: $color-navy;
-  display: inline-block;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  margin-bottom: space('6');
-  text-decoration: none;
+  @include back-link;
 }
 
 .activity-detail__layout {
   align-items: start;
   display: grid;
-  gap: clamp(2rem, 5vw, 4rem);
+  gap: space('6');
   grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 0.9fr);
-  margin-top: space('6');
+  margin-top: space('3');
 }
 
 .activity-detail__main {
@@ -37,9 +30,6 @@
 }
 
 .activity-detail__title {
-  color: $color-navy;
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
   margin: 0;
 }
 
@@ -85,8 +75,12 @@
   gap: space('4');
 }
 
+.activity-detail__panel .heart-button {
+  align-self: flex-start;
+}
+
 .activity-detail__panel-title {
-  color: $color-navy;
+  color: $color-heading;
   font-size: $font-size-lg;
   font-weight: $font-weight-semibold;
   margin: 0;
@@ -105,11 +99,5 @@
 
   .activity-detail__side {
     position: static;
-  }
-}
-
-@media (max-width: 48rem) {
-  .activity-detail {
-    padding: space('6') space('4') space('12');
   }
 }

@@ -8,7 +8,7 @@ export default function LoginPage() {
   const sessionExpired = location.state?.sessionExpired;
 
   return (
-    <div
+    <main
       className="login-page"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
@@ -65,6 +65,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

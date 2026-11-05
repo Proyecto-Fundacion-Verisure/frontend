@@ -1,0 +1,61 @@
+@use '../abstracts' as *;
+
+.page-header {
+  align-items: flex-start;
+  display: flex;
+  gap: space('5');
+  justify-content: space-between;
+  margin-bottom: space('6');
+
+  // Título y descripción: con o sin descripción, lo que sigue empieza a la misma altura.
+  &__text {
+    min-height: 4rem;
+    min-width: 0;
+  }
+
+  &__eyebrow { @include eyebrow; }
+
+  &__title {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  &__description {
+    color: $color-muted;
+    margin: space('1') 0 0;
+  }
+
+  &__actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: space('3');
+    position: relative;
+
+    // El propio valor del filtro lo explica; la etiqueta queda para lectores de pantalla.
+    .field { width: 16rem; }
+
+    .field__label {
+      clip-path: inset(50%);
+      height: 1px;
+      overflow: hidden;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+    }
+  }
+}
+
+@media (max-width: 38rem) {
+  .page-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .page-header__text { min-height: 0; }
+  .page-header__actions .field { width: 100%; }
+
+  .page-header__actions > .button,
+  .page-header__actions > .export-menu,
+  .page-header__actions > .export-menu > .button { width: 100%; }
+}

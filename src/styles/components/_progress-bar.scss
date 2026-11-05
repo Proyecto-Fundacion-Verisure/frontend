@@ -14,12 +14,12 @@
   &__track {
     background: $color-border;
     border-radius: $radius-pill;
-    height: .75rem;
+    height: .5rem;
     overflow: hidden;
   }
 
   &__bar {
-    background: $color-coral;
+    background: $color-coral-solid;
     border-radius: inherit;
     display: block;
     height: 100%;

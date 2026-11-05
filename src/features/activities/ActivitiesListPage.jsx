@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAdminActivities } from '../../api/activitiesApi';
-import { Badge, Button, EmptyState, Pagination, Select, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../components/ui';
 import CancelActivityButton from './CancelActivityButton';
 import { formatDate } from '../../utils/dates';
 import PartnerActivityReviewActions from './PartnerActivityReviewActions';
@@ -44,8 +44,8 @@ export const ACTIVITY_STATUS_BADGES = {
   DRAFT: { label: 'Borrador', variant: 'neutral' },
   PENDING_APPROVAL: { label: 'Pendiente', variant: 'warning' },
   PUBLISHED: { label: 'Publicada', variant: 'success' },
-  FULL: { label: 'Completa', variant: 'info' },
-  IN_PROGRESS: { label: 'En curso', variant: 'primary' },
+  FULL: { label: 'Completa', variant: 'warning' },
+  IN_PROGRESS: { label: 'En curso', variant: 'info' },
   FINISHED: { label: 'Finalizada', variant: 'neutral' },
   CANCELLED: { label: 'Cancelada', variant: 'danger' },
 };
@@ -75,7 +75,6 @@ export default function ActivitiesListPage({
   showStatusFilter = DEFAULT_COLUMNS_CONFIG.showStatusFilter,
   title = 'Proyectos',
   emptyDescription = null,
-  eyebrow = 'Administración',
   createPath = '/activities/new',
 }) {
   const [activities, setActivities] = useState([]);
@@ -224,28 +223,27 @@ export default function ActivitiesListPage({
 
   return (
     <section className="activities-list" aria-labelledby="activities-list-title">
-      <header className="activities-list__header">
-        <div>
-          <p className="activities-list__eyebrow">{eyebrow}</p>
-          <h1 id="activities-list-title">{title}</h1>
-          <p>{totalElements} {titleLower} encontrados</p>
-        </div>
-        {showCreateButton && (
-          <Link className="button button--primary button--medium" to={createPath}>
-            Nuevo proyecto →
-          </Link>
+      <PageHeader
+        title={title}
+        titleId="activities-list-title"
+        description={`${totalElements} ${titleLower} encontrados`}
+        actions={(showStatusFilter || showCreateButton) && (
+          <>
+            {showStatusFilter && (
+              <Select label="Filtrar por estado" value={statusFilter} onChange={handleStatusChange}>
+                {STATUS_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </Select>
+            )}
+            {showCreateButton && (
+              <Link className="button button--primary button--medium" to={createPath}>
+                Nuevo proyecto →
+              </Link>
+            )}
+          </>
         )}
-      </header>
-
-      {showStatusFilter && (
-        <div className="activities-list__toolbar">
-          <Select label="Filtrar por estado" value={statusFilter} onChange={handleStatusChange}>
-            {STATUS_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </Select>
-        </div>
-      )}
+      />
 
       {notice && <p className="activities-list__notice" role="status">{notice}</p>}
 

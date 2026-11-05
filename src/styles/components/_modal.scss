@@ -14,6 +14,7 @@
 
 .modal {
   background: $color-surface;
+  border: 1px solid $color-border;
   border-radius: $radius-lg;
   box-shadow: $shadow-lg;
   max-height: calc(100vh - 2rem);
@@ -39,12 +40,19 @@
     @include focus-ring;
     background: transparent;
     border: 0;
-    border-radius: $radius-sm;
+    border-radius: $radius-control;
+    color: $color-muted;
     cursor: pointer;
     font-size: 1.75rem;
     line-height: 1;
-    min-height: 2.25rem;
-    min-width: 2.25rem;
+    min-height: $control-height;
+    min-width: $control-height;
+    transition: background-color $transition-fast, color $transition-fast;
+
+    &:hover {
+      background: $color-surface-hover;
+      color: $color-heading;
+    }
   }
 
   &__footer {

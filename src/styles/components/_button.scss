@@ -5,26 +5,22 @@
   @include disabled-control;
   align-items: center;
   display: inline-flex;
-  // Mismo peso que «Cerrar sesión» de la cabecera; todos los botones leen igual.
-  font-weight: $font-weight-regular;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
   gap: space("2");
   justify-content: center;
   line-height: 1.25;
   min-height: $control-height;
-  min-width: 7rem;
+  // Los `<Link>` con `button button--primary` no llevan clase de tamaño.
+  padding: space("3") space("5");
   border: 0;
-  border-radius: $radius-md;
+  border-radius: $radius-control;
   cursor: pointer;
   text-decoration: none;
   transition:
     background-color $transition-fast,
-    border-color $transition-fast,
-    color $transition-fast,
-    transform $transition-fast;
-
-  &:active:not(:disabled) {
-    transform: translateY(1px);
-  }
+    box-shadow $transition-fast,
+    color $transition-fast;
 
   // El contenido va en un `span`: sin esto, un icono junto al texto se alinea a
   // la línea base y queda descolgado.
@@ -34,55 +30,58 @@
     gap: space("2");
   }
 
+  // Dos tamaños: `small` en filas y tablas, `medium` en todo lo demás.
   &--small {
-    font-size: $font-size-sm;
     min-height: 2.25rem;
-    padding: space("2") space("3");
+    padding: space("2") space("4");
   }
   &--medium {
-    padding: space("3") space("4");
-  }
-  &--large {
-    font-size: $font-size-lg;
-    min-height: 3.25rem;
-    padding: space("3") space("6");
+    padding: space("3") space("5");
   }
 
-  // Un solo rojo (`$color-coral`, el de «Cerrar sesión») y un solo hover, el
-  // azul marino: se ve sin ambigüedad, mantiene el contraste con el texto
-  // blanco y es el mismo de la cabecera.
-  &--primary,
-  &--danger {
-    background: $color-coral;
-    color: $color-surface;
+  // El rojo sólido se reserva para la acción principal de cada vista. El
+  // degradado solo oscurece: con texto blanco, el rojo del logo ya está en el
+  // límite de contraste y no admite un tono más claro.
+  &--primary {
+    background: linear-gradient(180deg, $color-coral-solid, $color-coral-gradient-end);
+    box-shadow: $shadow-accent;
+    color: $color-on-accent;
 
     &:hover:not(:disabled) {
-      background: $color-navy-light;
+      background: linear-gradient(180deg, $color-coral-solid-hover, $color-coral-gradient-end-hover);
+    }
+  }
+
+  // Suave porque puede repetirse en cada fila de una tabla.
+  &--danger {
+    background: $color-danger-light;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, $color-danger 35%, transparent);
+    color: $color-danger;
+
+    &:hover:not(:disabled) {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, $color-danger 70%, transparent);
     }
   }
 
   // El contorno va en `box-shadow` y no en `border` para que el secundario
   // mida exactamente lo mismo que el primario cuando van uno al lado del otro.
   &--secondary {
-    background: transparent;
-    box-shadow: inset 0 0 0 2px $color-coral;
-    color: $color-coral;
+    background: $color-surface;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, $color-border-strong 55%, transparent), $shadow-sm;
+    color: $color-heading;
 
     &:hover:not(:disabled) {
-      background: $color-navy-light;
-      box-shadow: inset 0 0 0 2px $color-navy-light;
-      color: $color-surface;
+      background: $color-surface-hover;
     }
   }
 
   &--ghost {
     background: transparent;
-    color: $color-muted;
-    text-decoration: underline;
+    color: $color-text;
 
     &:hover:not(:disabled) {
-      background: $color-navy-light;
-      color: $color-surface;
+      background: $color-surface-hover;
+      color: $color-heading;
     }
   }
 }

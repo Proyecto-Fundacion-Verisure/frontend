@@ -1,9 +1,7 @@
 @use '../abstracts' as *;
 
 .activity-form-page {
-  margin: 0 auto;
-  max-width: $content-max-width;
-  padding: space('8') space('6') space('16');
+  @include page-container;
 }
 
 .activity-form-page__header,
@@ -13,53 +11,37 @@
 
 .activity-form-page__header > a,
 .activity-form-page__back {
-  color: $color-navy;
-  display: inline-block;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  margin-bottom: space('10');
-  text-decoration: none;
+  @include back-link;
 }
 
 .activity-form-page__eyebrow {
-  color: $color-coral-dark;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  letter-spacing: .08em;
-  margin: 0 0 space('4');
-  text-transform: uppercase;
+  @include eyebrow;
 }
 
 .activity-form-page h1 {
-  color: $color-navy;
-  font-size: clamp(2.25rem, 4vw, 3.25rem);
-  letter-spacing: -.045em;
-  line-height: 1.1;
   margin: 0;
 }
 
 .activity-form-page__intro > p:last-child {
   color: $color-muted;
-  font-size: $font-size-lg;
-  line-height: 1.55;
-  margin: space('4') 0 0;
+  margin: space('1') 0 0;
 }
 
 .activity-form-page__layout {
   align-items: start;
   display: grid;
-  gap: clamp(2rem, 5vw, 4rem);
+  gap: space('6');
   grid-template-columns: minmax(0, 1.25fr) minmax(18rem, .75fr);
-  margin-top: space('10');
+  margin-top: space('6');
 }
 
 .activity-form {
   background: $color-surface;
   border: 1px solid $color-border;
   border-radius: $radius-lg;
-  box-shadow: $shadow-md;
-  margin-top: space('10');
-  padding: clamp(space('5'), 4vw, space('8'));
+  box-shadow: $shadow-sm;
+  margin-top: space('6');
+  padding: space('5');
 }
 
 .activity-form-page__layout .activity-form {
@@ -76,7 +58,7 @@
   grid-template-columns: repeat(3, 1fr);
 }
 
-.activity-form > .field {
+.activity-form > * + * {
   margin-top: space('5');
 }
 
@@ -109,21 +91,15 @@
 // que la descripción no se recupera al editar.
 .activity-form__review-note,
 .activity-form__notice {
-  border-radius: $radius-md;
   margin: 0 0 space('4');
-  padding: space('4');
 }
 
 .activity-form__review-note {
-  background: $color-warning-light;
-  border: 1px solid $color-warning;
-  color: $color-warning;
+  @include notice($color-warning, $color-warning-light);
 }
 
 .activity-form__notice {
-  background: $color-info-light;
-  border: 1px solid $color-info;
-  color: $color-info;
+  @include notice($color-info, $color-info-light);
 }
 
 .activity-form-page--success,
@@ -133,9 +109,7 @@
 
   > p:not(.activity-form-page__eyebrow) {
     color: $color-muted;
-    font-size: $font-size-lg;
-    line-height: 1.55;
-    margin: space('5') 0 space('8');
+    margin: space('3') 0 space('6');
   }
 }
 
@@ -167,10 +141,8 @@
 .activity-preview__label {
   color: $color-muted;
   font-size: $font-size-sm;
-  font-weight: $font-weight-semibold;
-  letter-spacing: .06em;
-  margin: 0 0 space('4');
-  text-transform: uppercase;
+  font-weight: $font-weight-medium;
+  margin: 0 0 space('3');
 }
 
 @media (max-width: 55rem) {
@@ -180,9 +152,6 @@
 }
 
 @media (max-width: 38rem) {
-  .activity-form-page { padding-inline: space('4'); }
-  .activity-form-page__header > a,
-  .activity-form-page__back { align-items: center; display: inline-flex; min-height: 2.75rem; }
   .activity-form__grid { grid-template-columns: 1fr; }
   .activity-form__footer { align-items: stretch; flex-direction: column; }
   .activity-form__actions { flex-direction: column; }

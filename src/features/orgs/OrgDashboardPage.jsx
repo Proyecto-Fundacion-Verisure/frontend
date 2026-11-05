@@ -60,7 +60,6 @@ export default function OrgDashboardPage() {
     <div className="dashboard">
       <header className="dashboard__header">
         <div>
-          <p className="dashboard__eyebrow">Entidad colaboradora</p>
           <h1>Panel de control de la entidad</h1>
           {dashboardData.dataSource === 'mock' && (
             <span className="dashboard__demo-badge">Datos ficticios para validación</span>

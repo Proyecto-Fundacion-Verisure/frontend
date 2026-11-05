@@ -6,6 +6,15 @@
     <meta name="description" content="Plataforma de voluntariado Verisure" />
     <title>Verisure Voluntariado</title>
     <link rel="icon" href="/icons/favicon.ico" />
+    <script>
+      // Antes del primer render para evitar el parpadeo. Misma regla que useTheme.
+      (function () {
+        var stored = null;
+        try { stored = localStorage.getItem('theme'); } catch (e) {}
+        var isDark = stored === 'dark' || (stored !== 'light' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,5 +1,6 @@
 import { LogOut } from 'lucide-react';
 import { useAuth } from '../../../features/auth/AuthContext';
+import ThemeToggle from '../../ui/ThemeToggle/ThemeToggle';
 
 const ROLE_LABELS = {
   ADMIN: 'Administrador',
@@ -30,6 +31,7 @@ export default function Topbar({ children }) {
       <div className="topbar__content">{children}</div>
       {user && (
         <div className="topbar__user-menu" role="group" aria-label="Menú de usuario">
+          <ThemeToggle />
           <div className="topbar__user-avatar" aria-hidden="true">
             {initials}
           </div>

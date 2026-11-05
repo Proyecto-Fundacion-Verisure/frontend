@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Card, Button, Input, Modal, Pagination, Spinner, EmptyState } from '../../components/ui';
+import { Badge, Button, EmptyState, Input, Modal, PageHeader, Pagination, Spinner, Table } from '../../components/ui';
 import { formatDateTime } from '../../utils/dates';
 import {
   getPendingOrganizations,
@@ -135,6 +135,7 @@ export default function AccountStatusPage() {
   return (
     <EmptyState
       title="Estado de la cuenta"
+      titleAs="h1"
       description="Inicia sesión para consultar el estado de tu entidad."
     />
   );
@@ -204,6 +205,68 @@ export function AdminAccountStatusPage() {
     }
   };
 
+  const columns = [
+    {
+      key: 'organization',
+      label: 'Entidad',
+      render: (org) => (
+        <>
+          <strong className="account-status__org-name">{org.organizationName}</strong>
+          <span className="account-status__meta">CIF {org.cif}</span>
+        </>
+      ),
+    },
+    {
+      key: 'contact',
+      label: 'Contacto',
+      render: (org) => (
+        <>
+          {org.contactName}
+          <span className="account-status__meta">{org.email}</span>
+          <span className="account-status__meta">{org.phone}</span>
+        </>
+      ),
+    },
+    {
+      key: 'requestedAt',
+      label: 'Solicitado el',
+      render: (org) => formatDateTime(org.requestedAt, { day: 'numeric', month: 'long', year: 'numeric' }),
+    },
+    {
+      // No se bloquea aprobar sin correo verificado; se avisa.
+      key: 'emailVerified',
+      label: 'Correo',
+      render: (org) => (org.emailVerified
+        ? <Badge variant="success">Verificado</Badge>
+        : <Badge variant="warning">Sin verificar</Badge>),
+    },
+    {
+      key: 'actions',
+      label: 'Acciones',
+      render: (org) => (
+        <div className="account-status__row-actions">
+          <Button
+            size="small"
+            isLoading={actionPending === org.id}
+            loadingLabel="Procesando"
+            onClick={() => openConfirm(org.id, org.organizationName, 'accept')}
+          >
+            Aceptar
+          </Button>
+          <Button
+            size="small"
+            variant="secondary"
+            isLoading={actionPending === org.id}
+            loadingLabel="Procesando"
+            onClick={() => openConfirm(org.id, org.organizationName, 'reject')}
+          >
+            Rechazar
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
   if (loading) {
     return (
       <div className="account-status__center">
@@ -229,77 +292,12 @@ export function AdminAccountStatusPage() {
 
   return (
     <section className="account-status">
-      <h1 className="account-status__title">Cuentas pendientes de revisión</h1>
-      <p className="account-status__subtitle">
-        {totalElements} solicitud{totalElements !== 1 && 'es'} pendiente{totalElements !== 1 && 's'}
-      </p>
+      <PageHeader
+        title="Cuentas pendientes de revisión"
+        description={`${totalElements} solicitud${totalElements !== 1 ? 'es' : ''} pendiente${totalElements !== 1 ? 's' : ''}`}
+      />
 
-      <div className="account-status__list">
-        {organizations.map((org) => (
-          <Card key={org.id} className="account-status__card">
-            <div className="account-status__card-main">
-              <div className="account-status__card-header">
-                <h2 className="account-status__org-name">{org.organizationName}</h2>
-              </div>
-
-              <div className="account-status__card-info">
-                <div className="account-status__field">
-                  <span className="account-status__label">CIF</span>
-                  <span className="account-status__value">{org.cif}</span>
-                </div>
-                <div className="account-status__field">
-                  <span className="account-status__label">Contacto</span>
-                  <span className="account-status__value">{org.contactName}</span>
-                </div>
-                <div className="account-status__field">
-                  <span className="account-status__label">Email</span>
-                  <span className="account-status__value">{org.email}</span>
-                </div>
-                <div className="account-status__field">
-                  <span className="account-status__label">Teléfono</span>
-                  <span className="account-status__value">{org.phone}</span>
-                </div>
-                <div className="account-status__field">
-                  <span className="account-status__label">Solicitado el</span>
-                  <span className="account-status__value">
-                    {formatDateTime(org.requestedAt, { day: 'numeric', month: 'long', year: 'numeric' })}
-                  </span>
-                </div>
-                {/* No se bloquea aprobar sin correo verificado; se avisa. */}
-                <div className="account-status__field">
-                  <span className="account-status__label">Correo</span>
-                  <span className="account-status__value">
-                    {org.emailVerified ? (
-                      <span className="badge badge--success">Verificado</span>
-                    ) : (
-                      <span className="badge badge--warning">Sin verificar</span>
-                    )}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="account-status__card-actions">
-              <Button
-                variant="primary"
-                isLoading={actionPending === org.id}
-                loadingLabel="Procesando"
-                onClick={() => openConfirm(org.id, org.organizationName, 'accept')}
-              >
-                Aceptar
-              </Button>
-              <Button
-                variant="danger"
-                isLoading={actionPending === org.id}
-                loadingLabel="Procesando"
-                onClick={() => openConfirm(org.id, org.organizationName, 'reject')}
-              >
-                Rechazar
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+      <Table caption="Cuentas pendientes de revisión" columns={columns} data={organizations} />
 
       <Pagination
         page={page}
@@ -314,7 +312,7 @@ export function AdminAccountStatusPage() {
         title={confirmModal.action === 'accept' ? 'Aceptar organización' : 'Rechazar organización'}
         footer={
           <>
-            <Button variant="ghost" onClick={closeConfirm}>
+            <Button variant="secondary" onClick={closeConfirm}>
               Cancelar
             </Button>
             <Button

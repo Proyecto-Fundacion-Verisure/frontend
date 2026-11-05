@@ -8,10 +8,11 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  padding: 0;
 
   &--interactive {
-    transition: box-shadow $transition-base, transform $transition-base;
-    &:hover { box-shadow: $shadow-md; transform: translateY(-2px); }
+    transition: border-color $transition-base, box-shadow $transition-base;
+    &:hover { border-color: $color-border-strong; box-shadow: $shadow-md; }
   }
 
   &--preview {
@@ -29,6 +30,17 @@
   justify-content: center;
   color: $color-muted;
   font-size: $font-size-sm;
+
+  img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+}
+
+.activity-card__link {
+  color: inherit;
+  text-decoration: none;
 }
 
 .activity-card__body {
@@ -40,7 +52,7 @@
 }
 
 .activity-card__title {
-  color: $color-navy;
+  color: $color-heading;
   font-size: $font-size-lg;
   font-weight: $font-weight-semibold;
   line-height: $line-height-tight;
@@ -52,7 +64,7 @@
 }
 
 .activity-card__dates {
-  color: $color-navy;
+  color: $color-heading;
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
   margin: 0;

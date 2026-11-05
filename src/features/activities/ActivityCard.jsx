@@ -61,7 +61,7 @@ export default function ActivityCard({
     <>
       {lineInfo ? (
         <div className="activity-card__image">
-          <img src={lineInfo.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src={lineInfo.image} alt="" />
         </div>
       ) : (
         <div className="activity-card__image" role="img" aria-label="Sin imagen disponible">
@@ -76,8 +76,8 @@ export default function ActivityCard({
           {isOpen && (
             <Badge variant="success"><span className="badge__dot" aria-hidden="true" />Inscripción abierta</Badge>
           )}
-          {lifecycleLabel && <Badge variant="neutral">{lifecycleLabel}</Badge>}
-          {isFull && <Badge variant="danger">Completa</Badge>}
+          {lifecycleLabel && <Badge variant={status === 'IN_PROGRESS' ? 'info' : 'neutral'}>{lifecycleLabel}</Badge>}
+          {isFull && <Badge variant="warning">Completa</Badge>}
           {isEnrolled && <Badge variant="success">Ya estás apuntado</Badge>}
         </div>
 
@@ -120,7 +120,7 @@ export default function ActivityCard({
   return (
     <Card className="activity-card activity-card--interactive">
       {linkTo ? (
-        <Link to={linkTo} style={{ textDecoration: 'none', color: 'inherit' }} aria-label={`Ver detalle de ${title}`}>
+        <Link to={linkTo} className="activity-card__link" aria-label={`Ver detalle de ${title}`}>
           {mainContent}
         </Link>
       ) : (

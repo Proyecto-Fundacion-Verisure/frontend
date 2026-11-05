@@ -74,14 +74,16 @@ describe('RegistrationsTablePage', () => {
     expect(within(queue).getByText('12')).toBeInTheDocument();
     expect(within(queue).getByText('Luis Martín')).toBeInTheDocument();
     expect(within(queue).getByText(/aceptada · en cola/i)).toBeInTheDocument();
+    // Solo se ve la pestaña activa.
+    expect(screen.queryByText('Marta Ruiz')).not.toBeInTheDocument();
 
-    expect(screen.getByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: /confirmadas 1/i }));
     const confirmed = screen.getByRole('region', { name: /confirmadas de la actividad/i });
     expect(within(confirmed).getByText('Marta Ruiz')).toBeInTheDocument();
+    expect(screen.queryByText('Ana Torres')).not.toBeInTheDocument();
 
-    // Las rechazadas solo se ven al abrir el historial.
-    await user.click(screen.getByRole('button', { name: /historial/i }));
-    expect(screen.getByRole('heading', { name: /rechazadas 1/i })).toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: /rechazadas 1/i }));
+    expect(screen.getByText('Sara Gil')).toBeInTheDocument();
     expect(screen.queryByText('No mostrar')).not.toBeInTheDocument();
   });
 
@@ -96,8 +98,8 @@ describe('RegistrationsTablePage', () => {
     // Las cifras de la cabecera son de toda la actividad y no coinciden con las
     // de las secciones, que cuentan solo esta página. Es a propósito.
     expect(screen.getByText(/Confirmadas 9 · En cola 7, de las que 4 sin revisar/i)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /en cola 2/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /confirmadas 1/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /en cola 2/i })).toBeInTheDocument();
   });
 
   it('still renders the board when the counts request fails', async () => {
@@ -106,7 +108,7 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     // Sin cifras la pantalla se lee igual; sin filas, no. Ojo: «Confirmadas» es
-    // también un título de sección, así que hay que mirar el resumen de la cabecera.
+    // también una pestaña, así que hay que mirar el resumen de la cabecera.
     expect(await screen.findByText('Ana Torres')).toBeInTheDocument();
     expect(document.querySelector('.registrations-page__summary')).toBeNull();
     expect(screen.queryByRole('heading', { name: /no hemos podido cargar/i })).not.toBeInTheDocument();
@@ -128,6 +130,47 @@ describe('RegistrationsTablePage', () => {
 
     expect(await screen.findByRole('heading', { name: /todavía no hay inscripciones/i })).toBeInTheDocument();
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
+  });
+
+  it('shows a message instead of an empty table in a tab without rows', async () => {
+    getActivityRegistrations.mockResolvedValue({ data: BOARD });
+    const user = userEvent.setup();
+    renderPage();
+
+    await screen.findByText('Ana Torres');
+    await user.click(screen.getByRole('tab', { name: /canceladas 0/i }));
+
+    expect(screen.getByRole('heading', { name: /no hay inscripciones canceladas/i })).toBeInTheDocument();
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+  });
+
+  it('hides the actions column in tabs where no row has actions', async () => {
+    getActivityRegistrations.mockResolvedValue({ data: BOARD });
+    const user = userEvent.setup();
+    renderPage();
+
+    await screen.findByText('Ana Torres');
+    expect(screen.getByRole('columnheader', { name: 'Acciones' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('tab', { name: /rechazadas 1/i }));
+    expect(screen.queryByRole('columnheader', { name: 'Acciones' })).not.toBeInTheDocument();
+  });
+
+  it('keeps the selected tab after a board reload', async () => {
+    const confirmed = BOARD.content[2];
+    getActivityRegistrations.mockResolvedValue({ data: BOARD });
+    cancelRegistration.mockResolvedValue({ data: { ...confirmed, status: 'CANCELLED' } });
+    const user = userEvent.setup();
+    renderPage();
+
+    await screen.findByText('Ana Torres');
+    await user.click(screen.getByRole('tab', { name: /confirmadas 1/i }));
+    const row = screen.getByText('Marta Ruiz').closest('tr');
+    await user.click(within(row).getByRole('button', { name: /dar de baja/i }));
+    await user.click(screen.getByRole('button', { name: /confirmar baja/i }));
+
+    await waitFor(() => expect(getActivityRegistrations).toHaveBeenCalledTimes(2));
+    expect(await screen.findByRole('tab', { name: /confirmadas 1/i })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('shows an explicit forbidden state', async () => {
@@ -165,9 +208,9 @@ describe('RegistrationsTablePage', () => {
     const row = (await screen.findByText('Ana Torres')).closest('tr');
     await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
 
-    expect(await screen.findByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: /confirmadas 1/i })).toBeInTheDocument();
     expect(acceptRegistration).toHaveBeenCalledWith(1);
-    expect(screen.queryByRole('heading', { name: /sin revisar 1/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: /en cola 0/i })).toBeInTheDocument();
   });
 
   it('keeps an accepted registration in the queue when backend reports no spot', async () => {
@@ -182,11 +225,10 @@ describe('RegistrationsTablePage', () => {
     const row = (await screen.findByText('Ana Torres')).closest('tr');
     await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
 
-    expect(await screen.findByRole('heading', { name: /en cola 1/i })).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: /en cola 1/i })).toBeInTheDocument();
     expect(screen.getByText(/aceptada · en cola/i)).toBeInTheDocument();
-    // Sin plaza en el backend no se promociona a la sección Confirmadas.
-    const confirmed = screen.getByRole('region', { name: /confirmadas de la actividad/i });
-    expect(within(confirmed).queryByText('Luis Martín')).not.toBeInTheDocument();
+    // Sin plaza en el backend no se promociona a la pestaña Confirmadas.
+    expect(screen.getByRole('tab', { name: /confirmadas 0/i })).toBeInTheDocument();
   });
 
   it('rejects without asking for or sending a reason', async () => {
@@ -202,9 +244,7 @@ describe('RegistrationsTablePage', () => {
     await user.click(within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i }));
 
     await waitFor(() => expect(rejectRegistration).toHaveBeenCalledWith(1));
-    // La rechazada queda en el historial, plegado por defecto.
-    await user.click(screen.getByRole('button', { name: /historial/i }));
-    expect(await screen.findByRole('heading', { name: /rechazadas 1/i })).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: /rechazadas 1/i })).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 
@@ -242,14 +282,16 @@ describe('RegistrationsTablePage', () => {
     const user = userEvent.setup();
     renderPage();
 
-    const confirmedRow = (await screen.findByText('Marta Ruiz')).closest('tr');
+    await user.click(await screen.findByRole('tab', { name: /confirmadas 1/i }));
+    const confirmedRow = screen.getByText('Marta Ruiz').closest('tr');
     await user.click(within(confirmedRow).getByRole('button', { name: /dar de baja/i }));
     await user.click(screen.getByRole('button', { name: /confirmar baja/i }));
 
     const refreshedPerson = await screen.findByText('Luis Martín');
     expect(within(refreshedPerson.closest('tr')).getByText('Confirmada')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /confirmadas 1/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /confirmadas 1/i })).toBeInTheDocument();
     // La sin revisar que el backend no promociona sigue en la cola, con su badge.
+    await user.click(screen.getByRole('tab', { name: /en cola 1/i }));
     const queue = screen.getByRole('region', { name: /en cola de la actividad/i });
     expect(within(queue).getByText('Ana Torres')).toBeInTheDocument();
     expect(within(queue).getByText('Sin revisar')).toBeInTheDocument();
@@ -268,12 +310,14 @@ describe('RegistrationsTablePage', () => {
     const user = userEvent.setup();
     renderPage();
 
-    const confirmedRow = (await screen.findByText('Marta Ruiz')).closest('tr');
+    await user.click(await screen.findByRole('tab', { name: /confirmadas 1/i }));
+    const confirmedRow = screen.getByText('Marta Ruiz').closest('tr');
     await user.click(within(confirmedRow).getByRole('button', { name: /dar de baja/i }));
     await user.click(screen.getByRole('button', { name: /confirmar baja/i }));
 
-    const remainingPerson = await screen.findByText('Ana Torres');
+    expect(await screen.findByRole('tab', { name: /confirmadas 0/i })).toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: /en cola 1/i }));
+    const remainingPerson = screen.getByText('Ana Torres');
     expect(within(remainingPerson.closest('tr')).getByText('Sin revisar')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: /confirmadas 1/i })).not.toBeInTheDocument();
   });
 });

@@ -1,19 +1,58 @@
 @use '../abstracts' as *;
 
+.pending-closures {
+  @include page-container;
+}
+
+.report-form-page {
+  @include page-container(48rem);
+
+  > a { @include back-link; }
+
+  h1 { margin: 0 0 space('2'); }
+
+  > p:not(.activity-form-page__eyebrow, .closure-form__activity, .closure-form__notice) {
+    color: $color-muted;
+    margin: 0 0 space('2');
+  }
+
+  > form,
+  > dl {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+    display: flex;
+    flex-direction: column;
+    gap: space('5');
+    margin: space('5') 0;
+    padding: space('5');
+  }
+
+  dt {
+    color: $color-muted;
+    font-size: $font-size-sm;
+  }
+
+  dd {
+    color: $color-heading;
+    margin: space('1') 0 0;
+    overflow-wrap: anywhere;
+  }
+
+  dd a { color: $color-coral-dark; }
+}
+
 .closure-form {
   &__notice {
-    background: $color-success-light;
-    border-left: 3px solid $color-success;
-    border-radius: $radius-sm;
-    color: $color-success;
+    @include notice($color-success, $color-success-light);
     margin-block: space('4');
-    padding: space('3') space('4');
   }
 
   &__returned {
     background: $color-warning-light;
-    border-left: 3px solid $color-warning;
-    border-radius: $radius-sm;
+    border: 1px solid color-mix(in srgb, $color-warning 30%, transparent);
+    border-radius: $radius-md;
     margin-block: space('4');
     padding: space('3') space('4');
   }
@@ -23,7 +62,6 @@
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
     margin: 0 0 space('1');
-    text-transform: uppercase;
   }
 
   &__returned-note {
@@ -32,7 +70,7 @@
   }
 
   &__activity {
-    color: $color-navy;
+    color: $color-heading;
     font-size: $font-size-lg;
     font-weight: $font-weight-semibold;
     margin: 0 0 space('2');
@@ -64,11 +102,11 @@
   }
 
   &__deviation {
-    border-radius: $radius-sm;
+    border-radius: $radius-pill;
     display: inline-block;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-    padding: space('1') space('2');
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    padding: space('1') .625rem;
 
     &--positive {
       background: $color-success-light;
@@ -89,9 +127,9 @@
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
-    box-shadow: $shadow-md;
-    margin-top: space('8');
-    padding: clamp(space('5'), 4vw, space('8'));
+    box-shadow: $shadow-sm;
+    margin-top: space('6');
+    padding: space('5');
 
     > .field {
       margin-top: space('5');
@@ -106,7 +144,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: space('3');
-    margin-top: space('8');
+    justify-content: flex-end;
 
     .button {
       min-height: 2.75rem;

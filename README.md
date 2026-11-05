@@ -107,6 +107,13 @@ Before delivering a screen, test it with a keyboard and verify visible focus, la
 
 There should be no accidental horizontal scroll; touch targets must be at least 44 × 44 px and text must be readable without zoom.
 
+## Themes and design tokens
+
+- Theme values live in `src/styles/base/_tokens.scss`, as CSS custom properties for light and dark. The Sass variables in `abstracts/_variables.scss` point to them, so use the Sass names in components and avoid literal colours.
+- Sass colour functions such as `rgba($token, .5)` do not work on these tokens; use `color-mix()`.
+- `useTheme` follows the system preference until the user picks a theme, which is then stored in `localStorage` under `theme`. A small script in `index.html` applies it before the first render and must keep the same rule.
+- The certificate stays light on screen, and printing always uses the light theme.
+
 ## User Flow & Mockups
 
 ![User Flow](docs/user-flow.png)

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getDashboard } from '../../api/dashboardApi';
-import { Button, Card, EmptyState, Spinner } from '../../components/ui';
+import { Button, Card, EmptyState, PageHeader, Spinner } from '../../components/ui';
 import { ACTIVITY_LINES } from '../../constants/activityLines';
 import BarChart from './BarChart';
 import ChartTable from './ChartTable';
@@ -213,21 +213,14 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard">
-      <header className="dashboard__header">
-        <div>
-          <p className="dashboard__eyebrow">Voluntariado corporativo</p>
-          <h1>Dashboard de impacto</h1>
-          {dashboardData.dataSource === 'mock' && (
-            <span className="dashboard__demo-badge">Datos ficticios para validación</span>
-          )}
-        </div>
-      </header>
-      <div className="dashboard__intro-row">
-        <p className="dashboard__intro">Consulta el impacto de las participaciones cerradas y descarga los resultados.</p>
-        <div className="dashboard__header-actions">
-          <ExportMenu filters={filters} />
-        </div>
-      </div>
+      <PageHeader
+        title="Dashboard de impacto"
+        description="Consulta el impacto de las participaciones cerradas y descarga los resultados."
+        actions={<ExportMenu filters={filters} />}
+      />
+      {dashboardData.dataSource === 'mock' && (
+        <span className="dashboard__demo-badge">Datos ficticios para validación</span>
+      )}
 
       <DashboardFilters
         year={year}

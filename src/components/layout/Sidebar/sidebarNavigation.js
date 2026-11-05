@@ -26,7 +26,6 @@ export const NAV_SECTIONS_BY_ROLE = {
           path: "/activities/new",
           label: "Nuevo proyecto",
           icon: CirclePlus,
-          variant: "cta",
         },
         { path: "/admin/activities", label: "Proyectos", icon: ClipboardList },
         { path: "/proposals", label: "Propuestas", icon: FileText },
@@ -99,7 +98,6 @@ export const NAV_SECTIONS_BY_ROLE = {
           path: "/org/activities/new",
           label: "Nueva propuesta",
           icon: CirclePlus,
-          variant: "cta",
         },
         {
           path: "/org/activities",

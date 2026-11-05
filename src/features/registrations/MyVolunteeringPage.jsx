@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cancelRegistration, getMyRegistrations } from '../../api/registrationsApi';
-import { Badge, Button, Card, EmptyState, Modal, Spinner } from '../../components/ui';
+import { Badge, Button, Card, EmptyState, Modal, PageHeader, Spinner } from '../../components/ui';
 import { formatDate } from '../../utils/dates';
 
 // Inscripciones vivas. El resto (`CLOSED`, `REJECTED`, `CANCELLED`) es historial:
@@ -35,6 +35,14 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
     CANCELLED: 'Cancelada',
   };
   const statusLabel = statusLabels[item.status] ?? item.status;
+  const statusVariants = {
+    WAITLISTED: 'warning',
+    CONFIRMED: 'success',
+    CLOSED: 'neutral',
+    PENDING_CLOSURE: 'warning',
+    REJECTED: 'danger',
+    CANCELLED: 'danger',
+  };
 
   // El backend deja cancelar hasta el día de inicio incluido: usa
   // `LocalDate.now().isAfter(startDate)`, que ese mismo día todavía es falso.
@@ -61,7 +69,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
     <Card className="my-volunteering__card" data-testid={`registration-${item.registrationId}`}>
       <div className="my-volunteering__card-header">
         <h3 className="my-volunteering__card-title">{title}</h3>
-        <Badge variant="neutral">{statusLabel}</Badge>
+        <Badge variant={statusVariants[item.status] ?? 'neutral'}>{statusLabel}</Badge>
       </div>
       {partner && <p className="my-volunteering__meta">Entidad: {partner}</p>}
       <p className="my-volunteering__meta">
@@ -97,7 +105,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
       {onCancel && canCancel && (
         <>
           <Button
-            variant="secondary"
+            variant="danger"
             size="small"
             onClick={handleOpen}
             data-testid={`cancel-${item.registrationId}`}
@@ -226,9 +234,7 @@ export default function MyVolunteeringPage() {
   if (bothEmpty) {
     return (
       <section className="my-volunteering" aria-labelledby="my-volunteering-title">
-        <h1 id="my-volunteering-title" className="my-volunteering__title">
-          Mi voluntariado
-        </h1>
+        <PageHeader title="Mi voluntariado" titleId="my-volunteering-title" />
         <EmptyState
           title="No tienes inscripciones"
           description="Aún no te has inscrito en ninguna actividad."
@@ -244,9 +250,7 @@ export default function MyVolunteeringPage() {
 
   return (
     <section className="my-volunteering" aria-labelledby="my-volunteering-title">
-      <h1 id="my-volunteering-title" className="my-volunteering__title">
-        Mi voluntariado
-      </h1>
+      <PageHeader title="Mi voluntariado" titleId="my-volunteering-title" />
       {cancelError && (
         <div className="my-volunteering__error" role="alert">
           {cancelError}

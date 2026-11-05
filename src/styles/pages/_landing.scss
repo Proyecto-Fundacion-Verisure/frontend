@@ -11,33 +11,33 @@
     padding-inline: space("6");
   }
   &__eyebrow {
-    color: $color-coral-dark;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-bold;
-    letter-spacing: 0.08em;
-    margin: 0 0 space("4");
-    text-transform: uppercase;
+    @include eyebrow;
+    margin-bottom: space("2");
   }
 }
 
 .landing-hero {
   align-items: center;
-  background: $color-coral-50;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.92fr);
   gap: clamp(2rem, 5vw, 4rem);
   margin: 0 auto;
-  max-width: 80rem;
-  padding: clamp(3.5rem, 6vw, 5rem) space("6") space("6");
+  max-width: $content-max-width;
+  padding: clamp(3rem, 6vw, 5rem) space("6") space("6");
 
   &__content {
     max-width: 38rem;
   }
+  // Ya está dentro del padding de la sección.
+  .landing__container.landing-hero__content {
+    margin: 0;
+    padding-inline: 0;
+  }
   h1 {
-    color: $color-navy;
-    font-size: clamp(2.5rem, 4.6vw, 4.4rem);
-    letter-spacing: -0.05em;
-    line-height: 1.05;
+    color: $color-heading;
+    font-size: clamp(2.25rem, 4vw, 3.5rem);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
     margin: 0;
   }
   h1 em {
@@ -45,9 +45,10 @@
     font-style: normal;
   }
   &__lead {
+    color: $color-muted;
     font-size: $font-size-lg;
-    line-height: 1.65;
-    margin: space("6") 0 0;
+    line-height: 1.6;
+    margin: space("5") 0 0;
     max-width: 45rem;
   }
   &__actions {
@@ -95,17 +96,16 @@
   padding: space("6");
   text-align: center;
   strong {
-    color: $color-navy;
-    font-size: clamp(2rem, 3.2vw, 2.7rem);
-    letter-spacing: -0.045em;
+    color: $color-heading;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-variant-numeric: tabular-nums;
+    font-weight: $font-weight-semibold;
+    letter-spacing: -0.02em;
     line-height: 1;
   }
   span {
     color: $color-muted;
-    font-size: $font-size-xs;
-    font-weight: $font-weight-bold;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: $font-size-sm;
   }
 
   &__icon {
@@ -115,7 +115,7 @@
 
 .landing-impact,
 .landing-access {
-  padding-block: clamp(4rem, 7vw, 6rem);
+  padding-block: clamp(3rem, 6vw, 5rem);
 }
 .landing-impact__heading {
   max-width: 48rem;
@@ -123,10 +123,10 @@
 .landing-impact__heading h2,
 .landing-access h2,
 .landing-cta h2 {
-  color: $color-navy;
-  font-size: clamp(2rem, 3.5vw, 3.25rem);
-  letter-spacing: -0.04em;
-  line-height: 1.15;
+  color: $color-heading;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
   margin: 0;
 }
 .landing-impact__heading > p:last-child {
@@ -150,14 +150,14 @@
   min-height: 17rem;
   padding: space("6");
   transition:
-    box-shadow $transition-base,
-    transform $transition-base;
+    border-color $transition-base,
+    box-shadow $transition-base;
   &:hover {
+    border-color: $color-border-strong;
     box-shadow: $shadow-md;
-    transform: translateY(-0.2rem);
   }
   h3 {
-    color: $color-navy;
+    color: $color-heading;
     font-size: $font-size-xl;
     margin: 0 0 space("3");
   }
@@ -165,20 +165,13 @@
     color: $color-muted;
     margin: 0;
   }
-  &__figure {
+  > .landing-impact__figure {
     color: $color-coral-dark;
     font-size: $font-size-sm;
-    font-weight: $font-weight-bold;
-    margin-top: auto !important;
+    font-weight: $font-weight-semibold;
+    margin-top: auto;
     padding-top: space("5");
   }
-}
-.landing-impact__figure {
-  color: $color-coral-dark !important;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  margin-top: auto !important;
-  padding-top: space("5");
 }
 
 .landing-access__grid {
@@ -198,20 +191,20 @@
   padding: space("8");
   text-decoration: none;
   transition:
-    box-shadow $transition-base,
-    transform $transition-base;
+    border-color $transition-base,
+    box-shadow $transition-base;
   &:hover {
+    border-color: $color-border-strong;
     box-shadow: $shadow-md;
-    transform: translateY(-0.2rem);
   }
   > p:has(strong) {
     strong {
       margin-top: space("1");
-      color: $color-navy;
+      color: $color-heading;
     }
   }
   h3 {
-    color: $color-navy;
+    color: $color-heading;
     font-size: $font-size-xl;
     margin: 0 0 space("3");
   }
@@ -220,8 +213,8 @@
     margin: 0 0 space("6");
   }
   .button {
+    align-self: flex-start;
     margin-top: auto;
-    width: 100%;
   }
   img {
     border-radius: $radius-lg;
@@ -243,7 +236,7 @@
     position: relative;
 
     &::before {
-      color: $color-coral-dark;
+      color: $color-muted;
       content: "•";
       left: 0;
       position: absolute;
@@ -264,18 +257,18 @@
 }
 .landing-access__steps span {
   align-items: center;
-  background: $color-coral-dark;
+  background: $color-surface-hover;
   border-radius: $radius-pill;
-  color: $color-surface;
+  color: $color-heading;
   display: inline-flex;
   flex: 0 0 1.75rem;
   font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
+  font-weight: $font-weight-semibold;
   height: 1.75rem;
   justify-content: center;
 }
 .landing-access__steps strong {
-  color: $color-navy;
+  color: $color-heading;
   display: block;
 }
 .landing-access__steps p {

@@ -1,0 +1,111 @@
+// Valores de los temas. Los componentes siguen usando las variables Sass de
+// `abstracts/_variables`, que apuntan a estas propiedades.
+@mixin theme-light {
+  color-scheme: light;
+
+  --color-coral-50: #fff1f2;
+  --color-coral-100: #ffe0e4;
+  --color-coral: #d6002a;
+  --color-coral-dark: #b00022;
+  // Rojo del logo. Solo como fondo, con `--color-on-accent` encima.
+  --color-coral-solid: #ed002f;
+  --color-coral-solid-hover: #dc002b;
+  --color-coral-gradient-end: #c70027;
+  --color-coral-gradient-end-hover: #b70024;
+  --color-on-accent: #ffffff;
+
+  --color-surface: #ffffff;
+  --color-surface-hover: #f3f5f8;
+  --color-background: #f8f9fb;
+  --color-heading: #111827;
+  --color-text: #374151;
+  --color-muted: #5b6474;
+  --color-border: #e5e7eb;
+  --color-border-strong: #858e9e;
+  --color-focus: #111827;
+
+  --color-surface-inverse: #111827;
+  --color-surface-inverse-hover: #1f2937;
+  --color-border-inverse: #1f2937;
+  --color-on-inverse: #ffffff;
+  --color-on-inverse-muted: rgb(255 255 255 / 78%);
+
+  --color-success: #17693f;
+  --color-success-light: #e9f8ef;
+  --color-warning: #8f5200;
+  --color-warning-light: #fdf5e4;
+  --color-danger: #b91c32;
+  --color-danger-light: #fdeef0;
+  --color-info: #1d5cb8;
+  --color-info-light: #ebf3fe;
+  --color-overlay: rgb(17 24 39 / 50%);
+
+  --shadow-sm: 0 1px 2px rgb(17 24 39 / 5%);
+  --shadow-md: 0 4px 12px rgb(17 24 39 / 8%);
+  --shadow-lg: 0 12px 32px rgb(17 24 39 / 12%);
+  --shadow-accent: 0 1px 2px rgb(199 0 39 / 30%), inset 0 1px 0 rgb(255 255 255 / 18%);
+}
+
+@mixin theme-dark {
+  color-scheme: dark;
+
+  --color-coral-50: #331820;
+  --color-coral-100: #4a1d29;
+  --color-coral: #ff6b7f;
+  --color-coral-dark: #ff8c9b;
+  --color-coral-solid: #e0002c;
+  --color-coral-solid-hover: #cf0029;
+  --color-coral-gradient-end: #b80024;
+  --color-coral-gradient-end-hover: #a90021;
+  --color-on-accent: #ffffff;
+
+  --color-surface: #171c26;
+  --color-surface-hover: #202733;
+  --color-background: #0f131a;
+  --color-heading: #f3f5f8;
+  --color-text: #cdd3dd;
+  --color-muted: #9aa4b4;
+  --color-border: #2a3240;
+  --color-border-strong: #6b7688;
+  --color-focus: #f3f5f8;
+
+  --color-surface-inverse: #262e3b;
+  --color-surface-inverse-hover: #303a49;
+  --color-border-inverse: #303a49;
+  --color-on-inverse: #ffffff;
+  --color-on-inverse-muted: rgb(255 255 255 / 78%);
+
+  --color-success: #5fd394;
+  --color-success-light: #12291e;
+  --color-warning: #f0b94d;
+  --color-warning-light: #2c220c;
+  --color-danger: #ff8c9b;
+  --color-danger-light: #351a20;
+  --color-info: #80b4ff;
+  --color-info-light: #14243c;
+  --color-overlay: rgb(0 0 0 / 60%);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 35%);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 45%);
+  --shadow-accent: 0 1px 2px rgb(0 0 0 / 40%), inset 0 1px 0 rgb(255 255 255 / 14%);
+}
+
+:root {
+  @include theme-light;
+}
+
+:root[data-theme='dark'] {
+  @include theme-dark;
+}
+
+// El certificado es un documento: siempre en claro, en pantalla y en papel.
+.certificate {
+  @include theme-light;
+}
+
+@media print {
+  :root[data-theme='dark'] {
+    @include theme-light;
+  }
+}

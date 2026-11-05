@@ -1,18 +1,21 @@
 @use '../abstracts' as *;
 
+// El texto siempre va en el tono del fondo y cada color significa lo mismo en
+// toda la app: verde, resuelto o abierto; ámbar, pendiente o con límite; azul,
+// en marcha o informativo; rojo, descartado; gris, inactivo o descriptivo.
 .badge {
   align-items: center;
-  background: $color-background;
+  background: $color-surface-hover;
   border-radius: $radius-pill;
-  color: $color-navy-light;
+  color: $color-muted;
   display: inline-flex;
   font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  line-height: 1;
-  padding: space('2') space('3');
+  font-weight: $font-weight-medium;
+  line-height: 1.25;
+  padding: space('1') .625rem;
+  white-space: nowrap;
   width: fit-content;
 
-  &--primary { background: $color-coral-100; color: $color-navy; }
   &--success { background: $color-success-light; color: $color-success; }
   &--warning { background: $color-warning-light; color: $color-warning; }
   &--danger { background: $color-danger-light; color: $color-danger; }

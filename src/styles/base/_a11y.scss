@@ -1,5 +1,10 @@
 @use '../abstracts' as *;
 
+:focus-visible {
+  outline: 2px solid $color-focus;
+  outline-offset: 2px;
+}
+
 .sr-only {
   clip: rect(0, 0, 0, 0);
   clip-path: inset(50%);
@@ -11,8 +16,8 @@
 }
 
 .skip-link {
-  background: $color-navy;
-  color: $color-surface;
+  background: $color-surface-inverse;
+  color: $color-on-inverse;
   left: space('4');
   padding: space('3') space('4');
   position: fixed;

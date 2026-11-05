@@ -40,7 +40,7 @@ describe('ProposalForm', () => {
     expect(consent).not.toBeChecked();
     expect(consent).toBeRequired();
 
-    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+    await user.click(screen.getByRole('button', { name: /^enviar$/i }));
 
     expect(screen.getByText('Debes aceptar la política de privacidad.')).toBeInTheDocument();
     expect(consent).toHaveAttribute('aria-invalid', 'true');
@@ -64,7 +64,7 @@ describe('ProposalForm', () => {
     await user.type(screen.getByLabelText(/teléfono/i), '600000000');
     await user.type(screen.getByLabelText(/descripción de la necesidad/i), 'Necesitamos apoyo voluntario.');
     await user.click(screen.getByRole('checkbox', { name: /he leído y acepto/i }));
-    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+    await user.click(screen.getByRole('button', { name: /^enviar$/i }));
 
     const serverError = await screen.findByText('Ya existe una propuesta con este correo.');
     expect(serverError).toBeInTheDocument();
@@ -82,7 +82,7 @@ describe('ProposalForm', () => {
     renderForm();
 
     await fillValidForm(user);
-    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+    await user.click(screen.getByRole('button', { name: /^enviar$/i }));
 
     expect(await screen.findByText(/no hemos podido enviar/i)).toBeInTheDocument();
   });
@@ -91,7 +91,7 @@ describe('ProposalForm', () => {
     const user = userEvent.setup();
     renderForm();
 
-    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+    await user.click(screen.getByRole('button', { name: /^enviar$/i }));
 
     expect(screen.getByText('Indica el nombre de la organización.')).toBeInTheDocument();
     expect(screen.getByText('Introduce un CIF válido.')).toBeInTheDocument();
@@ -102,7 +102,7 @@ describe('ProposalForm', () => {
     expect(createProposal).not.toHaveBeenCalled();
 
     await user.type(screen.getByLabelText(/correo electrónico/i), 'correo-invalido');
-    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+    await user.click(screen.getByRole('button', { name: /^enviar$/i }));
 
     expect(screen.getByText('Introduce un correo válido.')).toBeInTheDocument();
     expect(screen.getByLabelText(/correo electrónico/i)).toHaveAttribute('aria-invalid', 'true');
@@ -114,7 +114,7 @@ describe('ProposalForm', () => {
     renderForm();
 
     await fillValidForm(user);
-    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+    await user.click(screen.getByRole('button', { name: /^enviar$/i }));
 
     expect(await screen.findByText(/propuesta recibida/i)).toBeInTheDocument();
     const heading = screen.getByRole('heading', { name: /gracias por contarnos qué necesitáis/i });
@@ -132,7 +132,7 @@ describe('ProposalForm', () => {
     expect(screen.getByLabelText(/nombre de la organización/i)).toHaveValue('');
     expect(screen.getByLabelText(/^cif/i)).toHaveValue('');
     expect(screen.getByRole('checkbox', { name: /he leído y acepto/i })).not.toBeChecked();
-    expect(screen.getByRole('button', { name: /enviar propuesta/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^enviar$/i })).toBeInTheDocument();
   });
 
   it('muestra error general con 429 límite de solicitudes', async () => {
@@ -141,7 +141,7 @@ describe('ProposalForm', () => {
     renderForm();
 
     await fillValidForm(user);
-    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+    await user.click(screen.getByRole('button', { name: /^enviar$/i }));
 
     expect(await screen.findByText(/no hemos podido enviar/i)).toBeInTheDocument();
   });
@@ -152,7 +152,7 @@ describe('ProposalForm', () => {
     renderForm();
 
     await fillValidForm(user);
-    await user.click(screen.getByRole('button', { name: /enviar propuesta/i }));
+    await user.click(screen.getByRole('button', { name: /^enviar$/i }));
 
     expect(await screen.findByText(/no hemos podido enviar/i)).toBeInTheDocument();
   });
@@ -165,7 +165,7 @@ describe('ProposalForm', () => {
 
     await fillValidForm(user);
 
-    const submit = screen.getByRole('button', { name: /enviar propuesta/i });
+    const submit = screen.getByRole('button', { name: /^enviar$/i });
     await user.click(submit);
 
     expect(createProposal).toHaveBeenCalledTimes(1);
@@ -192,14 +192,14 @@ describe('ProposalForm', () => {
     expect(screen.getByLabelText(/teléfono/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/descripción de la necesidad/i)).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: /he leído y acepto/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /enviar propuesta/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^enviar$/i })).toBeInTheDocument();
 
     // navegación por teclado: Tab mueve el foco de forma secuencial
     await user.tab();
     expect(document.activeElement).not.toBe(document.body);
 
     // foco visible en el botón de envío
-    const submit = screen.getByRole('button', { name: /enviar propuesta/i });
+    const submit = screen.getByRole('button', { name: /^enviar$/i });
     submit.focus();
     expect(submit).toHaveFocus();
 

@@ -10,6 +10,7 @@ import Select from '../Select/Select';
 import Spinner from '../Spinner/Spinner';
 import Table from '../Table/Table';
 import Textarea from '../Textarea/Textarea';
+import ThemeToggle from '../ThemeToggle/ThemeToggle';
 
 const columns = [
   { key: 'name', label: 'Actividad' },
@@ -28,6 +29,7 @@ export default function UiShowcase() {
         <p className="ui-showcase__eyebrow">Fundación Verisure</p>
         <h1>Sistema de componentes UI</h1>
         <p>Referencia visual de variantes y estados reutilizables.</p>
+        <ThemeToggle />
       </header>
 
       <section className="ui-showcase__section">
@@ -35,7 +37,7 @@ export default function UiShowcase() {
         <div className="ui-showcase__row">
           <Button>Acción principal</Button>
           <Button variant="secondary">Secundaria</Button>
-          <Button variant="outline">Alternativa</Button>
+          <Button variant="ghost">Alternativa</Button>
           <Button variant="danger">Eliminar</Button>
           <Button disabled>Deshabilitada</Button>
           <Button isLoading>Guardando</Button>
@@ -43,7 +45,6 @@ export default function UiShowcase() {
         </div>
         <div className="ui-showcase__row">
           <Badge>Neutral</Badge>
-          <Badge variant="primary">Destacada</Badge>
           <Badge variant="success">Confirmada</Badge>
           <Badge variant="warning">Pendiente</Badge>
           <Badge variant="danger">Rechazada</Badge>
@@ -77,7 +78,7 @@ export default function UiShowcase() {
             <EmptyState
               title="Todavía no hay actividades"
               description="Las nuevas actividades aparecerán aquí."
-              action={<Button variant="outline">Volver al catálogo</Button>}
+              action={<Button variant="secondary">Volver al catálogo</Button>}
             />
           </Card>
         </div>

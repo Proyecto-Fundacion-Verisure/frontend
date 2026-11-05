@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { submitOrgActivity } from '../../api/orgApi';
 import { Button, Modal } from '../../components/ui';
 
-// «Enviar propuesta» desde el listado de la entidad. `PATCH
+// «Enviar» desde el listado de la entidad. `PATCH
 // /org/activities/{id}/submit` solo acepta `DRAFT`; en cualquier otro estado el
 // backend contesta 409 `ACTIVITY_NOT_EDITABLE`, que llega ya traducido en
 // `error.message` y se pinta dentro del modal.
@@ -27,8 +27,12 @@ export default function SubmitForReviewButton({ activity, onSubmitted }) {
 
   return (
     <>
-      <Button size="small" onClick={() => { setError(''); setIsOpen(true); }}>
-        Enviar propuesta
+      <Button
+        size="small"
+        aria-label={`Enviar propuesta ${activity.title}`}
+        onClick={() => { setError(''); setIsOpen(true); }}
+      >
+        Enviar
       </Button>
       <Modal
         isOpen={isOpen}

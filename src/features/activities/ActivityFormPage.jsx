@@ -15,7 +15,7 @@ import {
 import { ApiError } from '../../api/apiError';
 import { useAuth } from '../auth/AuthContext';
 import useForm from '../../hooks/useForm';
-import { Button, Input, Modal, Select, Spinner, Textarea } from '../../components/ui';
+import { Button, Input, Modal, PageHeader, Select, Spinner, Textarea } from '../../components/ui';
 
 // Los nombres son los de `CreateActivityRequest`: `mode` y `spots`, no
 // `modality` ni `maxParticipants`. Las fechas son `LocalDate` (`YYYY-MM-DD`): la
@@ -326,7 +326,7 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
           {requestStatus === 'load-error' && (
             <Button onClick={() => setReloadKey((current) => current + 1)}>Reintentar</Button>
           )}
-          <Link className="button button--secondary button--large" to={backPath}>Volver</Link>
+          <Link className="button button--secondary button--medium" to={backPath}>Volver</Link>
         </div>
       </section>
     );
@@ -365,20 +365,20 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
         {errorMessage && <p className="activity-form__error" role="alert">{errorMessage}</p>}
         <div className="activity-form-page__success-actions">
           {!isPublished && !isEditMode && (
-            <Button size="large" onClick={handlePublishRequest}>
-              {isPartner ? 'Enviar propuesta' : 'Publicar actividad'}
+            <Button onClick={handlePublishRequest}>
+              {isPartner ? 'Enviar' : 'Publicar actividad'}
             </Button>
           )}
           {isEditMode ? (
-            <Button size="large" variant="secondary" onClick={() => setRequestStatus('idle')}>
+            <Button variant="secondary" onClick={() => setRequestStatus('idle')}>
               Seguir editando
             </Button>
           ) : (
-            <Button size="large" variant="secondary" onClick={resetForm}>
+            <Button variant="secondary" onClick={resetForm}>
               Crear otra actividad
             </Button>
           )}
-          <Link className="button button--secondary button--large" to={backPath}>
+          <Link className="button button--secondary button--medium" to={backPath}>
             Volver
           </Link>
         </div>
@@ -395,26 +395,21 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
 
   return (
     <section className="activity-form-page" aria-labelledby="activity-form-title">
-      <div className="activity-form-page__intro">
-        <Link to={backPath} className="activity-form-page__back">&larr; Volver</Link>
-        <p className="activity-form-page__eyebrow">
-          {isPartner
-            ? isEditMode ? 'Editar propuesta' : 'Nueva propuesta'
-            : isEditMode ? 'Editar actividad' : 'Nueva actividad'}
-        </p>
-        <h1 id="activity-form-title">
-          {isPartner
-            ? isEditMode ? 'Editar propuesta de actividad' : 'Proponer una actividad de voluntariado'
-            : isEditMode ? 'Editar actividad de voluntariado' : 'Crear actividad de voluntariado'}
-        </h1>
-        <p>
-          {isEditMode
-            ? 'Actualiza los datos necesarios y guarda los cambios.'
-            : isPartner
-              ? 'Guarda la propuesta como borrador o envíala a la Fundación cuando esté lista. Si la aprueba, la actividad pasará al catálogo de la plantilla.'
-              : 'Guarda la actividad como borrador o publícala cuando todos los datos estén listos.'}
-        </p>
-      </div>
+      <Link to={backPath} className="activity-form-page__back">&larr; Volver</Link>
+      <PageHeader
+        eyebrow={isPartner
+          ? isEditMode ? 'Editar propuesta' : 'Nueva propuesta'
+          : isEditMode ? 'Editar actividad' : 'Nueva actividad'}
+        title={isPartner
+          ? isEditMode ? 'Editar propuesta de actividad' : 'Proponer una actividad de voluntariado'
+          : isEditMode ? 'Editar actividad de voluntariado' : 'Crear actividad de voluntariado'}
+        titleId="activity-form-title"
+        description={isEditMode
+          ? 'Actualiza los datos necesarios y guarda los cambios.'
+          : isPartner
+            ? 'Guarda la propuesta como borrador o envíala a la Fundación cuando esté lista. Si la aprueba, la actividad pasará al catálogo de la plantilla.'
+            : 'Guarda la actividad como borrador o publícala cuando todos los datos estén listos.'}
+      />
 
       {/* Viene de aceptar una propuesta: el backend solo pudo precargar
           descripción, línea, plazas y entidad; el resto son marcadores. */}
@@ -493,7 +488,6 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
           <div className="activity-form__actions">
             <Button
               type="submit"
-              size="large"
               variant="secondary"
               isLoading={requestStatus === 'saving'}
               loadingLabel="Guardando…"
@@ -502,8 +496,8 @@ export default function ActivityFormPage({ backPath = '/dashboard' }) {
               {isEditMode ? 'Guardar cambios' : 'Guardar borrador'}
             </Button>
             {!isEditMode && (
-              <Button type="button" size="large" onClick={handlePublishRequest} disabled={requestStatus === 'saving'}>
-                {isPartner ? 'Enviar propuesta' : 'Publicar actividad'}
+              <Button type="button" onClick={handlePublishRequest} disabled={requestStatus === 'saving'}>
+                {isPartner ? 'Enviar' : 'Publicar actividad'}
               </Button>
             )}
           </div>
