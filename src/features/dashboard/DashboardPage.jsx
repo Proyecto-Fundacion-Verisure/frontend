@@ -214,7 +214,6 @@ export default function DashboardPage() {
   return (
     <div className="dashboard">
       <PageHeader
-        eyebrow="Voluntariado corporativo"
         title="Dashboard de impacto"
         description="Consulta el impacto de las participaciones cerradas y descarga los resultados."
         actions={<ExportMenu filters={filters} />}

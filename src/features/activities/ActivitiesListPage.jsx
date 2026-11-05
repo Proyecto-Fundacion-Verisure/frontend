@@ -75,7 +75,6 @@ export default function ActivitiesListPage({
   showStatusFilter = DEFAULT_COLUMNS_CONFIG.showStatusFilter,
   title = 'Proyectos',
   emptyDescription = null,
-  eyebrow = 'Administración',
   createPath = '/activities/new',
 }) {
   const [activities, setActivities] = useState([]);
@@ -225,26 +224,26 @@ export default function ActivitiesListPage({
   return (
     <section className="activities-list" aria-labelledby="activities-list-title">
       <PageHeader
-        eyebrow={eyebrow}
         title={title}
         titleId="activities-list-title"
         description={`${totalElements} ${titleLower} encontrados`}
-        actions={showCreateButton && (
-          <Link className="button button--primary button--medium" to={createPath}>
-            Nuevo proyecto →
-          </Link>
+        actions={(showStatusFilter || showCreateButton) && (
+          <>
+            {showStatusFilter && (
+              <Select label="Filtrar por estado" value={statusFilter} onChange={handleStatusChange}>
+                {STATUS_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </Select>
+            )}
+            {showCreateButton && (
+              <Link className="button button--primary button--medium" to={createPath}>
+                Nuevo proyecto →
+              </Link>
+            )}
+          </>
         )}
       />
-
-      {showStatusFilter && (
-        <div className="activities-list__toolbar">
-          <Select label="Filtrar por estado" value={statusFilter} onChange={handleStatusChange}>
-            {STATUS_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </Select>
-        </div>
-      )}
 
       {notice && <p className="activities-list__notice" role="status">{notice}</p>}
 

@@ -40,10 +40,6 @@
   @include back-link;
 }
 
-.registrations-page__eyebrow {
-  @include eyebrow;
-}
-
 .registrations-page__sections { display: grid; gap: space('5'); grid-template-columns: minmax(0, 1fr); }
 
 .registration-summary {

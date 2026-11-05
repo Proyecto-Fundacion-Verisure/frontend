@@ -182,18 +182,21 @@ export default function ProposalsInboxPage() {
 
   return (
     <section className="proposals-inbox" aria-labelledby="proposals-inbox-title">
-      <PageHeader title="Bandeja de propuestas" titleId="proposals-inbox-title" />
-      <div className="proposals-inbox__filters">
-        <Select
-          label="Filtrar por estado"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          {STATUS_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </Select>
-      </div>
+      <PageHeader
+        title="Bandeja de propuestas"
+        titleId="proposals-inbox-title"
+        actions={(
+          <Select
+            label="Filtrar por estado"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            {STATUS_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </Select>
+        )}
+      />
 
       {actionError && (
         <p className="proposals-inbox__error" role="alert">{actionError}</p>

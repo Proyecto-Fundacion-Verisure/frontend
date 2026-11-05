@@ -4,15 +4,6 @@
   @include page-container;
 }
 
-.proposals-inbox__filters {
-  margin-bottom: space('5');
-  max-width: 20rem;
-}
-
-.proposals-inbox__filters .field {
-  margin: 0;
-}
-
 .proposals-inbox__error {
   @include notice($color-danger, $color-danger-light);
   margin-bottom: space('4');
@@ -76,7 +67,6 @@
 }
 
 @media (max-width: 38rem) {
-  .proposals-inbox__filters { max-width: none; }
   .proposals-inbox__link { align-items: center; display: inline-flex; min-height: 2.75rem; }
   .proposal-detail__meta { grid-template-columns: 1fr; }
   .proposal-detail__meta a { align-items: center; display: inline-flex; min-height: $control-height; }

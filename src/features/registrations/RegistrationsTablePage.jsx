@@ -197,9 +197,10 @@ export default function RegistrationsTablePage() {
 
   return (
     <section className="registrations-page" aria-labelledby="registrations-title">
-      <Link className="registrations-page__back" to="/admin/activities">← Volver a actividades</Link>
+      {!isGlobal && (
+        <Link className="registrations-page__back" to="/admin/activities">← Volver a actividades</Link>
+      )}
       <PageHeader
-        eyebrow="Administración"
         title="Inscripciones"
         titleId="registrations-title"
         description={isGlobal ? 'Todos los proyectos' : (state?.activityTitle ?? `Actividad ${activityId}`)}

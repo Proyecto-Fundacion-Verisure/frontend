@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getOrgActivities } from '../../api/orgApi';
-import { Badge, Button, EmptyState, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, PageHeader, Spinner, Table } from '../../components/ui';
 import { formatDate } from '../../utils/dates';
 import SubmitForReviewButton from '../activities/SubmitForReviewButton';
 
@@ -127,16 +127,16 @@ export default function OrgActivitiesPage() {
 
   return (
     <section className="activities-list" aria-labelledby="activities-list-title">
-      <header className="activities-list__header">
-        <div>
-          <p className="activities-list__eyebrow">Entidad colaboradora</p>
-          <h1 id="activities-list-title">Mis propuestas</h1>
-          <p>{activities.length} propuestas encontradas</p>
-        </div>
-        <Link className="button button--primary button--medium" to="/org/activities/new">
-          Nueva propuesta →
-        </Link>
-      </header>
+      <PageHeader
+        title="Mis propuestas"
+        titleId="activities-list-title"
+        description={`${activities.length} propuestas encontradas`}
+        actions={(
+          <Link className="button button--primary button--medium" to="/org/activities/new">
+            Nueva propuesta →
+          </Link>
+        )}
+      />
 
       {notice && <p className="activities-list__notice" role="status">{notice}</p>}
 

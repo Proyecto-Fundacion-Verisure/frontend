@@ -7,7 +7,11 @@
   justify-content: space-between;
   margin-bottom: space('6');
 
-  &__text { min-width: 0; }
+  // Título y descripción: con o sin descripción, lo que sigue empieza a la misma altura.
+  &__text {
+    min-height: 4rem;
+    min-width: 0;
+  }
 
   &__eyebrow { @include eyebrow; }
 
@@ -27,6 +31,18 @@
     flex-wrap: wrap;
     gap: space('3');
     position: relative;
+
+    // El propio valor del filtro lo explica; la etiqueta queda para lectores de pantalla.
+    .field { width: 16rem; }
+
+    .field__label {
+      clip-path: inset(50%);
+      height: 1px;
+      overflow: hidden;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+    }
   }
 }
 
@@ -35,6 +51,9 @@
     align-items: stretch;
     flex-direction: column;
   }
+
+  .page-header__text { min-height: 0; }
+  .page-header__actions .field { width: 100%; }
 
   .page-header__actions > .button,
   .page-header__actions > .export-menu,

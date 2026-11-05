@@ -4,36 +4,6 @@
   @include page-container;
 }
 
-.activities-list__header {
-  align-items: flex-start;
-  display: flex;
-  gap: space('5');
-  justify-content: space-between;
-  margin-bottom: space('6');
-
-  h1 {
-    color: $color-heading;
-    font-size: $font-size-2xl;
-    margin: 0;
-  }
-
-  p:last-child {
-    color: $color-muted;
-    margin: space('2') 0 0;
-  }
-}
-
-.activities-list__eyebrow {
-  @include eyebrow;
-}
-
-.activities-list__toolbar {
-  margin-bottom: space('5');
-  max-width: 20rem;
-
-  .field { margin: 0; }
-}
-
 .activities-list td[data-label='Inicio'] { white-space: nowrap; }
 
 .activities-list__search {
@@ -111,9 +81,6 @@
 }
 
 @media (max-width: 38rem) {
-  .activities-list__toolbar { max-width: none; }
-  .activities-list__header { align-items: stretch; flex-direction: column; }
-  .activities-list__header > .button { width: 100%; }
   .activities-list__search { grid-template-columns: 1fr; }
   .activities-list__pagination { align-items: stretch; flex-direction: column; gap: space('3'); }
   .activities-list__pagination > div { display: grid; grid-template-columns: 1fr 1fr; }
