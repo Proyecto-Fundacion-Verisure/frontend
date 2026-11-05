@@ -312,7 +312,7 @@ export function AdminAccountStatusPage() {
         title={confirmModal.action === 'accept' ? 'Aceptar organización' : 'Rechazar organización'}
         footer={
           <>
-            <Button variant="ghost" onClick={closeConfirm}>
+            <Button variant="secondary" onClick={closeConfirm}>
               Cancelar
             </Button>
             <Button

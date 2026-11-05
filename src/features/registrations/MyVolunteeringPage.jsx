@@ -97,7 +97,7 @@ function RegistrationCard({ item, onCancel, isCancelling }) {
       {onCancel && canCancel && (
         <>
           <Button
-            variant="secondary"
+            variant="danger"
             size="small"
             onClick={handleOpen}
             data-testid={`cancel-${item.registrationId}`}

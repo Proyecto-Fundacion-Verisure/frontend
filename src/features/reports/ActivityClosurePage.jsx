@@ -263,13 +263,14 @@ export default function ActivityClosurePage() {
       {!isClosed && (
         <div className="closure-form__actions">
           <Button
+            variant="secondary"
             onClick={save}
             isLoading={state.status === 'saving'}
             loadingLabel="Guardando…"
           >
             Guardar borrador
           </Button>
-          <Button variant="secondary" onClick={openConfirm}>
+          <Button onClick={openConfirm}>
             Finalizar cierre
           </Button>
         </div>
