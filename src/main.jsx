@@ -5,7 +5,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { AuthProvider } from './features/auth/AuthContext';
 import ErrorFallback from './components/ErrorBoundary/ErrorFallback';
 import AppRouter from './routes/AppRouter';
-import '@fontsource-variable/inter';
+import '@fontsource-variable/geist';
 import './styles/main.scss';
 
 createRoot(document.getElementById('root')).render(
