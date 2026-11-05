@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getProposals, rejectProposal } from '../../api/proposalsApi';
-import { Badge, Button, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../components/ui';
+import { Badge, Button, ConfirmModal, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../components/ui';
 import { getActivityDraftPath } from './AcceptProposalButton';
 import { formatDateTime } from '../../utils/dates';
 
@@ -33,6 +33,8 @@ export default function ProposalsInboxPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [actionError, setActionError] = useState('');
+  const [rejectTarget, setRejectTarget] = useState(null);
+  const [isRejecting, setIsRejecting] = useState(false);
 
   const fetchProposals = useCallback(async () => {
     setLoading(true);
@@ -60,13 +62,18 @@ export default function ProposalsInboxPage() {
 
   // 204 sin cuerpo: no hay nada que leer, se recarga la lista. El 409
   // `PROPOSAL_ALREADY_DECIDED` llega traducido en `message`.
-  const handleReject = async (id) => {
+  const handleReject = async () => {
     setActionError('');
+    setIsRejecting(true);
     try {
-      await rejectProposal(id);
+      await rejectProposal(rejectTarget.id);
+      setRejectTarget(null);
       fetchProposals();
     } catch (err) {
+      setRejectTarget(null);
       setActionError(err?.message || 'No se pudo rechazar la propuesta.');
+    } finally {
+      setIsRejecting(false);
     }
   };
 
@@ -157,7 +164,7 @@ export default function ProposalsInboxPage() {
               <Button
                 size="small"
                 variant="secondary"
-                onClick={() => handleReject(row.id)}
+                onClick={() => setRejectTarget(row)}
                 aria-label={`Rechazar propuesta de ${partnerLabel(row)}`}
               >
                 Rechazar
@@ -223,6 +230,19 @@ export default function ProposalsInboxPage() {
           />
         </>
       )}
+
+      <ConfirmModal
+        isOpen={Boolean(rejectTarget)}
+        onClose={() => setRejectTarget(null)}
+        onConfirm={handleReject}
+        isLoading={isRejecting}
+        loadingLabel="Rechazando…"
+        title="Rechazar propuesta"
+        description={rejectTarget
+          ? `Se rechazará la propuesta de ${partnerLabel(rejectTarget)}. Esta acción no se puede deshacer.`
+          : undefined}
+        confirmLabel="Confirmar rechazo"
+      />
     </section>
   );
 }

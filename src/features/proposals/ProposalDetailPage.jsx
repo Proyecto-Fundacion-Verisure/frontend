@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getProposal, rejectProposal } from '../../api/proposalsApi';
-import { Badge, Button, Card, EmptyState, PageHeader, Spinner } from '../../components/ui';
+import { Badge, Button, Card, ConfirmModal, EmptyState, PageHeader, Spinner } from '../../components/ui';
 import AcceptProposalButton, { getActivityDraftPath } from './AcceptProposalButton';
 import { formatDateTime } from '../../utils/dates';
 
@@ -25,6 +25,7 @@ export default function ProposalDetailPage() {
   const [error, setError] = useState(null);
   const [rejectStatus, setRejectStatus] = useState('idle');
   const [rejectError, setRejectError] = useState('');
+  const [isRejectConfirmOpen, setIsRejectConfirmOpen] = useState(false);
 
   const fetchProposal = useCallback(async () => {
     setLoading(true);
@@ -59,6 +60,8 @@ export default function ProposalDetailPage() {
         setRejectStatus('idle');
         setRejectError(err?.message || 'No hemos podido rechazar la propuesta. Inténtalo de nuevo.');
       }
+    } finally {
+      setIsRejectConfirmOpen(false);
     }
   };
 
@@ -171,9 +174,7 @@ export default function ProposalDetailPage() {
             <AcceptProposalButton proposalId={proposal.id} />
             <Button
               variant="secondary"
-              onClick={handleReject}
-              isLoading={rejectStatus === 'loading'}
-              loadingLabel="Rechazando…"
+              onClick={() => setIsRejectConfirmOpen(true)}
               disabled={rejectStatus === 'conflict'}
             >
               Rechazar propuesta
@@ -183,6 +184,16 @@ export default function ProposalDetailPage() {
                 {rejectError}
               </p>
             )}
+            <ConfirmModal
+              isOpen={isRejectConfirmOpen}
+              onClose={() => setIsRejectConfirmOpen(false)}
+              onConfirm={handleReject}
+              isLoading={rejectStatus === 'loading'}
+              loadingLabel="Rechazando…"
+              title="Rechazar propuesta"
+              description={`Se rechazará la propuesta de ${partnerName}. Esta acción no se puede deshacer.`}
+              confirmLabel="Confirmar rechazo"
+            />
           </>
         )}
         {proposal.status === 'ACCEPTED' && (

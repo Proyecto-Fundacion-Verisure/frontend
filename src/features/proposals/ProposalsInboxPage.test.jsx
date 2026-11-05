@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -99,6 +99,52 @@ describe('ProposalsInboxPage', () => {
     const tr = row.closest('tr');
     expect(within(tr).getByText('4')).toBeInTheDocument();
     expect(within(tr).getByRole('button', { name: /rechazar propuesta de sin entidad/i })).toBeInTheDocument();
+  });
+
+  it('asks for confirmation before rejecting and reloads the list afterwards', async () => {
+    getProposals.mockResolvedValue({ data: [NEW_PROPOSAL], headers: { 'x-total-count': '1' } });
+    rejectProposal.mockResolvedValue({});
+    const user = userEvent.setup();
+    renderPage();
+
+    const tr = (await screen.findByText('Fundación Solitaria')).closest('tr');
+    await user.click(within(tr).getByRole('button', { name: /rechazar propuesta de fundación solitaria/i }));
+
+    expect(rejectProposal).not.toHaveBeenCalled();
+    expect(screen.getByRole('dialog', { name: /rechazar propuesta/i })).toHaveTextContent('Fundación Solitaria');
+
+    await user.click(screen.getByRole('button', { name: /confirmar rechazo/i }));
+
+    expect(rejectProposal).toHaveBeenCalledWith(NEW_PROPOSAL.id);
+    await waitFor(() => expect(getProposals).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+  });
+
+  it('does not reject when going back from the confirmation', async () => {
+    getProposals.mockResolvedValue({ data: [NEW_PROPOSAL], headers: { 'x-total-count': '1' } });
+    const user = userEvent.setup();
+    renderPage();
+
+    const tr = (await screen.findByText('Fundación Solitaria')).closest('tr');
+    await user.click(within(tr).getByRole('button', { name: /rechazar propuesta/i }));
+    await user.click(screen.getByRole('button', { name: 'Volver' }));
+
+    expect(rejectProposal).not.toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('closes the confirmation and shows the error when rejecting fails', async () => {
+    getProposals.mockResolvedValue({ data: [NEW_PROPOSAL], headers: { 'x-total-count': '1' } });
+    rejectProposal.mockRejectedValue({ status: 409, message: 'Ya se ha decidido.' });
+    const user = userEvent.setup();
+    renderPage();
+
+    const tr = (await screen.findByText('Fundación Solitaria')).closest('tr');
+    await user.click(within(tr).getByRole('button', { name: /rechazar propuesta/i }));
+    await user.click(screen.getByRole('button', { name: /confirmar rechazo/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Ya se ha decidido.');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('shows empty state when there are no proposals', async () => {

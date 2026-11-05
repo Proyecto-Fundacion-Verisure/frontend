@@ -100,9 +100,24 @@ describe('ProposalDetailPage', () => {
 
     await user.click(screen.getByRole('button', { name: /rechazar propuesta/i }));
 
+    await user.click(screen.getByRole('button', { name: /confirmar rechazo/i }));
+
     expect(rejectProposal).toHaveBeenCalledWith('1');
     expect(await screen.findByText(/sin acciones disponibles/i)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /aceptar propuesta/i })).not.toBeInTheDocument();
+  });
+
+  it('no rechaza si se vuelve atrás desde la confirmación', async () => {
+    getProposal.mockResolvedValue({ data: baseProposal });
+    const user = userEvent.setup();
+    renderDetail('1');
+
+    await user.click(await screen.findByRole('button', { name: /rechazar propuesta/i }));
+    expect(rejectProposal).not.toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: 'Volver' }));
+
+    expect(rejectProposal).not.toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('gestiona 409 conflicto en aceptar y rechazar', async () => {
@@ -126,6 +141,7 @@ describe('ProposalDetailPage', () => {
 
     await screen.findByRole('heading', { name: /fundación solitaria/i });
     await user.click(screen.getByRole('button', { name: /rechazar propuesta/i }));
+    await user.click(screen.getByRole('button', { name: /confirmar rechazo/i }));
 
     expect(await screen.findByText(/ya ha sido aceptada o rechazada/i)).toBeInTheDocument();
   });

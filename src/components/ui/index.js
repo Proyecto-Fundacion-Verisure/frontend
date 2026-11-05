@@ -1,6 +1,7 @@
 export { default as Badge } from './Badge/Badge';
 export { default as Button } from './Button/Button';
 export { default as Card } from './Card/Card';
+export { default as ConfirmModal } from './ConfirmModal/ConfirmModal';
 export { default as EmptyState } from './EmptyState/EmptyState';
 export { default as HeartButton } from './HeartButton/HeartButton';
 export { default as Input } from './Input/Input';

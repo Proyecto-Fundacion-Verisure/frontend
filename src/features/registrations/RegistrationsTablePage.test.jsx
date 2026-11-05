@@ -243,9 +243,44 @@ describe('RegistrationsTablePage', () => {
     const row = (await screen.findByText('Ana Torres')).closest('tr');
     await user.click(within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i }));
 
+    // Nada se envía hasta confirmar, y la confirmación no pide motivo.
+    expect(rejectRegistration).not.toHaveBeenCalled();
+    expect(screen.getByRole('dialog', { name: /rechazar inscripción/i })).toHaveTextContent('Ana Torres');
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /confirmar rechazo/i }));
+
     await waitFor(() => expect(rejectRegistration).toHaveBeenCalledWith(1));
     expect(await screen.findByRole('tab', { name: /rechazadas 1/i })).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  });
+
+  it('does not reject when going back from the confirmation', async () => {
+    getActivityRegistrations.mockResolvedValue({ data: BOARD });
+    const user = userEvent.setup();
+    renderPage();
+
+    const row = (await screen.findByText('Ana Torres')).closest('tr');
+    const trigger = within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i });
+    await user.click(trigger);
+    await user.click(screen.getByRole('button', { name: 'Volver' }));
+
+    expect(rejectRegistration).not.toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  it('shows the error in the row when rejecting fails', async () => {
+    getActivityRegistrations.mockResolvedValue({ data: BOARD });
+    rejectRegistration.mockRejectedValue({ status: 500, message: 'No se pudo rechazar.' });
+    const user = userEvent.setup();
+    renderPage();
+
+    const row = (await screen.findByText('Ana Torres')).closest('tr');
+    await user.click(within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i }));
+    await user.click(screen.getByRole('button', { name: /confirmar rechazo/i }));
+
+    expect(await within(row).findByRole('alert')).toHaveTextContent('No se pudo rechazar.');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('keeps the row actionable after a decision error', async () => {
