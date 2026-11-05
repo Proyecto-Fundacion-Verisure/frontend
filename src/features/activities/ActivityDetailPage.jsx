@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { MapPin } from 'lucide-react';
 import { getActivityDetail } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
@@ -10,6 +11,18 @@ import RegisterButton from '../registrations/RegisterButton';
 import { getLineByValue } from '../../constants/activityLines';
 import { formatDate, formatDateRange, isPastLocalDate } from '../../utils/dates';
 import { LIFECYCLE_BADGES, formatSpots, isOpenForRegistration } from './spots';
+
+const ENROLLED_STATUS_NOTES = {
+  WAITLISTED: ' — En lista de espera',
+  PENDING_CLOSURE: ' — Pendiente de cierre',
+  CLOSED: ' — Participación cerrada',
+  REJECTED: ' — Solicitud no aceptada',
+};
+
+const ENROLLED_BUTTON_LABELS = {
+  WAITLISTED: 'Inscripción solicitada',
+  REJECTED: 'Solicitud no aceptada',
+};
 
 export default function ActivityDetailPage() {
   const { activityId } = useParams();
@@ -128,9 +141,7 @@ export default function ActivityDetailPage() {
     ? favoritesCtx.getFavorite(activity.id, activity.favoritedByMe)
     : Boolean(activity.favoritedByMe);
   const isFavoritePending = favoritesCtx ? favoritesCtx.isPending(activity.id) : false;
-  // Los dos corazones de la página —cabecera y panel— comparten este manejador y
-  // el estado del contexto, así que pulsar uno mueve el otro. El fallo lo deshace
-  // el proveedor; aquí solo se captura la promesa.
+  // El fallo lo deshace el proveedor; aquí solo se captura la promesa.
   const handleToggleFavorite = favoritesCtx
     ? () => favoritesCtx.toggleFavorite(activity.id, favoritedByMe).catch(() => {})
     : undefined;
@@ -144,24 +155,24 @@ export default function ActivityDetailPage() {
 
       <div className="activity-detail__layout">
         <div className="activity-detail__main">
-          <div className="activity-detail__header">
-            <h1 id="activity-detail-title" className="activity-detail__title">
-              {activity.title}
-            </h1>
+          <h1 id="activity-detail-title" className="activity-detail__title">
+            {activity.title}
+          </h1>
+
+          <Card className={`activity-detail__card${lineInfo ? '' : ' activity-detail__card--no-image'}`}>
             {canParticipate && (
               <HeartButton
+                className="activity-detail__favorite"
                 active={favoritedByMe}
                 aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
                 onClick={handleToggleFavorite}
                 isLoading={isFavoritePending}
               />
             )}
-          </div>
-
-          <Card className="activity-detail__card">
             {lineInfo && (
               <img src={lineInfo.image} alt={lineInfo.description} className="activity-detail__image" />
             )}
+            <div className="activity-detail__body">
             <div className="activity-detail__badges">
               {lineLabel && <Badge variant="info">{lineLabel}</Badge>}
               {activity.mode && <Badge variant="neutral">{activity.mode}</Badge>}
@@ -173,7 +184,8 @@ export default function ActivityDetailPage() {
               {isEnrolled && <Badge variant="success">Ya estás apuntado</Badge>}
               {displayLocation && (
                 <Badge variant="neutral">
-                  <span aria-label={`Ubicación: ${displayLocation}`}>📍 {displayLocation}</span>
+                  <MapPin aria-hidden="true" size={12} />
+                  <span aria-label={`Ubicación: ${displayLocation}`}>{displayLocation}</span>
                 </Badge>
               )}
             </div>
@@ -198,10 +210,11 @@ export default function ActivityDetailPage() {
                 <strong>Plazo de inscripción:</strong> hasta el {formatDate(activity.registrationDeadline)}
               </p>
             )}
-            {total > 0 && (
+            {!canParticipate && total > 0 && (
               <ProgressBar value={occupied} max={total} label="Plazas ocupadas" showValue={false} valueLabel={`${occupied} de ${total}`} />
             )}
-            {spotsLabel && <p className="activity-detail__meta">{spotsLabel}</p>}
+            {!canParticipate && spotsLabel && <p className="activity-detail__meta">{spotsLabel}</p>}
+            </div>
           </Card>
         </div>
 
@@ -216,11 +229,7 @@ export default function ActivityDetailPage() {
             {isEnrolled && (
               <p className="activity-detail__panel-meta">
                 Ya estás apuntado
-                {currentRegistration?.status === 'WAITLISTED'
-                  ? ' — En lista de espera'
-                  : currentRegistration?.status && currentRegistration.status !== 'CONFIRMED'
-                    ? ` — ${currentRegistration.status}`
-                    : ''}
+                {ENROLLED_STATUS_NOTES[currentRegistration?.status] ?? ''}
                 .
               </p>
             )}
@@ -240,12 +249,12 @@ export default function ActivityDetailPage() {
                 Plazo de inscripción: hasta el {formatDate(activity.registrationDeadline)}
               </p>
             )}
-            {!isEnrolled && <RegisterButton activity={activity} onSuccess={(data) => setLocalRegistration(data)} />}
-            <HeartButton
-              active={favoritedByMe}
-              aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
-              onClick={handleToggleFavorite}
-              isLoading={isFavoritePending}
+            <RegisterButton
+              className="activity-detail__register"
+              activity={activity}
+              enrolledLabel={isEnrolled ? ENROLLED_BUTTON_LABELS[currentRegistration?.status] ?? 'Ya estás inscrito' : undefined}
+              closedLabel={lifecycleLabel ? `Actividad ${lifecycleLabel.toLowerCase()}` : undefined}
+              onSuccess={(data) => setLocalRegistration(data)}
             />
           </Card>
         </aside>}

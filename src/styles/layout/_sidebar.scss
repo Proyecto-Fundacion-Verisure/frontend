@@ -130,3 +130,6 @@
     min-width: max-content;
   }
 }
+
+.sidebar__link svg { color: $color-muted; }
+.sidebar__link--active svg { color: inherit; }

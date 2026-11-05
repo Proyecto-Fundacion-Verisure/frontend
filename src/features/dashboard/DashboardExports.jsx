@@ -88,7 +88,7 @@ export default function DashboardExports({ filters = {} }) {
                   <h3>{definition.title}</h3>
                   <span className="dashboard-export__format">{definition.format}</span>
                 </div>
-                <Download aria-hidden="true" />
+                <Download aria-hidden="true" size={16} />
               </div>
               <p>{definition.description}</p>
               {definition.optional && (

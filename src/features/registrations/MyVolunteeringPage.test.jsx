@@ -127,6 +127,8 @@ describe('MyVolunteeringPage', () => {
     renderPage();
     expect(await screen.findByRole('heading', { name: /^activas$/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /^historial$/i })).toBeInTheDocument();
+    expect(screen.getByTestId('active-count')).toHaveTextContent(String(activeItems.length));
+    expect(screen.getByTestId('history-count')).toHaveTextContent(String(closedItems.length));
     // cada inscripción aparece en su bloque
     expect(screen.getByText('Acompañamiento a mayores')).toBeInTheDocument();
     expect(screen.getAllByText('Jornada ambiental')).toHaveLength(2);

@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { TriangleAlert } from 'lucide-react';
 import { EmptyState } from '../ui';
 
 export default function ErrorFallback({ error, resetErrorBoundary }) {
@@ -7,7 +8,7 @@ export default function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <section className="error-fallback" role="alert">
       <EmptyState
-        icon={<span aria-hidden="true">⚠</span>}
+        icon={<TriangleAlert aria-hidden="true" size={40} />}
         title="Algo salió mal"
         description={error.message}
         action={

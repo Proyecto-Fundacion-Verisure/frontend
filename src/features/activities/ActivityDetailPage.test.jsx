@@ -67,7 +67,7 @@ describe('ActivityDetailPage', () => {
 
     expect(await screen.findByRole('heading', { name: /acompañamiento a mayores/i })).toBeInTheDocument();
     expect(screen.getByText(/visitas semanales/i)).toBeInTheDocument();
-    expect(screen.getByText('📍 Madrid')).toBeInTheDocument();
+    expect(screen.getByText('Madrid')).toBeInTheDocument();
   });
 
   it('es recargable via param activityId sin depender de state', async () => {
@@ -107,6 +107,18 @@ describe('ActivityDetailPage', () => {
     expect(favButtons[0]).toHaveAttribute('aria-pressed', 'true');
     expect(screen.queryByText(/favoriteCount/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/♥.*\d+/)).not.toBeInTheDocument();
+  });
+
+  it('muestra un solo corazón, dentro de la tarjeta', async () => {
+    getActivityDetail.mockResolvedValue({
+      data: { id: 1, title: 'Acompañamiento a mayores', status: 'PUBLISHED', spots: 10, occupiedSpots: 2 },
+    });
+    renderDetail('1');
+    await screen.findByRole('heading', { name: /acompañamiento a mayores/i });
+    const hearts = screen.getAllByRole('button', { name: /añadir a favoritos/i });
+    expect(hearts).toHaveLength(1);
+    expect(hearts[0].closest('.activity-detail__card')).not.toBeNull();
+    expect(screen.getByRole('button', { name: /solicitar inscripción/i })).toBeInTheDocument();
   });
 
   it('muestra estado no favorito cuando favoritedByMe es false', async () => {
@@ -212,6 +224,46 @@ describe('ActivityDetailPage', () => {
     // ensure no numeric favorite count rendered
     const text = document.body.textContent || '';
     expect(text).not.toMatch(/favoritos.*\d+/i);
+  });
+
+  describe('botón de inscripción', () => {
+    const OPEN = { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 };
+
+    async function renderButton(activity, registrations = []) {
+      getActivityDetail.mockResolvedValue({ data: { ...OPEN, ...activity } });
+      getMyRegistrations.mockResolvedValue({ data: registrations });
+      renderDetail('1');
+      await screen.findByRole('heading', { name: 'Actividad' });
+    }
+
+    it.each([
+      [{ status: 'IN_PROGRESS' }, /actividad en curso/i],
+      [{ status: 'FINISHED' }, /actividad finalizada/i],
+      [{ status: 'PUBLISHED', registrationDeadline: '2020-01-01' }, /plazo cerrado/i],
+    ])('queda bloqueado y explica el motivo con %j', async (activity, name) => {
+      await renderButton(activity);
+
+      expect(screen.getByRole('button', { name })).toBeDisabled();
+      expect(screen.getByRole('note')).toHaveTextContent(/ya no se admiten inscripciones/i);
+      expect(screen.queryByTestId('open-registration-modal')).not.toBeInTheDocument();
+    });
+
+    it.each([
+      ['CONFIRMED', /ya estás inscrito/i],
+      ['WAITLISTED', /inscripción solicitada/i],
+      ['REJECTED', /solicitud no aceptada/i],
+    ])('queda bloqueado con una inscripción %s', async (status, name) => {
+      await renderButton({ status: 'PUBLISHED' }, [{ activityId: 1, status }]);
+
+      expect(await screen.findByRole('button', { name })).toBeDisabled();
+      expect(screen.queryByRole('note')).not.toBeInTheDocument();
+    });
+
+    it('sigue activo si está completa con el plazo abierto, para la lista de espera', async () => {
+      await renderButton({ status: 'FULL', spots: 10, occupiedSpots: 10 });
+
+      expect(screen.getByRole('button', { name: /solicitar inscripción/i })).toBeEnabled();
+    });
   });
 
   // H12 — Modal explicativo antes de confirmar

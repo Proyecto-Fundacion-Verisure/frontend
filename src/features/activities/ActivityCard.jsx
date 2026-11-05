@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Building2, CalendarDays, MapPin } from 'lucide-react';
 import { Badge, Card, HeartButton, ProgressBar } from '../../components/ui';
 import { getLineByValue } from '../../constants/activityLines';
 import { formatDateRange } from '../../utils/dates';
@@ -59,20 +60,17 @@ export default function ActivityCard({
 
   const mainContent = (
     <>
-      {lineInfo ? (
-        <div className="activity-card__image">
-          <img src={lineInfo.image} alt="" />
-        </div>
-      ) : (
-        <div className="activity-card__image" role="img" aria-label="Sin imagen disponible">
-          Sin imagen
-        </div>
-      )}
-
-      <div className="activity-card__body">
-        <div className="activity-card__badges">
-          {lineLabel && <Badge variant="info">{lineLabel}</Badge>}
-          {mode && <Badge variant="neutral">{mode}</Badge>}
+      <div className="activity-card__media">
+        {lineInfo ? (
+          <div className="activity-card__image">
+            <img src={lineInfo.image} alt="" />
+          </div>
+        ) : (
+          <div className="activity-card__image" role="img" aria-label="Sin imagen disponible">
+            Sin imagen
+          </div>
+        )}
+        <div className="activity-card__status">
           {isOpen && (
             <Badge variant="success"><span className="badge__dot" aria-hidden="true" />Inscripción abierta</Badge>
           )}
@@ -80,37 +78,53 @@ export default function ActivityCard({
           {isFull && <Badge variant="warning">Completa</Badge>}
           {isEnrolled && <Badge variant="success">Ya estás apuntado</Badge>}
         </div>
+      </div>
+
+      <div className="activity-card__body">
+        <div className="activity-card__badges">
+          {lineLabel && <Badge variant="info">{lineLabel}</Badge>}
+          {mode && <Badge variant="neutral">{mode}</Badge>}
+        </div>
 
         {title && <h2 className="activity-card__title">{title}</h2>}
 
-        {dateRange && (
-          <p className="activity-card__dates">
-            <span className="activity-card__dates-label">Fechas: </span>
-            {dateRange}
-            {hours ? ` · ${hours} h` : ''}
-          </p>
-        )}
-
         {description && <p className="activity-card__description">{description}</p>}
 
-        {total > 0 && (
-          <ProgressBar
-            value={occupied}
-            max={total}
-            label="Plazas ocupadas"
-            showValue={false}
-            valueLabel={`${occupied} de ${total}`}
-          />
-        )}
-
-        {(partnerName || displayLocation) && (
-          <div className="activity-card__meta">
-            {partnerName && <span className="activity-card__organization">{partnerName}</span>}
-            {displayLocation && (
-              <span className="activity-card__location" aria-label={`Ubicación: ${displayLocation}`}>
-                <span aria-hidden="true">📍</span> {displayLocation}
+        <ul className="activity-card__facts">
+          {dateRange && (
+            <li className="activity-card__dates">
+              <CalendarDays aria-hidden="true" size={16} />
+              <span>
+                <span className="sr-only">Fechas: </span>
+                {dateRange}
+                {hours ? ` · ${hours} h` : ''}
               </span>
-            )}
+            </li>
+          )}
+          {displayLocation && (
+            <li aria-label={`Ubicación: ${displayLocation}`}>
+              <MapPin aria-hidden="true" size={16} />
+              <span>{displayLocation}</span>
+            </li>
+          )}
+          {partnerName && (
+            <li className="activity-card__organization">
+              <Building2 aria-hidden="true" size={16} />
+              <span>{partnerName}</span>
+            </li>
+          )}
+        </ul>
+
+        {total > 0 && (
+          <div className="activity-card__spots">
+            <ProgressBar
+              value={occupied}
+              max={total}
+              label="Plazas ocupadas"
+              showValue={false}
+              valueLabel={`${occupied} de ${total}`}
+            />
+            <p>{formatSpots(occupied, total)}</p>
           </div>
         )}
       </div>
@@ -127,15 +141,14 @@ export default function ActivityCard({
         mainContent
       )}
 
-      <div className="activity-card__footer">
-        <span className="activity-card__organization">{total > 0 ? formatSpots(occupied, total) : ''}</span>
-        <HeartButton
-          active={Boolean(favoritedByMe)}
-          aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
-          onClick={onToggleFavorite}
-          isLoading={isFavoritePending}
-        />
-      </div>
+      {/* Fuera del enlace: un botón dentro de un enlace no es HTML válido. */}
+      <HeartButton
+        className="activity-card__favorite"
+        active={Boolean(favoritedByMe)}
+        aria-label={favoritedByMe ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+        onClick={onToggleFavorite}
+        isLoading={isFavoritePending}
+      />
     </Card>
   );
 }

@@ -2,26 +2,26 @@ export const ACTIVITY_LINES = [
   {
     value: "desoledad",
     label: "Desoledad",
-    image: "/images/01-desoledad-linea-de-accion.png",
-    description: "Dos personas mayores sentadas frente a frente, acompañándose y conversando, con un corazón sobre ellas.",
+    image: "/images/lines/desoledad.svg",
+    description: "Portada en tonos cálidos con el icono de un corazón y un apretón de manos.",
   },
   {
     value: "educar",
     label: "Educar para proteger",
-    image: "/images/02-educar-linea-de-accion.png",
-    description: "Persona aprendiendo y alcanzando una estrella sobre un libro abierto.",
+    image: "/images/lines/educar.svg",
+    description: "Portada en tonos azules con el icono de un libro abierto.",
   },
   {
     value: "acoso",
     label: "Protegidos ante el acoso",
-    image: "/images/03-acoso-linea-de-accion.png",
-    description: "Tres personas protegidas por un escudo y sostenidas por dos manos.",
+    image: "/images/lines/acoso.svg",
+    description: "Portada en tonos violetas con el icono de un escudo.",
   },
   {
     value: "medioambiente",
     label: "Medio ambiente",
-    image: "/images/04-medioambiente-linea-de-accion.png",
-    description: "Tres personas rodeadas y sostenidas por manos, con una planta creciendo sobre ellas.",
+    image: "/images/lines/medioambiente.svg",
+    description: "Portada en tonos verdes con el icono de un brote.",
   },
 ];
 
