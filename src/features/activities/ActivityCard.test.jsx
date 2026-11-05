@@ -43,7 +43,7 @@ describe('ActivityCard', () => {
     const { container } = render(<ActivityCard activity={baseActivity} />);
 
     expect(container.querySelector('.activity-card__image img'))
-      .toHaveAttribute('src', '/images/01-desoledad-linea-de-accion.png');
+      .toHaveAttribute('src', '/images/lines/desoledad.svg');
   });
 
   it('deja el hueco cuando la línea no se reconoce', () => {
