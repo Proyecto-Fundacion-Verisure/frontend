@@ -4,19 +4,9 @@
   @include page-container;
 }
 
-.proposals-inbox__header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: space('4');
-  margin-bottom: space('6');
-}
-
 .proposals-inbox__filters {
-  display: flex;
-  align-items: center;
-  gap: space('3');
+  margin-bottom: space('5');
+  max-width: 20rem;
 }
 
 .proposals-inbox__filters .field {
@@ -45,19 +35,6 @@
 
 .proposal-detail__back {
   @include back-link;
-}
-
-.proposal-detail__header {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: space('3');
-  justify-content: space-between;
-  margin: space('3') 0 space('6');
-}
-
-.proposal-detail__header h1 {
-  overflow-wrap: anywhere;
 }
 
 .proposal-detail__meta {
@@ -99,10 +76,8 @@
 }
 
 @media (max-width: 38rem) {
-  .proposals-inbox__header { flex-direction: column; align-items: flex-start; }
-  .proposals-inbox__filters { align-items: stretch; width: 100%; }
+  .proposals-inbox__filters { max-width: none; }
   .proposals-inbox__link { align-items: center; display: inline-flex; min-height: 2.75rem; }
-  .proposal-detail__header { align-items: flex-start; flex-direction: column; }
   .proposal-detail__meta { grid-template-columns: 1fr; }
   .proposal-detail__meta a { align-items: center; display: inline-flex; min-height: $control-height; }
   .proposal-detail__actions { align-items: stretch; flex-direction: column; }

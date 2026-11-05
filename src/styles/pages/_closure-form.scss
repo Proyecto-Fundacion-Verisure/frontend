@@ -1,5 +1,9 @@
 @use '../abstracts' as *;
 
+.pending-closures {
+  @include page-container;
+}
+
 .report-form-page {
   @include page-container(48rem);
 
@@ -22,7 +26,7 @@
     flex-direction: column;
     gap: space('5');
     margin: space('5') 0;
-    padding: clamp(space('5'), 4vw, space('8'));
+    padding: space('5');
   }
 
   dt {
@@ -124,8 +128,8 @@
     border: 1px solid $color-border;
     border-radius: $radius-lg;
     box-shadow: $shadow-sm;
-    margin-top: space('8');
-    padding: clamp(space('5'), 4vw, space('8'));
+    margin-top: space('6');
+    padding: space('5');
 
     > .field {
       margin-top: space('5');

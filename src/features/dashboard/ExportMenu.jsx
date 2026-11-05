@@ -110,7 +110,7 @@ export default function ExportMenu({ filters = {} }) {
       <button
         ref={buttonRef}
         type="button"
-        className={`button button--primary button--medium export-menu__trigger ${open ? 'export-menu__trigger--open' : ''}`}
+        className={`button button--secondary button--medium export-menu__trigger ${open ? 'export-menu__trigger--open' : ''}`}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls="export-menu"

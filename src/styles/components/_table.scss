@@ -5,6 +5,7 @@
   background: $color-surface;
   border: 1px solid $color-border;
   border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
   max-width: 100%;
   overflow-x: auto;
 }
@@ -66,4 +67,19 @@
       }
     }
   }
+}
+
+// El título ya lo dice la cabecera de la página o de la sección; la tabla lo
+// conserva para lectores de pantalla.
+.activities-list caption,
+.account-status caption,
+.pending-closures caption,
+.proposals-inbox caption,
+.registrations-page__section caption {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }

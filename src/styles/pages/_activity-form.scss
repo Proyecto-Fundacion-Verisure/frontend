@@ -12,7 +12,6 @@
 .activity-form-page__header > a,
 .activity-form-page__back {
   @include back-link;
-  margin-bottom: space('3');
 }
 
 .activity-form-page__eyebrow {
@@ -42,7 +41,7 @@
   border-radius: $radius-lg;
   box-shadow: $shadow-sm;
   margin-top: space('6');
-  padding: clamp(space('5'), 4vw, space('8'));
+  padding: space('5');
 }
 
 .activity-form-page__layout .activity-form {

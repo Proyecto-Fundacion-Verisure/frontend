@@ -7,6 +7,8 @@
   width: 100%;
   @include page-container;
 
+  .page-header { margin-bottom: 0; }
+
   &__header,
   .dashboard-section-heading {
     align-items: flex-start;
@@ -51,8 +53,8 @@
     display: inline-flex;
     font-size: $font-size-xs;
     font-weight: $font-weight-semibold;
-    margin-top: space('3');
     padding: space('1') space('3');
+    width: fit-content;
   }
 
   &__charts {
@@ -626,6 +628,8 @@
       .export-menu__dropdown { left: 0; right: auto; width: 100%; min-width: 0; }
     }
   }
+
+  .page-header__actions .export-menu__dropdown { left: 0; min-width: 0; right: auto; width: 100%; }
 
   .dashboard-filters {
     &__controls { grid-template-columns: 1fr; }

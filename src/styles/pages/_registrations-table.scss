@@ -4,24 +4,13 @@
   @include page-container;
 }
 
-.registrations-page__header {
-  align-items: end;
-  display: flex;
-  gap: space('5');
-  justify-content: space-between;
-  margin-bottom: space('6');
-
-  h1 { margin: 0; }
-
-  p:last-child { color: $color-muted; margin: space('1') 0 0; }
-}
-
 .registrations-page__totals {
   display: grid;
   gap: space('3');
   justify-items: end;
 
   > strong { color: $color-heading; white-space: nowrap; }
+  > p { color: $color-muted; margin: 0; }
 }
 
 // Contadores de toda la actividad, no de la página que se está viendo.
@@ -49,7 +38,6 @@
 
 .registrations-page__back {
   @include back-link;
-  margin-bottom: space('3');
 }
 
 .registrations-page__eyebrow {
@@ -146,7 +134,6 @@
 }
 
 @media (max-width: 38rem) {
-  .registrations-page__header { align-items: flex-start; flex-direction: column; }
   .registrations-page__totals { justify-items: start; }
   .registrations-page__counts div { text-align: left; }
   .registrations-page__state-actions { align-items: stretch; flex-direction: column; }

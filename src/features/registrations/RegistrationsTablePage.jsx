@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { Badge, Button, EmptyState, Pagination, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, PageHeader, Pagination, Spinner, Table } from '../../components/ui';
 import RegistrationDecisionActions from './RegistrationDecisionActions';
 import CancelRegistrationAction from './CancelRegistrationAction';
 import useRegistrations from './useRegistrations';
@@ -207,23 +207,24 @@ export default function RegistrationsTablePage() {
 
   return (
     <section className="registrations-page" aria-labelledby="registrations-title">
-      <header className="registrations-page__header">
-        <div>
-          <Link className="registrations-page__back" to="/admin/activities">← Volver a actividades</Link>
-          <p className="registrations-page__eyebrow">Administración</p>
-          <h1 id="registrations-title">Inscripciones</h1>
-          <p>{isGlobal ? 'Todos los proyectos' : (state?.activityTitle ?? `Actividad ${activityId}`)}</p>
-        </div>
-        <div className="registrations-page__totals">
-          <strong>{totalElements} inscripciones</strong>
-          {counts && (
-            <p className="registrations-page__summary">
-              Confirmadas {counts.confirmed} · En cola {counts.waitlisted}
-              {counts.unreviewed > 0 && `, de las que ${counts.unreviewed} sin revisar`}
-            </p>
-          )}
-        </div>
-      </header>
+      <Link className="registrations-page__back" to="/admin/activities">← Volver a actividades</Link>
+      <PageHeader
+        eyebrow="Administración"
+        title="Inscripciones"
+        titleId="registrations-title"
+        description={isGlobal ? 'Todos los proyectos' : (state?.activityTitle ?? `Actividad ${activityId}`)}
+        actions={(
+          <div className="registrations-page__totals">
+            <strong>{totalElements} inscripciones</strong>
+            {counts && (
+              <p className="registrations-page__summary">
+                Confirmadas {counts.confirmed} · En cola {counts.waitlisted}
+                {counts.unreviewed > 0 && `, de las que ${counts.unreviewed} sin revisar`}
+              </p>
+            )}
+          </div>
+        )}
+      />
 
       {registrations.length === 0 ? (
         <EmptyState

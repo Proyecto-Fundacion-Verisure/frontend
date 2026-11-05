@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getPendingActivityClosures } from '../../api/closuresApi';
-import { Button, EmptyState, Pagination, Spinner, Table } from '../../components/ui';
+import { Button, EmptyState, PageHeader, Pagination, Spinner, Table } from '../../components/ui';
 import { formatDateRange } from '../../utils/dates';
 
 export default function PendingClosurePage() {
@@ -32,7 +32,7 @@ export default function PendingClosurePage() {
   if (state.status === 'error') {
     const forbidden = state.error?.status === 403;
     return (
-      <section aria-labelledby="pending-closures-title">
+      <section className="pending-closures" aria-labelledby="pending-closures-title">
         <h1 id="pending-closures-title">
           {forbidden ? 'Acceso restringido' : 'No hemos podido cargar las actividades pendientes de cierre'}
         </h1>
@@ -73,9 +73,12 @@ export default function PendingClosurePage() {
   ];
 
   return (
-    <section aria-labelledby="pending-closures-title">
-      <h1 id="pending-closures-title">Actividades pendientes de cierre</h1>
-      <p>{totalElements} {totalElements === 1 ? 'actividad pendiente' : 'actividades pendientes'}</p>
+    <section className="pending-closures" aria-labelledby="pending-closures-title">
+      <PageHeader
+        title="Actividades pendientes de cierre"
+        titleId="pending-closures-title"
+        description={`${totalElements} ${totalElements === 1 ? 'actividad pendiente' : 'actividades pendientes'}`}
+      />
       {items.length ? (
         <>
           <Table

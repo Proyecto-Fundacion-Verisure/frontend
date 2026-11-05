@@ -5,7 +5,7 @@ import {
   getActivityClosure,
   saveActivityClosure,
 } from '../../api/closuresApi';
-import { Button, Input, Modal, Spinner, Table, Textarea } from '../../components/ui';
+import { Button, Input, Modal, PageHeader, Spinner, Table, Textarea } from '../../components/ui';
 
 const toNumber = (value) => {
   if (value == null || value === '') return null;
@@ -208,9 +208,12 @@ export default function ActivityClosurePage() {
   return (
     <section className="report-form-page" aria-labelledby="activity-closure-title">
       <Link to="/admin/activities/pending-closure">← Volver a cierres pendientes</Link>
-      <p className="activity-form-page__eyebrow">Cierre de actividad</p>
-      <h1 id="activity-closure-title">Cierre de la actividad</h1>
-      <p>{closure?.activityTitle ?? `Actividad ${activityId}`}</p>
+      <PageHeader
+        eyebrow="Cierre de actividad"
+        title="Cierre de la actividad"
+        titleId="activity-closure-title"
+        description={closure?.activityTitle ?? `Actividad ${activityId}`}
+      />
 
       {saved && (
         <p className="closure-form__notice" role="status" data-testid="activity-closure-status">

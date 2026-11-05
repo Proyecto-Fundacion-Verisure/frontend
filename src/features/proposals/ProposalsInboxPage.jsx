@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getProposals, rejectProposal } from '../../api/proposalsApi';
-import { Badge, Button, EmptyState, Pagination, Select, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../components/ui';
 import { getActivityDraftPath } from './AcceptProposalButton';
 import { formatDateTime } from '../../utils/dates';
 
@@ -147,14 +147,6 @@ export default function ProposalsInboxPage() {
         <div className="proposals-inbox__actions">
           {row.status === 'NEW' && (
             <>
-              <Button
-                size="small"
-                variant="danger"
-                onClick={() => handleReject(row.id)}
-                aria-label={`Rechazar propuesta de ${partnerLabel(row)}`}
-              >
-                Rechazar
-              </Button>
               <Link
                 className="button button--primary button--small"
                 to={`/proposals/${row.id}`}
@@ -162,6 +154,14 @@ export default function ProposalsInboxPage() {
               >
                 Revisar
               </Link>
+              <Button
+                size="small"
+                variant="secondary"
+                onClick={() => handleReject(row.id)}
+                aria-label={`Rechazar propuesta de ${partnerLabel(row)}`}
+              >
+                Rechazar
+              </Button>
             </>
           )}
           {row.status === 'ACCEPTED' && (
@@ -182,19 +182,17 @@ export default function ProposalsInboxPage() {
 
   return (
     <section className="proposals-inbox" aria-labelledby="proposals-inbox-title">
-      <div className="proposals-inbox__header">
-        <h1 id="proposals-inbox-title">Bandeja de propuestas</h1>
-        <div className="proposals-inbox__filters">
-          <Select
-            label="Filtrar por estado"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </Select>
-        </div>
+      <PageHeader title="Bandeja de propuestas" titleId="proposals-inbox-title" />
+      <div className="proposals-inbox__filters">
+        <Select
+          label="Filtrar por estado"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          {STATUS_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </Select>
       </div>
 
       {actionError && (

@@ -11,7 +11,10 @@
 
   &__eyebrow { @include eyebrow; }
 
-  &__title { margin: 0; }
+  &__title {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
 
   &__description {
     color: $color-muted;
@@ -23,6 +26,7 @@
     flex: 0 0 auto;
     flex-wrap: wrap;
     gap: space('3');
+    position: relative;
   }
 }
 
@@ -32,5 +36,7 @@
     flex-direction: column;
   }
 
-  .page-header__actions > .button { width: 100%; }
+  .page-header__actions > .button,
+  .page-header__actions > .export-menu,
+  .page-header__actions > .export-menu > .button { width: 100%; }
 }

@@ -7,7 +7,7 @@ export default function Sidebar({ sections = [], counts = {} }) {
         {sections.map(({ section, items }) => (
           <div key={section} className="sidebar__section">
             <span className="sidebar__section-title">{section}</span>
-            {items.map(({ path, label, icon: Icon, badgeKey, variant }) => {
+            {items.map(({ path, label, icon: Icon, badgeKey }) => {
               const badge = badgeKey ? counts[badgeKey] : null;
 
               return (
@@ -17,7 +17,6 @@ export default function Sidebar({ sections = [], counts = {} }) {
                   className={({ isActive }) =>
                     [
                       "sidebar__link",
-                      variant === "cta" && "sidebar__link--cta",
                       isActive && "sidebar__link--active",
                     ]
                       .filter(Boolean)

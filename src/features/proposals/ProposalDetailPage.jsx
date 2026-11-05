@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getProposal, rejectProposal } from '../../api/proposalsApi';
-import { Badge, Button, Card, EmptyState, Spinner } from '../../components/ui';
+import { Badge, Button, Card, EmptyState, PageHeader, Spinner } from '../../components/ui';
 import AcceptProposalButton, { getActivityDraftPath } from './AcceptProposalButton';
 import { formatDateTime } from '../../utils/dates';
 
@@ -110,10 +110,11 @@ export default function ProposalDetailPage() {
       <Link to="/proposals" className="proposal-detail__back">
         ← Volver a la bandeja
       </Link>
-      <div className="proposal-detail__header">
-        <h1 id="proposal-detail-title">{partnerName}</h1>
-        {badge && <Badge variant={badge.variant}>{badge.label}</Badge>}
-      </div>
+      <PageHeader
+        title={partnerName}
+        titleId="proposal-detail-title"
+        actions={badge && <Badge variant={badge.variant}>{badge.label}</Badge>}
+      />
 
       <Card className="proposal-detail__card">
         <dl className="proposal-detail__meta">
