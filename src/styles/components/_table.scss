@@ -1,5 +1,28 @@
 @use '../abstracts' as *;
 
+@mixin stacked-rows {
+  display: block;
+  min-width: 0;
+
+  caption, tbody { display: block; }
+  td a:not(.button) { align-items: center; display: inline-flex; min-height: $control-height; }
+  thead { display: none; }
+  tr { display: block; border-bottom: 2px solid $color-border; }
+  td {
+    display: flex;
+    justify-content: space-between;
+    text-align: right;
+    border-bottom: 1px solid $color-border;
+    &::before {
+      content: attr(data-label);
+      font-weight: $font-weight-semibold;
+      color: $color-heading;
+      text-align: left;
+      margin-right: space('4');
+    }
+  }
+}
+
 .table-wrapper {
   @include focus-ring;
   background: $color-surface;
@@ -45,28 +68,17 @@
   tbody tr:hover { background: $color-surface-hover; }
   &__empty { color: $color-muted; padding: space('8') !important; text-align: center !important; }
 
-  @media (max-width: 36rem) {
-    display: block;
-    min-width: 0;
+  @media (max-width: 36rem) { @include stacked-rows; }
+}
 
-    caption, tbody { display: block; }
-    td a:not(.button) { align-items: center; display: inline-flex; min-height: $control-height; }
-    thead { display: none; }
-    tr { display: block; border-bottom: 2px solid $color-border; }
-    td {
-      display: flex;
-      justify-content: space-between;
-      text-align: right;
-      border-bottom: 1px solid $color-border;
-      &::before {
-        content: attr(data-label);
-        font-weight: $font-weight-semibold;
-        color: $color-heading;
-        text-align: left;
-        margin-right: space('4');
-      }
-    }
-  }
+// Los listados con columna de acciones no caben antes: se apilan en vez de
+// obligar a desplazarse dentro de la tabla para llegar a los botones.
+.activities-list .table,
+.account-status .table,
+.pending-closures .table,
+.proposals-inbox .table,
+.registrations-page .table {
+  @media (max-width: 56.25rem) { @include stacked-rows; }
 }
 
 // El título ya lo dice la cabecera de la página o de la sección; la tabla lo

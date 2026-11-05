@@ -74,7 +74,8 @@
   font-weight: $font-weight-semibold;
 }
 
-@media (max-width: 48rem) {
+// Con la barra vertical, por debajo de este ancho las tablas no caben.
+@media (max-width: 75rem) {
   .app-layout {
     grid-template-columns: 1fr;
     grid-template-rows: 64px auto 1fr;
@@ -87,12 +88,8 @@
   .sidebar {
     border-right: none;
     border-bottom: 1px solid $color-border;
-    overflow-y: visible;
-    overflow-x: auto;
+    overflow: visible;
     padding: 0;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
   }
 
   .app-layout__content {
@@ -100,17 +97,16 @@
     padding: map-get($spacing, '5') map-get($spacing, '4');
   }
 
+  // Sin barra de scroll visible, con ratón no se vería que hay más enlaces:
+  // pasan a otra línea y solo el móvil desplaza con el dedo.
   .sidebar__nav {
     display: flex;
-    gap: map-get($spacing, '2');
-    min-width: max-content;
+    flex-wrap: wrap;
+    gap: map-get($spacing, '1') map-get($spacing, '2');
     padding: map-get($spacing, '2') map-get($spacing, '4');
   }
 
-  .sidebar__section {
-    display: flex;
-    gap: map-get($spacing, '2');
-  }
+  .sidebar__section { display: contents; }
 
   .sidebar__section-title { display: none; }
 
@@ -118,5 +114,19 @@
     min-height: 2.75rem;
     white-space: nowrap;
     padding: map-get($spacing, '2') map-get($spacing, '3');
+  }
+}
+
+@media (max-width: 36rem) {
+  .sidebar {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .sidebar__nav {
+    flex-wrap: nowrap;
+    min-width: max-content;
   }
 }
