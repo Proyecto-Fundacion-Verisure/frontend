@@ -258,9 +258,12 @@ export default function MyVolunteeringPage() {
       )}
 
       <section className="my-volunteering__block" aria-labelledby="active-title">
-        <h2 id="active-title" className="my-volunteering__block-title">
-          Activas
-        </h2>
+        <div className="my-volunteering__block-header">
+          <h2 id="active-title" className="my-volunteering__block-title">
+            Activas
+          </h2>
+          <span className="my-volunteering__block-count" data-testid="active-count">{activeList.length}</span>
+        </div>
         {activeList.length === 0 ? (
           <EmptyState
             title="Sin inscripciones activas"
@@ -272,7 +275,7 @@ export default function MyVolunteeringPage() {
             }
           />
         ) : (
-          <div className="my-volunteering__grid">
+          <div>
             {activeList.map((item) => (
               <RegistrationCard
                 key={item.registrationId}
@@ -286,13 +289,16 @@ export default function MyVolunteeringPage() {
       </section>
 
       <section className="my-volunteering__block" aria-labelledby="history-title">
-        <h2 id="history-title" className="my-volunteering__block-title">
-          Historial
-        </h2>
+        <div className="my-volunteering__block-header">
+          <h2 id="history-title" className="my-volunteering__block-title">
+            Historial
+          </h2>
+          <span className="my-volunteering__block-count" data-testid="history-count">{closedList.length}</span>
+        </div>
         {closedList.length === 0 ? (
           <EmptyState title="Sin historial" description="Aquí verás las inscripciones cerradas, rechazadas o canceladas." />
         ) : (
-          <div className="my-volunteering__grid">
+          <div>
             {closedList.map((item) => (
               <RegistrationCard key={item.registrationId} item={item} />
             ))}
