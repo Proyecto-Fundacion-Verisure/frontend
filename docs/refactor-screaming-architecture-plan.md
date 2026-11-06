@@ -1,6 +1,7 @@
 # Plan · Refactor del frontend a Screaming Architecture
 
-> **Estado:** propuesta, no ejecutada.
+> **Estado:** en ejecución. Fase 0 (rama y plan) y Fase 1 (esqueleto `app/` + `shared/`)
+> completadas en `refactor/screaming-architecture` el 7 de noviembre de 2026.
 > **Base:** rama `dev` del repositorio `frontend/`, 6 de noviembre de 2026.
 > **Baseline verificado:** 56 archivos de test, 405 tests en verde, `vite build` correcto.
 > **Complejidad global:** media-alta. **9-11 jornadas** para el núcleo y **12-14 jornadas**

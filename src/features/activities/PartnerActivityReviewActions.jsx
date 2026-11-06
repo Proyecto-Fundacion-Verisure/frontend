@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { approveActivity, returnActivity } from '../../api/activitiesApi';
-import { Button, Modal, Textarea } from '../../components/ui';
+import { Button, Modal, Textarea } from '../../shared/ui';
 
 export default function PartnerActivityReviewActions({ activity, onReviewed }) {
   const [isReturnOpen, setIsReturnOpen] = useState(false);

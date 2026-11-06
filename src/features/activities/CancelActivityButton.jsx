@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { cancelActivity } from '../../api/activitiesApi';
 import { getActivityRegistrations } from '../../api/registrationsApi';
-import { Button, Modal, Spinner } from '../../components/ui';
+import { Button, Modal, Spinner } from '../../shared/ui';
 
 const UNAFFECTED_STATUSES = new Set(['CANCELLED', 'REJECTED', 'CLOSED']);
 

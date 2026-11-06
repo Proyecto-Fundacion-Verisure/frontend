@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { createProposal } from "../../api/proposalsApi";
-import useForm from "../../hooks/useForm";
-import { Button, Input, Select, Textarea } from "../../components/ui";
-import { ACTIVITY_LINES, getLineByValue } from "../../constants/activityLines";
+import useForm from "../../shared/hooks/useForm";
+import { Button, Input, Select, Textarea } from "../../shared/ui";
+import { ACTIVITY_LINES, getLineByValue } from "../../shared/domain/activityLines";
 import ProposalImagePreview from "./ProposalImagePreview";
 import ProposalSuccess from "./ProposalSuccess";
 import ProposalConsentField from "./ProposalConsentField";

@@ -1,4 +1,4 @@
-@use '../abstracts' as *;
+@use '../../shared/styles/abstracts' as *;
 
 .spinner { animation: spin 1s linear infinite; border: 3px solid $color-border; border-radius: 50%; border-top-color: $color-coral; height: 1.5rem; width: 1.5rem; }
 .spinner { display: inline-block; flex: 0 0 auto; }

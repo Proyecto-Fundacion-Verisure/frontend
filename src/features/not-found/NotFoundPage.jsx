@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { getRoleHomePath } from '../../routes/routeAccess';
-import { EmptyState } from '../../components/ui';
+import { EmptyState } from '../../shared/ui';
 
 export default function NotFoundPage() {
   const headingRef = useRef(null);

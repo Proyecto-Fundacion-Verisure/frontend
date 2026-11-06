@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { submitOrgActivity } from '../../api/orgApi';
-import { Button, Modal } from '../../components/ui';
+import { Button, Modal } from '../../shared/ui';
 
 // «Enviar» desde el listado de la entidad. `PATCH
 // /org/activities/{id}/submit` solo acepta `DRAFT`; en cualquier otro estado el

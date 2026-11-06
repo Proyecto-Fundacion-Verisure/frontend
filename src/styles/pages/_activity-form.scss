@@ -1,4 +1,4 @@
-@use '../abstracts' as *;
+@use '../../shared/styles/abstracts' as *;
 
 .activity-form-page {
   @include page-container;

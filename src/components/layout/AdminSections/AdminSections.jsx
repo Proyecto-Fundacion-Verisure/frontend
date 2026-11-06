@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { NavTabs } from '../../ui';
+import { NavTabs } from '../../../shared/ui';
 import { SidebarCountsContext } from '../Sidebar/useSidebarCounts';
 
 export function ActivitiesTabs() {

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getPendingActivityClosures } from '../../api/closuresApi';
-import { Button, EmptyState, PageHeader, Pagination, Spinner, Table } from '../../components/ui';
+import { Button, EmptyState, PageHeader, Pagination, Spinner, Table } from '../../shared/ui';
 import { ActivitiesTabs } from '../../components/layout/AdminSections/AdminSections';
-import { getLineByValue } from '../../constants/activityLines';
-import { formatDateRange } from '../../utils/dates';
+import { getLineByValue } from '../../shared/domain/activityLines';
+import { formatDateRange } from '../../shared/lib/dates';
 
 export default function PendingClosurePage() {
   const [page, setPage] = useState(1);

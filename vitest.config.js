@@ -7,14 +7,14 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['./src/test/setup.js'],
+    setupFiles: ['./src/shared/testing/setup.js'],
     css: true,
     restoreMocks: true,
     include: ['src/**/*.{test,spec}.{js,jsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
-      exclude: ['src/test/**'],
+      exclude: ['src/test/**', 'src/shared/testing/**'],
     },
   },
 });

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import logoVerisure from '../../../assets/images/logo-fundacion-verisure.png';
-import ThemeToggle from '../../ui/ThemeToggle/ThemeToggle';
+import ThemeToggle from '../../../shared/ui/ThemeToggle/ThemeToggle';
 
 const PublicHeader = () => {
   return (

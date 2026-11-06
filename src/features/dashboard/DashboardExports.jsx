@@ -5,7 +5,7 @@ import {
   exportPartnersCsv,
   exportParticipationsCsv,
 } from '../../api/dashboardApi';
-import { Button, Card } from '../../components/ui';
+import { Button, Card } from '../../shared/ui';
 import { downloadBlob } from './downloadFile';
 
 const EXPORTS = [

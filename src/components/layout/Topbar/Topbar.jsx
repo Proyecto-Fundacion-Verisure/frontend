@@ -1,6 +1,6 @@
 import { LogOut } from 'lucide-react';
 import { useAuth } from '../../../features/auth/AuthContext';
-import ThemeToggle from '../../ui/ThemeToggle/ThemeToggle';
+import ThemeToggle from '../../../shared/ui/ThemeToggle/ThemeToggle';
 
 const ROLE_LABELS = {
   ADMIN: 'Administrador',

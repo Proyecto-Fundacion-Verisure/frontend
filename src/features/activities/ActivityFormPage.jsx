@@ -12,10 +12,10 @@ import {
   submitOrgActivity,
   updateOrgActivity,
 } from '../../api/orgApi';
-import { ApiError } from '../../api/apiError';
+import { ApiError } from '../../shared/api/apiError';
 import { useAuth } from '../auth/AuthContext';
-import useForm from '../../hooks/useForm';
-import { Button, Input, Modal, PageHeader, Select, Spinner, Textarea } from '../../components/ui';
+import useForm from '../../shared/hooks/useForm';
+import { Button, Input, Modal, PageHeader, Select, Spinner, Textarea } from '../../shared/ui';
 
 // Los nombres son los de `CreateActivityRequest`: `mode` y `spots`, no
 // `modality` ni `maxParticipants`. Las fechas son `LocalDate` (`YYYY-MM-DD`): la

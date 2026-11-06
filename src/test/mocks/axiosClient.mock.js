@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
-// Shared mocked axios client — use in contract tests via vi.mock('./axiosClient')
-// Example: vi.mock('./axiosClient', () => ({ default: client }))
+// Shared mocked axios client — use in contract tests via
+// vi.mock('../../shared/api/axiosClient', () => ({ default: client }))
 
 export const client = {
   get: vi.fn(),

@@ -6,7 +6,7 @@ import CatalogPage from '../features/activities/CatalogPage';
 import ActivitiesListPage, { PENDING_REVIEW_PATH } from '../features/activities/ActivitiesListPage';
 import { ActivitiesTabs, RequestsTabs } from '../components/layout/AdminSections/AdminSections';
 import { getPendingActivities } from '../api/activitiesApi';
-import UiShowcase from '../components/ui/UiShowcase/UiShowcase';
+import UiShowcase from '../app/dev/UiShowcase';
 import PublicLayout from '../components/layout/PublicLayout/PublicLayout';
 import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';

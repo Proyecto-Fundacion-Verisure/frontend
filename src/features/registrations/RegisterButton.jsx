@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { createRegistration } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from './RegistrationsContext';
-import { Button } from '../../components/ui';
-import { isPastLocalDate } from '../../utils/dates';
+import { Button } from '../../shared/ui';
+import { isPastLocalDate } from '../../shared/lib/dates';
 import RegistrationInfoModal from './RegistrationInfoModal';
 
 // Siempre visible: bloqueado, y con el motivo en su texto, cuando no se puede usar.

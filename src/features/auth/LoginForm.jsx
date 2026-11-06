@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, Input } from '../../components/ui';
+import { Button, Input } from '../../shared/ui';
 import { useAuth } from './AuthContext';
 import { getRoleHomePath } from '../../routes/routeAccess';
 

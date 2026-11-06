@@ -6,10 +6,11 @@ import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
 import { useFavoritesOptional } from '../favorites/FavoritesContext';
 import { useAuth } from '../auth/AuthContext';
-import { Badge, Button, Card, EmptyState, HeartButton, ProgressBar, Spinner } from '../../components/ui';
+import { Badge, Button, Card, EmptyState, ProgressBar, Spinner } from '../../shared/ui';
+import { HeartButton } from '../favorites';
 import RegisterButton from '../registrations/RegisterButton';
-import { getLineByValue } from '../../constants/activityLines';
-import { formatDate, formatDateRange, isPastLocalDate } from '../../utils/dates';
+import { getLineByValue } from '../../shared/domain/activityLines';
+import { formatDate, formatDateRange, isPastLocalDate } from '../../shared/lib/dates';
 import { LIFECYCLE_BADGES, formatSpots, isOpenForRegistration } from './spots';
 
 const ENROLLED_STATUS_NOTES = {

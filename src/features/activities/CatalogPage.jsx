@@ -4,7 +4,7 @@ import { getPublishedActivities } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
 import { useFavoritesOptional } from '../favorites/FavoritesContext';
-import { Button, EmptyState, Input, PageHeader, Pagination, Select, Spinner } from '../../components/ui';
+import { Button, EmptyState, Input, PageHeader, Pagination, Select, Spinner } from '../../shared/ui';
 import ActivityCard from './ActivityCard';
 
 const LIMIT = 12;

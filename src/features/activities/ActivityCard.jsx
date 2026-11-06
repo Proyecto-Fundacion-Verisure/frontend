@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Building2, CalendarDays, MapPin } from 'lucide-react';
-import { Badge, Card, HeartButton, ProgressBar } from '../../components/ui';
-import { getLineByValue } from '../../constants/activityLines';
-import { formatDateRange } from '../../utils/dates';
+import { Badge, Card, ProgressBar } from '../../shared/ui';
+import { HeartButton } from '../favorites';
+import { getLineByValue } from '../../shared/domain/activityLines';
+import { formatDateRange } from '../../shared/lib/dates';
 import { LIFECYCLE_BADGES, formatSpots, isOpenForRegistration } from './spots';
 
 // `favoritedByMe` llega por propiedad y manda sobre el campo del `activity`: quien

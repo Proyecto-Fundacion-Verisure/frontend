@@ -1,4 +1,4 @@
-@use '../abstracts' as *;
+@use '../../shared/styles/abstracts' as *;
 
 .account-status {
   @include page-container;

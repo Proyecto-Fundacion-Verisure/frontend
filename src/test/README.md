@@ -2,7 +2,7 @@
 
 Este directorio contiene **mocks contractuales** que reproducen el backend v2 sin depender de red.
 
-- **Entorno:** `jsdom` + `vitest` globals + `@testing-library/jest-dom` matchers + `afterEach(cleanup)` en `setup.js`.
+- **Entorno:** `jsdom` + `vitest` globals + `@testing-library/jest-dom` matchers + `afterEach(cleanup)` en `src/shared/testing/setup.js`.
 - **Helpers:** `utils/renderWithProviders.jsx` expone `renderWithProviders(ui, {route, user, authValue})` (Router + `AuthContext`) y `renderWithRouter`.
 - **Fixtures:** `fixtures/*` definen enums y DTOs idénticos a v2:
   - `RegistrationStatus` (`WAITLISTED, CONFIRMED, REJECTED, CANCELLED, PENDING_CLOSURE, CLOSED`) + `accepted:boolean`, `queuePosition?`

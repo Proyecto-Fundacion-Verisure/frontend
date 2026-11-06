@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { getAdminActivities } from '../../api/activitiesApi';
-import { Badge, Button, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../components/ui';
+import { Badge, Button, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../shared/ui';
 import CancelActivityButton from './CancelActivityButton';
-import { formatDate } from '../../utils/dates';
+import { formatDate } from '../../shared/lib/dates';
 import PartnerActivityReviewActions from './PartnerActivityReviewActions';
 
 // Lo que cambia entre el inventario de administración (`/admin/activities`) y

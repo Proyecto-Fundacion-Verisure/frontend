@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { getOrgActivities } from '../../api/orgApi';
-import { Badge, Button, EmptyState, PageHeader, Spinner, Table } from '../../components/ui';
-import { formatDate } from '../../utils/dates';
+import { Badge, Button, EmptyState, PageHeader, Spinner, Table } from '../../shared/ui';
+import { formatDate } from '../../shared/lib/dates';
 import SubmitForReviewButton from '../activities/SubmitForReviewButton';
 
 // «Mis propuestas» de la entidad. La entidad no publica actividades: propone

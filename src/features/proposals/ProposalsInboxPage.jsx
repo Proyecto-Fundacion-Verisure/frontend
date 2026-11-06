@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getProposals, rejectProposal } from '../../api/proposalsApi';
-import { Badge, Button, ConfirmModal, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../components/ui';
+import { Badge, Button, ConfirmModal, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../shared/ui';
 import { getActivityDraftPath } from './AcceptProposalButton';
 import { RequestsTabs } from '../../components/layout/AdminSections/AdminSections';
-import { formatDateTime } from '../../utils/dates';
+import { formatDateTime } from '../../shared/lib/dates';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'Todas' },

@@ -1,4 +1,4 @@
-import client from './axiosClient';
+import client from '../shared/api/axiosClient';
 
 export const createRegistration = (activityId) => client.post('/registrations', { activityId });
 

@@ -1,4 +1,4 @@
-import client from './axiosClient';
+import client from '../shared/api/axiosClient';
 
 const pickAdminParams = (params = {}) => Object.fromEntries(
   Object.entries(params).filter(([key, value]) => (

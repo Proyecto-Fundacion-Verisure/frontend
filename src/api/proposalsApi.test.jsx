@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import client from './axiosClient';
+import client from '../shared/api/axiosClient';
 import { createProposal } from './proposalsApi';
 
-vi.mock('./axiosClient', () => ({ default: { post: vi.fn(), get: vi.fn(), patch: vi.fn() } }));
+vi.mock('../shared/api/axiosClient', () => ({ default: { post: vi.fn(), get: vi.fn(), patch: vi.fn() } }));
 
 const VALID_PROPOSAL = {
   organizationName: 'Fundación Ejemplo',

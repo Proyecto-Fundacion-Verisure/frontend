@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, ConfirmModal } from '../../components/ui';
+import { Button, ConfirmModal } from '../../shared/ui';
 
 export default function RegistrationDecisionActions({
   registration,

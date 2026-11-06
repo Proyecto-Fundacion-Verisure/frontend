@@ -1,4 +1,4 @@
-import { Button, Modal } from '../../components/ui';
+import { Button, Modal } from '../../shared/ui';
 
 /**
  * El `error` se pinta aquí dentro y no en quien abre el modal. Mientras el modal

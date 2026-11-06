@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Badge, Button, EmptyState, Input, Modal, PageHeader, Pagination, Spinner, Table } from '../../components/ui';
-import { formatDateTime } from '../../utils/dates';
+import { Badge, Button, EmptyState, Input, Modal, PageHeader, Pagination, Spinner, Table } from '../../shared/ui';
+import { formatDateTime } from '../../shared/lib/dates';
 import {
   getPendingOrganizations,
   approveOrganization,

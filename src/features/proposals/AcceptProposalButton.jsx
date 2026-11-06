@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { acceptProposal } from '../../api/proposalsApi';
-import { Button } from '../../components/ui';
+import { Button } from '../../shared/ui';
 
 const CONFLICT_MESSAGE =
   'Esta propuesta ya ha sido aceptada o rechazada. Actualiza el detalle para ver su estado.';

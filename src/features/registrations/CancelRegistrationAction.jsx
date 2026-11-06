@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Button, Modal, Textarea } from '../../components/ui';
+import { Button, Modal, Textarea } from '../../shared/ui';
 
 export default function CancelRegistrationAction({ registration, decision, onCancel }) {
   const registrationId = registration.registrationId ?? registration.id;

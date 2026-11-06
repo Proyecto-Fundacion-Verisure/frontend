@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getPendingActivityClosures } from '../../api/closuresApi';
-import { ApiError } from '../../api/apiError';
+import { ApiError } from '../../shared/api/apiError';
 import { makeActivitySummary, makePage } from '../../test/fixtures/closures';
 import PendingClosurePage from './PendingClosurePage';
 

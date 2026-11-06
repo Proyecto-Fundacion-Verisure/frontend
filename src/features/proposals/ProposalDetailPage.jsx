@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getProposal, rejectProposal } from '../../api/proposalsApi';
-import { Badge, Button, Card, ConfirmModal, EmptyState, PageHeader, Spinner } from '../../components/ui';
+import { Badge, Button, Card, ConfirmModal, EmptyState, PageHeader, Spinner } from '../../shared/ui';
 import AcceptProposalButton, { getActivityDraftPath } from './AcceptProposalButton';
-import { formatDateTime } from '../../utils/dates';
+import { formatDateTime } from '../../shared/lib/dates';
 
 const STATUS_BADGE = {
   NEW: { variant: 'info', label: 'Nueva' },

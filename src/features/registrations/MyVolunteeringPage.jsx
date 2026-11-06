@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cancelRegistration, getMyRegistrations } from '../../api/registrationsApi';
-import { Badge, Button, Card, EmptyState, Modal, PageHeader, Spinner } from '../../components/ui';
-import { formatDate } from '../../utils/dates';
+import { Badge, Button, Card, EmptyState, Modal, PageHeader, Spinner } from '../../shared/ui';
+import { formatDate } from '../../shared/lib/dates';
 
 // Inscripciones vivas. El resto (`CLOSED`, `REJECTED`, `CANCELLED`) es historial:
 // ya no admite acciones, pero la persona debe poder ver que fue rechazada o

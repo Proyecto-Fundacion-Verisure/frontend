@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createOrganization } from '../../api/orgApi';
-import useForm from '../../hooks/useForm';
-import { Button, Input, Modal } from '../../components/ui';
+import useForm from '../../shared/hooks/useForm';
+import { Button, Input, Modal } from '../../shared/ui';
 
 // El backend nombra `name` lo que el formulario llama `organizationName`. Los
 // `fields` de un 400 se traducen aquí para que caigan sobre su input.

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { Badge, Button, EmptyState, PageHeader, Pagination, Spinner, Table, Tabs } from '../../components/ui';
+import { Badge, Button, EmptyState, PageHeader, Pagination, Spinner, Table, Tabs } from '../../shared/ui';
 import RegistrationDecisionActions from './RegistrationDecisionActions';
 import CancelRegistrationAction from './CancelRegistrationAction';
 import useRegistrations from './useRegistrations';

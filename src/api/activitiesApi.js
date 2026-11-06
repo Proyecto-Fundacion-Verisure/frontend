@@ -1,4 +1,4 @@
-import client from './axiosClient';
+import client from '../shared/api/axiosClient';
 
 // Las actividades de la entidad (`B2-13`) viven en `orgApi.js`. Todo lo de aquí
 // va contra el backend real; los mocks de desarrollo se retiraron al terminar

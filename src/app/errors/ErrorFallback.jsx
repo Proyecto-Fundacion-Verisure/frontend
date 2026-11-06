@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { TriangleAlert } from 'lucide-react';
-import { EmptyState } from '../ui';
+import { EmptyState } from '../../shared/ui';
 
 export default function ErrorFallback({ error, resetErrorBoundary }) {
   const navigate = useNavigate();

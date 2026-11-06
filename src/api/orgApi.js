@@ -1,10 +1,10 @@
-import client from './axiosClient';
+import client from '../shared/api/axiosClient';
 import { registerPartner, resendVerification } from './authApi';
 import { getOrgDashboardMockData } from '../assets/mock/data/orgDashboard';
-import { isMockEnabled } from './mocks';
+import { isMockEnabled } from '../shared/api/mocks';
 
 // Solo `/org/dashboard` sigue en mock: no tiene controlador en el backend. El
-// resto del módulo va siempre contra el backend real. Ver `src/api/mocks.js`.
+// resto del módulo va siempre contra el backend real. Ver `src/shared/api/mocks.js`.
 const useDevelopmentMocks = () => isMockEnabled('ORG');
 
 function simulateRequest({ data, delay = 300, failRate = 0 } = {}) {

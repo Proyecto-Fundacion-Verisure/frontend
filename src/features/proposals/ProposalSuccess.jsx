@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Button } from "../../components/ui";
+import { Button } from "../../shared/ui";
 
 export default function ProposalSuccess({ onReset }) {
   const headingRef = useRef(null);

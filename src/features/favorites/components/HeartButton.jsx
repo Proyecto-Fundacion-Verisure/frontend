@@ -1,5 +1,5 @@
 import { Heart } from 'lucide-react';
-import Spinner from '../Spinner/Spinner';
+import Spinner from '../../../shared/ui/Spinner/Spinner';
 
 export default function HeartButton({
   active = false,

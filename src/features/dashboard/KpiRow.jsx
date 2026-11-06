@@ -6,7 +6,7 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
-import { Card } from '../../components/ui';
+import { Card } from '../../shared/ui';
 
 export const KPI_DEFINITIONS = [
   { key: 'reportedHours', label: 'Horas de voluntariado', Icon: Clock3, suffix: ' h' },

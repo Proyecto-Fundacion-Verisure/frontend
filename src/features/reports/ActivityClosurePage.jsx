@@ -5,7 +5,7 @@ import {
   getActivityClosure,
   saveActivityClosure,
 } from '../../api/closuresApi';
-import { Button, Input, Modal, PageHeader, Spinner, Table, Textarea } from '../../components/ui';
+import { Button, Input, Modal, PageHeader, Spinner, Table, Textarea } from '../../shared/ui';
 
 const toNumber = (value) => {
   if (value == null || value === '') return null;

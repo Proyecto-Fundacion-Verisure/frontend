@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getOrgDashboard } from '../../api/orgApi';
-import { Card, EmptyState, Spinner, Button } from '../../components/ui';
+import { Card, EmptyState, Spinner, Button } from '../../shared/ui';
 import BarChart from '../dashboard/BarChart';
 import ChartTable from '../dashboard/ChartTable';
 import KpiRow from '../dashboard/KpiRow';

@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import Badge from '../Badge/Badge';
-import Button from '../Button/Button';
-import Card from '../Card/Card';
-import EmptyState from '../EmptyState/EmptyState';
-import Input from '../Input/Input';
-import Modal from '../Modal/Modal';
-import ProgressBar from '../ProgressBar/ProgressBar';
-import Select from '../Select/Select';
-import Spinner from '../Spinner/Spinner';
-import Table from '../Table/Table';
-import Textarea from '../Textarea/Textarea';
-import ThemeToggle from '../ThemeToggle/ThemeToggle';
+import Badge from '../../shared/ui/Badge/Badge';
+import Button from '../../shared/ui/Button/Button';
+import Card from '../../shared/ui/Card/Card';
+import EmptyState from '../../shared/ui/EmptyState/EmptyState';
+import Input from '../../shared/ui/Input/Input';
+import Modal from '../../shared/ui/Modal/Modal';
+import ProgressBar from '../../shared/ui/ProgressBar/ProgressBar';
+import Select from '../../shared/ui/Select/Select';
+import Spinner from '../../shared/ui/Spinner/Spinner';
+import Table from '../../shared/ui/Table/Table';
+import Textarea from '../../shared/ui/Textarea/Textarea';
+import ThemeToggle from '../../shared/ui/ThemeToggle/ThemeToggle';
 
 const columns = [
   { key: 'name', label: 'Actividad' },

@@ -1,4 +1,4 @@
-import { ApiError } from '../../api/apiError';
+import { ApiError } from '../../shared/api/apiError';
 
 export function createApiError({ status, code = null, message, fieldErrors = null, details = null }) {
   return new ApiError({ message, status, code, fieldErrors, details });

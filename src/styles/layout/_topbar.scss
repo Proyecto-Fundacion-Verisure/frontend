@@ -1,5 +1,5 @@
-@use '../abstracts/variables' as *;
-@use '../abstracts/mixins' as *;
+@use '../../shared/styles/abstracts/variables' as *;
+@use '../../shared/styles/abstracts/mixins' as *;
 
 .topbar {
   grid-area: topbar;

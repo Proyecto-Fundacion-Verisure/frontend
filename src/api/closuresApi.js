@@ -1,4 +1,4 @@
-import client from './axiosClient';
+import client from '../shared/api/axiosClient';
 
 export const getClosure = (closureId) => client.get(`/closures/${closureId}`);
 // El multipart no se fija a mano: si resolvemos el `Content-Type`, el navegador

@@ -1,4 +1,4 @@
-import { Table } from '../../components/ui';
+import { Table } from '../../shared/ui';
 import { formatDashboardNumber } from './KpiRow';
 
 export default function ChartTable({
