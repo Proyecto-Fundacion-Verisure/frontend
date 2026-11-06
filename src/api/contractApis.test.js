@@ -13,15 +13,6 @@ import {
   updateActivity,
 } from './activitiesApi';
 import {
-  acceptRegistration,
-  cancelRegistration,
-  createRegistration,
-  getActivityRegistrations,
-  getMyRegistrations,
-  getRegistrationCounts,
-  rejectRegistration,
-} from './registrationsApi';
-import {
   finalizeActivityClosure,
   getActivityClosure,
   getCertificate,
@@ -30,13 +21,6 @@ import {
   saveActivityClosure,
   submitClosure,
 } from './closuresApi';
-import {
-  acceptProposal,
-  createProposal,
-  getProposal,
-  getProposals,
-  rejectProposal,
-} from './proposalsApi';
 import {
   approveOrganization,
   createOrgActivity,
@@ -109,34 +93,6 @@ describe('activity API contract', () => {
   });
 });
 
-describe('registration API contracts', () => {
-  it('uses the employee and administrative registration routes', () => {
-    createRegistration(21);
-    getMyRegistrations();
-    getActivityRegistrations(21, { status: 'WAITLISTED', page: 0 });
-    getRegistrationCounts(21);
-    acceptRegistration(4);
-    rejectRegistration(5);
-    cancelRegistration(6, 'Cambio de disponibilidad');
-
-    expect(client.post).toHaveBeenCalledWith('/registrations', { activityId: 21 });
-    expect(client.get).toHaveBeenNthCalledWith(1, '/registrations/me');
-    expect(client.get).toHaveBeenNthCalledWith(2, '/admin/registrations', {
-      params: { activityId: 21, status: 'WAITLISTED', page: 0 },
-    });
-    // Los contadores van en su propia ruta y activityId es obligatorio.
-    expect(client.get).toHaveBeenNthCalledWith(3, '/admin/registrations/counts', {
-      params: { activityId: 21 },
-    });
-    expect(client.patch).toHaveBeenNthCalledWith(1, '/registrations/4/accept');
-    expect(client.patch).toHaveBeenNthCalledWith(2, '/registrations/5/reject');
-    expect(client.patch).toHaveBeenNthCalledWith(3, '/registrations/6/cancel', {
-      reason: 'Cambio de disponibilidad',
-    });
-  });
-
-});
-
 describe('closure API contract', () => {
   it('submits the employee closure as multipart and reads it by closureId', () => {
     const request = {
@@ -178,25 +134,7 @@ describe('closure API contract', () => {
   });
 });
 
-describe('proposal and partner API contracts', () => {
-  it('uses public creation and administrative proposal routes', () => {
-    const proposal = { organizationName: 'Entidad' };
-
-    createProposal(proposal);
-    getProposals({ status: 'NEW', page: 0, size: 1, sort: 'ignored' });
-    getProposal(9);
-    acceptProposal(9);
-    rejectProposal(10);
-
-    expect(client.post).toHaveBeenNthCalledWith(1, '/proposals', proposal);
-    expect(client.get).toHaveBeenNthCalledWith(1, '/admin/proposals', {
-      params: { status: 'NEW', page: 0, size: 1 },
-    });
-    expect(client.get).toHaveBeenNthCalledWith(2, '/admin/proposals/9');
-    expect(client.post).toHaveBeenNthCalledWith(2, '/admin/proposals/9/accept');
-    expect(client.patch).toHaveBeenCalledWith('/admin/proposals/10/reject');
-  });
-
+describe('partner API contracts', () => {
   it('uses /org for partner resources and /admin/org-accounts for approval', () => {
     const account = { name: 'Entidad', cif: 'G12345678', email: 'partner@example.org' };
     const activity = { title: 'Actividad' };

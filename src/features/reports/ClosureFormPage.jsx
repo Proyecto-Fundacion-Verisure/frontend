@@ -3,7 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { getClosure, submitClosure } from '../../api/closuresApi';
 import { Button, Input, Select, Spinner, Textarea } from '../../shared/ui';
 import { formatDateTime } from '../../shared/lib/dates';
-import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
+import { useRegistrationsOptional } from '../registrations';
 
 const MAX_EVIDENCE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_EVIDENCE_TYPES = new Set(['application/pdf', 'image/jpeg', 'image/png']);

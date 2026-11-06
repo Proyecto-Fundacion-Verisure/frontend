@@ -10,3 +10,8 @@
 @use '../features/landing/styles/landing';
 @use '../features/dashboard/styles/dashboard';
 @use '../app/navigation/attention-panel';
+
+@use '../features/proposals/styles/proposal';
+@use '../features/proposals/styles/proposals-inbox';
+@use '../features/registrations/styles/my-volunteering';
+@use '../features/registrations/styles/registrations-table';

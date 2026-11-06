@@ -2,14 +2,14 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { cancelActivity } from '../../api/activitiesApi';
-import { getActivityRegistrations } from '../../api/registrationsApi';
+import { getActivityRegistrations } from '../registrations';
 import CancelActivityButton from './CancelActivityButton';
 
 vi.mock('../../api/activitiesApi', () => ({
   cancelActivity: vi.fn(),
 }));
 
-vi.mock('../../api/registrationsApi', () => ({
+vi.mock('../registrations/api/registrationsApi', () => ({
   getActivityRegistrations: vi.fn(),
 }));
 

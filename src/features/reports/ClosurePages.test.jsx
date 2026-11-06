@@ -11,7 +11,7 @@ import {
 } from '../../api/closuresApi';
 import { presets } from '../../test/fixtures/apiErrors';
 import { makeActivityClosure } from '../../test/fixtures/closures';
-import { RegistrationsContext } from '../registrations/RegistrationsContext';
+import { RegistrationsContext } from '../registrations';
 import ActivityClosurePage from './ActivityClosurePage';
 import ClosureFormPage from './ClosureFormPage';
 

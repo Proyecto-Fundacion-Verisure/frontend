@@ -2,9 +2,9 @@ import { createContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../../features/auth';
 import { getPendingOrganizations } from '../../../api/orgApi';
-import { getRegistrationCounts } from '../../../api/registrationsApi';
+import { getRegistrationCounts } from '../../../features/registrations';
 import { getPendingActivities } from '../../../api/activitiesApi';
-import { getProposals } from '../../../api/proposalsApi';
+import { getProposals } from '../../../features/proposals';
 import { getPendingActivityClosures } from '../../../api/closuresApi';
 
 // Todas las cifras vienen de sus endpoints; si uno falla, el globo se queda en

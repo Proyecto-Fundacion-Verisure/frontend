@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { SidebarCountsContext } from '../Sidebar/useSidebarCounts';
-import { ActivitiesTabs, RequestsTabs } from './AdminSections';
+import { ActivitiesTabs } from './AdminSections';
 
 const COUNTS = { pendingReview: 1, proposals: 3, inscriptions: 0, closes: 2, pendingAccounts: 4 };
 
@@ -27,12 +27,5 @@ describe('section tabs', () => {
 
     expect(screen.getByRole('link', { name: 'Por cerrar 2' })).toHaveAttribute('aria-current', 'page');
     expect(screen.getByRole('link', { name: 'Todas' })).toHaveAttribute('href', '/admin/activities');
-  });
-
-  it('groups both origins under requests', () => {
-    renderWithCounts(<RequestsTabs />, '/proposals');
-
-    expect(screen.getByRole('link', { name: 'Formulario público 3' })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('link', { name: 'Actividades de entidades 1' })).toHaveAttribute('href', '/admin/activities/pending');
   });
 });

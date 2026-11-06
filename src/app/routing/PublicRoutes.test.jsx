@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import AppRouter from './AppRouter';
 
-vi.mock('../../api/proposalsApi', () => ({
+vi.mock('../../features/proposals/api/proposalsApi', () => ({
   createProposal: vi.fn(),
   getProposals: vi.fn(),
 }));

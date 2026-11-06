@@ -4,9 +4,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { LandingPage } from '../features/landing';
 import CatalogPage from '../features/activities/CatalogPage';
 import { DashboardPage } from '../features/dashboard';
-import MyVolunteeringPage from '../features/registrations/MyVolunteeringPage';
+import { MyVolunteeringPage } from '../features/registrations';
 import { getPublishedActivities } from '../api/activitiesApi';
-import { getMyRegistrations } from '../api/registrationsApi';
+import { getMyRegistrations } from '../features/registrations';
 
 vi.mock('../api/activitiesApi', () => ({
   getPublishedActivities: vi.fn(),
@@ -14,7 +14,7 @@ vi.mock('../api/activitiesApi', () => ({
   getAdminActivity: vi.fn(),
 }));
 
-vi.mock('../api/registrationsApi', () => ({
+vi.mock('../features/registrations/api/registrationsApi', () => ({
   getMyRegistrations: vi.fn(),
   createRegistration: vi.fn(),
   getActivityRegistrations: vi.fn(),

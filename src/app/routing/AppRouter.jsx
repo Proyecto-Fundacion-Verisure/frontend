@@ -4,29 +4,30 @@ import { authRoutes } from '../../features/auth';
 import { DashboardPage } from '../../features/dashboard';
 import CatalogPage from '../../features/activities/CatalogPage';
 import ActivitiesListPage, { PENDING_REVIEW_PATH } from '../../features/activities/ActivitiesListPage';
-import { ActivitiesTabs, RequestsTabs } from '../../components/layout/AdminSections/AdminSections';
+import { ActivitiesTabs } from '../../components/layout/AdminSections/AdminSections';
+import RequestsTabs from '../navigation/RequestsTabs';
 import { getPendingActivities } from '../../api/activitiesApi';
 import UiShowcase from '../dev/UiShowcase';
 import AttentionPanel from '../navigation/AttentionPanel';
 import PublicLayout from '../../components/layout/PublicLayout/PublicLayout';
 import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
-import ProposalForm from '../../features/proposals/ProposalForm';
+import { ProposalDetailPage, ProposalForm, ProposalsInboxPage } from '../../features/proposals';
 import OrgRegisterPage from '../../features/orgs/OrgRegisterPage';
 import ActivityFormPage from '../../features/activities/ActivityFormPage';
 import OrgImpactPage from '../../features/orgs/OrgImpactPage';
 import OrgDashboardPage from '../../features/orgs/OrgDashboardPage';
 import OrgActivitiesPage from '../../features/orgs/OrgActivitiesPage';
-import ProposalsInboxPage from '../../features/proposals/ProposalsInboxPage';
-import ProposalDetailPage from '../../features/proposals/ProposalDetailPage';
 import AccountStatusPage, { AdminAccountStatusPage } from '../../features/orgs/AccountStatusPage';
 import ActivityDetailPage from '../../features/activities/ActivityDetailPage';
-import MyVolunteeringPage from '../../features/registrations/MyVolunteeringPage';
+import {
+  MyVolunteeringPage,
+  RegistrationsProvider,
+  RegistrationsTablePage,
+} from '../../features/registrations';
 import { NotFoundPage } from '../../features/not-found';
 import AppLayout from '../../components/layout/AppLayout/AppLayout';
-import { RegistrationsProvider } from '../../features/registrations/RegistrationsContext';
 import { FavoritesProvider } from '../../features/favorites';
-import RegistrationsTablePage from '../../features/registrations/RegistrationsTablePage';
 import CertificatePage from '../../features/reports/CertificatePage';
 import PendingClosurePage from '../../features/reports/PendingClosurePage';
 import ClosureFormPage from '../../features/reports/ClosureFormPage';
@@ -66,7 +67,7 @@ export default function AppRouter() {
           </Route>
           <Route element={<RoleRoute roles={['ADMIN']} />}>
             <Route path="/dashboard" element={<DashboardPage attentionPanel={<AttentionPanel />} />} />
-            <Route path="/proposals" element={<ProposalsInboxPage />} />
+            <Route path="/proposals" element={<ProposalsInboxPage sectionTabs={<RequestsTabs />} />} />
             <Route path="/proposals/:proposalId" element={<ProposalDetailPage />} />
             <Route path="/activities/new" element={<ActivityFormPage backPath="/admin/activities" />} />
             <Route path="/admin/registrations" element={<RegistrationsTablePage />} />

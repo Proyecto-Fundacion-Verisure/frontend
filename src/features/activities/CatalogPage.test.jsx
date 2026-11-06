@@ -3,14 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getPublishedActivities } from '../../api/activitiesApi';
-import { getMyRegistrations } from '../../api/registrationsApi';
+import { getMyRegistrations } from '../registrations';
 import CatalogPage from './CatalogPage';
 
 vi.mock('../../api/activitiesApi', () => ({
   getPublishedActivities: vi.fn(),
 }));
 
-vi.mock('../../api/registrationsApi', () => ({
+vi.mock('../registrations/api/registrationsApi', () => ({
   getMyRegistrations: vi.fn(),
   createRegistration: vi.fn(),
   getActivityRegistrations: vi.fn(),

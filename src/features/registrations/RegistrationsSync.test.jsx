@@ -4,11 +4,11 @@ import { MemoryRouter, Route, Routes, Link } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import CatalogPage from '../activities/CatalogPage';
 import ActivityDetailPage from '../activities/ActivityDetailPage';
-import { RegistrationsProvider } from './RegistrationsContext';
-import { getMyRegistrations, createRegistration } from '../../api/registrationsApi';
+import { RegistrationsProvider } from './context/RegistrationsContext';
+import { getMyRegistrations, createRegistration } from './api/registrationsApi';
 import { getPublishedActivities, getActivityDetail } from '../../api/activitiesApi';
 
-vi.mock('../../api/registrationsApi', () => ({
+vi.mock('./api/registrationsApi', () => ({
   getMyRegistrations: vi.fn(),
   createRegistration: vi.fn(),
   getActivityRegistrations: vi.fn(),
