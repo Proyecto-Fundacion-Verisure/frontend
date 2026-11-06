@@ -14,7 +14,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
-      exclude: ['src/test/**', 'src/shared/testing/**'],
+      exclude: ['src/shared/testing/**', 'src/app/testing/**'],
     },
   },
 });

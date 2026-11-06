@@ -1,0 +1,40 @@
+@use '../abstracts' as *;
+
+.ui-showcase {
+  display: grid;
+  gap: space('8');
+  margin: 0 auto;
+  max-width: $content-max-width;
+  padding: space('8') space('4') space('16');
+
+  &__eyebrow {
+    color: $color-coral-dark;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  &__section {
+    display: grid;
+    gap: space('5');
+  }
+
+  &__row {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: space('3');
+  }
+
+  &__form,
+  &__grid {
+    display: grid;
+    gap: space('4');
+  }
+
+  @include respond-to('md') {
+    &__form,
+    &__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+}

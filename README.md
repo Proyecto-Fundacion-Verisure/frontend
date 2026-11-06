@@ -47,16 +47,17 @@ The application is available at [http://localhost:5173](http://localhost:5173). 
 | `npm test` | Opens Vitest in interactive mode. |
 | `npm run test:run` | Runs all tests once. |
 | `npm run test:coverage` | Runs tests and generates a coverage report. |
+| `npm run arch:check` | Checks feature/shared/app import boundaries. |
+| `npm run smoke` | Runs tests, build and the architecture check. |
 
 ## Architecture
 
 ```text
 src/
-├── app/          # Composition root: App, providers, routing, navigation, layout, and errors
+├── app/          # Composition root: App, providers, routing, navigation, layout, styles, and test harness
 ├── features/     # Screens, API and logic grouped by business feature
-├── shared/       # API client, UI, charts, hooks, lib, domain data, assets, base styles, and testing
-├── styles/       # Component and layout styles pending feature co-location
-└── test/         # Fixtures and mocks shared by the test suite
+├── shared/       # API client, assets, UI, charts, hooks, lib, domain, styles, and testing
+└── main.jsx
 ```
 
 HTTP calls live in each feature's `api/` module; a screen should never call Axios directly. Feature-specific logic stays within its `feature` folder, and reusable patterns go into `src/shared/ui`.

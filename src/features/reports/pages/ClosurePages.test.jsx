@@ -9,8 +9,8 @@ import {
   saveActivityClosure,
   submitClosure,
 } from '../api/closuresApi';
-import { presets } from '../../../test/fixtures/apiErrors';
-import { makeActivityClosure } from '../../../test/fixtures/closures';
+import { presets } from '../../../shared/testing/fixtures/apiErrors';
+import { makeActivityClosure } from '../../../shared/testing/fixtures/closures';
 import { RegistrationsContext } from '../../registrations';
 import ActivityClosurePage from './ActivityClosurePage';
 import ClosureFormPage from './ClosureFormPage';

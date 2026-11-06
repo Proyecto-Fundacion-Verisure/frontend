@@ -2,7 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { DASHBOARD_RESPONSE, makeDashboardResponse } from '../../../test/fixtures/dashboard';
+import { DASHBOARD_RESPONSE, makeDashboardResponse } from '../../../shared/testing/fixtures/dashboard';
 import DashboardPage from './DashboardPage';
 
 const api = vi.hoisted(() => ({

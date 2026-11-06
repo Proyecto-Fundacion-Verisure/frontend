@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getOrgDashboard } from '../api/orgApi';
-import { makeOrgDashboardResponse, makeEmptyOrgDashboardResponse } from '../../../test/fixtures/orgDashboard';
+import { makeOrgDashboardResponse, makeEmptyOrgDashboardResponse } from '../../../shared/testing/fixtures/orgDashboard';
 import OrgDashboardPage from './OrgDashboardPage';
 
 vi.mock('../api/orgApi', () => ({

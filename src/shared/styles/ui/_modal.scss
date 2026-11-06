@@ -1,0 +1,77 @@
+@use '../abstracts' as *;
+
+.modal-backdrop {
+  align-items: center;
+  background: $color-overlay;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  overflow-y: auto;
+  padding: space('4');
+  position: fixed;
+  z-index: 1000;
+}
+
+.modal {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: space('6');
+  width: min(100%, 34rem);
+
+  &--small { width: min(100%, 26rem); }
+  &--large { width: min(100%, 52rem); }
+
+  &__header {
+    align-items: flex-start;
+    display: flex;
+    gap: space('4');
+    justify-content: space-between;
+  }
+
+  &__title { font-size: $font-size-xl; }
+  &__description { color: $color-muted; margin-top: space('2'); }
+  &__content { margin-top: space('5'); }
+
+  &__close {
+    @include focus-ring;
+    background: transparent;
+    border: 0;
+    border-radius: $radius-control;
+    color: $color-muted;
+    cursor: pointer;
+    font-size: 1.75rem;
+    line-height: 1;
+    min-height: $control-height;
+    min-width: $control-height;
+    transition: background-color $transition-fast, color $transition-fast;
+
+    &:hover {
+      background: $color-surface-hover;
+      color: $color-heading;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: space('3');
+    justify-content: flex-end;
+    margin-top: space('6');
+  }
+}
+
+// Aviso de error dentro del modal de inscripción. Va aquí y no junto al botón
+// que lo abre porque mientras el modal está abierto el resto de la página queda
+// `inert` y `aria-hidden`: un aviso de fuera no se ve ni se anuncia.
+.registration-info-modal__error {
+  background: $color-danger-light;
+  border-left: 3px solid $color-danger;
+  border-radius: $radius-sm;
+  color: $color-danger;
+  margin: space('4') 0 0;
+  padding: space('3') space('4');
+}

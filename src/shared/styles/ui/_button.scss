@@ -1,0 +1,93 @@
+@use "../abstracts" as *;
+
+.button {
+  @include focus-ring;
+  @include disabled-control;
+  align-items: center;
+  display: inline-flex;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  gap: space("2");
+  justify-content: center;
+  line-height: 1.25;
+  min-height: $control-height;
+  // Los `<Link>` con `button button--primary` no llevan clase de tamaño.
+  padding: space("3") space("5");
+  border: 0;
+  border-radius: $radius-control;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color $transition-fast,
+    box-shadow $transition-fast,
+    color $transition-fast;
+
+  // El contenido va en un `span`: sin esto, un icono junto al texto se alinea a
+  // la línea base y queda descolgado.
+  &__label {
+    align-items: center;
+    display: inline-flex;
+    gap: space("2");
+  }
+
+  // Dos tamaños: `small` en filas y tablas, `medium` en todo lo demás.
+  &--small {
+    min-height: 2.25rem;
+    padding: space("2") space("4");
+  }
+  &--medium {
+    padding: space("3") space("5");
+  }
+
+  // El rojo sólido se reserva para la acción principal de cada vista. El
+  // degradado solo oscurece: con texto blanco, el rojo del logo ya está en el
+  // límite de contraste y no admite un tono más claro.
+  &--primary {
+    background: linear-gradient(180deg, $color-coral-solid, $color-coral-gradient-end);
+    box-shadow: $shadow-accent;
+    color: $color-on-accent;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(180deg, $color-coral-solid-hover, $color-coral-gradient-end-hover);
+    }
+  }
+
+  // Suave porque puede repetirse en cada fila de una tabla.
+  &--danger {
+    background: $color-danger-light;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, $color-danger 35%, transparent);
+    color: $color-danger;
+
+    &:hover:not(:disabled) {
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, $color-danger 70%, transparent);
+    }
+  }
+
+  // El contorno va en `box-shadow` y no en `border` para que el secundario
+  // mida exactamente lo mismo que el primario cuando van uno al lado del otro.
+  &--secondary {
+    background: $color-surface;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, $color-border-strong 55%, transparent), $shadow-sm;
+    color: $color-heading;
+
+    &:hover:not(:disabled) {
+      background: $color-surface-hover;
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: $color-text;
+
+    &:hover:not(:disabled) {
+      background: $color-surface-hover;
+      color: $color-heading;
+    }
+  }
+}
+
+@media (max-width: 38rem) {
+  .button--small {
+    min-height: 2.75rem;
+  }
+}
