@@ -1,6 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../features/auth/AuthContext';
-import { getRoleHomePath } from './routeAccess';
+import { getRoleHomePath, useAuth } from '../../features/auth';
 
 export default function RoleRoute({ roles = [] }) {
   const { user } = useAuth();

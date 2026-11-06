@@ -5,7 +5,7 @@ import { getActivityDetail } from '../../api/activitiesApi';
 import { getMyRegistrations } from '../../api/registrationsApi';
 import { useRegistrationsOptional } from '../registrations/RegistrationsContext';
 import { HeartButton, useFavoritesOptional } from '../favorites';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../auth';
 import { Badge, Button, Card, EmptyState, ProgressBar, Spinner } from '../../shared/ui';
 import RegisterButton from '../registrations/RegisterButton';
 import { getLineByValue } from '../../shared/domain/activityLines';

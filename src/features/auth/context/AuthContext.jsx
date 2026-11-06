@@ -7,8 +7,8 @@ import {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosClient, { AUTH_UNAUTHORIZED_EVENT, clearSession } from '../../shared/api/axiosClient';
-import { login as loginRequest, logout as logoutRequest } from '../../api/authApi';
+import axiosClient, { AUTH_UNAUTHORIZED_EVENT, clearSession } from '../../../shared/api/axiosClient';
+import { login as loginRequest, logout as logoutRequest } from '../api/authApi';
 
 export const AuthContext = createContext(null);
 

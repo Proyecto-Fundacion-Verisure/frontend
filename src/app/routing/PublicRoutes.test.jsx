@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
-import AppRouter from '../../routes/AppRouter';
+import AppRouter from './AppRouter';
 
 vi.mock('../../api/proposalsApi', () => ({
   createProposal: vi.fn(),
@@ -17,7 +17,7 @@ function renderAt(route = '/') {
   );
 }
 
-describe('LandingPage', () => {
+describe('public routes', () => {
   it('no renderiza el formulario de propuesta', () => {
     renderAt('/');
 

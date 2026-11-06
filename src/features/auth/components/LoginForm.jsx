@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, Input } from '../../shared/ui';
-import { useAuth } from './AuthContext';
-import { getRoleHomePath } from '../../routes/routeAccess';
+import { Button, Input } from '../../../shared/ui';
+import useAuth from '../hooks/useAuth';
+import { getRoleHomePath } from '../model/roleHomePaths';
 
 // Una entidad a la que el backend deniega el acceso por el estado de su cuenta
 // tiene una página que se lo explica (y, sin correo verificado, un reenvío).

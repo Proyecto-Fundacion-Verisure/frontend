@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { AuthContext } from '../../../features/auth/AuthContext';
+import { AuthContext } from '../../../features/auth';
 import Topbar from './Topbar';
 
 function renderTopbar(value) {

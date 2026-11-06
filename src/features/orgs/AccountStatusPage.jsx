@@ -8,7 +8,7 @@ import {
   rejectOrganization,
   resendOrganizationRegistrationEmail,
 } from '../../api/orgApi';
-import { verifyEmail } from '../../api/authApi';
+import { verifyEmail } from '../auth';
 
 // Reenvío del enlace de verificación. El backend responde 204 siempre, exista
 // o no el correo: se confirma sin decir si la cuenta existe.

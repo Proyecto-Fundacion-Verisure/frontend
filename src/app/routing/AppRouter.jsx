@@ -1,41 +1,43 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
-import LandingPage from '../features/landing/LandingPage';
-import LoginPage from '../features/auth/LoginPage';
-import DashboardPage from '../features/dashboard/DashboardPage';
-import CatalogPage from '../features/activities/CatalogPage';
-import ActivitiesListPage, { PENDING_REVIEW_PATH } from '../features/activities/ActivitiesListPage';
-import { ActivitiesTabs, RequestsTabs } from '../components/layout/AdminSections/AdminSections';
-import { getPendingActivities } from '../api/activitiesApi';
-import UiShowcase from '../app/dev/UiShowcase';
-import PublicLayout from '../components/layout/PublicLayout/PublicLayout';
+import LandingPage from '../../features/landing/LandingPage';
+import { authRoutes } from '../../features/auth';
+import DashboardPage from '../../features/dashboard/DashboardPage';
+import CatalogPage from '../../features/activities/CatalogPage';
+import ActivitiesListPage, { PENDING_REVIEW_PATH } from '../../features/activities/ActivitiesListPage';
+import { ActivitiesTabs, RequestsTabs } from '../../components/layout/AdminSections/AdminSections';
+import { getPendingActivities } from '../../api/activitiesApi';
+import UiShowcase from '../dev/UiShowcase';
+import PublicLayout from '../../components/layout/PublicLayout/PublicLayout';
 import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
-import ProposalForm from '../features/proposals/ProposalForm';
-import OrgRegisterPage from '../features/orgs/OrgRegisterPage';
-import ActivityFormPage from '../features/activities/ActivityFormPage';
-import OrgImpactPage from '../features/orgs/OrgImpactPage';
-import OrgDashboardPage from '../features/orgs/OrgDashboardPage';
-import OrgActivitiesPage from '../features/orgs/OrgActivitiesPage';
-import ProposalsInboxPage from '../features/proposals/ProposalsInboxPage';
-import ProposalDetailPage from '../features/proposals/ProposalDetailPage';
-import AccountStatusPage, { AdminAccountStatusPage } from '../features/orgs/AccountStatusPage';
-import ActivityDetailPage from '../features/activities/ActivityDetailPage';
-import MyVolunteeringPage from '../features/registrations/MyVolunteeringPage';
-import NotFoundPage from '../features/not-found/NotFoundPage';
-import AppLayout from '../components/layout/AppLayout/AppLayout';
-import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
-import { FavoritesProvider } from '../features/favorites';
-import RegistrationsTablePage from '../features/registrations/RegistrationsTablePage';
-import CertificatePage from '../features/reports/CertificatePage';
-import PendingClosurePage from '../features/reports/PendingClosurePage';
-import ClosureFormPage from '../features/reports/ClosureFormPage';
-import ActivityClosurePage from '../features/reports/ActivityClosurePage';
+import ProposalForm from '../../features/proposals/ProposalForm';
+import OrgRegisterPage from '../../features/orgs/OrgRegisterPage';
+import ActivityFormPage from '../../features/activities/ActivityFormPage';
+import OrgImpactPage from '../../features/orgs/OrgImpactPage';
+import OrgDashboardPage from '../../features/orgs/OrgDashboardPage';
+import OrgActivitiesPage from '../../features/orgs/OrgActivitiesPage';
+import ProposalsInboxPage from '../../features/proposals/ProposalsInboxPage';
+import ProposalDetailPage from '../../features/proposals/ProposalDetailPage';
+import AccountStatusPage, { AdminAccountStatusPage } from '../../features/orgs/AccountStatusPage';
+import ActivityDetailPage from '../../features/activities/ActivityDetailPage';
+import MyVolunteeringPage from '../../features/registrations/MyVolunteeringPage';
+import NotFoundPage from '../../features/not-found/NotFoundPage';
+import AppLayout from '../../components/layout/AppLayout/AppLayout';
+import { RegistrationsProvider } from '../../features/registrations/RegistrationsContext';
+import { FavoritesProvider } from '../../features/favorites';
+import RegistrationsTablePage from '../../features/registrations/RegistrationsTablePage';
+import CertificatePage from '../../features/reports/CertificatePage';
+import PendingClosurePage from '../../features/reports/PendingClosurePage';
+import ClosureFormPage from '../../features/reports/ClosureFormPage';
+import ActivityClosurePage from '../../features/reports/ActivityClosurePage';
 
 export default function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<PublicLayout><LandingPage /></PublicLayout>} />
-      <Route path="/login" element={<LoginPage />} />
+      {authRoutes.map(({ path, element }) => (
+        <Route key={path} path={path} element={element} />
+      ))}
       <Route path="/proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
       <Route path="/new-proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
       <Route path="/register-organization" element={<PublicLayout><OrgRegisterPage /></PublicLayout>} />

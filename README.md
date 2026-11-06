@@ -52,13 +52,12 @@ The application is available at [http://localhost:5173](http://localhost:5173). 
 
 ```text
 src/
-├── app/          # Composition root: App, providers, errors, and dev-only screens
+├── app/          # Composition root: App, providers, routing, errors, and dev-only screens
 ├── api/          # Domain endpoints pending move into their features
 ├── assets/       # Images, icons, and local mock data
 ├── components/
 │   └── layout/   # App shell pending move to app/layout
 ├── features/     # Screens and logic grouped by feature
-├── routes/       # Router pending move to app/routing
 ├── shared/       # API client, UI, hooks, lib, domain data, base styles, and testing
 ├── styles/       # Component, layout, and page styles pending feature co-location
 └── test/         # Fixtures and mocks shared by the test suite

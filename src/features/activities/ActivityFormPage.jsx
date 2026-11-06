@@ -13,7 +13,7 @@ import {
   updateOrgActivity,
 } from '../../api/orgApi';
 import { ApiError } from '../../shared/api/apiError';
-import { useAuth } from '../auth/AuthContext';
+import { useAuth } from '../auth';
 import useForm from '../../shared/hooks/useForm';
 import { Button, Input, Modal, PageHeader, Select, Spinner, Textarea } from '../../shared/ui';
 

@@ -9,7 +9,7 @@ import {
   updateActivity,
 } from '../../api/activitiesApi';
 import { createOrgActivity, getOrgActivities, updateOrgActivity } from '../../api/orgApi';
-import { AuthContext } from '../auth/AuthContext';
+import { AuthContext } from '../auth';
 import ActivityFormPage from './ActivityFormPage';
 
 vi.mock('../../api/activitiesApi', () => ({

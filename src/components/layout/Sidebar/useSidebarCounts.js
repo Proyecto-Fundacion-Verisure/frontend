@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from '../../../features/auth/AuthContext';
+import { useAuth } from '../../../features/auth';
 import { getPendingOrganizations } from '../../../api/orgApi';
 import { getRegistrationCounts } from '../../../api/registrationsApi';
 import { getPendingActivities } from '../../../api/activitiesApi';

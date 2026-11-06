@@ -2,8 +2,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ApiError } from '../../shared/api/apiError';
-import { AuthContext } from './AuthContext';
+import { ApiError } from '../../../shared/api/apiError';
+import { AuthContext } from '../context/AuthContext';
 import LoginForm from './LoginForm';
 
 const login = vi.fn();

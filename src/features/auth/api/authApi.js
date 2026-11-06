@@ -1,4 +1,4 @@
-import realClient from '../shared/api/axiosClient';
+import realClient from '../../../shared/api/axiosClient';
 
 export const login = (credentials) => realClient.post('/auth/login', credentials);
 

@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import LoginForm from './LoginForm';
-import logo from "../../assets/images/logo-fundacion-verisure.png";
-import backgroundImage from "../../assets/images/login-background.png";
+import LoginForm from '../components/LoginForm';
+import logo from "../../../assets/images/logo-fundacion-verisure.png";
+import backgroundImage from "../../../assets/images/login-background.png";
 
 export default function LoginPage() {
   const location = useLocation();

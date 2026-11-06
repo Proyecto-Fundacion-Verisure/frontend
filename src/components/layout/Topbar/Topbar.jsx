@@ -1,5 +1,5 @@
 import { LogOut } from 'lucide-react';
-import { useAuth } from '../../../features/auth/AuthContext';
+import { useAuth } from '../../../features/auth';
 import ThemeToggle from '../../../shared/ui/ThemeToggle/ThemeToggle';
 
 const ROLE_LABELS = {

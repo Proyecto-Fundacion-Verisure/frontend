@@ -3,11 +3,11 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { AUTH_UNAUTHORIZED_EVENT } from '../../shared/api/axiosClient';
+import { AUTH_UNAUTHORIZED_EVENT } from '../../../shared/api/axiosClient';
 import { AuthContext, AuthProvider } from './AuthContext';
-import { login as loginRequest, logout as logoutRequest } from '../../api/authApi';
+import { login as loginRequest, logout as logoutRequest } from '../api/authApi';
 
-vi.mock('../../api/authApi', () => ({
+vi.mock('../api/authApi', () => ({
   login: vi.fn(),
   logout: vi.fn(),
 }));

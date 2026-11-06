@@ -1,5 +1,5 @@
 import client from '../shared/api/axiosClient';
-import { registerPartner, resendVerification } from './authApi';
+import { registerPartner, resendVerification } from '../features/auth';
 import { getOrgDashboardMockData } from '../assets/mock/data/orgDashboard';
 import { isMockEnabled } from '../shared/api/mocks';
 
