@@ -445,8 +445,8 @@ npm run build
 
 **Salida**
 
-- `src/api`, `src/hooks`, `src/utils` y `src/components/ui` dejan de existir (o solo
-  contienen el barril temporal de `shared/ui`).
+- `src/hooks`, `src/utils`, `src/constants` y `src/components/ui` dejan de existir.
+- `src/api` conserva solo los endpoints de dominio que se moverán en las fases 2-7.
 - La app arranca y los tests pasan.
 
 **Criterio de aceptación**
