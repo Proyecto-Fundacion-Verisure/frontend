@@ -1,17 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getDashboard } from '../../api/dashboardApi';
-import { AttentionPanel } from '../../components/layout/AdminSections/AdminSections';
-import { Button, Card, EmptyState, PageHeader, Spinner } from '../../shared/ui';
-import { ACTIVITY_LINES } from '../../shared/domain/activityLines';
-import BarChart from './BarChart';
-import ChartTable from './ChartTable';
-import DashboardExports from './DashboardExports';
-import ExportMenu from './ExportMenu';
-import DashboardFilters, { isValidDashboardYear } from './DashboardFilters';
-import DashboardRanking from './DashboardRanking';
-import KpiRow, { KPI_DEFINITIONS, formatDashboardNumber } from './KpiRow';
-import MetricProgressList from './MetricProgressList';
+import { getDashboard } from '../api/dashboardApi';
+import { Button, Card, EmptyState, PageHeader, Spinner } from '../../../shared/ui';
+import { ACTIVITY_LINES } from '../../../shared/domain/activityLines';
+import { BarChart, ChartTable, KpiRow, KPI_DEFINITIONS } from '../../../shared/charts';
+import { formatDashboardNumber } from '../../../shared/lib/formatNumber';
+import DashboardExports from '../components/DashboardExports';
+import ExportMenu from '../components/ExportMenu';
+import DashboardFilters, { isValidDashboardYear } from '../components/DashboardFilters';
+import DashboardRanking from '../components/DashboardRanking';
+import MetricProgressList from '../components/MetricProgressList';
 
 const ALLOWED_LINES = new Set(ACTIVITY_LINES.map(({ value }) => value));
 
@@ -130,7 +128,7 @@ function ParticipationDistribution({ data, title, description, categoryLabel, la
   );
 }
 
-export default function DashboardPage() {
+export default function DashboardPage({ attentionPanel = null }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [requestState, setRequestState] = useState({ status: 'loading', data: null, error: null });
   const [retryKey, setRetryKey] = useState(0);
@@ -223,7 +221,7 @@ export default function DashboardPage() {
         <span className="dashboard__demo-badge">Datos ficticios para validación</span>
       )}
 
-      <AttentionPanel />
+      {attentionPanel}
 
       <DashboardFilters
         year={year}

@@ -2,7 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import DashboardExports from './DashboardExports';
-import { downloadBlob } from './downloadFile';
+import { downloadBlob } from '../model/downloadFile';
 
 const api = vi.hoisted(() => ({
   exportDashboardPdf: vi.fn(),
@@ -10,8 +10,8 @@ const api = vi.hoisted(() => ({
   exportParticipationsCsv: vi.fn(),
 }));
 
-vi.mock('../../api/dashboardApi', () => api);
-vi.mock('./downloadFile', () => ({ downloadBlob: vi.fn() }));
+vi.mock('../api/dashboardApi', () => api);
+vi.mock('../model/downloadFile', () => ({ downloadBlob: vi.fn() }));
 
 const findCard = (title) => screen.getByRole('heading', { name: title }).closest('article');
 

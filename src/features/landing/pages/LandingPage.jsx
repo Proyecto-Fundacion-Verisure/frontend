@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { Building, Clock, HandHeart, Users } from 'lucide-react';
-import colabImage from '../../assets/images/landing-colaboration.png'
-import footerPortrait from '../../assets/images/footer-portrait.jpg'
-import StatCounter from "./StatCounter";
+import colabImage from '../assets/landing-colaboration.png'
+import footerPortrait from '../../../assets/images/footer-portrait.jpg'
+import StatCounter from "../components/StatCounter";
 
 const impactAreas = [
   {

@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import KpiRow, { formatDashboardNumber, formatDashboardVariation } from './KpiRow';
+import KpiRow from './KpiRow';
+import { formatDashboardNumber, formatDashboardVariation } from '../lib/formatNumber';
 
 describe('KpiRow', () => {
   it('muestra exactamente los agregados recibidos con formato consistente', () => {

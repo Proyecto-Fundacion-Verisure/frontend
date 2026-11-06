@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
-import { AuthContext } from '../auth';
+import { AuthContext } from '../../auth';
 import NotFoundPage from './NotFoundPage';
 
 function renderNotFound({ isAuthenticated = false, user = null, initialEntry = '/no-existe' } = {}) {

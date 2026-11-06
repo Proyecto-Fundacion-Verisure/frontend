@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { formatDashboardNumber } from './KpiRow';
+import { formatDashboardNumber } from '../lib/formatNumber';
 
 const CHART_WIDTH = 760;
 const LABEL_WIDTH = 210;

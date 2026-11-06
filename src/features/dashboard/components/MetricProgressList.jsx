@@ -1,4 +1,4 @@
-import { formatDashboardNumber } from './KpiRow';
+import { formatDashboardNumber } from '../../../shared/lib/formatNumber';
 
 function clampPercentage(value) {
   const numericValue = Number(value);

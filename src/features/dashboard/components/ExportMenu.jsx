@@ -4,8 +4,8 @@ import {
   exportDashboardPdf,
   exportParticipationsCsv,
   exportPartnersCsv,
-} from '../../api/dashboardApi';
-import { downloadBlob } from './downloadFile';
+} from '../api/dashboardApi';
+import { downloadBlob } from '../model/downloadFile';
 
 const EXPORT_OPTIONS = [
   {

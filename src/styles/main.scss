@@ -4,3 +4,9 @@
 @use 'layout';
 @use 'pages';
 @use '../features/favorites/styles/heart-button';
+
+@use '../shared/charts/kpi-row';
+@use '../shared/charts/charts';
+@use '../features/landing/styles/landing';
+@use '../features/dashboard/styles/dashboard';
+@use '../app/navigation/attention-panel';

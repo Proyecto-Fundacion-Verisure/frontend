@@ -1,12 +1,13 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
-import LandingPage from '../../features/landing/LandingPage';
+import { LandingPage } from '../../features/landing';
 import { authRoutes } from '../../features/auth';
-import DashboardPage from '../../features/dashboard/DashboardPage';
+import { DashboardPage } from '../../features/dashboard';
 import CatalogPage from '../../features/activities/CatalogPage';
 import ActivitiesListPage, { PENDING_REVIEW_PATH } from '../../features/activities/ActivitiesListPage';
 import { ActivitiesTabs, RequestsTabs } from '../../components/layout/AdminSections/AdminSections';
 import { getPendingActivities } from '../../api/activitiesApi';
 import UiShowcase from '../dev/UiShowcase';
+import AttentionPanel from '../navigation/AttentionPanel';
 import PublicLayout from '../../components/layout/PublicLayout/PublicLayout';
 import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
@@ -21,7 +22,7 @@ import ProposalDetailPage from '../../features/proposals/ProposalDetailPage';
 import AccountStatusPage, { AdminAccountStatusPage } from '../../features/orgs/AccountStatusPage';
 import ActivityDetailPage from '../../features/activities/ActivityDetailPage';
 import MyVolunteeringPage from '../../features/registrations/MyVolunteeringPage';
-import NotFoundPage from '../../features/not-found/NotFoundPage';
+import { NotFoundPage } from '../../features/not-found';
 import AppLayout from '../../components/layout/AppLayout/AppLayout';
 import { RegistrationsProvider } from '../../features/registrations/RegistrationsContext';
 import { FavoritesProvider } from '../../features/favorites';
@@ -64,7 +65,7 @@ export default function AppRouter() {
             <Route path="/activities/:activityId" element={<ActivityDetailPage />} />
           </Route>
           <Route element={<RoleRoute roles={['ADMIN']} />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/dashboard" element={<DashboardPage attentionPanel={<AttentionPanel />} />} />
             <Route path="/proposals" element={<ProposalsInboxPage />} />
             <Route path="/proposals/:proposalId" element={<ProposalDetailPage />} />
             <Route path="/activities/new" element={<ActivityFormPage backPath="/admin/activities" />} />

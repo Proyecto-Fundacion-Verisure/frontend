@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getOrgDashboard } from '../../api/orgApi';
 import { Card, EmptyState, Spinner, Button } from '../../shared/ui';
-import BarChart from '../dashboard/BarChart';
-import ChartTable from '../dashboard/ChartTable';
-import KpiRow from '../dashboard/KpiRow';
+import { BarChart, ChartTable, KpiRow } from '../../shared/charts';
 import { ORG_KPI_DEFINITIONS, ORG_KPI_KEYS } from './orgDashboardDefinitions';
 
 function hasOrgDashboardData(data) {

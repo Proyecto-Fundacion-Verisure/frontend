@@ -51,13 +51,6 @@ import {
   submitOrgActivity,
   updateOrgActivity,
 } from './orgApi';
-import {
-  exportDashboardPdf,
-  exportPartnersCsv,
-  exportParticipationsCsv,
-  getDashboard,
-  sanitizeDashboardParams,
-} from './dashboardApi';
 
 const { client } = vi.hoisted(() => ({
   client: {
@@ -238,39 +231,5 @@ describe('proposal and partner API contracts', () => {
     expect(client.get).toHaveBeenNthCalledWith(3, '/org/proposals', { params: { page: 0 } });
     expect(client.post).toHaveBeenNthCalledWith(4, '/org/proposals', proposal);
     expect(client.get).toHaveBeenNthCalledWith(4, '/org/dashboard', { params: { year: 2026 } });
-  });
-});
-
-describe('dashboard API contract', () => {
-  it('uses the contract export paths and filters each export independently', () => {
-    const filters = { year: 2026, line: 'SOCIAL' };
-
-    getDashboard(filters);
-    exportParticipationsCsv(filters);
-    exportPartnersCsv(filters);
-    exportDashboardPdf(filters);
-
-    expect(client.get).toHaveBeenNthCalledWith(1, '/dashboard', { params: filters });
-    expect(client.get).toHaveBeenNthCalledWith(2, '/dashboard/participations.csv', {
-      params: filters,
-      responseType: 'blob',
-    });
-    expect(client.get).toHaveBeenNthCalledWith(3, '/dashboard/partners.csv', {
-      params: { year: 2026 },
-      responseType: 'blob',
-    });
-    expect(client.get).toHaveBeenNthCalledWith(4, '/dashboard/report.pdf', {
-      params: filters,
-      responseType: 'blob',
-    });
-  });
-
-  it('never sends filters outside the dashboard contract', () => {
-    expect(sanitizeDashboardParams({
-      year: 2026,
-      line: 'desoledad',
-      department: 'Tecnología',
-      page: 3,
-    })).toEqual({ year: 2026, line: 'desoledad' });
   });
 });

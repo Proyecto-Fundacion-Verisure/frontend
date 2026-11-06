@@ -1,5 +1,5 @@
-import { Card } from '../../shared/ui';
-import { formatDashboardNumber } from './KpiRow';
+import { Card } from '../../../shared/ui';
+import { formatDashboardNumber } from '../../../shared/lib/formatNumber';
 
 export default function DashboardRanking({ items = [] }) {
   const highestCount = Math.max(

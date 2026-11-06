@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ACTIVITY_LINES, getLineByValue } from '../../shared/domain/activityLines';
-import { Button, Card, Input, Select } from '../../shared/ui';
+import { ACTIVITY_LINES, getLineByValue } from '../../../shared/domain/activityLines';
+import { Button, Card, Input, Select } from '../../../shared/ui';
 
 export const MIN_DASHBOARD_YEAR = 2000;
 

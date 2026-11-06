@@ -1,5 +1,5 @@
-import { Table } from '../../shared/ui';
-import { formatDashboardNumber } from './KpiRow';
+import { Table } from '../ui';
+import { formatDashboardNumber } from '../lib/formatNumber';
 
 export default function ChartTable({
   data = [],

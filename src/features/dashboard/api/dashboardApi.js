@@ -1,4 +1,4 @@
-import client from '../shared/api/axiosClient';
+import client from '../../../shared/api/axiosClient';
 
 const DASHBOARD_FILTERS = ['year', 'line'];
 const YEAR_FILTER = ['year'];

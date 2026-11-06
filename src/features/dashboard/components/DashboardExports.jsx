@@ -4,9 +4,9 @@ import {
   exportDashboardPdf,
   exportPartnersCsv,
   exportParticipationsCsv,
-} from '../../api/dashboardApi';
-import { Button, Card } from '../../shared/ui';
-import { downloadBlob } from './downloadFile';
+} from '../api/dashboardApi';
+import { Button, Card } from '../../../shared/ui';
+import { downloadBlob } from '../model/downloadFile';
 
 const EXPORTS = [
   {
