@@ -1,4 +1,4 @@
-@use '../../shared/styles/abstracts' as *;
+@use '../../../shared/styles/abstracts' as *;
 
 .heart-button {
   @include focus-ring;

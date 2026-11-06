@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { favoriteActivity, unfavoriteActivity } from '../../api/favoritesApi';
+import { favoriteActivity, unfavoriteActivity } from '../api/favoritesApi';
 
 export const FavoritesContext = createContext(null);
 

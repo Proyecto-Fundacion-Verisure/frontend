@@ -24,7 +24,7 @@ import MyVolunteeringPage from '../features/registrations/MyVolunteeringPage';
 import NotFoundPage from '../features/not-found/NotFoundPage';
 import AppLayout from '../components/layout/AppLayout/AppLayout';
 import { RegistrationsProvider } from '../features/registrations/RegistrationsContext';
-import { FavoritesProvider } from '../features/favorites/FavoritesContext';
+import { FavoritesProvider } from '../features/favorites';
 import RegistrationsTablePage from '../features/registrations/RegistrationsTablePage';
 import CertificatePage from '../features/reports/CertificatePage';
 import PendingClosurePage from '../features/reports/PendingClosurePage';

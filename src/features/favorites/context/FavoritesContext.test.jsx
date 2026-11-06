@@ -2,9 +2,9 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FavoritesProvider, useFavorites } from './FavoritesContext';
-import { favoriteActivity, unfavoriteActivity } from '../../api/favoritesApi';
+import { favoriteActivity, unfavoriteActivity } from '../api/favoritesApi';
 
-vi.mock('../../api/favoritesApi', () => ({
+vi.mock('../api/favoritesApi', () => ({
   favoriteActivity: vi.fn(),
   unfavoriteActivity: vi.fn(),
 }));

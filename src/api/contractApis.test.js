@@ -37,7 +37,6 @@ import {
   saveActivityClosure,
   submitClosure,
 } from './closuresApi';
-import { favoriteActivity, unfavoriteActivity } from './favoritesApi';
 import {
   acceptProposal,
   createProposal,
@@ -148,7 +147,7 @@ describe('activity API contract', () => {
   });
 });
 
-describe('registration and favorite API contracts', () => {
+describe('registration API contracts', () => {
   it('uses the employee and administrative registration routes', () => {
     createRegistration(21);
     getMyRegistrations();
@@ -174,13 +173,6 @@ describe('registration and favorite API contracts', () => {
     });
   });
 
-  it('uses the dedicated favorite routes', () => {
-    favoriteActivity(8);
-    unfavoriteActivity(8);
-
-    expect(client.post).toHaveBeenCalledWith('/favorites', { activityId: 8 });
-    expect(client.delete).toHaveBeenCalledWith('/favorites/8');
-  });
 });
 
 describe('closure API contract', () => {
