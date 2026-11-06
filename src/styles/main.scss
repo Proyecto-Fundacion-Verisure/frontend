@@ -15,3 +15,11 @@
 @use '../features/proposals/styles/proposals-inbox';
 @use '../features/registrations/styles/my-volunteering';
 @use '../features/registrations/styles/registrations-table';
+
+@use '../features/activities/styles/activities-list';
+@use '../features/activities/styles/activity-detail';
+@use '../features/activities/styles/activity-form';
+@use '../features/activities/styles/catalog';
+@use '../features/activities/styles/activity-card';
+@use '../features/reports/styles/certificate';
+@use '../features/reports/styles/closure-form';

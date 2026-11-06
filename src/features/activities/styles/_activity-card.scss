@@ -1,0 +1,143 @@
+@use '../../../shared/styles/abstracts' as *;
+
+.activity-card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+
+  &--interactive {
+    transition: border-color $transition-base, box-shadow $transition-base;
+    &:hover { border-color: $color-border-strong; box-shadow: $shadow-md; }
+  }
+
+  &--preview {
+    border-style: dashed;
+    border-color: $color-border-strong;
+    background: $color-background;
+  }
+}
+
+.activity-card__link {
+  color: inherit;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.activity-card__media { position: relative; }
+
+.activity-card__image {
+  align-items: center;
+  aspect-ratio: 2 / 1;
+  background: $color-background;
+  color: $color-muted;
+  display: flex;
+  font-size: $font-size-sm;
+  justify-content: center;
+
+  img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+}
+
+// Sobre la imagen: el estado es lo primero que se busca al recorrer la rejilla.
+.activity-card__status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('1');
+  left: space('3');
+  max-width: calc(100% - 4.5rem);
+  position: absolute;
+  top: space('3');
+
+  .badge { box-shadow: $shadow-sm; }
+}
+
+.activity-card__favorite {
+  background: $color-surface;
+  box-shadow: $shadow-sm;
+  position: absolute;
+  right: space('2');
+  top: space('2');
+}
+
+.activity-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: space('3');
+  padding: space('4') space('5') space('5');
+}
+
+.activity-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('2');
+}
+
+.activity-card__title {
+  color: $color-heading;
+  display: -webkit-box;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.activity-card__description {
+  color: $color-muted;
+  display: -webkit-box;
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.activity-card__facts {
+  color: $color-text;
+  display: grid;
+  font-size: $font-size-sm;
+  gap: space('1');
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    align-items: flex-start;
+    display: flex;
+    gap: space('2');
+    min-width: 0;
+  }
+
+  svg {
+    color: $color-muted;
+    flex: 0 0 auto;
+    margin-top: .125rem;
+  }
+}
+
+// Al fondo de la tarjeta: las barras quedan alineadas en toda la fila.
+.activity-card__spots {
+  margin-top: auto;
+  padding-top: space('1');
+
+  p {
+    color: $color-muted;
+    font-size: $font-size-xs;
+    margin: space('1') 0 0;
+  }
+}

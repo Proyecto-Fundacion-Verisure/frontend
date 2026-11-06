@@ -1,0 +1,59 @@
+@use '../../../shared/styles/abstracts' as *;
+
+.catalog {
+  @include page-container;
+}
+
+.catalog__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('4');
+  margin-bottom: space('6');
+
+  .field {
+    flex: 1 1 11rem;
+    width: auto;
+  }
+}
+
+.catalog__toggle {
+  align-items: center;
+  align-self: flex-end;
+  color: $color-text;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  gap: space('2');
+  min-height: $control-height;
+}
+
+.catalog__error {
+  @include notice($color-danger, $color-danger-light);
+  margin-bottom: space('4');
+}
+
+.catalog__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: space('5');
+}
+
+// Con la barra lateral al lado, tres columnas quedan estrechas por debajo de esto.
+@media (max-width: 80rem) {
+  .catalog__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 64rem) {
+  .catalog__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 48rem) {
+  .catalog__grid {
+    grid-template-columns: 1fr;
+  }
+}

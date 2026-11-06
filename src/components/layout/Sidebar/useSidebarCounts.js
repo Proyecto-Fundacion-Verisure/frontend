@@ -3,9 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../../features/auth';
 import { getPendingOrganizations } from '../../../api/orgApi';
 import { getRegistrationCounts } from '../../../features/registrations';
-import { getPendingActivities } from '../../../api/activitiesApi';
+import { getPendingActivities } from '../../../features/activities';
 import { getProposals } from '../../../features/proposals';
-import { getPendingActivityClosures } from '../../../api/closuresApi';
+import { getPendingActivityClosures } from '../../../features/reports';
 
 // Todas las cifras vienen de sus endpoints; si uno falla, el globo se queda en
 // 0 y el menú se pinta igual: una cifra de adorno no puede tumbar la

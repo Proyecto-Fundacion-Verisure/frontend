@@ -4,7 +4,7 @@ import { Plus } from 'lucide-react';
 import { getOrgActivities } from '../../api/orgApi';
 import { Badge, Button, EmptyState, PageHeader, Spinner, Table } from '../../shared/ui';
 import { formatDate } from '../../shared/lib/dates';
-import SubmitForReviewButton from '../activities/SubmitForReviewButton';
+import { SubmitForReviewButton } from '../activities';
 
 // «Mis propuestas» de la entidad. La entidad no publica actividades: propone
 // una (`POST /org/activities`), la envía y la Fundación la aprueba o la

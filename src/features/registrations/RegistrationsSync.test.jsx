@@ -2,11 +2,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, Link } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import CatalogPage from '../activities/CatalogPage';
-import ActivityDetailPage from '../activities/ActivityDetailPage';
+import { ActivityDetailPage, CatalogPage } from '../activities';
 import { RegistrationsProvider } from './context/RegistrationsContext';
 import { getMyRegistrations, createRegistration } from './api/registrationsApi';
-import { getPublishedActivities, getActivityDetail } from '../../api/activitiesApi';
+import { getPublishedActivities, getActivityDetail } from '../activities';
 
 vi.mock('./api/registrationsApi', () => ({
   getMyRegistrations: vi.fn(),
@@ -17,7 +16,7 @@ vi.mock('./api/registrationsApi', () => ({
   cancelRegistration: vi.fn(),
 }));
 
-vi.mock('../../api/activitiesApi', () => ({
+vi.mock('../activities/api/activitiesApi', () => ({
   getActivityDetail: vi.fn(),
   getAdminActivity: vi.fn(),
   getPublishedActivities: vi.fn(),

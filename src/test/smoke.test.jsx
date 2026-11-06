@@ -2,13 +2,13 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { LandingPage } from '../features/landing';
-import CatalogPage from '../features/activities/CatalogPage';
+import { CatalogPage } from '../features/activities';
 import { DashboardPage } from '../features/dashboard';
 import { MyVolunteeringPage } from '../features/registrations';
-import { getPublishedActivities } from '../api/activitiesApi';
+import { getPublishedActivities } from '../features/activities';
 import { getMyRegistrations } from '../features/registrations';
 
-vi.mock('../api/activitiesApi', () => ({
+vi.mock('../features/activities/api/activitiesApi', () => ({
   getPublishedActivities: vi.fn(),
   getActivityDetail: vi.fn(),
   getAdminActivity: vi.fn(),

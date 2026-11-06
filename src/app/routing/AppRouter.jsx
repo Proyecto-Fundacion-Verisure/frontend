@@ -2,11 +2,16 @@ import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { LandingPage } from '../../features/landing';
 import { authRoutes } from '../../features/auth';
 import { DashboardPage } from '../../features/dashboard';
-import CatalogPage from '../../features/activities/CatalogPage';
-import ActivitiesListPage, { PENDING_REVIEW_PATH } from '../../features/activities/ActivitiesListPage';
-import { ActivitiesTabs } from '../../components/layout/AdminSections/AdminSections';
+import {
+  ActivitiesListPage,
+  ActivityDetailPage,
+  ActivityFormPage,
+  CatalogPage,
+  PENDING_REVIEW_PATH,
+  getPendingActivities,
+} from '../../features/activities';
+import { ActivitiesTabs } from '../navigation/ActivitiesTabs';
 import RequestsTabs from '../navigation/RequestsTabs';
-import { getPendingActivities } from '../../api/activitiesApi';
 import UiShowcase from '../dev/UiShowcase';
 import AttentionPanel from '../navigation/AttentionPanel';
 import PublicLayout from '../../components/layout/PublicLayout/PublicLayout';
@@ -14,12 +19,10 @@ import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
 import { ProposalDetailPage, ProposalForm, ProposalsInboxPage } from '../../features/proposals';
 import OrgRegisterPage from '../../features/orgs/OrgRegisterPage';
-import ActivityFormPage from '../../features/activities/ActivityFormPage';
 import OrgImpactPage from '../../features/orgs/OrgImpactPage';
 import OrgDashboardPage from '../../features/orgs/OrgDashboardPage';
 import OrgActivitiesPage from '../../features/orgs/OrgActivitiesPage';
 import AccountStatusPage, { AdminAccountStatusPage } from '../../features/orgs/AccountStatusPage';
-import ActivityDetailPage from '../../features/activities/ActivityDetailPage';
 import {
   MyVolunteeringPage,
   RegistrationsProvider,
@@ -28,10 +31,12 @@ import {
 import { NotFoundPage } from '../../features/not-found';
 import AppLayout from '../../components/layout/AppLayout/AppLayout';
 import { FavoritesProvider } from '../../features/favorites';
-import CertificatePage from '../../features/reports/CertificatePage';
-import PendingClosurePage from '../../features/reports/PendingClosurePage';
-import ClosureFormPage from '../../features/reports/ClosureFormPage';
-import ActivityClosurePage from '../../features/reports/ActivityClosurePage';
+import {
+  ActivityClosurePage,
+  CertificatePage,
+  ClosureFormPage,
+  PendingClosurePage,
+} from '../../features/reports';
 
 export default function AppRouter() {
   return (
@@ -96,7 +101,10 @@ export default function AppRouter() {
               )}
             />
             <Route path="/admin/account-status" element={<AdminAccountStatusPage />} />
-            <Route path="/admin/activities/pending-closure" element={<PendingClosurePage />} />
+            <Route
+              path="/admin/activities/pending-closure"
+              element={<PendingClosurePage sectionTabs={<ActivitiesTabs />} />}
+            />
             <Route path="/admin/activities/:activityId/closure" element={<ActivityClosurePage />} />
           </Route>
           <Route element={<RoleRoute roles={['EMPLOYEE']} />}>
