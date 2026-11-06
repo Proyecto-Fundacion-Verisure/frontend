@@ -2,11 +2,11 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getOrgDashboard } from '../../api/orgApi';
-import { makeOrgDashboardResponse, makeEmptyOrgDashboardResponse } from '../../test/fixtures/orgDashboard';
+import { getOrgDashboard } from '../api/orgApi';
+import { makeOrgDashboardResponse, makeEmptyOrgDashboardResponse } from '../../../test/fixtures/orgDashboard';
 import OrgDashboardPage from './OrgDashboardPage';
 
-vi.mock('../../api/orgApi', () => ({
+vi.mock('../api/orgApi', () => ({
   getOrgDashboard: vi.fn(),
 }));
 

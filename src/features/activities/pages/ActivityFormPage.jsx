@@ -11,7 +11,7 @@ import {
   getOrgActivities,
   submitOrgActivity,
   updateOrgActivity,
-} from '../../../api/orgApi';
+} from '../../orgs';
 import { ApiError } from '../../../shared/api/apiError';
 import { useAuth } from '../../auth';
 import useForm from '../../../shared/hooks/useForm';

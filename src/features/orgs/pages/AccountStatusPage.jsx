@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Badge, Button, EmptyState, Input, Modal, PageHeader, Pagination, Spinner, Table } from '../../shared/ui';
-import { formatDateTime } from '../../shared/lib/dates';
+import { Badge, Button, EmptyState, Input, Modal, PageHeader, Pagination, Spinner, Table } from '../../../shared/ui';
+import { formatDateTime } from '../../../shared/lib/dates';
 import {
   getPendingOrganizations,
   approveOrganization,
   rejectOrganization,
   resendOrganizationRegistrationEmail,
-} from '../../api/orgApi';
-import { verifyEmail } from '../auth';
+} from '../api/orgApi';
+import { verifyEmail } from '../../auth';
 
 // Reenvío del enlace de verificación. El backend responde 204 siempre, exista
 // o no el correo: se confirma sin decir si la cuenta existe.

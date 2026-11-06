@@ -8,7 +8,7 @@ import {
   publishActivity,
   updateActivity,
 } from '../api/activitiesApi';
-import { createOrgActivity, getOrgActivities, updateOrgActivity } from '../../../api/orgApi';
+import { createOrgActivity, getOrgActivities, updateOrgActivity } from '../../orgs';
 import { AuthContext } from '../../auth';
 import ActivityFormPage from './ActivityFormPage';
 
@@ -19,7 +19,7 @@ vi.mock('../api/activitiesApi', () => ({
   updateActivity: vi.fn(),
 }));
 
-vi.mock('../../../api/orgApi', () => ({
+vi.mock('../../orgs/api/orgApi', () => ({
   createOrgActivity: vi.fn(),
   getOrgActivities: vi.fn(),
   submitOrgActivity: vi.fn(),

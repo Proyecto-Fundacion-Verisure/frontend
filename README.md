@@ -52,18 +52,14 @@ The application is available at [http://localhost:5173](http://localhost:5173). 
 
 ```text
 src/
-├── app/          # Composition root: App, providers, routing, navigation, errors, and dev-only screens
-├── api/          # Domain endpoints pending move into their features
-├── assets/       # Images, icons, and local mock data
-├── components/
-│   └── layout/   # App shell pending move to app/layout
-├── features/     # Screens and logic grouped by feature
-├── shared/       # API client, UI, charts, hooks, lib, domain data, base styles, and testing
-├── styles/       # Component, layout, and page styles pending feature co-location
+├── app/          # Composition root: App, providers, routing, navigation, layout, and errors
+├── features/     # Screens, API and logic grouped by business feature
+├── shared/       # API client, UI, charts, hooks, lib, domain data, assets, base styles, and testing
+├── styles/       # Component and layout styles pending feature co-location
 └── test/         # Fixtures and mocks shared by the test suite
 ```
 
-HTTP calls live in `src/api` while each domain module finishes moving into its feature; a screen should never call Axios directly. Feature-specific logic stays within its `feature` folder, and reusable patterns go into `src/shared/ui`.
+HTTP calls live in each feature's `api/` module; a screen should never call Axios directly. Feature-specific logic stays within its `feature` folder, and reusable patterns go into `src/shared/ui`.
 
 ### Feature modules (`src/features`)
 

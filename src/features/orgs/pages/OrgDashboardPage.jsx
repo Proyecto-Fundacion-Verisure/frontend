@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getOrgDashboard } from '../../api/orgApi';
-import { Card, EmptyState, Spinner, Button } from '../../shared/ui';
-import { BarChart, ChartTable, KpiRow } from '../../shared/charts';
-import { ORG_KPI_DEFINITIONS, ORG_KPI_KEYS } from './orgDashboardDefinitions';
+import { getOrgDashboard } from '../api/orgApi';
+import { Card, EmptyState, Spinner, Button } from '../../../shared/ui';
+import { BarChart, ChartTable, KpiRow } from '../../../shared/charts';
+import { ORG_KPI_DEFINITIONS, ORG_KPI_KEYS } from '../model/orgDashboardDefinitions';
 
 function hasOrgDashboardData(data) {
   if (!data || typeof data !== 'object') return false;

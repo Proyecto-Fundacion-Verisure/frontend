@@ -24,7 +24,7 @@ const { client } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('../shared/api/axiosClient', () => ({ default: client }));
+vi.mock('../../../shared/api/axiosClient', () => ({ default: client }));
 
 beforeEach(() => {
   vi.clearAllMocks();

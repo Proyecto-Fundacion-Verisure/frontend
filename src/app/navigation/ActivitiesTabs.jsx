@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { NavTabs } from '../../shared/ui';
-import { SidebarCountsContext } from '../../components/layout/Sidebar/useSidebarCounts';
+import { SidebarCountsContext } from './useSidebarCounts';
 
 export function ActivitiesTabs() {
   const counts = useContext(SidebarCountsContext);

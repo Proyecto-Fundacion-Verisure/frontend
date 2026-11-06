@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import logo from '../../../assets/images/logo-fundacion-verisure.png';
+import logo from '../../../shared/assets/images/logo-fundacion-verisure.png';
 import { getCertificate } from '../api/closuresApi';
 import { Button, Spinner } from '../../../shared/ui';
 import { formatDate, formatDateRange } from '../../../shared/lib/dates';

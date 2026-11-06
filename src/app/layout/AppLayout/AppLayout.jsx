@@ -1,10 +1,10 @@
 import { Link, Outlet } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import Topbar from "../Topbar/Topbar";
-import Logo from "../../../assets/images/logo-fundacion-verisure.png"
+import Logo from "../../../shared/assets/images/logo-fundacion-verisure.png"
 import { getRoleHomePath, useAuth } from "../../../features/auth";
 import { NAV_SECTIONS_BY_ROLE } from "../Sidebar/sidebarNavigation";
-import { SidebarCountsContext, useSidebarCounts } from "../Sidebar/useSidebarCounts";
+import { SidebarCountsContext, useSidebarCounts } from "../../navigation/useSidebarCounts";
 
 export default function AppLayout() {
   const { user } = useAuth();

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getOrgDashboard } from '../../api/orgApi';
-import { Button, Input, Spinner } from '../../shared/ui';
+import { getOrgDashboard } from '../api/orgApi';
+import { Button, Input, Spinner } from '../../../shared/ui';
 
 export default function OrgImpactPage() {
   const [year, setYear] = useState(String(new Date().getFullYear()));

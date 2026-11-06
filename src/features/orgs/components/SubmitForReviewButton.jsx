@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { submitOrgActivity } from '../../../api/orgApi';
+import { submitOrgActivity } from '../api/orgApi';
 import { Button, Modal } from '../../../shared/ui';
 
 // «Enviar» desde el listado de la entidad. `PATCH

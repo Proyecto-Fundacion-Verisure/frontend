@@ -1,7 +1,7 @@
-import client from '../shared/api/axiosClient';
-import { registerPartner, resendVerification } from '../features/auth';
-import { getOrgDashboardMockData } from '../assets/mock/data/orgDashboard';
-import { isMockEnabled } from '../shared/api/mocks';
+import client from '../../../shared/api/axiosClient';
+import { registerPartner, resendVerification } from '../../auth';
+import { getOrgDashboardMockData } from '../mocks/orgDashboard';
+import { isMockEnabled } from '../../../shared/api/mocks';
 
 // Solo `/org/dashboard` sigue en mock: no tiene controlador en el backend. El
 // resto del módulo va siempre contra el backend real. Ver `src/shared/api/mocks.js`.

@@ -2,8 +2,8 @@
 
 > **Estado:** en ejecución. Fases 0 (rama y plan), 1 (esqueleto `app/` + `shared/`), 2 (pilot
 > `favorites`), 3 (`auth` + routing base), 4 (`landing`, `not-found`, `dashboard` y gráficos
-> compartidos), 5 (`proposals` + `registrations`) y 6 (`reports` + `activities`) completadas en
-> `refactor/screaming-architecture` el 7 de noviembre de 2026.
+> compartidos), 5 (`proposals` + `registrations`), 6 (`reports` + `activities`) y 7 (`orgs` +
+> limpieza del shell) completadas en `refactor/screaming-architecture` el 7 de noviembre de 2026.
 > **Base:** rama `dev` del repositorio `frontend/`, 6 de noviembre de 2026.
 > **Baseline verificado:** 56 archivos de test, 405 tests en verde, `vite build` correcto.
 > **Complejidad global:** media-alta. **9-11 jornadas** para el núcleo y **12-14 jornadas**

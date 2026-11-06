@@ -1,4 +1,4 @@
-@use '../../shared/styles/abstracts' as *;
+@use '../../../shared/styles/abstracts' as *;
 
 .org-register-page { margin: 0 auto; max-width: $content-max-width; padding: space('6') space('6') space('12'); }
 .org-register-page__intro { max-width: 52rem; }

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import { getOrgActivities } from '../../api/orgApi';
-import { Badge, Button, EmptyState, PageHeader, Spinner, Table } from '../../shared/ui';
-import { formatDate } from '../../shared/lib/dates';
-import { SubmitForReviewButton } from '../activities';
+import { getOrgActivities } from '../api/orgApi';
+import { Badge, Button, EmptyState, PageHeader, Spinner, Table } from '../../../shared/ui';
+import { formatDate } from '../../../shared/lib/dates';
+import SubmitForReviewButton from '../components/SubmitForReviewButton';
 
 // «Mis propuestas» de la entidad. La entidad no publica actividades: propone
 // una (`POST /org/activities`), la envía y la Fundación la aprueba o la

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logoVerisure from '../../../assets/images/logo-fundacion-verisure.png';
+import logoVerisure from '../../../shared/assets/images/logo-fundacion-verisure.png';
 import ThemeToggle from '../../../shared/ui/ThemeToggle/ThemeToggle';
 
 const PublicHeader = () => {

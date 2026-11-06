@@ -2,7 +2,6 @@
 @use '../shared/styles/base';
 @use 'components';
 @use 'layout';
-@use 'pages';
 @use '../features/favorites/styles/heart-button';
 
 @use '../shared/charts/kpi-row';
@@ -23,3 +22,8 @@
 @use '../features/activities/styles/activity-card';
 @use '../features/reports/styles/certificate';
 @use '../features/reports/styles/closure-form';
+
+@use '../features/orgs/styles/account-status';
+@use '../features/orgs/styles/org-register';
+
+@use '../features/auth/styles/login';

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
-import { SidebarCountsContext } from '../../components/layout/Sidebar/useSidebarCounts';
+import { SidebarCountsContext } from './useSidebarCounts';
 import AttentionPanel from './AttentionPanel';
 
 const COUNTS = { pendingReview: 1, proposals: 3, inscriptions: 0, closes: 2, pendingAccounts: 4 };

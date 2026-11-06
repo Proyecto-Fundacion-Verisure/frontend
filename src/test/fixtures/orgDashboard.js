@@ -1,4 +1,4 @@
-import { ORG_DASHBOARD_MOCK_DATA } from '../../assets/mock/data/orgDashboard';
+import { ORG_DASHBOARD_MOCK_DATA } from '../../features/orgs/mocks/orgDashboard';
 
 export const ORG_DASHBOARD_RESPONSE = ORG_DASHBOARD_MOCK_DATA;
 

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { SidebarCountsContext } from '../../components/layout/Sidebar/useSidebarCounts';
+import { SidebarCountsContext } from './useSidebarCounts';
 
 const ATTENTION_ITEMS = [
   { key: 'pendingReview', to: '/admin/activities/pending', one: 'actividad por aprobar', many: 'actividades por aprobar' },
