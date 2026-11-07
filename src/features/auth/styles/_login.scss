@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @use '../../../shared/styles/abstracts/variables' as *;
 @use '../../../shared/styles/abstracts/mixins' as *;
 
@@ -30,7 +32,7 @@
 
   &__panel {
     flex: 1;
-    padding: map-get($spacing, '12') map-get($spacing, '10');
+    padding: map.get($spacing, '12') map.get($spacing, '10');
     display: flex;
     flex-direction: column;
     justify-content:flex-start;
@@ -49,7 +51,7 @@
   &__logo {
     height: auto;
     width: auto;
-    margin-bottom: map-get($spacing, '10');
+    margin-bottom: map.get($spacing, '10');
   }
 
   &__hero-title {
@@ -57,7 +59,7 @@
     font-weight: $font-weight-semibold;
     line-height: $line-height-tight;
     color: $color-heading;
-    margin: 0 0 map-get($spacing, '4');
+    margin: 0 0 map.get($spacing, '4');
   }
 
   &__hero-text {
@@ -79,23 +81,23 @@
     font-size: $font-size-xl;
     font-weight: $font-weight-semibold;
     color: $color-heading;
-    margin: 0 0 map-get($spacing, '2');
+    margin: 0 0 map.get($spacing, '2');
   }
 
   &__form-subtitle {
     font-size: $font-size-sm;
     color: $color-muted;
-    margin: 0 0 map-get($spacing, '8');
+    margin: 0 0 map.get($spacing, '8');
   }
 
   &__session-expired {
     @include notice($color-warning, $color-warning-light);
     font-size: $font-size-sm;
-    margin-bottom: map-get($spacing, '4');
+    margin-bottom: map.get($spacing, '4');
   }
 
   &__register {
-    margin-top: map-get($spacing, '10');
+    margin-top: map.get($spacing, '10');
     text-align: center;
     font-size: $font-size-sm;
     color: $color-muted;
@@ -117,7 +119,7 @@
     align-items: center;
     display: flex;
     justify-content: center;
-    margin-top: map-get($spacing, '4');
+    margin-top: map.get($spacing, '4');
     min-height: $control-height;
     font-size: $font-size-sm;
     color: $color-muted;
@@ -134,15 +136,15 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: map-get($spacing, '5');
+  gap: map.get($spacing, '5');
 
   &__submit {
-    margin-top: map-get($spacing, '2');
+    margin-top: map.get($spacing, '2');
     width: 100%;
     justify-content: center;
     display: inline-flex;
     align-items: center;
-    gap: map-get($spacing, '2');
+    gap: map.get($spacing, '2');
   }
 
   &__error {
@@ -151,7 +153,7 @@
   }
 }
 
-@media (max-width: map-get($breakpoints, 'md')) {
+@media (max-width: map.get($breakpoints, 'md')) {
   .login-page {
     &__card {
       flex-direction: column;
@@ -163,7 +165,7 @@
     }
 
     &__panel--right {
-      padding: map-get($spacing, '8') map-get($spacing, '6');
+      padding: map.get($spacing, '8') map.get($spacing, '6');
     }
   }
 }
