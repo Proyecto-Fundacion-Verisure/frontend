@@ -1,0 +1,169 @@
+@use '../../../shared/styles/abstracts/variables' as *;
+@use '../../../shared/styles/abstracts/mixins' as *;
+
+.login-page {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: left;
+  box-sizing: border-box;
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  &__card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 100%;
+    max-width: $content-max-width * 0.7;
+    min-height: 620px;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    box-shadow: $shadow-lg;
+  }
+
+  &__panel {
+    flex: 1;
+    padding: map-get($spacing, '12') map-get($spacing, '10');
+    display: flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    background: color-mix(in srgb, $color-surface 85%, transparent);
+    backdrop-filter: blur(6px);
+
+    &--left {
+      background: color-mix(in srgb, $color-surface 80%, transparent);
+    }
+
+    &--right {
+      background: color-mix(in srgb, $color-surface 95%, transparent);
+    }
+  }
+
+  &__logo {
+    height: auto;
+    width: auto;
+    margin-bottom: map-get($spacing, '10');
+  }
+
+  &__hero-title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-semibold;
+    line-height: $line-height-tight;
+    color: $color-heading;
+    margin: 0 0 map-get($spacing, '4');
+  }
+
+  &__hero-text {
+    font-family: $font-sans;
+    font-size: $font-size-md;
+    line-height: $line-height-normal;
+    color: $color-text;
+    margin: 0;
+    max-width: 320px;
+  }
+
+  &__form-wrapper {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  &__form-title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $color-heading;
+    margin: 0 0 map-get($spacing, '2');
+  }
+
+  &__form-subtitle {
+    font-size: $font-size-sm;
+    color: $color-muted;
+    margin: 0 0 map-get($spacing, '8');
+  }
+
+  &__session-expired {
+    @include notice($color-warning, $color-warning-light);
+    font-size: $font-size-sm;
+    margin-bottom: map-get($spacing, '4');
+  }
+
+  &__register {
+    margin-top: map-get($spacing, '10');
+    text-align: center;
+    font-size: $font-size-sm;
+    color: $color-muted;
+    line-height: $line-height-normal;
+  }
+
+  &__register-link {
+    align-items: center;
+    color: $color-coral-dark;
+    display: inline-flex;
+    font-weight: $font-weight-semibold;
+    min-height: $control-height;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+
+  &__back-link {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-top: map-get($spacing, '4');
+    min-height: $control-height;
+    font-size: $font-size-sm;
+    color: $color-muted;
+    text-decoration: none;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-text;
+      text-decoration: underline;
+    }
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: map-get($spacing, '5');
+
+  &__submit {
+    margin-top: map-get($spacing, '2');
+    width: 100%;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    gap: map-get($spacing, '2');
+  }
+
+  &__error {
+    @include notice($color-danger, $color-danger-light);
+    font-size: $font-size-sm;
+  }
+}
+
+@media (max-width: map-get($breakpoints, 'md')) {
+  .login-page {
+    &__card {
+      flex-direction: column;
+      min-height: auto;
+    }
+
+    &__panel--left {
+      display: none;
+    }
+
+    &__panel--right {
+      padding: map-get($spacing, '8') map-get($spacing, '6');
+    }
+  }
+}

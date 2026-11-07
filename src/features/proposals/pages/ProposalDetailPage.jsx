@@ -1,0 +1,217 @@
+import { useCallback, useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { getProposal, rejectProposal } from '../api/proposalsApi';
+import { Badge, Button, Card, ConfirmModal, EmptyState, PageHeader, Spinner } from '../../../shared/ui';
+import AcceptProposalButton, { getActivityDraftPath } from '../components/AcceptProposalButton';
+import { formatDateTime } from '../../../shared/lib/dates';
+
+const STATUS_BADGE = {
+  NEW: { variant: 'info', label: 'Nueva' },
+  ACCEPTED: { variant: 'success', label: 'Aceptada' },
+  REJECTED: { variant: 'danger', label: 'Rechazada' },
+};
+
+const LINE_LABELS = {
+  desoledad: 'Desoledad',
+  educar: 'Educar para proteger',
+  acoso: 'Protegidos ante el acoso',
+  medioambiente: 'Medio ambiente',
+};
+
+export default function ProposalDetailPage() {
+  const { proposalId } = useParams();
+  const [proposal, setProposal] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [rejectStatus, setRejectStatus] = useState('idle');
+  const [rejectError, setRejectError] = useState('');
+  const [isRejectConfirmOpen, setIsRejectConfirmOpen] = useState(false);
+
+  const fetchProposal = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await getProposal(proposalId);
+      setProposal(response.data);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [proposalId]);
+
+  useEffect(() => {
+    fetchProposal();
+  }, [fetchProposal]);
+
+  const handleReject = async () => {
+    if (rejectStatus === 'loading' || rejectStatus === 'conflict') return;
+    setRejectStatus('loading');
+    setRejectError('');
+    try {
+      await rejectProposal(proposalId);
+      setProposal((prev) => (prev ? { ...prev, status: 'REJECTED' } : prev));
+      setRejectStatus('idle');
+    } catch (err) {
+      if (err?.status === 409 || err?.code === 'PROPOSAL_ALREADY_DECIDED') {
+        setRejectStatus('conflict');
+        setRejectError('Esta propuesta ya ha sido aceptada o rechazada. Actualiza el detalle para ver su estado.');
+      } else {
+        setRejectStatus('idle');
+        setRejectError(err?.message || 'No hemos podido rechazar la propuesta. Inténtalo de nuevo.');
+      }
+    } finally {
+      setIsRejectConfirmOpen(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="proposal-detail" aria-label="Cargando propuesta">
+        <Spinner label="Cargando propuesta…" />
+      </section>
+    );
+  }
+
+  if (error?.status === 404) {
+    return (
+      <section className="proposal-detail">
+        <EmptyState
+          title="Propuesta no encontrada"
+          description={error.message || 'No se ha encontrado el recurso solicitado.'}
+          action={
+            <Link to="/proposals" className="button button--primary">
+              Volver a la bandeja
+            </Link>
+          }
+        />
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="proposal-detail">
+        <div className="proposals-inbox__error" role="alert">
+          {error.message || 'Ha ocurrido un error al cargar la propuesta.'}
+        </div>
+        <Button onClick={fetchProposal}>Reintentar</Button>
+      </section>
+    );
+  }
+
+  if (!proposal) return null;
+
+  const badge = STATUS_BADGE[proposal.status];
+  const lineLabel = LINE_LABELS[proposal.suggestedLine] || proposal.suggestedLine;
+  // `partnerName` y los tres datos de contacto son nulos en las propuestas que
+  // llegaron por el formulario público de una organización sin cuenta.
+  const partnerName = proposal.partnerName ?? 'Sin entidad';
+
+  return (
+    <section className="proposal-detail" aria-labelledby="proposal-detail-title">
+      <Link to="/proposals" className="proposal-detail__back">
+        ← Volver a solicitudes
+      </Link>
+      <PageHeader
+        title={partnerName}
+        titleId="proposal-detail-title"
+        actions={badge && <Badge variant={badge.variant}>{badge.label}</Badge>}
+      />
+
+      <Card className="proposal-detail__card">
+        <dl className="proposal-detail__meta">
+          <div>
+            <dt>Entidad</dt>
+            <dd>{partnerName}</dd>
+          </div>
+          <div>
+            <dt>CIF</dt>
+            <dd>{proposal.cif ?? '—'}</dd>
+          </div>
+          <div>
+            <dt>Persona de contacto</dt>
+            <dd>{proposal.contactName ?? '—'}</dd>
+          </div>
+          <div>
+            <dt>Correo</dt>
+            <dd>
+              {proposal.email ? <a href={`mailto:${proposal.email}`}>{proposal.email}</a> : '—'}
+            </dd>
+          </div>
+          <div>
+            <dt>Teléfono</dt>
+            <dd>
+              {proposal.phone ? <a href={`tel:${proposal.phone}`}>{proposal.phone}</a> : '—'}
+            </dd>
+          </div>
+          <div>
+            <dt>Línea sugerida</dt>
+            <dd>{lineLabel ? <Badge variant="info">{lineLabel}</Badge> : 'Sin definir'}</dd>
+          </div>
+          <div>
+            <dt>Voluntarios estimados</dt>
+            <dd>{proposal.estimatedVolunteers ?? '—'}</dd>
+          </div>
+          <div>
+            <dt>Personas beneficiarias</dt>
+            <dd>{proposal.scope ?? '—'}</dd>
+          </div>
+          <div>
+            <dt>Fecha</dt>
+            <dd>{formatDateTime(proposal.createdAt)}</dd>
+          </div>
+          <div>
+            <dt>Consentimiento</dt>
+            <dd>{proposal.consentAt ? formatDateTime(proposal.consentAt) : '—'}</dd>
+          </div>
+        </dl>
+        <div className="proposal-detail__description">
+          <h2>Descripción</h2>
+          <p>{proposal.description}</p>
+        </div>
+      </Card>
+
+      <div className="proposal-detail__actions">
+        {proposal.status === 'NEW' && (
+          <>
+            <AcceptProposalButton proposalId={proposal.id} />
+            <Button
+              variant="secondary"
+              onClick={() => setIsRejectConfirmOpen(true)}
+              disabled={rejectStatus === 'conflict'}
+            >
+              Rechazar propuesta
+            </Button>
+            {rejectError && (
+              <p className="proposal-detail__error" role="alert">
+                {rejectError}
+              </p>
+            )}
+            <ConfirmModal
+              isOpen={isRejectConfirmOpen}
+              onClose={() => setIsRejectConfirmOpen(false)}
+              onConfirm={handleReject}
+              isLoading={rejectStatus === 'loading'}
+              loadingLabel="Rechazando…"
+              title="Rechazar propuesta"
+              description={`Se rechazará la propuesta de ${partnerName}. Esta acción no se puede deshacer.`}
+              confirmLabel="Confirmar rechazo"
+            />
+          </>
+        )}
+        {proposal.status === 'ACCEPTED' && (
+          <Link
+            className="button button--secondary"
+            to={getActivityDraftPath(proposal.activityId ?? proposal.id)}
+          >
+            Ver actividad
+          </Link>
+        )}
+        {proposal.status === 'REJECTED' && (
+          <span className="proposals-inbox__no-action">Sin acciones disponibles</span>
+        )}
+      </div>
+    </section>
+  );
+}

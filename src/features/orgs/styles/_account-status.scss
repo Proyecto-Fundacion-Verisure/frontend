@@ -1,0 +1,60 @@
+@use '../../../shared/styles/abstracts' as *;
+
+.account-status {
+  @include page-container;
+  display: flex;
+  flex-direction: column;
+  gap: space('4');
+
+  &__center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 20rem;
+  }
+
+  &__title { margin: 0; }
+
+  // Con el `gap` de la columna suma lo mismo que en el resto de listados.
+  > .page-header { margin-bottom: space('2'); }
+
+  &__subtitle {
+    font-size: $font-size-md;
+    color: $color-muted;
+    margin: 0;
+  }
+
+  // La columna flex estira a los hijos: los botones de la rama pública se
+  // alinean al inicio para que no ocupen todo el ancho.
+  &__actions {
+    display: flex;
+    gap: space('3');
+  }
+
+  // Reenvío del enlace de verificación en la rama pública.
+  &__resend {
+    display: flex;
+    flex-direction: column;
+    gap: space('3');
+    max-width: 28rem;
+
+    .button {
+      align-self: flex-start;
+    }
+  }
+
+  &__org-name { color: $color-heading; }
+
+  &__meta {
+    color: $color-muted;
+    display: block;
+    font-size: $font-size-xs;
+    overflow-wrap: anywhere;
+  }
+
+  &__row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: space('2');
+  }
+}

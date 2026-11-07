@@ -1,0 +1,218 @@
+@use '../../../shared/styles/abstracts' as *;
+
+.pending-closures {
+  @include page-container;
+}
+
+.report-form-page {
+  @include page-container(48rem);
+
+  > a { @include back-link; }
+
+  h1 { margin: 0 0 space('2'); }
+
+  > p:not(.activity-form-page__eyebrow, .closure-form__activity, .closure-form__notice) {
+    color: $color-muted;
+    margin: 0 0 space('2');
+  }
+
+  > form,
+  > dl {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+    display: flex;
+    flex-direction: column;
+    gap: space('5');
+    margin: space('5') 0;
+    padding: space('5');
+  }
+
+  dt {
+    color: $color-muted;
+    font-size: $font-size-sm;
+  }
+
+  dd {
+    color: $color-heading;
+    margin: space('1') 0 0;
+    overflow-wrap: anywhere;
+  }
+
+  dd a { color: $color-coral-dark; }
+}
+
+.closure-form {
+  &__notice {
+    @include notice($color-success, $color-success-light);
+    margin-block: space('4');
+  }
+
+  &__returned {
+    background: $color-warning-light;
+    border: 1px solid color-mix(in srgb, $color-warning 30%, transparent);
+    border-radius: $radius-md;
+    margin-block: space('4');
+    padding: space('3') space('4');
+  }
+
+  &__returned-title {
+    color: $color-warning;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    margin: 0 0 space('1');
+  }
+
+  &__returned-note {
+    color: $color-text;
+    margin: 0;
+  }
+
+  &__activity {
+    color: $color-heading;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    margin: 0 0 space('2');
+  }
+
+  &__consent {
+    align-items: flex-start;
+    background: $color-background;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    display: flex;
+    gap: space('3');
+    line-height: 1.45;
+    margin-top: space('5');
+    padding: space('4');
+
+    input {
+      flex-shrink: 0;
+      margin-top: 0.2em;
+    }
+
+    &--error {
+      border-color: $color-danger;
+    }
+  }
+
+  &__contrast {
+    margin-top: space('6');
+  }
+
+  &__deviation {
+    border-radius: $radius-pill;
+    display: inline-block;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    padding: space('1') .625rem;
+
+    &--positive {
+      background: $color-success-light;
+      color: $color-success;
+    }
+
+    &--negative {
+      background: $color-warning-light;
+      color: $color-warning;
+    }
+
+    &--neutral {
+      color: $color-muted;
+    }
+  }
+
+  &__fields {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+    margin-top: space('6');
+    padding: space('5');
+
+    > .field {
+      margin-top: space('5');
+    }
+
+    > .field:first-child {
+      margin-top: 0;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: space('3');
+    justify-content: flex-end;
+
+    .button {
+      min-height: 2.75rem;
+    }
+  }
+
+  @media (max-width: 38rem) {
+    &__actions {
+      flex-direction: column;
+
+      .button {
+        width: 100%;
+      }
+    }
+  }
+
+  &__file {
+    align-items: center;
+    background: $color-background;
+    border: 1px dashed $color-border-strong;
+    border-radius: $radius-md;
+    display: flex;
+    flex-wrap: wrap;
+    gap: space('3');
+    padding: space('3');
+  }
+
+  &__file-preview {
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    height: 3.5rem;
+    object-fit: cover;
+    width: 3.5rem;
+  }
+
+  &__file-badge {
+    align-items: center;
+    background: $color-info-light;
+    border-radius: $radius-sm;
+    color: $color-info;
+    display: inline-flex;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    height: 3.5rem;
+    justify-content: center;
+    text-transform: uppercase;
+    width: 3.5rem;
+  }
+
+  &__file-info {
+    display: flex;
+    flex-direction: column;
+    gap: space('1');
+    min-width: 0;
+  }
+
+  &__file-name {
+    color: $color-text;
+    font-weight: $font-weight-semibold;
+    overflow-wrap: anywhere;
+  }
+
+  &__file-size {
+    color: $color-muted;
+    font-size: $font-size-sm;
+  }
+
+  &__file-actions {
+    margin-left: auto;
+  }
+}

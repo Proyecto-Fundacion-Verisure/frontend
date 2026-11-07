@@ -1,0 +1,60 @@
+@use '../../shared/styles/abstracts' as *;
+
+.attention-panel {
+  display: grid;
+  gap: space('3');
+
+  &__title { font-size: $font-size-lg; }
+
+  &__grid {
+    display: grid;
+    gap: space('3');
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.attention-card {
+  @include focus-ring;
+  align-items: center;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  column-gap: space('2');
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  height: 100%;
+  padding: space('4');
+  text-decoration: none;
+  transition: border-color $transition-fast;
+
+  &:hover { border-color: $color-border-strong; }
+
+  &__count {
+    color: $color-heading;
+    font-size: $font-size-2xl;
+    font-variant-numeric: tabular-nums;
+    font-weight: $font-weight-semibold;
+    line-height: 1.1;
+  }
+
+  &__label {
+    color: $color-text;
+    font-size: $font-size-sm;
+    grid-column: 1;
+    margin-top: space('1');
+  }
+
+  &__icon {
+    color: $color-muted;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  &--empty &__count,
+  &--empty &__label { color: $color-muted; }
+  &--empty &__count { font-weight: $font-weight-medium; }
+}

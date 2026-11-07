@@ -1,0 +1,33 @@
+import { Link, Outlet } from "react-router-dom";
+import Sidebar from "../Sidebar/Sidebar";
+import Topbar from "../Topbar/Topbar";
+import Logo from "../../../shared/assets/images/logo-fundacion-verisure.png"
+import { getRoleHomePath, useAuth } from "../../../features/auth";
+import { NAV_SECTIONS_BY_ROLE } from "../Sidebar/sidebarNavigation";
+import { SidebarCountsContext, useSidebarCounts } from "../../navigation/useSidebarCounts";
+
+export default function AppLayout() {
+  const { user } = useAuth();
+  const sections = NAV_SECTIONS_BY_ROLE[user?.role] ?? [];
+  const counts = useSidebarCounts();
+
+  return (
+    <div className="app-layout">
+      <a href="#main" className="skip-link">
+        Saltar al contenido
+      </a>
+      <Topbar>
+        {/* Dentro del backoffice el logo lleva al inicio del rol, no a la landing. */}
+        <Link to={getRoleHomePath(user?.role)} className="topbar__brand">
+          <img src={Logo} alt="Fundación Verisure" />
+        </Link>
+      </Topbar>
+      <Sidebar sections={sections} counts={counts} />
+      <main id="main" tabIndex={-1} className="app-layout__content">
+        <SidebarCountsContext.Provider value={counts}>
+          <Outlet />
+        </SidebarCountsContext.Provider>
+      </main>
+    </div>
+  );
+}

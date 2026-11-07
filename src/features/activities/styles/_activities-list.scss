@@ -1,0 +1,87 @@
+@use '../../../shared/styles/abstracts' as *;
+
+.activities-list {
+  @include page-container;
+}
+
+.activities-list td[data-label='Inicio'] { white-space: nowrap; }
+
+.activities-list__search {
+  align-items: flex-end;
+  display: grid;
+  gap: space('3');
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.activities-list__activity-title { color: $color-heading; }
+
+// Los dos bloques de «Mis proyectos» de la entidad.
+.activities-list__group + .activities-list__group {
+  margin-top: space('8');
+}
+
+.activities-list__group-title {
+  color: $color-heading;
+  font-size: $font-size-lg;
+  margin: 0 0 space('3');
+
+  span {
+    color: $color-muted;
+    font-weight: normal;
+  }
+}
+
+.activities-list__group-empty {
+  color: $color-muted;
+  margin: 0;
+}
+
+.activities-list__review-note {
+  color: $color-warning;
+  font-size: $font-size-sm;
+  margin: space('1') 0 0;
+}
+
+.activities-list__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('2');
+}
+
+.activities-list__notice {
+  @include notice($color-success, $color-success-light);
+  margin: 0 0 space('4');
+}
+
+.activities-list__loading {
+  display: grid;
+  min-height: 14rem;
+  place-items: center;
+}
+
+.activities-list__error-panel { text-align: center; }
+
+.activities-list__error {
+  @include notice($color-danger, $color-danger-light);
+  margin: 0 0 space('4');
+}
+
+.activities-list__pagination {
+  align-items: center;
+  color: $color-muted;
+  display: flex;
+  font-size: $font-size-sm;
+  justify-content: space-between;
+  margin-top: space('5');
+
+  > div {
+    display: flex;
+    gap: space('3');
+  }
+}
+
+@media (max-width: 38rem) {
+  .activities-list__search { grid-template-columns: 1fr; }
+  .activities-list__pagination { align-items: stretch; flex-direction: column; gap: space('3'); }
+  .activities-list__pagination > div { display: grid; grid-template-columns: 1fr 1fr; }
+}

@@ -9,8 +9,9 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "arch:check": "node scripts/check-architecture.mjs",
     "demo:reset": "node scripts/restore-demo.js",
-    "smoke": "npm run test:run && npm run build"
+    "smoke": "npm run test:run && npm run build && npm run arch:check"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

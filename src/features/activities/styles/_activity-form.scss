@@ -1,0 +1,162 @@
+@use '../../../shared/styles/abstracts' as *;
+
+.activity-form-page {
+  @include page-container;
+}
+
+.activity-form-page__header,
+.activity-form-page__intro {
+  max-width: 52rem;
+}
+
+.activity-form-page__header > a,
+.activity-form-page__back {
+  @include back-link;
+}
+
+.activity-form-page__eyebrow {
+  @include eyebrow;
+}
+
+.activity-form-page h1 {
+  margin: 0;
+}
+
+.activity-form-page__intro > p:last-child {
+  color: $color-muted;
+  margin: space('1') 0 0;
+}
+
+.activity-form-page__layout {
+  align-items: start;
+  display: grid;
+  gap: space('6');
+  grid-template-columns: minmax(0, 1.25fr) minmax(18rem, .75fr);
+  margin-top: space('6');
+}
+
+.activity-form {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  margin-top: space('6');
+  padding: space('5');
+}
+
+.activity-form-page__layout .activity-form {
+  margin-top: 0;
+}
+
+.activity-form__grid {
+  display: grid;
+  gap: space('5') space('4');
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.activity-form__grid--dates {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.activity-form > * + * {
+  margin-top: space('5');
+}
+
+.activity-form__footer {
+  align-items: center;
+  border-top: 1px solid $color-border;
+  display: flex;
+  gap: space('4');
+  justify-content: space-between;
+  margin-top: space('5');
+  padding-top: space('5');
+
+  small { color: $color-muted; }
+}
+
+.activity-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('3');
+  justify-content: flex-end;
+}
+
+.activity-form__error {
+  color: $color-danger;
+  font-size: $font-size-sm;
+  margin: space('4') 0 0;
+}
+
+// El comentario con el que la Fundación devolvió la actividad, y el aviso de
+// que la descripción no se recupera al editar.
+.activity-form__review-note,
+.activity-form__notice {
+  margin: 0 0 space('4');
+}
+
+.activity-form__review-note {
+  @include notice($color-warning, $color-warning-light);
+}
+
+.activity-form__notice {
+  @include notice($color-info, $color-info-light);
+}
+
+.activity-form-page--success,
+.activity-form--success {
+  max-width: 42rem;
+  text-align: center;
+
+  > p:not(.activity-form-page__eyebrow) {
+    color: $color-muted;
+    margin: space('3') 0 space('6');
+  }
+}
+
+.activity-form-page__success-actions {
+  display: flex;
+  gap: space('3');
+  justify-content: center;
+  margin-top: space('6');
+}
+
+.activity-form-page--state {
+  display: grid;
+  justify-items: center;
+  min-height: 20rem;
+  place-content: center;
+  text-align: center;
+
+  > p {
+    color: $color-muted;
+    margin: space('4') 0 0;
+  }
+}
+
+.activity-preview {
+  position: sticky;
+  top: space('8');
+}
+
+.activity-preview__label {
+  color: $color-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  margin: 0 0 space('3');
+}
+
+@media (max-width: 55rem) {
+  .activity-form-page__layout,
+  .activity-form__grid--dates { grid-template-columns: 1fr; }
+  .activity-preview { position: static; }
+}
+
+@media (max-width: 38rem) {
+  .activity-form__grid { grid-template-columns: 1fr; }
+  .activity-form__footer { align-items: stretch; flex-direction: column; }
+  .activity-form__actions { flex-direction: column; }
+  .activity-form__actions .button,
+  .activity-form__footer .button,
+  .activity-form-page__success-actions .button { width: 100%; }
+  .activity-form-page__success-actions { flex-direction: column; }
+}

@@ -47,26 +47,20 @@ The application is available at [http://localhost:5173](http://localhost:5173). 
 | `npm test` | Opens Vitest in interactive mode. |
 | `npm run test:run` | Runs all tests once. |
 | `npm run test:coverage` | Runs tests and generates a coverage report. |
+| `npm run arch:check` | Checks feature/shared/app import boundaries. |
+| `npm run smoke` | Runs tests, build and the architecture check. |
 
 ## Architecture
 
 ```text
 src/
-├── api/          # Axios client, errors, and API endpoints per domain
-├── assets/       # Images and icons
-├── components/
-│   ├── ErrorBoundary/  # Global error boundary
-│   ├── layout/   # AppLayout, PublicLayout, Topbar, Sidebar, and footer
-│   └── ui/       # Shared, accessible UI components
-├── constants/    # Shared values, such as action lines
-├── features/     # Screens and logic grouped by feature
-├── hooks/        # Cross-cutting hooks
-├── routes/       # Router, protected routes, and role-based authorization
-├── styles/       # Sass 7-1: abstracts, base, components, layout, and pages
-└── test/         # Fixtures, mocks, and test-only utilities
+├── app/          # Composition root: App, providers, routing, navigation, layout, styles, and test harness
+├── features/     # Screens, API and logic grouped by business feature
+├── shared/       # API client, assets, UI, charts, hooks, lib, domain, styles, and testing
+└── main.jsx
 ```
 
-HTTP calls live in `src/api`; a screen should never call Axios directly. Feature-specific logic stays within its `feature` folder, and reusable patterns go into `components/ui`.
+HTTP calls live in each feature's `api/` module; a screen should never call Axios directly. Feature-specific logic stays within its `feature` folder, and reusable patterns go into `src/shared/ui`.
 
 ### Feature modules (`src/features`)
 
@@ -109,7 +103,7 @@ There should be no accidental horizontal scroll; touch targets must be at least 
 
 ## Themes and design tokens
 
-- Theme values live in `src/styles/base/_tokens.scss`, as CSS custom properties for light and dark. The Sass variables in `abstracts/_variables.scss` point to them, so use the Sass names in components and avoid literal colours.
+- Theme values live in `src/shared/styles/base/_tokens.scss`, as CSS custom properties for light and dark. The Sass variables in `src/shared/styles/abstracts/_variables.scss` point to them, so use the Sass names in components and avoid literal colours.
 - Sass colour functions such as `rgba($token, .5)` do not work on these tokens; use `color-mix()`.
 - `useTheme` follows the system preference until the user picks a theme, which is then stored in `localStorage` under `theme`. A small script in `index.html` applies it before the first render and must keep the same rule.
 - The certificate stays light on screen, and printing always uses the light theme.
