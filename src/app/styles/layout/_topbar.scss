@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @use '../../../shared/styles/abstracts/variables' as *;
 @use '../../../shared/styles/abstracts/mixins' as *;
 
@@ -8,10 +10,10 @@
   border-bottom: 1px solid $color-border;
   align-items: center;
   color: $color-text;
-  gap: map-get($spacing, '4');
+  gap: map.get($spacing, '4');
   justify-content: space-between;
   min-height: 4rem;
-  padding: 0 map-get($spacing, '6');
+  padding: 0 map.get($spacing, '6');
 }
 
 .topbar__content { 
@@ -35,7 +37,7 @@
 .topbar__user-menu {
   align-items: center;
   display: flex;
-  gap: map-get($spacing, '3');
+  gap: map.get($spacing, '3');
   margin-left: auto;
 }
 
@@ -93,11 +95,11 @@
   font: inherit;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  gap: map-get($spacing, '2');
+  gap: map.get($spacing, '2');
   justify-content: center;
   min-height: $control-height;
   min-width: $control-height;
-  padding: 0 map-get($spacing, '3');
+  padding: 0 map.get($spacing, '3');
   transition: background-color $transition-fast, border-color $transition-fast;
 
   &:hover {
@@ -107,7 +109,7 @@
 }
 
 @media (max-width: 35.99rem) {
-  .topbar { padding-inline: map-get($spacing, '4'); }
+  .topbar { padding-inline: map.get($spacing, '4'); }
   .topbar__user-info,
   .topbar__logout span { display: none; }
 }
