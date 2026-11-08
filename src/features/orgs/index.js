@@ -1,4 +1,5 @@
-export { default as AccountStatusPage, AdminAccountStatusPage } from './pages/AccountStatusPage';
+export { default as AccountStatusPage } from './pages/AccountStatusPage';
+export { default as AdminAccountStatusPage } from './pages/AdminAccountStatusPage';
 export { default as OrgActivitiesPage } from './pages/OrgActivitiesPage';
 export { default as OrgDashboardPage } from './pages/OrgDashboardPage';
 export { default as OrgImpactPage } from './pages/OrgImpactPage';
