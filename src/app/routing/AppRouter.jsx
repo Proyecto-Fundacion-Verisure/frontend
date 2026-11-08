@@ -1,15 +1,6 @@
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { LandingPage } from '../../features/landing';
 import { authRoutes } from '../../features/auth';
-import { DashboardPage } from '../../features/dashboard';
-import {
-  ActivitiesListPage,
-  ActivityDetailPage,
-  ActivityFormPage,
-  CatalogPage,
-  PENDING_REVIEW_PATH,
-  getPendingActivities,
-} from '../../features/activities';
 import { ActivitiesTabs } from '../navigation/ActivitiesTabs';
 import RequestsTabs from '../navigation/RequestsTabs';
 import UiShowcase from '../dev/UiShowcase';
@@ -17,29 +8,53 @@ import AttentionPanel from '../navigation/AttentionPanel';
 import PublicLayout from '../layout/PublicLayout/PublicLayout';
 import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
-import { ProposalDetailPage, ProposalForm, ProposalsInboxPage } from '../../features/proposals';
-import {
-  AccountStatusPage,
-  AdminAccountStatusPage,
-  OrgActivitiesPage,
-  OrgDashboardPage,
-  OrgImpactPage,
-  OrgRegisterPage,
-} from '../../features/orgs';
-import {
-  MyVolunteeringPage,
-  RegistrationsProvider,
-  RegistrationsTablePage,
-} from '../../features/registrations';
-import { NotFoundPage } from '../../features/not-found';
 import AppLayout from '../layout/AppLayout/AppLayout';
 import { FavoritesProvider } from '../../features/favorites';
-import {
-  ActivityClosurePage,
-  CertificatePage,
-  ClosureFormPage,
-  PendingClosurePage,
-} from '../../features/reports';
+// El router pide la API y el provider por su módulo, no por el barril de la
+// feature: así el barril —y con él sus páginas— solo entra con el `import()`
+// diferido de cada ruta y no en el trozo de entrada.
+import { getPendingActivities } from '../../features/activities/api';
+import { PENDING_REVIEW_PATH } from '../../features/activities/routes';
+import { RegistrationsProvider } from '../../features/registrations/context/RegistrationsContext';
+import createLazyPage from './createLazyPage';
+
+// La landing y el acceso se cargan de entrada: son la primera pantalla de casi
+// todo el mundo. El resto —incluidas las páginas públicas secundarias y todo el
+// backoffice— se reparte por feature y cada trozo se descarga al entrar en su
+// ruta. El `Suspense` que los muestra vive en cada layout, no aquí, para que la
+// cabecera, el menú y el pie sigan montados mientras llega la página.
+const DashboardPage = createLazyPage(() => import('../../features/dashboard'), 'DashboardPage');
+
+const ActivitiesListPage = createLazyPage(() => import('../../features/activities'), 'ActivitiesListPage');
+const ActivityDetailPage = createLazyPage(() => import('../../features/activities'), 'ActivityDetailPage');
+const ActivityFormPage = createLazyPage(() => import('../../features/activities'), 'ActivityFormPage');
+const CatalogPage = createLazyPage(() => import('../../features/activities'), 'CatalogPage');
+const ProposalForm = createLazyPage(() => import('../../features/proposals'), 'ProposalForm');
+const ProposalsInboxPage = createLazyPage(() => import('../../features/proposals'), 'ProposalsInboxPage');
+const ProposalDetailPage = createLazyPage(() => import('../../features/proposals'), 'ProposalDetailPage');
+
+const RegistrationsTablePage = createLazyPage(
+  () => import('../../features/registrations'),
+  'RegistrationsTablePage',
+);
+const MyVolunteeringPage = createLazyPage(() => import('../../features/registrations'), 'MyVolunteeringPage');
+
+const ActivityClosurePage = createLazyPage(() => import('../../features/reports'), 'ActivityClosurePage');
+const CertificatePage = createLazyPage(() => import('../../features/reports'), 'CertificatePage');
+const ClosureFormPage = createLazyPage(() => import('../../features/reports'), 'ClosureFormPage');
+const PendingClosurePage = createLazyPage(() => import('../../features/reports'), 'PendingClosurePage');
+
+const AccountStatusPage = createLazyPage(() => import('../../features/orgs'), 'AccountStatusPage');
+const OrgRegisterPage = createLazyPage(() => import('../../features/orgs'), 'OrgRegisterPage');
+const AdminAccountStatusPage = createLazyPage(
+  () => import('../../features/orgs'),
+  'AdminAccountStatusPage',
+);
+const OrgActivitiesPage = createLazyPage(() => import('../../features/orgs'), 'OrgActivitiesPage');
+const OrgDashboardPage = createLazyPage(() => import('../../features/orgs'), 'OrgDashboardPage');
+const OrgImpactPage = createLazyPage(() => import('../../features/orgs'), 'OrgImpactPage');
+
+const NotFoundPage = createLazyPage(() => import('../../features/not-found'), 'NotFoundPage');
 
 export default function AppRouter() {
   return (

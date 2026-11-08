@@ -1,11 +1,11 @@
 import { createContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../features/auth';
-import { getPendingOrganizations } from '../../features/orgs';
-import { getRegistrationCounts } from '../../features/registrations';
-import { getPendingActivities } from '../../features/activities';
-import { getProposals } from '../../features/proposals';
-import { getPendingActivityClosures } from '../../features/reports';
+import { getPendingOrganizations } from '../../features/orgs/api';
+import { getRegistrationCounts } from '../../features/registrations/api';
+import { getPendingActivities } from '../../features/activities/api';
+import { getProposals } from '../../features/proposals/api';
+import { getPendingActivityClosures } from '../../features/reports/api';
 
 // Todas las cifras vienen de sus endpoints; si uno falla, el globo se queda en
 // 0 y el menú se pinta igual: una cifra de adorno no puede tumbar la
