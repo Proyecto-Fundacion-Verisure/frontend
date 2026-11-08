@@ -1,14 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ACTIVITY_LINES, getLineByValue } from '../../../shared/domain/activityLines';
 import { Button, Card, Input, Select } from '../../../shared/ui';
-
-export const MIN_DASHBOARD_YEAR = 2000;
-
-export function isValidDashboardYear(value, currentYear = new Date().getFullYear()) {
-  if (value === '' || value === null || value === undefined) return true;
-  const year = Number(value);
-  return Number.isInteger(year) && year >= MIN_DASHBOARD_YEAR && year <= currentYear;
-}
+import { MIN_DASHBOARD_YEAR, isValidDashboardYear } from '../model/dashboardFilters';
 
 export default function DashboardFilters({ year = '', line = '', onApply, onClear }) {
   const [draftYear, setDraftYear] = useState(year ? String(year) : '');
