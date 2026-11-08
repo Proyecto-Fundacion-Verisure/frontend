@@ -33,15 +33,15 @@ distintos.
 
 Todo comprobado leyendo el repositorio de frontend, sin modificar nada.
 
-| Hallazgo | Dónde |
-|---|---|
-| El interruptor de mocks ya es por módulo y las llamadas reales ya apuntan a la ruta y los parámetros correctos | `src/api/mocks.js`, `src/api/activitiesApi.js:254-263` |
-| **El módulo `ACTIVITY` mezcla dos cosas**: el catálogo (ya real) y `/admin/activities`, `/org/activities` y `cancel` (de `B2-05` y `B2-13`, **sin backend**) | `src/api/activitiesApi.js:250-291` |
-| **`FavoritesProvider` es código muerto**: nadie lo monta y nadie lo consume; los tres `HeartButton` no tienen `onClick` | `FavoritesContext.jsx`, `ActivityCard.jsx:99`, `ActivityDetailPage.jsx:132,196` |
-| **La línea «medio ambiente» no cuadra**: el backend siembra `medioambiente`, el frontend fija `medio_ambiente` | `ActivitySeeder.java:113,119` vs `src/constants/activityLines.js:20` |
-| `activityLines.js` apunta a `/images/04-medio_ambiente-linea-de-accion.png`, **que no existe** en `public/images` | `src/constants/activityLines.js:23` |
-| El botón de apuntarse se esconde **un día antes de tiempo**: compara `new Date('YYYY-MM-DD') < new Date()`; el backend permite apuntarse el propio día del plazo (`LocalDate.now().isAfter(deadline)`) | `RegisterButton.jsx:16-21` vs `SpotServiceImpl.java:45` |
-| El catálogo está restringido a `EMPLOYEE` en el router, pero el backend lo sirve también a `ADMIN`, que además sí puede abrir la ficha | `AppRouter.jsx:52,65,73` |
+| Hallazgo                                                                                                                                                                                               | Dónde                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| El interruptor de mocks ya es por módulo y las llamadas reales ya apuntan a la ruta y los parámetros correctos                                                                                         | `src/api/mocks.js`, `src/api/activitiesApi.js:254-263`                          |
+| **El módulo `ACTIVITY` mezcla dos cosas**: el catálogo (ya real) y `/admin/activities`, `/org/activities` y `cancel` (de `B2-05` y `B2-13`, **sin backend**)                                           | `src/api/activitiesApi.js:250-291`                                              |
+| **`FavoritesProvider` es código muerto**: nadie lo monta y nadie lo consume; los tres `HeartButton` no tienen `onClick`                                                                                | `FavoritesContext.jsx`, `ActivityCard.jsx:99`, `ActivityDetailPage.jsx:132,196` |
+| **La línea «medio ambiente» no cuadra**: el backend siembra `medioambiente`, el frontend fija `medio_ambiente`                                                                                         | `ActivitySeeder.java:113,119` vs `src/constants/activityLines.js:20`            |
+| `activityLines.js` apunta a `/images/04-medio_ambiente-linea-de-accion.png`, **que no existe** en `public/images`                                                                                      | `src/constants/activityLines.js:23`                                             |
+| El botón de apuntarse se esconde **un día antes de tiempo**: compara `new Date('YYYY-MM-DD') < new Date()`; el backend permite apuntarse el propio día del plazo (`LocalDate.now().isAfter(deadline)`) | `RegisterButton.jsx:16-21` vs `SpotServiceImpl.java:45`                         |
+| El catálogo está restringido a `EMPLOYEE` en el router, pero el backend lo sirve también a `ADMIN`, que además sí puede abrir la ficha                                                                 | `AppRouter.jsx:52,65,73`                                                        |
 
 `ActivityCard` solo lo usa `CatalogPage`, así que renombrar sus campos no afecta a ninguna
 pantalla de administración. `ActivitiesListPage` ya acepta los dos nombres con `??`.
@@ -89,12 +89,12 @@ todavía».
 Renombrado directo, sin `??` de compatibilidad: el mock del catálogo desaparece, así que no hay
 dos formas conviviendo.
 
-| Frontend hoy | Backend |
-|---|---|
-| `capacity` | `spots` |
-| `registeredCount` | `occupiedSpots` |
-| `organizationName` | `partnerName` |
-| `image` | `imageUrl` |
+| Frontend hoy       | Backend         |
+| ------------------ | --------------- |
+| `capacity`         | `spots`         |
+| `registeredCount`  | `occupiedSpots` |
+| `organizationName` | `partnerName`   |
+| `image`            | `imageUrl`      |
 
 - **`ActivityCard.jsx:14-32,42-44,73-75`** · la desestructuración, la imagen y el pie.
 - **`ActivityDetailPage.jsx:111-114,140-141,155-158`** · lo mismo, más `description` y
@@ -155,21 +155,21 @@ que no está.
 
 Backend arrancado con la semilla y sesión de **`ana.gil@verisure.es`**.
 
-| Comprobación | Qué debe verse |
-|---|---|
-| `/activities` | **9 tarjetas**, las visibles de las doce; ninguna `DRAFT`, `PENDING_APPROVAL` ni `CANCELLED` |
-| Plazas | «Visitas a residencias» sale **2 de 2** y con la etiqueta «Completa» |
-| Las `FINISHED` | «Acompañamiento a mayores» **3 de 8** y «Alfabetización digital» **2 de 6**. «Campaña contra el acoso escolar» sale **0 de 5** y es correcto: `RegistrationSeeder` no le siembra ninguna inscripción |
-| Corazones | Con `ana.gil@verisure.es`, marcados **«Limpieza de playas» y «Charlas de prevención»**; pulsar uno lo cambia, recargar lo conserva |
-| Fallo de red al pulsar | El corazón vuelve a su sitio solo |
-| Pulsar dos veces seguidas | El 409 `ALREADY_FAVORITED` no revierte el corazón |
-| Filtros | Línea, modalidad y las dos fechas, sueltos y combinados; **«Medio ambiente» devuelve dos** —«Limpieza de playas» y «Reparto del banco de alimentos»— donde hoy devolvería vacío. La tercera con esa línea, «Voluntariado ambiental», está en `PENDING_APPROVAL` y no se publica |
-| Paginación | Con `size` pequeño, ninguna actividad repetida entre páginas |
-| Ficha de una `PUBLISHED` | Descripción, entidad y plazas; el botón de apuntarse lleva a la cola |
-| Ficha de una `DRAFT` | «Actividad no encontrada», no un error feo |
+| Comprobación                   | Qué debe verse                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/activities`                  | **9 tarjetas**, las visibles de las doce; ninguna `DRAFT`, `PENDING_APPROVAL` ni `CANCELLED`                                                                                                                                                                                                                                                                                         |
+| Plazas                         | «Visitas a residencias» sale **2 de 2** y con la etiqueta «Completa»                                                                                                                                                                                                                                                                                                                 |
+| Las `FINISHED`                 | «Acompañamiento a mayores» **3 de 8** y «Alfabetización digital» **2 de 6**. «Campaña contra el acoso escolar» sale **0 de 5** y es correcto: `RegistrationSeeder` no le siembra ninguna inscripción                                                                                                                                                                                 |
+| Corazones                      | Con `ana.gil@verisure.es`, marcados **«Limpieza de playas» y «Charlas de prevención»**; pulsar uno lo cambia, recargar lo conserva                                                                                                                                                                                                                                                   |
+| Fallo de red al pulsar         | El corazón vuelve a su sitio solo                                                                                                                                                                                                                                                                                                                                                    |
+| Pulsar dos veces seguidas      | El 409 `ALREADY_FAVORITED` no revierte el corazón                                                                                                                                                                                                                                                                                                                                    |
+| Filtros                        | Línea, modalidad y las dos fechas, sueltos y combinados; **«Medio ambiente» devuelve dos** —«Limpieza de playas» y «Reparto del banco de alimentos»— donde hoy devolvería vacío. La tercera con esa línea, «Voluntariado ambiental», está en `PENDING_APPROVAL` y no se publica                                                                                                      |
+| Paginación                     | Con `size` pequeño, ninguna actividad repetida entre páginas                                                                                                                                                                                                                                                                                                                         |
+| Ficha de una `PUBLISHED`       | Descripción, entidad y plazas; el botón de apuntarse lleva a la cola                                                                                                                                                                                                                                                                                                                 |
+| Ficha de una `DRAFT`           | «Actividad no encontrada», no un error feo                                                                                                                                                                                                                                                                                                                                           |
 | Actividad cuyo plazo vence hoy | El botón **sigue visible** y apuntarse funciona. **No se puede probar con la semilla tal cual**: ningún plazo cae hoy, van a `today+7`, `+12`, `+21`, `+30`, `+40`, `+50` o al pasado. O se pone a mano `registration_deadline = CURRENT_DATE` en una publicada, o se da por bueno con `src/utils/dates.test.js`, que fija el reloj y cubre la víspera, el propio día y el siguiente |
-| Sesión de entidad colaboradora | Ver «El catálogo y la entidad colaboradora», debajo: son **tres** comprobaciones y ninguna es «entra y sale un 403» |
-| Consola de red | Una sola petición al catálogo por cambio de filtro |
+| Sesión de entidad colaboradora | Ver «El catálogo y la entidad colaboradora», debajo: son **tres** comprobaciones y ninguna es «entra y sale un 403»                                                                                                                                                                                                                                                                  |
+| Consola de red                 | Una sola petición al catálogo por cambio de filtro                                                                                                                                                                                                                                                                                                                                   |
 
 Sobre las pruebas: **la rama ya venía roja**, con 18 fallos en `axiosClient.test.js`,
 `AuthContext.test.jsx`, `OrgDashboardPage.test.jsx`, `ActivitiesListPage.test.jsx` y la
@@ -250,8 +250,10 @@ curl -s -o /dev/null -w '%{http_code}\n' localhost:8080/api/activities -H "Autho
 consola del navegador:
 
 ```js
-const u = JSON.parse(localStorage.getItem('user')); u.role = 'EMPLOYEE';
-localStorage.setItem('user', JSON.stringify(u)); location.href = '/activities';
+const u = JSON.parse(localStorage.getItem('user'));
+u.role = 'EMPLOYEE';
+localStorage.setItem('user', JSON.stringify(u));
+location.href = '/activities';
 ```
 
 El router deja pasar porque mira ese campo, la petición sale con el token de entidad, el backend

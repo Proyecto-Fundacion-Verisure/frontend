@@ -14,7 +14,8 @@ export default function useActivities(params) {
       const response = await getPublishedActivities(params);
       const data = response.data?.content ?? response.data;
       setActivities(Array.isArray(data) ? data : []);
-      const total = response.headers?.['x-total-count'] ?? response.data?.totalElements ?? data.length;
+      const total =
+        response.headers?.['x-total-count'] ?? response.data?.totalElements ?? data.length;
       setTotalCount(Number(total) || 0);
     } catch (err) {
       setError(err);

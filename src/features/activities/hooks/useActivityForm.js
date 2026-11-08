@@ -6,11 +6,7 @@ import {
   publishActivity,
   updateActivity,
 } from '../api/activitiesApi';
-import {
-  createOrgActivity,
-  submitOrgActivity,
-  updateOrgActivity,
-} from '../../orgs';
+import { createOrgActivity, submitOrgActivity, updateOrgActivity } from '../../orgs';
 import findOrgActivity from '../api/findOrgActivity';
 import { useAuth } from '../../auth';
 import useForm from '../../../shared/hooks/useForm';
@@ -96,7 +92,9 @@ export default function useActivityForm({ backPath }) {
       setErrors(error.fieldErrors);
       setTouched(createTouchedState(Object.keys(error.fieldErrors)));
     }
-    setErrorMessage(error?.message || 'No hemos podido completar la operación. Inténtalo de nuevo.');
+    setErrorMessage(
+      error?.message || 'No hemos podido completar la operación. Inténtalo de nuevo.',
+    );
   };
 
   const createDraft = async () => {

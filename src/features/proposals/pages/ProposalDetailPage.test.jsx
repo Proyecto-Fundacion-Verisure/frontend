@@ -52,13 +52,21 @@ describe('ProposalDetailPage', () => {
     getProposal.mockResolvedValue({ data: baseProposal });
     renderDetail('1');
 
-    expect(await screen.findByRole('heading', { name: /fundación solitaria/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /fundación solitaria/i }),
+    ).toBeInTheDocument();
     // Sin CIF: `ProposalDetailResponse` no lo lleva. Entran beneficiarios y consentimiento.
     expect(screen.queryByText('G12345678')).not.toBeInTheDocument();
     expect(screen.getByText('Personas beneficiarias')).toBeInTheDocument();
     expect(screen.getByText('María García')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'maria@solitaria.org' })).toHaveAttribute('href', 'mailto:maria@solitaria.org');
-    expect(screen.getByRole('link', { name: '600 111 222' })).toHaveAttribute('href', 'tel:600 111 222');
+    expect(screen.getByRole('link', { name: 'maria@solitaria.org' })).toHaveAttribute(
+      'href',
+      'mailto:maria@solitaria.org',
+    );
+    expect(screen.getByRole('link', { name: '600 111 222' })).toHaveAttribute(
+      'href',
+      'tel:600 111 222',
+    );
     expect(screen.getByText('Acompañamiento semanal a personas mayores.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /aceptar propuesta/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /rechazar propuesta/i })).toBeInTheDocument();
@@ -68,10 +76,14 @@ describe('ProposalDetailPage', () => {
   it('recarga conserva el detalle (GET por id sin location.state)', async () => {
     getProposal.mockResolvedValue({ data: baseProposal });
     const { unmount } = renderDetail('2');
-    expect(await screen.findByRole('heading', { name: /fundación solitaria/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /fundación solitaria/i }),
+    ).toBeInTheDocument();
     expect(getProposal).toHaveBeenCalledWith('2');
     unmount();
-    getProposal.mockResolvedValue({ data: { ...baseProposal, id: 2, partnerName: 'Educamos Juntos' } });
+    getProposal.mockResolvedValue({
+      data: { ...baseProposal, id: 2, partnerName: 'Educamos Juntos' },
+    });
     renderDetail('2');
     expect(await screen.findByRole('heading', { name: /educamos juntos/i })).toBeInTheDocument();
   });
@@ -87,7 +99,9 @@ describe('ProposalDetailPage', () => {
     await user.click(screen.getByRole('button', { name: /aceptar propuesta/i }));
 
     expect(acceptProposal).toHaveBeenCalledWith(1);
-    expect(await screen.findByRole('heading', { name: /actividad en borrador 42/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /actividad en borrador 42/i }),
+    ).toBeInTheDocument();
   });
 
   it('rechaza sin motivo y actualiza el estado a REJECTED', async () => {
@@ -161,10 +175,16 @@ describe('ProposalDetailPage', () => {
   });
 
   it('gestiona 404 no encontrado', async () => {
-    getProposal.mockRejectedValue({ status: 404, message: 'No se ha encontrado el recurso solicitado.' });
+    getProposal.mockRejectedValue({
+      status: 404,
+      message: 'No se ha encontrado el recurso solicitado.',
+    });
     renderDetail('999');
 
     expect(await screen.findByText(/propuesta no encontrada/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /volver a la bandeja/i })).toHaveAttribute('href', '/proposals');
+    expect(screen.getByRole('link', { name: /volver a la bandeja/i })).toHaveAttribute(
+      'href',
+      '/proposals',
+    );
   });
 });

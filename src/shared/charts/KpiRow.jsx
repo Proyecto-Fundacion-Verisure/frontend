@@ -1,11 +1,4 @@
-import {
-  Building2,
-  CalendarCheck2,
-  Clock3,
-  TrendingDown,
-  TrendingUp,
-  Users,
-} from 'lucide-react';
+import { Building2, CalendarCheck2, Clock3, TrendingDown, TrendingUp, Users } from 'lucide-react';
 import { Card } from '../ui';
 import { formatDashboardNumber, formatDashboardVariation } from '../lib/formatNumber';
 
@@ -36,13 +29,20 @@ export default function KpiRow({
             <dl>
               <div>
                 <dt>{label}</dt>
-                <dd>{formattedValue}{formattedValue === '—' ? '' : suffix}</dd>
+                <dd>
+                  {formattedValue}
+                  {formattedValue === '—' ? '' : suffix}
+                </dd>
               </div>
             </dl>
             {formattedVariation && (
-              <p className={`kpi-card__variation kpi-card__variation--${variation < 0 ? 'negative' : 'positive'}`}>
+              <p
+                className={`kpi-card__variation kpi-card__variation--${variation < 0 ? 'negative' : 'positive'}`}
+              >
                 <VariationIcon aria-hidden="true" size={16} />
-                <span>{formattedVariation} {variationLabel}</span>
+                <span>
+                  {formattedVariation} {variationLabel}
+                </span>
               </p>
             )}
           </Card>

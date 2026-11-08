@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getProposal, rejectProposal } from '../api/proposalsApi';
-import { Badge, Button, Card, ConfirmModal, EmptyState, PageHeader, Spinner } from '../../../shared/ui';
+import {
+  Badge,
+  Button,
+  Card,
+  ConfirmModal,
+  EmptyState,
+  PageHeader,
+  Spinner,
+} from '../../../shared/ui';
 import AcceptProposalButton, { getActivityDraftPath } from '../components/AcceptProposalButton';
 import { formatDateTime } from '../../../shared/lib/dates';
 
@@ -55,10 +63,14 @@ export default function ProposalDetailPage() {
     } catch (err) {
       if (err?.status === 409 || err?.code === 'PROPOSAL_ALREADY_DECIDED') {
         setRejectStatus('conflict');
-        setRejectError('Esta propuesta ya ha sido aceptada o rechazada. Actualiza el detalle para ver su estado.');
+        setRejectError(
+          'Esta propuesta ya ha sido aceptada o rechazada. Actualiza el detalle para ver su estado.',
+        );
       } else {
         setRejectStatus('idle');
-        setRejectError(err?.message || 'No hemos podido rechazar la propuesta. Inténtalo de nuevo.');
+        setRejectError(
+          err?.message || 'No hemos podido rechazar la propuesta. Inténtalo de nuevo.',
+        );
       }
     } finally {
       setIsRejectConfirmOpen(false);
@@ -141,9 +153,7 @@ export default function ProposalDetailPage() {
           </div>
           <div>
             <dt>Teléfono</dt>
-            <dd>
-              {proposal.phone ? <a href={`tel:${proposal.phone}`}>{proposal.phone}</a> : '—'}
-            </dd>
+            <dd>{proposal.phone ? <a href={`tel:${proposal.phone}`}>{proposal.phone}</a> : '—'}</dd>
           </div>
           <div>
             <dt>Línea sugerida</dt>

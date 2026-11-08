@@ -4,7 +4,9 @@
   display: grid;
   gap: space('3');
 
-  &__title { font-size: $font-size-lg; }
+  &__title {
+    font-size: $font-size-lg;
+  }
 
   &__grid {
     display: grid;
@@ -31,7 +33,9 @@
   text-decoration: none;
   transition: border-color $transition-fast;
 
-  &:hover { border-color: $color-border-strong; }
+  &:hover {
+    border-color: $color-border-strong;
+  }
 
   &__count {
     color: $color-heading;
@@ -55,6 +59,10 @@
   }
 
   &--empty &__count,
-  &--empty &__label { color: $color-muted; }
-  &--empty &__count { font-weight: $font-weight-medium; }
+  &--empty &__label {
+    color: $color-muted;
+  }
+  &--empty &__count {
+    font-weight: $font-weight-medium;
+  }
 }

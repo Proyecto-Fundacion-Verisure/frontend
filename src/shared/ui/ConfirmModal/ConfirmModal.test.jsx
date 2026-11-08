@@ -32,7 +32,9 @@ describe('ConfirmModal', () => {
     const user = userEvent.setup();
     const { onClose, onConfirm } = renderModal();
 
-    expect(screen.getByRole('dialog', { name: 'Rechazar inscripción' })).toHaveTextContent('No se puede deshacer.');
+    expect(screen.getByRole('dialog', { name: 'Rechazar inscripción' })).toHaveTextContent(
+      'No se puede deshacer.',
+    );
     await user.click(screen.getByRole('button', { name: 'Confirmar rechazo' }));
 
     expect(onConfirm).toHaveBeenCalledTimes(1);

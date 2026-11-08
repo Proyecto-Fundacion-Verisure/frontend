@@ -10,11 +10,11 @@
   &__container {
     margin: 0 auto;
     max-width: $content-max-width;
-    padding-inline: space("6");
+    padding-inline: space('6');
   }
   &__eyebrow {
     @include eyebrow;
-    margin-bottom: space("2");
+    margin-bottom: space('2');
   }
 }
 
@@ -25,7 +25,7 @@
   gap: clamp(2rem, 5vw, 4rem);
   margin: 0 auto;
   max-width: $content-max-width;
-  padding: clamp(3rem, 6vw, 5rem) space("6") space("6");
+  padding: clamp(3rem, 6vw, 5rem) space('6') space('6');
 
   &__content {
     max-width: 38rem;
@@ -50,14 +50,14 @@
     color: $color-muted;
     font-size: $font-size-lg;
     line-height: 1.6;
-    margin: space("5") 0 0;
+    margin: space('5') 0 0;
     max-width: 45rem;
   }
   &__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: space("3");
-    margin-top: space("8");
+    gap: space('3');
+    margin-top: space('8');
   }
 
   &__art {
@@ -80,11 +80,11 @@
 }
 
 .landing-stats {
-  padding: space("12") 0;
+  padding: space('12') 0;
 }
 .landing-stats__grid {
   display: grid;
-  gap: space("5");
+  gap: space('5');
   grid-template-columns: repeat(4, 1fr);
 }
 .landing-stat {
@@ -93,9 +93,9 @@
   border-radius: $radius-lg;
   box-shadow: $shadow-sm;
   display: grid;
-  gap: space("2");
+  gap: space('2');
   margin: 0;
-  padding: space("6");
+  padding: space('6');
   text-align: center;
   strong {
     color: $color-heading;
@@ -135,13 +135,13 @@
 .landing-impact__heading > p:last-child {
   color: $color-muted;
   font-size: $font-size-lg;
-  margin: space("4") 0 0;
+  margin: space('4') 0 0;
 }
 .landing-impact__grid {
   display: grid;
-  gap: space("5");
+  gap: space('5');
   grid-template-columns: repeat(4, 1fr);
-  margin-top: space("10");
+  margin-top: space('10');
 }
 .landing-impact__card {
   background: $color-surface;
@@ -151,7 +151,7 @@
   display: flex;
   flex-direction: column;
   min-height: 17rem;
-  padding: space("6");
+  padding: space('6');
   transition:
     border-color $transition-base,
     box-shadow $transition-base;
@@ -162,7 +162,7 @@
   h3 {
     color: $color-heading;
     font-size: $font-size-xl;
-    margin: 0 0 space("3");
+    margin: 0 0 space('3');
   }
   > p {
     color: $color-muted;
@@ -173,7 +173,7 @@
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
     margin-top: auto;
-    padding-top: space("5");
+    padding-top: space('5');
   }
 }
 
@@ -191,7 +191,7 @@
   color: inherit;
   display: flex;
   flex-direction: column;
-  padding: space("8");
+  padding: space('8');
   text-decoration: none;
   transition:
     border-color $transition-base,
@@ -202,18 +202,18 @@
   }
   > p:has(strong) {
     strong {
-      margin-top: space("1");
+      margin-top: space('1');
       color: $color-heading;
     }
   }
   h3 {
     color: $color-heading;
     font-size: $font-size-xl;
-    margin: 0 0 space("3");
+    margin: 0 0 space('3');
   }
   > p:not(.landing__eyebrow) {
     color: $color-muted;
-    margin: 0 0 space("6");
+    margin: 0 0 space('6');
   }
   .button {
     align-self: flex-start;
@@ -231,16 +231,16 @@
   display: grid;
   gap: map.get($spacing, '1');
   list-style: none;
-  margin: 0 0 space("6");
-  padding-left: space("5");
+  margin: 0 0 space('6');
+  padding-left: space('5');
 
   li {
-    padding-left: space("4");
+    padding-left: space('4');
     position: relative;
 
     &::before {
       color: $color-muted;
-      content: "•";
+      content: '•';
       left: 0;
       position: absolute;
     }
@@ -251,8 +251,8 @@
   display: grid;
   gap: map.get($spacing, '2');
   list-style: none;
-  margin: 0 0 space("6");
-  padding-left: space("3");
+  margin: 0 0 space('6');
+  padding-left: space('3');
 }
 .landing-access__steps li {
   display: flex;
@@ -299,10 +299,10 @@
 
 @media (max-width: 47.99rem) {
   .landing__container {
-    padding-inline: space("4");
+    padding-inline: space('4');
   }
   .landing-hero {
-    padding-inline: space("4");
+    padding-inline: space('4');
   }
   .landing-stats__grid,
   .landing-impact__grid,

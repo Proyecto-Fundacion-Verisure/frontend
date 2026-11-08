@@ -7,9 +7,13 @@
 .report-form-page {
   @include page-container(48rem);
 
-  > a { @include back-link; }
+  > a {
+    @include back-link;
+  }
 
-  h1 { margin: 0 0 space('2'); }
+  h1 {
+    margin: 0 0 space('2');
+  }
 
   > p:not(.activity-form-page__eyebrow, .closure-form__activity, .closure-form__notice) {
     color: $color-muted;
@@ -40,7 +44,9 @@
     overflow-wrap: anywhere;
   }
 
-  dd a { color: $color-coral-dark; }
+  dd a {
+    color: $color-coral-dark;
+  }
 }
 
 .closure-form {
@@ -106,7 +112,7 @@
     display: inline-block;
     font-size: $font-size-xs;
     font-weight: $font-weight-medium;
-    padding: space('1') .625rem;
+    padding: space('1') 0.625rem;
 
     &--positive {
       background: $color-success-light;

@@ -9,11 +9,13 @@ export const ACCOUNT_STATUS_COPY = Object.freeze({
   },
   pendingVerification: {
     title: 'Verifica tu correo electrónico',
-    description: 'Te hemos enviado un enlace para confirmar la dirección de correo de la entidad. Si no lo encuentras, pide otro:',
+    description:
+      'Te hemos enviado un enlace para confirmar la dirección de correo de la entidad. Si no lo encuentras, pide otro:',
   },
   pendingApproval: {
     title: 'Cuenta pendiente de aprobación',
-    description: 'Tu correo ya está verificado. La Fundación está revisando la solicitud de tu entidad y te avisará por correo.',
+    description:
+      'Tu correo ya está verificado. La Fundación está revisando la solicitud de tu entidad y te avisará por correo.',
   },
   verificationError: {
     title: 'No hemos podido verificar el correo',

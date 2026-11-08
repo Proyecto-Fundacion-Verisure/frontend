@@ -76,11 +76,13 @@ describe('activityForm model', () => {
     expect(getActivityFormHeaderCopy({ isPartner: true, isEditMode: false })).toMatchObject({
       eyebrow: 'Nueva propuesta',
     });
-    expect(getActivityFormResultCopy({
-      requestStatus: 'published',
-      isPartner: true,
-      isEditMode: false,
-    })).toMatchObject({
+    expect(
+      getActivityFormResultCopy({
+        requestStatus: 'published',
+        isPartner: true,
+        isEditMode: false,
+      }),
+    ).toMatchObject({
       title: 'La propuesta está pendiente de aprobación',
       showPublish: false,
     });

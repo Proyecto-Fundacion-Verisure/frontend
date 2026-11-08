@@ -47,7 +47,12 @@ describe('Sidebar ADMIN navigation', () => {
     renderSidebar('ADMIN');
 
     expect(screen.getAllByRole('link').map((link) => link.textContent)).toEqual([
-      'Panel', 'Nueva actividad', 'Actividades', 'Solicitudes', 'Inscripciones', 'Entidades',
+      'Panel',
+      'Nueva actividad',
+      'Actividades',
+      'Solicitudes',
+      'Inscripciones',
+      'Entidades',
     ]);
     ['Análisis', 'Catálogo', 'Participación'].forEach((title) => {
       expect(screen.getByText(title)).toBeInTheDocument();
@@ -80,7 +85,8 @@ describe('Sidebar active link', () => {
         <Sidebar sections={NAV_SECTIONS_BY_ROLE[role]} counts={{}} />
       </MemoryRouter>,
     );
-    const links = screen.getAllByRole('link')
+    const links = screen
+      .getAllByRole('link')
       .filter((link) => link.getAttribute('aria-current') === 'page')
       .map((link) => link.textContent);
     unmount();

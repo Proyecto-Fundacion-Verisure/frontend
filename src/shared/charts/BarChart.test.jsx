@@ -20,11 +20,13 @@ describe('BarChart', () => {
       />,
     );
 
-    expect(screen.getByRole('img', { name: 'Horas por departamento Horas cerradas por departamento' }))
-      .toBeInTheDocument();
+    expect(
+      screen.getByRole('img', { name: 'Horas por departamento Horas cerradas por departamento' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Tecnología')).toBeInTheDocument();
-    expect(Number(screen.getByTestId('bar-0').getAttribute('width')))
-      .toBeCloseTo(Number(screen.getByTestId('bar-1').getAttribute('width')) / 2);
+    expect(Number(screen.getByTestId('bar-0').getAttribute('width'))).toBeCloseTo(
+      Number(screen.getByTestId('bar-1').getAttribute('width')) / 2,
+    );
     expect(Number(screen.getByTestId('bar-2').getAttribute('width'))).toBe(0);
   });
 

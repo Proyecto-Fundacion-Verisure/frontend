@@ -78,7 +78,7 @@ export default function PartnerActivityReviewActions({ activity, onReviewed }) {
         onClose={() => state.status !== 'returning' && setIsReturnOpen(false)}
         title="Devolver propuesta"
         description="Explica a la entidad qué información debe corregir."
-        footer={(
+        footer={
           <>
             <Button
               variant="secondary"
@@ -95,7 +95,7 @@ export default function PartnerActivityReviewActions({ activity, onReviewed }) {
               Confirmar devolución
             </Button>
           </>
-        )}
+        }
       >
         <Textarea
           name="note"

@@ -1,7 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getProposals, rejectProposal } from '../api/proposalsApi';
-import { Badge, Button, ConfirmModal, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../../shared/ui';
+import {
+  Badge,
+  Button,
+  ConfirmModal,
+  EmptyState,
+  PageHeader,
+  Pagination,
+  Select,
+  Spinner,
+  Table,
+} from '../../../shared/ui';
 import { getActivityDraftPath } from '../components/AcceptProposalButton';
 import { formatDateTime } from '../../../shared/lib/dates';
 
@@ -48,7 +58,9 @@ export default function ProposalsInboxPage({ sectionTabs = null }) {
       const totalElements = Number(
         response.data?.totalElements ?? response.headers?.['x-total-count'] ?? content?.length ?? 0,
       );
-      setTotalPages(Number(response.data?.totalPages) || Math.max(1, Math.ceil(totalElements / 10)));
+      setTotalPages(
+        Number(response.data?.totalPages) || Math.max(1, Math.ceil(totalElements / 10)),
+      );
     } catch (err) {
       setError(err);
     } finally {
@@ -56,9 +68,13 @@ export default function ProposalsInboxPage({ sectionTabs = null }) {
     }
   }, [statusFilter, page]);
 
-  useEffect(() => { fetchProposals(); }, [fetchProposals]);
+  useEffect(() => {
+    fetchProposals();
+  }, [fetchProposals]);
 
-  useEffect(() => { setPage(1); }, [statusFilter]);
+  useEffect(() => {
+    setPage(1);
+  }, [statusFilter]);
 
   // 204 sin cuerpo: no hay nada que leer, se recarga la lista. El 409
   // `PROPOSAL_ALREADY_DECIDED` llega traducido en `message`.
@@ -86,17 +102,19 @@ export default function ProposalsInboxPage({ sectionTabs = null }) {
       <PageHeader
         title="Solicitudes"
         titleId="proposals-inbox-title"
-        actions={(
+        actions={
           <Select
             label="Filtrar por estado"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
             {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
             ))}
           </Select>
-        )}
+        }
       />
       {sectionTabs}
     </>
@@ -147,9 +165,12 @@ export default function ProposalsInboxPage({ sectionTabs = null }) {
     {
       key: 'suggestedLine',
       label: 'Línea sugerida',
-      render: (row) => row.suggestedLine
-        ? <Badge variant="info">{LINE_LABELS[row.suggestedLine] || row.suggestedLine}</Badge>
-        : '—',
+      render: (row) =>
+        row.suggestedLine ? (
+          <Badge variant="info">{LINE_LABELS[row.suggestedLine] || row.suggestedLine}</Badge>
+        ) : (
+          '—'
+        ),
     },
     // `ProposalRow` no lleva la descripción (está en el detalle). Lo que sí
     // viaja, y decide si interesa, es el voluntariado estimado.
@@ -203,9 +224,7 @@ export default function ProposalsInboxPage({ sectionTabs = null }) {
               Ver actividad
             </Link>
           )}
-          {row.status === 'REJECTED' && (
-            <span className="proposals-inbox__no-action">—</span>
-          )}
+          {row.status === 'REJECTED' && <span className="proposals-inbox__no-action">—</span>}
         </div>
       ),
     },
@@ -216,7 +235,9 @@ export default function ProposalsInboxPage({ sectionTabs = null }) {
       {header}
 
       {actionError && (
-        <p className="proposals-inbox__error" role="alert">{actionError}</p>
+        <p className="proposals-inbox__error" role="alert">
+          {actionError}
+        </p>
       )}
 
       {proposals.length === 0 ? (
@@ -226,12 +247,7 @@ export default function ProposalsInboxPage({ sectionTabs = null }) {
         />
       ) : (
         <>
-          <Table
-            caption="Propuestas"
-            columns={columns}
-            data={proposals}
-            rowKey="id"
-          />
+          <Table caption="Propuestas" columns={columns} data={proposals} rowKey="id" />
           <Pagination
             page={page}
             totalPages={totalPages}
@@ -248,9 +264,11 @@ export default function ProposalsInboxPage({ sectionTabs = null }) {
         isLoading={isRejecting}
         loadingLabel="Rechazando…"
         title="Rechazar propuesta"
-        description={rejectTarget
-          ? `Se rechazará la propuesta de ${partnerLabel(rejectTarget)}. Esta acción no se puede deshacer.`
-          : undefined}
+        description={
+          rejectTarget
+            ? `Se rechazará la propuesta de ${partnerLabel(rejectTarget)}. Esta acción no se puede deshacer.`
+            : undefined
+        }
         confirmLabel="Confirmar rechazo"
       />
     </section>

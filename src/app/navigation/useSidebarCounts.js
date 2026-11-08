@@ -12,8 +12,8 @@ import { getPendingActivityClosures } from '../../features/reports/api';
 // navegación. Solo el rol ADMIN pinta globos.
 
 // `totalElements` de la primera página con `size: 1`: el recuento sin traer filas.
-const countOf = (request) => request
-  .then((res) => Number(res.data?.totalElements ?? res.data?.length ?? 0) || 0);
+const countOf = (request) =>
+  request.then((res) => Number(res.data?.totalElements ?? res.data?.length ?? 0) || 0);
 
 // Las mismas cifras para lo que no es el menú: pestañas y «Requiere tu atención».
 // Un contexto propio y no el del `Outlet`: `RoleRoute` pinta otro por medio y lo corta.
@@ -33,9 +33,13 @@ export function useSidebarCounts() {
     if (user?.role !== 'ADMIN') return;
     let cancelled = false;
     countOf(getPendingOrganizations({ page: 0, size: 1 }))
-      .then((count) => { if (!cancelled) setPendingAccounts(count); })
+      .then((count) => {
+        if (!cancelled) setPendingAccounts(count);
+      })
       .catch(() => {});
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [user?.role, pathname]);
 
   useEffect(() => {
@@ -49,22 +53,32 @@ export function useSidebarCounts() {
         if (!cancelled) setUnreviewed(res.data.unreviewed ?? 0);
       })
       .catch(() => {});
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [user?.role, pathname]);
 
   useEffect(() => {
     if (user?.role !== 'ADMIN') return;
     let cancelled = false;
     countOf(getProposals({ status: 'NEW', page: 0, size: 1 }))
-      .then((count) => { if (!cancelled) setNewProposals(count); })
+      .then((count) => {
+        if (!cancelled) setNewProposals(count);
+      })
       .catch(() => {});
     countOf(getPendingActivities({ page: 0, size: 1 }))
-      .then((count) => { if (!cancelled) setPendingReview(count); })
+      .then((count) => {
+        if (!cancelled) setPendingReview(count);
+      })
       .catch(() => {});
     countOf(getPendingActivityClosures({ page: 0, size: 1 }))
-      .then((count) => { if (!cancelled) setCloses(count); })
+      .then((count) => {
+        if (!cancelled) setCloses(count);
+      })
       .catch(() => {});
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [user?.role, pathname]);
 
   return {

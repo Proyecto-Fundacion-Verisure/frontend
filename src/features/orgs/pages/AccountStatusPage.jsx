@@ -38,11 +38,11 @@ export default function AccountStatusPage() {
         <AccountStatusPanel
           title={ACCOUNT_STATUS_COPY.verified.title}
           description={ACCOUNT_STATUS_COPY.verified.description}
-          actions={(
+          actions={
             <Link to="/login" className="button button--secondary button--medium">
               {ACCOUNT_STATUS_COPY.verified.loginLabel}
             </Link>
-          )}
+          }
         />
       )}
 

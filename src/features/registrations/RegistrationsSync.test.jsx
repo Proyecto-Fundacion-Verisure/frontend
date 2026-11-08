@@ -46,7 +46,7 @@ function renderWithProvider(initialEntries = ['/activities/1']) {
           <Route path="/activities/:activityId" element={<ActivityDetailPage />} />
         </Routes>
       </RegistrationsProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 
@@ -62,7 +62,13 @@ beforeEach(() => {
 
 describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
   it('aplica RegistrationResponse 201 WAITLISTED y sincroniza tarjeta y ficha', async () => {
-    const waitlisted = { registrationId: 900, activityId: 1, status: 'WAITLISTED', accepted: false, queuePosition: 3 };
+    const waitlisted = {
+      registrationId: 900,
+      activityId: 1,
+      status: 'WAITLISTED',
+      accepted: false,
+      queuePosition: 3,
+    };
     createRegistration.mockResolvedValue({ data: waitlisted });
     renderWithProvider(['/activities/1']);
     await screen.findByRole('heading', { name: /acompañamiento a mayores/i });
@@ -82,7 +88,13 @@ describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
   });
 
   it('ambas vistas muestran la misma inscripción sin recargar', async () => {
-    const waitlisted = { registrationId: 901, activityId: 1, status: 'WAITLISTED', accepted: false, queuePosition: 2 };
+    const waitlisted = {
+      registrationId: 901,
+      activityId: 1,
+      status: 'WAITLISTED',
+      accepted: false,
+      queuePosition: 2,
+    };
     createRegistration.mockResolvedValue({ data: waitlisted });
     const { unmount } = render(
       <MemoryRouter initialEntries={['/activities/1']}>
@@ -93,14 +105,16 @@ describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
             <Route path="/" element={<Link to="/activities">go catalog</Link>} />
           </Routes>
         </RegistrationsProvider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     await screen.findByRole('heading', { name: /acompañamiento a mayores/i });
     const user = userEvent.setup();
     await user.click(screen.getByTestId('open-registration-modal'));
     await screen.findByRole('dialog');
     await user.click(screen.getByTestId('confirm-registration'));
-    await waitFor(() => expect(screen.getByText(/Ya estás apuntado.*En lista de espera/)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/Ya estás apuntado.*En lista de espera/)).toBeInTheDocument(),
+    );
     expect(screen.getAllByText(/Ya estás apuntado/).length).toBeGreaterThan(0);
     unmount();
     getMyRegistrations.mockResolvedValue({ data: [waitlisted] });
@@ -109,13 +123,18 @@ describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
         <Routes>
           <Route path="/activities" element={<CatalogPage />} />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(await screen.findByText('Ya estás apuntado')).toBeInTheDocument();
   });
 
   it('no muestra CONFIRMED ni Aceptada antes de decisión admin', async () => {
-    const waitlisted = { registrationId: 902, activityId: 1, status: 'WAITLISTED', accepted: false };
+    const waitlisted = {
+      registrationId: 902,
+      activityId: 1,
+      status: 'WAITLISTED',
+      accepted: false,
+    };
     createRegistration.mockResolvedValue({ data: waitlisted });
     renderWithProvider();
     await screen.findByRole('heading', { name: /acompañamiento a mayores/i });
@@ -130,8 +149,16 @@ describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
   });
 
   it('revierte ante error y permite reintentar', async () => {
-    const err = { message: 'Ya estás inscrito en esta actividad.', status: 409, code: 'ALREADY_REGISTERED' };
-    createRegistration.mockRejectedValueOnce(err).mockResolvedValueOnce({ data: { registrationId: 903, activityId: 1, status: 'WAITLISTED', accepted: false } });
+    const err = {
+      message: 'Ya estás inscrito en esta actividad.',
+      status: 409,
+      code: 'ALREADY_REGISTERED',
+    };
+    createRegistration
+      .mockRejectedValueOnce(err)
+      .mockResolvedValueOnce({
+        data: { registrationId: 903, activityId: 1, status: 'WAITLISTED', accepted: false },
+      });
     renderWithProvider();
     await screen.findByRole('heading', { name: /acompañamiento a mayores/i });
     const user = userEvent.setup();
@@ -147,12 +174,20 @@ describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     // retry — second confirm should succeed
     await user.click(screen.getByTestId('confirm-registration'));
-    await waitFor(() => expect(screen.getByText(/Ya estás apuntado.*En lista de espera/)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/Ya estás apuntado.*En lista de espera/)).toBeInTheDocument(),
+    );
     expect(createRegistration).toHaveBeenCalledTimes(2);
   });
 
   it('no construye ID ni posición localmente — usa RegistrationResponse tal cual', async () => {
-    const serverResponse = { registrationId: 7777, activityId: 1, status: 'WAITLISTED', accepted: false, queuePosition: 5 };
+    const serverResponse = {
+      registrationId: 7777,
+      activityId: 1,
+      status: 'WAITLISTED',
+      accepted: false,
+      queuePosition: 5,
+    };
     createRegistration.mockResolvedValue({ data: serverResponse });
     renderWithProvider();
     await screen.findByRole('heading', { name: /acompañamiento a mayores/i });

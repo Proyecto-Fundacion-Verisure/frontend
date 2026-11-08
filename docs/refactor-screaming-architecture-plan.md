@@ -73,33 +73,33 @@ El proyecto no parte de cero:
 
 ### 2.2 Lo que no grita
 
-| Situación actual | Por qué molesta |
-| --- | --- |
-| `src/api/*Api.js` global | Una persona nueva no ve qué API pertenece a qué dominio; todo parece infraestructura. |
-| `src/components/ui` y `src/components/layout` globales | Mezcla design system con shell de aplicación. |
-| `src/hooks`, `src/utils`, `src/constants`, `src/routes` globales | Capas técnicas por encima de los dominios; el negocio queda escondido. |
-| `src/styles/pages` y `src/styles/components` globales | Los estilos de una feature no viven con la feature. |
-| `src/test` central | Fixtures y mocks de dominios distintos en un mismo sitio. |
-| `components/layout/Sidebar/useSidebarCounts.js` importa 5 APIs de dominio | El shell conoce y consulta todos los dominios. |
-| `features/dashboard`, `features/proposals` y `features/reports` importan `components/layout/AdminSections` | Una feature depende del shell de la aplicación: dirección prohibida. |
-| `features/orgs` importa 3 componentes de `features/dashboard` | Copia de dependencia entre dominios que debería ser `shared` o una API pública explícita. |
-| `features/auth` y `features/not-found` importan `routes/routeAccess` | Una feature depende del router. |
-| `AppRouter` conoce todas las páginas y una API | El composition root puede conocerlas, pero las rutas deberían ser de cada feature. |
+| Situación actual                                                                                           | Por qué molesta                                                                           |
+| ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `src/api/*Api.js` global                                                                                   | Una persona nueva no ve qué API pertenece a qué dominio; todo parece infraestructura.     |
+| `src/components/ui` y `src/components/layout` globales                                                     | Mezcla design system con shell de aplicación.                                             |
+| `src/hooks`, `src/utils`, `src/constants`, `src/routes` globales                                           | Capas técnicas por encima de los dominios; el negocio queda escondido.                    |
+| `src/styles/pages` y `src/styles/components` globales                                                      | Los estilos de una feature no viven con la feature.                                       |
+| `src/test` central                                                                                         | Fixtures y mocks de dominios distintos en un mismo sitio.                                 |
+| `components/layout/Sidebar/useSidebarCounts.js` importa 5 APIs de dominio                                  | El shell conoce y consulta todos los dominios.                                            |
+| `features/dashboard`, `features/proposals` y `features/reports` importan `components/layout/AdminSections` | Una feature depende del shell de la aplicación: dirección prohibida.                      |
+| `features/orgs` importa 3 componentes de `features/dashboard`                                              | Copia de dependencia entre dominios que debería ser `shared` o una API pública explícita. |
+| `features/auth` y `features/not-found` importan `routes/routeAccess`                                       | Una feature depende del router.                                                           |
+| `AppRouter` conoce todas las páginas y una API                                                             | El composition root puede conocerlas, pero las rutas deberían ser de cada feature.        |
 
 ### 2.3 Métricas del baseline
 
-| Métrica | Valor |
-| --- | ---: |
-| Archivos JS/JSX en `src/` | 183 |
-| Archivos dentro de `features/` | 86 |
-| Features | 10 |
-| Tests | 56 archivos / 405 tests |
-| Archivos SCSS | 49 |
-| Imports relativos analizados | 421 |
-| Imports entre features (producción) | 13 |
-| Imports entre features (solo tests) | 5 |
-| Módulos de API de dominio | 8 |
-| Módulos de API compartidos | 4 (`axiosClient`, `apiError`, `domainMessages`, `mocks`) |
+| Métrica                             |                                                    Valor |
+| ----------------------------------- | -------------------------------------------------------: |
+| Archivos JS/JSX en `src/`           |                                                      183 |
+| Archivos dentro de `features/`      |                                                       86 |
+| Features                            |                                                       10 |
+| Tests                               |                                  56 archivos / 405 tests |
+| Archivos SCSS                       |                                                       49 |
+| Imports relativos analizados        |                                                      421 |
+| Imports entre features (producción) |                                                       13 |
+| Imports entre features (solo tests) |                                                        5 |
+| Módulos de API de dominio           |                                                        8 |
+| Módulos de API compartidos          | 4 (`axiosClient`, `apiError`, `domainMessages`, `mocks`) |
 
 ### 2.4 Acoplamientos que hay que resolver
 
@@ -319,52 +319,52 @@ frontend/src/
 
 ### 3.3 Decisiones de diseño
 
-| Decisión | Recomendación | Motivo |
-| --- | --- | --- |
-| Nombre del contenedor | Mantener `features/` | Ya existe y expresa dominio. Renombrar a `domains/` es cosmético y añade ruido. |
-| Auth | Feature `auth` con API pública estable | Es un dominio de soporte, no infraestructura pura. Muchas features consumen `useAuth`. |
-| Favoritos y registros | Features propias; `activities` las consume por su API pública | Evita convertir `activities` en una mega-feature. |
-| Gráficos | `shared/charts` | `orgs` y `dashboard` los comparten; no son de un dominio. |
-| `activityLines` | `shared/domain` | Lo usan `activities`, `dashboard` y `reports`; es un catálogo compartido. |
-| `HeartButton` | `features/favorites/components` | Tiene semántica de favoritos; hoy está mal ubicado en `ui`. |
-| Estilos | Tokens/base/UI en `shared/styles`; páginas y componentes de dominio en su feature | Evita que un cambio de una página afecte a otra. |
-| Alias de imports | Opcional, al final | `@/` reduce `../../../`, pero añade configuración y churn. No es necesario para el objetivo. |
-| Lint de fronteras | Script propio sin dependencias | No hay ESLint hoy; no conviene introducir un stack de lint solo para esto. |
+| Decisión              | Recomendación                                                                     | Motivo                                                                                       |
+| --------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Nombre del contenedor | Mantener `features/`                                                              | Ya existe y expresa dominio. Renombrar a `domains/` es cosmético y añade ruido.              |
+| Auth                  | Feature `auth` con API pública estable                                            | Es un dominio de soporte, no infraestructura pura. Muchas features consumen `useAuth`.       |
+| Favoritos y registros | Features propias; `activities` las consume por su API pública                     | Evita convertir `activities` en una mega-feature.                                            |
+| Gráficos              | `shared/charts`                                                                   | `orgs` y `dashboard` los comparten; no son de un dominio.                                    |
+| `activityLines`       | `shared/domain`                                                                   | Lo usan `activities`, `dashboard` y `reports`; es un catálogo compartido.                    |
+| `HeartButton`         | `features/favorites/components`                                                   | Tiene semántica de favoritos; hoy está mal ubicado en `ui`.                                  |
+| Estilos               | Tokens/base/UI en `shared/styles`; páginas y componentes de dominio en su feature | Evita que un cambio de una página afecte a otra.                                             |
+| Alias de imports      | Opcional, al final                                                                | `@/` reduce `../../../`, pero añade configuración y churn. No es necesario para el objetivo. |
+| Lint de fronteras     | Script propio sin dependencias                                                    | No hay ESLint hoy; no conviene introducir un stack de lint solo para esto.                   |
 
 ### 3.4 Mapa de movimiento
 
-| Origen actual | Destino |
-| --- | --- |
-| `src/api/axiosClient.js`, `apiError.js`, `domainMessages.js`, `mocks.js` | `src/shared/api/` |
-| `src/api/activitiesApi.js` | `src/features/activities/api/` |
-| `src/api/authApi.js` | `src/features/auth/api/` |
-| `src/api/closuresApi.js` | `src/features/reports/api/` |
-| `src/api/dashboardApi.js` | `src/features/dashboard/api/` |
-| `src/api/favoritesApi.js` | `src/features/favorites/api/` |
-| `src/api/orgApi.js` | `src/features/orgs/api/` |
-| `src/api/proposalsApi.js` | `src/features/proposals/api/` |
-| `src/api/registrationsApi.js` | `src/features/registrations/api/` |
-| `src/components/ui/*` | `src/shared/ui/*` (excepto `HeartButton` → `favorites` y `UiShowcase` → `app/dev`) |
-| `src/components/layout/*` | `src/app/layout/*` |
-| `src/components/ErrorBoundary/*` | `src/app/errors/ErrorFallback.jsx` |
-| `src/routes/*` | `src/app/routing/*` |
-| `src/hooks/*` | `src/shared/hooks/*` |
-| `src/utils/dates.js` | `src/shared/lib/dates.js` |
-| `src/constants/activityLines.js` | `src/shared/domain/activityLines.js` |
-| `src/assets/images/*` | `src/shared/assets/images/` o `features/*/assets/` según uso |
-| `src/assets/mock/data/orgDashboard.js` | `src/features/orgs/mocks/` |
-| `src/styles/abstracts`, `base` | `src/shared/styles/` |
-| `src/styles/components` (UI) | `src/shared/styles/ui/` (excepto `_activity-card`, `_heart-button` y `_showcase`) |
-| `src/styles/layout` | `src/app/styles/layout/` |
-| `src/styles/pages` | `features/*/styles/` |
-| `src/test/setup.js`, `utils/`, `fixtures/`, `mocks/` | `src/shared/testing/` |
-| `src/features/dashboard/{BarChart,ChartTable,KpiRow}.jsx` | `src/shared/charts/` |
-| `src/components/layout/AdminSections` (`AttentionPanel`) | `src/app/navigation/AttentionPanel.jsx` |
-| `src/components/layout/AdminSections` (`ActivitiesTabs`, `RequestsTabs`) | `src/app/navigation/` |
-| `src/components/ui/UiShowcase` | `src/app/dev/UiShowcase.jsx` |
-| `src/components/layout/Sidebar/useSidebarCounts.js` | `src/app/navigation/useSidebarCounts.js` |
-| `src/routes/routeAccess.js` | `src/features/auth/model/roleHomePaths.js` |
-| `src/components/ui/HeartButton` | `src/features/favorites/components/HeartButton.jsx` |
+| Origen actual                                                            | Destino                                                                            |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| `src/api/axiosClient.js`, `apiError.js`, `domainMessages.js`, `mocks.js` | `src/shared/api/`                                                                  |
+| `src/api/activitiesApi.js`                                               | `src/features/activities/api/`                                                     |
+| `src/api/authApi.js`                                                     | `src/features/auth/api/`                                                           |
+| `src/api/closuresApi.js`                                                 | `src/features/reports/api/`                                                        |
+| `src/api/dashboardApi.js`                                                | `src/features/dashboard/api/`                                                      |
+| `src/api/favoritesApi.js`                                                | `src/features/favorites/api/`                                                      |
+| `src/api/orgApi.js`                                                      | `src/features/orgs/api/`                                                           |
+| `src/api/proposalsApi.js`                                                | `src/features/proposals/api/`                                                      |
+| `src/api/registrationsApi.js`                                            | `src/features/registrations/api/`                                                  |
+| `src/components/ui/*`                                                    | `src/shared/ui/*` (excepto `HeartButton` → `favorites` y `UiShowcase` → `app/dev`) |
+| `src/components/layout/*`                                                | `src/app/layout/*`                                                                 |
+| `src/components/ErrorBoundary/*`                                         | `src/app/errors/ErrorFallback.jsx`                                                 |
+| `src/routes/*`                                                           | `src/app/routing/*`                                                                |
+| `src/hooks/*`                                                            | `src/shared/hooks/*`                                                               |
+| `src/utils/dates.js`                                                     | `src/shared/lib/dates.js`                                                          |
+| `src/constants/activityLines.js`                                         | `src/shared/domain/activityLines.js`                                               |
+| `src/assets/images/*`                                                    | `src/shared/assets/images/` o `features/*/assets/` según uso                       |
+| `src/assets/mock/data/orgDashboard.js`                                   | `src/features/orgs/mocks/`                                                         |
+| `src/styles/abstracts`, `base`                                           | `src/shared/styles/`                                                               |
+| `src/styles/components` (UI)                                             | `src/shared/styles/ui/` (excepto `_activity-card`, `_heart-button` y `_showcase`)  |
+| `src/styles/layout`                                                      | `src/app/styles/layout/`                                                           |
+| `src/styles/pages`                                                       | `features/*/styles/`                                                               |
+| `src/test/setup.js`, `utils/`, `fixtures/`, `mocks/`                     | `src/shared/testing/`                                                              |
+| `src/features/dashboard/{BarChart,ChartTable,KpiRow}.jsx`                | `src/shared/charts/`                                                               |
+| `src/components/layout/AdminSections` (`AttentionPanel`)                 | `src/app/navigation/AttentionPanel.jsx`                                            |
+| `src/components/layout/AdminSections` (`ActivitiesTabs`, `RequestsTabs`) | `src/app/navigation/`                                                              |
+| `src/components/ui/UiShowcase`                                           | `src/app/dev/UiShowcase.jsx`                                                       |
+| `src/components/layout/Sidebar/useSidebarCounts.js`                      | `src/app/navigation/useSidebarCounts.js`                                           |
+| `src/routes/routeAccess.js`                                              | `src/features/auth/model/roleHomePaths.js`                                         |
+| `src/components/ui/HeartButton`                                          | `src/features/favorites/components/HeartButton.jsx`                                |
 
 ---
 
@@ -653,20 +653,20 @@ Es la fase más grande. Se recomienda dividirla en dos PR: primero `reports`, de
 
 ## 6. Riesgos y mitigaciones
 
-| Riesgo | Probabilidad | Impacto | Mitigación |
-| --- | --- | --- | --- |
-| Cascada Sass alterada | Media | Alto | Mover estilos al final; no cambiar selectores; revisar visualmente. |
-| Ciclo de dependencias entre features | Media | Alto | API pública + `arch:check`; extraer a `shared` si aparece. |
-| Orden de providers roto | Baja | Alto | `AppProviders` explícito y tests de contexto. |
-| Rutas/guardas mal recompuestas | Media | Alto | Tests de `RouteGuards` y smoke de los 4 perfiles. |
-| Imports profundos entre features | Alta durante la migración | Medio | Regla de API pública y script de fronteras desde la fase 1. |
-| Conflictos de merge | Media-alta si hay varios devs | Medio | Un PR por feature, rama corta, rebase diario. |
-| `useSidebarCounts` acoplado a 5 dominios | Alta | Medio | Moverlo a `app/navigation`; es composición, no shared. |
-| `orgApi` depende de `authApi` | Baja | Bajo | Documentar la arista o mover las dos funciones a `orgs`. |
-| Tests con imports rotos | Alta | Bajo | Mover tests con su feature; suite completa en cada PR. |
-| Pérdida de historial Git | Baja | Bajo | `git mv`, no copiar/borrar. |
-| Bundle size por barriles | Baja | Bajo | Evitar barriles gigantes; exportar lo necesario; comparar build. |
-| Refactor eterno | Media | Alto | Fases cerradas, PRs pequeños, criterio de aceptación por fase. |
+| Riesgo                                   | Probabilidad                  | Impacto | Mitigación                                                          |
+| ---------------------------------------- | ----------------------------- | ------- | ------------------------------------------------------------------- |
+| Cascada Sass alterada                    | Media                         | Alto    | Mover estilos al final; no cambiar selectores; revisar visualmente. |
+| Ciclo de dependencias entre features     | Media                         | Alto    | API pública + `arch:check`; extraer a `shared` si aparece.          |
+| Orden de providers roto                  | Baja                          | Alto    | `AppProviders` explícito y tests de contexto.                       |
+| Rutas/guardas mal recompuestas           | Media                         | Alto    | Tests de `RouteGuards` y smoke de los 4 perfiles.                   |
+| Imports profundos entre features         | Alta durante la migración     | Medio   | Regla de API pública y script de fronteras desde la fase 1.         |
+| Conflictos de merge                      | Media-alta si hay varios devs | Medio   | Un PR por feature, rama corta, rebase diario.                       |
+| `useSidebarCounts` acoplado a 5 dominios | Alta                          | Medio   | Moverlo a `app/navigation`; es composición, no shared.              |
+| `orgApi` depende de `authApi`            | Baja                          | Bajo    | Documentar la arista o mover las dos funciones a `orgs`.            |
+| Tests con imports rotos                  | Alta                          | Bajo    | Mover tests con su feature; suite completa en cada PR.              |
+| Pérdida de historial Git                 | Baja                          | Bajo    | `git mv`, no copiar/borrar.                                         |
+| Bundle size por barriles                 | Baja                          | Bajo    | Evitar barriles gigantes; exportar lo necesario; comparar build.    |
+| Refactor eterno                          | Media                         | Alto    | Fases cerradas, PRs pequeños, criterio de aceptación por fase.      |
 
 ---
 
@@ -674,28 +674,28 @@ Es la fase más grande. Se recomienda dividirla en dos PR: primero `reports`, de
 
 ### 7.1 Por dimensión
 
-| Dimensión | Nivel | Por qué |
-| --- | --- | --- |
-| Movimiento mecánico | Media | 183 archivos JS/JSX y 421 imports relativos; la mayoría son cambios de ruta. |
-| Reasignación de dependencias | Media-alta | 13 aristas entre features, shell que consulta 5 dominios y features que importan el shell. |
-| Estado global | Media | `AuthContext`, `FavoritesContext` y `RegistrationsContext`; hay que preservar el orden de providers. |
-| Rutas y guardas | Media-alta | `AppRouter` centraliza páginas, roles, redirecciones y pestañas. |
-| Estilos | Alta | 49 SCSS, orden de cascada y riesgo de regresión visual. |
-| Tests | Media | 56 archivos / 405 tests; ya están cerca de las features, pero cambian imports. |
-| Tooling | Baja-media | No hay lint; el script de fronteras es sencillo y sin dependencias. |
-| **Global** | **Media-alta** | No es una reescritura, pero tampoco es un movimiento trivial: hay que invertir dependencias del shell y de las rutas. |
+| Dimensión                    | Nivel          | Por qué                                                                                                               |
+| ---------------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Movimiento mecánico          | Media          | 183 archivos JS/JSX y 421 imports relativos; la mayoría son cambios de ruta.                                          |
+| Reasignación de dependencias | Media-alta     | 13 aristas entre features, shell que consulta 5 dominios y features que importan el shell.                            |
+| Estado global                | Media          | `AuthContext`, `FavoritesContext` y `RegistrationsContext`; hay que preservar el orden de providers.                  |
+| Rutas y guardas              | Media-alta     | `AppRouter` centraliza páginas, roles, redirecciones y pestañas.                                                      |
+| Estilos                      | Alta           | 49 SCSS, orden de cascada y riesgo de regresión visual.                                                               |
+| Tests                        | Media          | 56 archivos / 405 tests; ya están cerca de las features, pero cambian imports.                                        |
+| Tooling                      | Baja-media     | No hay lint; el script de fronteras es sencillo y sin dependencias.                                                   |
+| **Global**                   | **Media-alta** | No es una reescritura, pero tampoco es un movimiento trivial: hay que invertir dependencias del shell y de las rutas. |
 
 ### 7.2 Esfuerzo estimado
 
 Supuestos: una persona con contexto del proyecto, sin cambiar comportamiento, con la suite
 en verde y sin features nuevas en paralelo.
 
-| Escenario | Alcance | Esfuerzo | Calendario orientativo |
-| --- | --- | --- | --- |
-| **MVP núcleo** | `app/` + `shared/` + todas las features con API/contexto/componentes/páginas/rutas; sin mover estilos ni test kit | **9-11 jornadas** | ~2-2,5 semanas |
-| **Completo** | MVP + estilos co-localizados + test kit + `arch:check` + docs | **12-14 jornadas** | ~3 semanas |
-| **Solo estructura mínima** | `app/` + `shared/` + APIs dentro de features; sin tocar shell/rutas/estilos | **3-5 jornadas** | ~1 semana |
-| **Big bang** | Todo en una rama y un PR | 2-4 jornadas | No recomendado: riesgo alto y revisión inviable |
+| Escenario                  | Alcance                                                                                                           | Esfuerzo           | Calendario orientativo                          |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------ | ----------------------------------------------- |
+| **MVP núcleo**             | `app/` + `shared/` + todas las features con API/contexto/componentes/páginas/rutas; sin mover estilos ni test kit | **9-11 jornadas**  | ~2-2,5 semanas                                  |
+| **Completo**               | MVP + estilos co-localizados + test kit + `arch:check` + docs                                                     | **12-14 jornadas** | ~3 semanas                                      |
+| **Solo estructura mínima** | `app/` + `shared/` + APIs dentro de features; sin tocar shell/rutas/estilos                                       | **3-5 jornadas**   | ~1 semana                                       |
+| **Big bang**               | Todo en una rama y un PR                                                                                          | 2-4 jornadas       | No recomendado: riesgo alto y revisión inviable |
 
 Con dos personas en paralelo, el calendario puede bajar a **1,5-2 semanas**, pero solo si se
 reparten features disjuntas y una sola persona toca `AppRouter`, `useSidebarCounts` y los

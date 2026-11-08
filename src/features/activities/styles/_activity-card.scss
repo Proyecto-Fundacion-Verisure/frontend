@@ -12,8 +12,13 @@
   position: relative;
 
   &--interactive {
-    transition: border-color $transition-base, box-shadow $transition-base;
-    &:hover { border-color: $color-border-strong; box-shadow: $shadow-md; }
+    transition:
+      border-color $transition-base,
+      box-shadow $transition-base;
+    &:hover {
+      border-color: $color-border-strong;
+      box-shadow: $shadow-md;
+    }
   }
 
   &--preview {
@@ -31,7 +36,9 @@
   text-decoration: none;
 }
 
-.activity-card__media { position: relative; }
+.activity-card__media {
+  position: relative;
+}
 
 .activity-card__image {
   align-items: center;
@@ -59,7 +66,9 @@
   position: absolute;
   top: space('3');
 
-  .badge { box-shadow: $shadow-sm; }
+  .badge {
+    box-shadow: $shadow-sm;
+  }
 }
 
 .activity-card__favorite {
@@ -126,7 +135,7 @@
   svg {
     color: $color-muted;
     flex: 0 0 auto;
-    margin-top: .125rem;
+    margin-top: 0.125rem;
   }
 }
 

@@ -89,14 +89,18 @@ describe('myVolunteering model', () => {
       testIdPrefix: 'action-enviar',
     });
 
-    expect(getRegistrationAction(makeItem({ closureId: 501, activityClosed: true }))).toMatchObject({
-      key: 'certificate',
-      to: '/closures/501/certificate',
-      label: 'Descargar certificado',
-      testIdPrefix: 'action-cert',
-    });
+    expect(getRegistrationAction(makeItem({ closureId: 501, activityClosed: true }))).toMatchObject(
+      {
+        key: 'certificate',
+        to: '/closures/501/certificate',
+        label: 'Descargar certificado',
+        testIdPrefix: 'action-cert',
+      },
+    );
 
-    expect(getRegistrationAction(makeItem({ closureId: 502, activityClosed: false }))).toMatchObject({
+    expect(
+      getRegistrationAction(makeItem({ closureId: 502, activityClosed: false })),
+    ).toMatchObject({
       key: 'view-closure',
       to: '/closures/502',
       label: 'Ver cierre',
@@ -108,6 +112,8 @@ describe('myVolunteering model', () => {
   it('no propone acción cuando la inscripción no la necesita', () => {
     expect(getRegistrationAction(makeItem({ status: 'CLOSED' }))).toBeNull();
     expect(getRegistrationAction(makeItem({ status: 'CONFIRMED' }))).toBeNull();
-    expect(getRegistrationAction(makeItem({ status: 'PENDING_CLOSURE', activityClosed: true }))).toBeNull();
+    expect(
+      getRegistrationAction(makeItem({ status: 'PENDING_CLOSURE', activityClosed: true })),
+    ).toBeNull();
   });
 });

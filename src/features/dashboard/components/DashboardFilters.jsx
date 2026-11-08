@@ -75,7 +75,9 @@ export default function DashboardFilters({ year = '', line = '', onApply, onClea
         >
           <option value="">Todas las líneas</option>
           {ACTIVITY_LINES.map((option) => (
-            <option key={option.value} value={option.value}>{option.label}</option>
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
           ))}
         </Select>
       </div>
@@ -97,7 +99,9 @@ export default function DashboardFilters({ year = '', line = '', onApply, onClea
             {year && <li>Año: {year}</li>}
             {line && <li>Línea: {activeLine?.label ?? line}</li>}
           </ul>
-        ) : <span> ninguno</span>}
+        ) : (
+          <span> ninguno</span>
+        )}
       </div>
     </Card>
   );

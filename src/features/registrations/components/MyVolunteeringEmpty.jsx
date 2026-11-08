@@ -8,11 +8,11 @@ export default function MyVolunteeringEmpty() {
       <EmptyState
         title="No tienes inscripciones"
         description="Aún no te has inscrito en ninguna actividad."
-        action={(
+        action={
           <Link to="/activities" className="button button--primary">
             Explorar actividades
           </Link>
-        )}
+        }
       />
     </section>
   );

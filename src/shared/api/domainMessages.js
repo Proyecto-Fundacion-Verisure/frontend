@@ -64,11 +64,13 @@ export function translateFieldErrors(fieldErrors) {
   if (!fieldErrors || Array.isArray(fieldErrors) || typeof fieldErrors !== 'object') {
     return fieldErrors ?? null;
   }
-  return Object.fromEntries(Object.entries(fieldErrors).map(([field, messages]) => {
-    const list = Array.isArray(messages) ? messages : [messages];
-    const translated = list
-      .filter((message) => typeof message === 'string' && message.trim())
-      .map((message) => getDomainMessage(message, translateValidationDefault(message)));
-    return [field, translated.join(' ')];
-  }));
+  return Object.fromEntries(
+    Object.entries(fieldErrors).map(([field, messages]) => {
+      const list = Array.isArray(messages) ? messages : [messages];
+      const translated = list
+        .filter((message) => typeof message === 'string' && message.trim())
+        .map((message) => getDomainMessage(message, translateValidationDefault(message)));
+      return [field, translated.join(' ')];
+    }),
+  );
 }

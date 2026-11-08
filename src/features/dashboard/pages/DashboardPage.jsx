@@ -6,15 +6,7 @@ import useDashboard from '../hooks/useDashboard';
 import { normalizeDashboardData } from '../model/dashboardData';
 
 export default function DashboardPage({ attentionPanel = null }) {
-  const {
-    year,
-    line,
-    filters,
-    requestState,
-    applyFilters,
-    clearFilters,
-    retry,
-  } = useDashboard();
+  const { year, line, filters, requestState, applyFilters, clearFilters, retry } = useDashboard();
   const dashboard = normalizeDashboardData(requestState.data);
 
   const isLoading = requestState.status === 'loading';
@@ -37,12 +29,7 @@ export default function DashboardPage({ attentionPanel = null }) {
 
       {attentionPanel}
 
-      <DashboardFilters
-        year={year}
-        line={line}
-        onApply={applyFilters}
-        onClear={clearFilters}
-      />
+      <DashboardFilters year={year} line={line} onApply={applyFilters} onClear={clearFilters} />
 
       {isLoading && (
         <Card className="dashboard__loading" role="status" aria-live="polite">
@@ -61,7 +48,9 @@ export default function DashboardPage({ attentionPanel = null }) {
       {hasRequestError && (
         <Card className="dashboard__error">
           <h2>No hemos podido cargar el dashboard</h2>
-          <p role="alert">{requestState.error?.message ?? 'Comprueba tu conexión y vuelve a intentarlo.'}</p>
+          <p role="alert">
+            {requestState.error?.message ?? 'Comprueba tu conexión y vuelve a intentarlo.'}
+          </p>
           <Button onClick={retry}>Reintentar</Button>
         </Card>
       )}
@@ -71,9 +60,13 @@ export default function DashboardPage({ attentionPanel = null }) {
           <EmptyState
             title="Todavía no hay datos de impacto"
             description="El dashboard se completa cuando existen participaciones cerradas para los filtros seleccionados."
-            action={hasActiveFilters ? (
-              <Button variant="secondary" onClick={clearFilters}>Ver todos los datos</Button>
-            ) : undefined}
+            action={
+              hasActiveFilters ? (
+                <Button variant="secondary" onClick={clearFilters}>
+                  Ver todos los datos
+                </Button>
+              ) : undefined
+            }
           />
         </Card>
       )}

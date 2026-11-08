@@ -33,7 +33,8 @@ const ACTIVITY_FORM_HEADER_COPY = {
     create: {
       eyebrow: 'Nueva actividad',
       title: 'Crear actividad de voluntariado',
-      description: 'Guarda la actividad como borrador o publícala cuando todos los datos estén listos.',
+      description:
+        'Guarda la actividad como borrador o publícala cuando todos los datos estén listos.',
     },
     edit: {
       eyebrow: 'Editar actividad',
@@ -45,7 +46,8 @@ const ACTIVITY_FORM_HEADER_COPY = {
     create: {
       eyebrow: 'Nueva propuesta',
       title: 'Proponer una actividad de voluntariado',
-      description: 'Guarda la propuesta como borrador o envíala a la Fundación cuando esté lista. Si la aprueba, la actividad pasará al catálogo de la plantilla.',
+      description:
+        'Guarda la propuesta como borrador o envíala a la Fundación cuando esté lista. Si la aprueba, la actividad pasará al catálogo de la plantilla.',
     },
     edit: {
       eyebrow: 'Editar propuesta',
@@ -60,7 +62,8 @@ const ACTIVITY_FORM_RESULT_COPY = {
     draft: {
       eyebrow: 'Borrador guardado',
       title: 'Tu borrador está guardado',
-      description: 'La actividad todavía no es visible en el catálogo. Puedes publicarla cuando esté lista.',
+      description:
+        'La actividad todavía no es visible en el catálogo. Puedes publicarla cuando esté lista.',
       publishLabel: 'Publicar actividad',
     },
     updated: {
@@ -78,18 +81,21 @@ const ACTIVITY_FORM_RESULT_COPY = {
     draft: {
       eyebrow: 'Borrador guardado',
       title: 'Tu borrador está guardado',
-      description: 'La propuesta todavía no se ha enviado a la Fundación. Puedes enviarla cuando esté lista.',
+      description:
+        'La propuesta todavía no se ha enviado a la Fundación. Puedes enviarla cuando esté lista.',
       publishLabel: 'Enviar',
     },
     updated: {
       eyebrow: 'Cambios guardados',
       title: 'La propuesta se ha actualizado',
-      description: 'Los cambios están guardados. Desde «Mis propuestas» puedes enviarla a la Fundación.',
+      description:
+        'Los cambios están guardados. Desde «Mis propuestas» puedes enviarla a la Fundación.',
     },
     published: {
       eyebrow: 'Propuesta enviada',
       title: 'La propuesta está pendiente de aprobación',
-      description: 'La Fundación revisará la propuesta y, si la aprueba, la actividad pasará al catálogo.',
+      description:
+        'La Fundación revisará la propuesta y, si la aprueba, la actividad pasará al catálogo.',
     },
   },
 };
@@ -127,7 +133,8 @@ export function getActivityFormHeaderCopy({ isPartner, isEditMode }) {
 export function getActivityFormResultCopy({ requestStatus, isPartner, isEditMode }) {
   const audience = isPartner ? 'partner' : 'admin';
   const status = PENDING_RESULT_STATUS[requestStatus] ?? requestStatus;
-  const copy = ACTIVITY_FORM_RESULT_COPY[audience][status] ?? ACTIVITY_FORM_RESULT_COPY[audience].draft;
+  const copy =
+    ACTIVITY_FORM_RESULT_COPY[audience][status] ?? ACTIVITY_FORM_RESULT_COPY[audience].draft;
   const hasPublishAction = status !== 'published' && !isEditMode;
 
   return {
@@ -241,9 +248,9 @@ function validateActivityDateFields(values) {
     errors.endDate = 'La fecha de fin no puede ser anterior a la de inicio.';
   }
   if (
-    values.startDate
-    && values.registrationDeadline
-    && values.registrationDeadline > values.startDate
+    values.startDate &&
+    values.registrationDeadline &&
+    values.registrationDeadline > values.startDate
   ) {
     errors.registrationDeadline = 'La fecha límite no puede ser posterior al inicio.';
   }

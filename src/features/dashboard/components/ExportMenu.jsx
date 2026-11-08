@@ -40,7 +40,7 @@ const EXPORT_OPTIONS = [
 export default function ExportMenu({ filters = {} }) {
   const [open, setOpen] = useState(false);
   const [statuses, setStatuses] = useState(() =>
-    Object.fromEntries(EXPORT_OPTIONS.map((o) => [o.id, { state: 'idle', message: '' }]))
+    Object.fromEntries(EXPORT_OPTIONS.map((o) => [o.id, { state: 'idle', message: '' }])),
   );
   const buttonRef = useRef(null);
   const menuRef = useRef(null);
@@ -54,7 +54,10 @@ export default function ExportMenu({ filters = {} }) {
     try {
       const response = await option.request(filters);
       downloadBlob(response.data, option.filename);
-      updateStatus(option.id, { state: 'success', message: `${option.filename} se ha descargado correctamente.` });
+      updateStatus(option.id, {
+        state: 'success',
+        message: `${option.filename} se ha descargado correctamente.`,
+      });
       setOpen(false);
       buttonRef.current?.focus();
     } catch (error) {
@@ -86,7 +89,10 @@ export default function ExportMenu({ filters = {} }) {
         if (!items?.length) return;
         const current = document.activeElement;
         const idx = Array.from(items).indexOf(current);
-        const next = e.key === 'ArrowDown' ? (idx + 1) % items.length : (idx - 1 + items.length) % items.length;
+        const next =
+          e.key === 'ArrowDown'
+            ? (idx + 1) % items.length
+            : (idx - 1 + items.length) % items.length;
         items[next]?.focus();
       }
     };

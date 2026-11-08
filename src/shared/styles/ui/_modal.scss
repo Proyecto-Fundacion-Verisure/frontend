@@ -22,8 +22,12 @@
   padding: space('6');
   width: min(100%, 34rem);
 
-  &--small { width: min(100%, 26rem); }
-  &--large { width: min(100%, 52rem); }
+  &--small {
+    width: min(100%, 26rem);
+  }
+  &--large {
+    width: min(100%, 52rem);
+  }
 
   &__header {
     align-items: flex-start;
@@ -32,9 +36,16 @@
     justify-content: space-between;
   }
 
-  &__title { font-size: $font-size-xl; }
-  &__description { color: $color-muted; margin-top: space('2'); }
-  &__content { margin-top: space('5'); }
+  &__title {
+    font-size: $font-size-xl;
+  }
+  &__description {
+    color: $color-muted;
+    margin-top: space('2');
+  }
+  &__content {
+    margin-top: space('5');
+  }
 
   &__close {
     @include focus-ring;
@@ -47,7 +58,9 @@
     line-height: 1;
     min-height: $control-height;
     min-width: $control-height;
-    transition: background-color $transition-fast, color $transition-fast;
+    transition:
+      background-color $transition-fast,
+      color $transition-fast;
 
     &:hover {
       background: $color-surface-hover;

@@ -20,7 +20,9 @@
   }
 
   dl,
-  dd { margin: 0; }
+  dd {
+    margin: 0;
+  }
 
   dt {
     color: $color-muted;
@@ -32,7 +34,7 @@
     font-size: $font-size-2xl;
     font-variant-numeric: tabular-nums;
     font-weight: $font-weight-semibold;
-    letter-spacing: -.015em;
+    letter-spacing: -0.015em;
     margin-top: space('1');
   }
 
@@ -44,9 +46,15 @@
     grid-column: 1 / -1;
     margin: 0;
 
-    svg { flex: 0 0 auto; }
+    svg {
+      flex: 0 0 auto;
+    }
 
-    &--positive { color: $color-success; }
-    &--negative { color: $color-danger; }
+    &--positive {
+      color: $color-success;
+    }
+    &--negative {
+      color: $color-danger;
+    }
   }
 }

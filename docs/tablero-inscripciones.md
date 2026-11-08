@@ -12,11 +12,11 @@ Es lo primero que hay que tener claro, porque descarta la solución que parece o
 
 La cabecera pinta `confirmed`, `waitlisted` y `unreviewed`, que llegan de `GET /api/admin/registrations/counts`. Esto es lo que cuenta cada uno, según la consulta del backend (`RegistrationRepository.java:116-124`):
 
-| Contador | Qué cuenta |
-|---|---|
-| `confirmed` | las que están en `CONFIRMED` |
+| Contador     | Qué cuenta                                              |
+| ------------ | ------------------------------------------------------- |
+| `confirmed`  | las que están en `CONFIRMED`                            |
 | `waitlisted` | **todas** las que están en `WAITLISTED`, revisadas o no |
-| `unreviewed` | las de `WAITLISTED` **con `accepted = false`** |
+| `unreviewed` | las de `WAITLISTED` **con `accepted = false`**          |
 
 **`unreviewed` está dentro de `waitlisted`, no al lado.** Una persona sin revisar se cuenta en los dos.
 
@@ -72,10 +72,10 @@ Si al usarlo se ve que confunde, la salida es separar «Sin revisar» como terce
 
 ## 6 · Qué habría que tocar
 
-| Fichero | Qué |
-|---|---|
-| `src/features/registrations/RegistrationsTablePage.jsx` | `SECTIONS`, `getSectionKey`, la elección de columnas y la cabecera |
-| `src/styles/pages/_registrations-table.scss` | el bloque plegable del historial |
+| Fichero                                                      | Qué                                                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `src/features/registrations/RegistrationsTablePage.jsx`      | `SECTIONS`, `getSectionKey`, la elección de columnas y la cabecera                   |
+| `src/styles/pages/_registrations-table.scss`                 | el bloque plegable del historial                                                     |
 | `src/features/registrations/RegistrationsTablePage.test.jsx` | sus casos afirman los títulos actuales, como `/confirmadas 1/i` y `/sin revisar 1/i` |
 
 Sin cambios en `RegistrationDecisionActions.jsx` ni en `CancelRegistrationAction.jsx`.

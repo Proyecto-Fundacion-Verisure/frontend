@@ -43,7 +43,9 @@ describe('CertificatePage', () => {
     renderPage();
 
     expect(screen.getByRole('status', { name: /cargando certificado/i })).toBeInTheDocument();
-    expect(await screen.findByRole('heading', { name: /certificado de voluntariado/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /certificado de voluntariado/i }),
+    ).toBeInTheDocument();
     expect(getCertificate).toHaveBeenCalledWith('41');
     expect(screen.getByText('María García López')).toBeInTheDocument();
     expect(screen.getByText('Acompañamiento a mayores')).toBeInTheDocument();
@@ -66,7 +68,12 @@ describe('CertificatePage', () => {
 
   it.each([
     [403, 'NOT_OWNER', 'No tienes permiso.', /no puedes consultar este certificado/i],
-    [409, 'ACTIVITY_NOT_CLOSED', 'La actividad aún no está cerrada.', /todavía no está disponible/i],
+    [
+      409,
+      'ACTIVITY_NOT_CLOSED',
+      'La actividad aún no está cerrada.',
+      /todavía no está disponible/i,
+    ],
   ])('explains certificate access error %s', async (status, code, message, heading) => {
     getCertificate.mockRejectedValue({ status, code, message });
     renderPage();

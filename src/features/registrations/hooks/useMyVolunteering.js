@@ -20,7 +20,9 @@ export default function useMyVolunteering() {
     setError(null);
     try {
       const response = await getMyRegistrations();
-      const { active: activeItems, history: historyItems } = splitRegistrations(readItems(response));
+      const { active: activeItems, history: historyItems } = splitRegistrations(
+        readItems(response),
+      );
       setActive(activeItems);
       setHistory(historyItems);
     } catch (requestError) {
@@ -38,24 +40,27 @@ export default function useMyVolunteering() {
     }
   };
 
-  const handleCancel = useCallback(async (registrationId) => {
-    setCancelError(null);
-    setCancellingId(registrationId);
-    try {
-      await cancelRegistration(registrationId);
-      await fetchData();
-    } catch (requestError) {
-      // DEADLINE_PASSED (400) significa que el backend ya no deja cancelar: la
-      // actividad empezó. Recargamos para que la fila deje de ofrecer el botón,
-      // que es lo que la pantalla estaba enseñando de más.
-      if (requestError?.code === 'DEADLINE_PASSED') {
-        await reloadAfterDeadline();
+  const handleCancel = useCallback(
+    async (registrationId) => {
+      setCancelError(null);
+      setCancellingId(registrationId);
+      try {
+        await cancelRegistration(registrationId);
+        await fetchData();
+      } catch (requestError) {
+        // DEADLINE_PASSED (400) significa que el backend ya no deja cancelar: la
+        // actividad empezó. Recargamos para que la fila deje de ofrecer el botón,
+        // que es lo que la pantalla estaba enseñando de más.
+        if (requestError?.code === 'DEADLINE_PASSED') {
+          await reloadAfterDeadline();
+        }
+        setCancelError(requestError.message || 'No se pudo cancelar la inscripción.');
+      } finally {
+        setCancellingId(null);
       }
-      setCancelError(requestError.message || 'No se pudo cancelar la inscripción.');
-    } finally {
-      setCancellingId(null);
-    }
-  }, [fetchData]);
+    },
+    [fetchData],
+  );
 
   useEffect(() => {
     fetchData();

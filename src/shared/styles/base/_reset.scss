@@ -1,16 +1,43 @@
-*, *::before, *::after { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
-body, h1, h2, h3, h4, p { margin: 0; }
+body,
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
 
-button, input, select, textarea { font: inherit; }
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
 
-img { display: block; max-width: 100%; }
+img {
+  display: block;
+  max-width: 100%;
+}
 
-button { color: inherit; }
+button {
+  color: inherit;
+}
 
-a { color: inherit; }
+a {
+  color: inherit;
+}
 
 input[type='checkbox'],
-input[type='radio'] { accent-color: var(--color-coral-solid); }
+input[type='radio'] {
+  accent-color: var(--color-coral-solid);
+}

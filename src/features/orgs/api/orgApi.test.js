@@ -51,7 +51,9 @@ describe('partner API contracts', () => {
     getOrgDashboard(2026);
 
     expect(client.post).toHaveBeenNthCalledWith(1, '/auth/register', account);
-    expect(client.post).toHaveBeenNthCalledWith(2, '/auth/resend-verification', { email: account.email });
+    expect(client.post).toHaveBeenNthCalledWith(2, '/auth/resend-verification', {
+      email: account.email,
+    });
     expect(client.get).toHaveBeenNthCalledWith(1, '/admin/org-accounts', {
       params: { status: 'PENDING', page: 0 },
     });

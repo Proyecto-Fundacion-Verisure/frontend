@@ -3,9 +3,8 @@
 // la actividad estuviera llena. Aquí se dice cuántas quedan, o que no queda ninguna.
 export function formatSpots(occupied, total) {
   const free = Math.max(total - occupied, 0);
-  const freeLabel = free === 0
-    ? 'sin plazas libres'
-    : free === 1 ? '1 plaza libre' : `${free} plazas libres`;
+  const freeLabel =
+    free === 0 ? 'sin plazas libres' : free === 1 ? '1 plaza libre' : `${free} plazas libres`;
   return `${occupied} de ${total} plazas ocupadas · ${freeLabel}`;
 }
 

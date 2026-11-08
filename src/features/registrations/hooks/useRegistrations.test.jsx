@@ -28,7 +28,9 @@ const page = (content) => ({
   totalPages: content.length ? 1 : 0,
 });
 
-const INITIAL_BOARD = page([{ registrationId: 10, userName: 'Ana Torres', status: 'WAITLISTED', accepted: false }]);
+const INITIAL_BOARD = page([
+  { registrationId: 10, userName: 'Ana Torres', status: 'WAITLISTED', accepted: false },
+]);
 const COUNTS = { confirmed: 0, waitlisted: 1, unreviewed: 1 };
 
 beforeEach(() => {
@@ -42,7 +44,9 @@ beforeEach(() => {
 
 describe('useRegistrations', () => {
   it('loads the board and reloads it after accepting', async () => {
-    const refreshedBoard = page([{ registrationId: 10, userName: 'Ana Torres', status: 'CONFIRMED', accepted: true }]);
+    const refreshedBoard = page([
+      { registrationId: 10, userName: 'Ana Torres', status: 'CONFIRMED', accepted: true },
+    ]);
     getActivityRegistrations
       .mockResolvedValueOnce({ data: INITIAL_BOARD })
       .mockResolvedValueOnce({ data: refreshedBoard });
@@ -67,9 +71,11 @@ describe('useRegistrations', () => {
     getActivityRegistrations
       .mockResolvedValueOnce({ data: INITIAL_BOARD })
       .mockResolvedValueOnce({ data: page([]) });
-    rejectRegistration.mockReturnValue(new Promise((resolve) => {
-      resolveRejection = resolve;
-    }));
+    rejectRegistration.mockReturnValue(
+      new Promise((resolve) => {
+        resolveRejection = resolve;
+      }),
+    );
     const { result } = renderHook(() => useRegistrations(8));
     await waitFor(() => expect(result.current.loading).toBe(false));
 

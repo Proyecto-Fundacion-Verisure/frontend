@@ -30,7 +30,10 @@ export default function SubmitForReviewButton({ activity, onSubmitted }) {
       <Button
         size="small"
         aria-label={`Enviar propuesta ${activity.title}`}
-        onClick={() => { setError(''); setIsOpen(true); }}
+        onClick={() => {
+          setError('');
+          setIsOpen(true);
+        }}
       >
         Enviar
       </Button>
@@ -39,7 +42,7 @@ export default function SubmitForReviewButton({ activity, onSubmitted }) {
         onClose={() => !isSubmitting && setIsOpen(false)}
         title="Enviar propuesta a la Fundación"
         description={`La Fundación revisará «${activity.title}» y, si la aprueba, pasará al catálogo. Hasta entonces no podrás editarla.`}
-        footer={(
+        footer={
           <>
             <Button variant="secondary" onClick={() => setIsOpen(false)} disabled={isSubmitting}>
               Volver
@@ -48,9 +51,13 @@ export default function SubmitForReviewButton({ activity, onSubmitted }) {
               Confirmar envío
             </Button>
           </>
-        )}
+        }
       >
-        {error && <p className="activity-form__error" role="alert">{error}</p>}
+        {error && (
+          <p className="activity-form__error" role="alert">
+            {error}
+          </p>
+        )}
       </Modal>
     </>
   );

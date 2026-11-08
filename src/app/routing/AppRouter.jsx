@@ -25,24 +25,48 @@ import createLazyPage from './createLazyPage';
 // cabecera, el menú y el pie sigan montados mientras llega la página.
 const DashboardPage = createLazyPage(() => import('../../features/dashboard'), 'DashboardPage');
 
-const ActivitiesListPage = createLazyPage(() => import('../../features/activities'), 'ActivitiesListPage');
-const ActivityDetailPage = createLazyPage(() => import('../../features/activities'), 'ActivityDetailPage');
-const ActivityFormPage = createLazyPage(() => import('../../features/activities'), 'ActivityFormPage');
+const ActivitiesListPage = createLazyPage(
+  () => import('../../features/activities'),
+  'ActivitiesListPage',
+);
+const ActivityDetailPage = createLazyPage(
+  () => import('../../features/activities'),
+  'ActivityDetailPage',
+);
+const ActivityFormPage = createLazyPage(
+  () => import('../../features/activities'),
+  'ActivityFormPage',
+);
 const CatalogPage = createLazyPage(() => import('../../features/activities'), 'CatalogPage');
 const ProposalForm = createLazyPage(() => import('../../features/proposals'), 'ProposalForm');
-const ProposalsInboxPage = createLazyPage(() => import('../../features/proposals'), 'ProposalsInboxPage');
-const ProposalDetailPage = createLazyPage(() => import('../../features/proposals'), 'ProposalDetailPage');
+const ProposalsInboxPage = createLazyPage(
+  () => import('../../features/proposals'),
+  'ProposalsInboxPage',
+);
+const ProposalDetailPage = createLazyPage(
+  () => import('../../features/proposals'),
+  'ProposalDetailPage',
+);
 
 const RegistrationsTablePage = createLazyPage(
   () => import('../../features/registrations'),
   'RegistrationsTablePage',
 );
-const MyVolunteeringPage = createLazyPage(() => import('../../features/registrations'), 'MyVolunteeringPage');
+const MyVolunteeringPage = createLazyPage(
+  () => import('../../features/registrations'),
+  'MyVolunteeringPage',
+);
 
-const ActivityClosurePage = createLazyPage(() => import('../../features/reports'), 'ActivityClosurePage');
+const ActivityClosurePage = createLazyPage(
+  () => import('../../features/reports'),
+  'ActivityClosurePage',
+);
 const CertificatePage = createLazyPage(() => import('../../features/reports'), 'CertificatePage');
 const ClosureFormPage = createLazyPage(() => import('../../features/reports'), 'ClosureFormPage');
-const PendingClosurePage = createLazyPage(() => import('../../features/reports'), 'PendingClosurePage');
+const PendingClosurePage = createLazyPage(
+  () => import('../../features/reports'),
+  'PendingClosurePage',
+);
 
 const AccountStatusPage = createLazyPage(() => import('../../features/orgs'), 'AccountStatusPage');
 const OrgRegisterPage = createLazyPage(() => import('../../features/orgs'), 'OrgRegisterPage');
@@ -59,18 +83,53 @@ const NotFoundPage = createLazyPage(() => import('../../features/not-found'), 'N
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<PublicLayout><LandingPage /></PublicLayout>} />
+      <Route
+        path="/"
+        element={
+          <PublicLayout>
+            <LandingPage />
+          </PublicLayout>
+        }
+      />
       {authRoutes.map(({ path, element }) => (
         <Route key={path} path={path} element={element} />
       ))}
-      <Route path="/proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
-      <Route path="/new-proposal" element={<PublicLayout><ProposalForm /></PublicLayout>} />
-      <Route path="/register-organization" element={<PublicLayout><OrgRegisterPage /></PublicLayout>} />
+      <Route
+        path="/proposal"
+        element={
+          <PublicLayout>
+            <ProposalForm />
+          </PublicLayout>
+        }
+      />
+      <Route
+        path="/new-proposal"
+        element={
+          <PublicLayout>
+            <ProposalForm />
+          </PublicLayout>
+        }
+      />
+      <Route
+        path="/register-organization"
+        element={
+          <PublicLayout>
+            <OrgRegisterPage />
+          </PublicLayout>
+        }
+      />
       {import.meta.env.DEV && <Route path="/ui-kit" element={<UiShowcase />} />}
       <Route path="/explore" element={<Navigate to="/activities" replace />} />
       <Route path="/inscriptions" element={<Navigate to="/admin/registrations" replace />} />
       <Route path="/closes" element={<Navigate to="/admin/activities/pending-closure" replace />} />
-      <Route path="/account-status" element={<PublicLayout><AccountStatusPage /></PublicLayout>} />
+      <Route
+        path="/account-status"
+        element={
+          <PublicLayout>
+            <AccountStatusPage />
+          </PublicLayout>
+        }
+      />
       <Route element={<ProtectedRoute />}>
         {/* Un solo proveedor de favoritos por encima de `AppLayout`, que pinta el
             `Outlet`: así el corazón del catálogo (tramo EMPLOYEE) y los dos de la
@@ -89,20 +148,38 @@ export default function AppRouter() {
             <Route path="/activities/:activityId" element={<ActivityDetailPage />} />
           </Route>
           <Route element={<RoleRoute roles={['ADMIN']} />}>
-            <Route path="/dashboard" element={<DashboardPage attentionPanel={<AttentionPanel />} />} />
-            <Route path="/proposals" element={<ProposalsInboxPage sectionTabs={<RequestsTabs />} />} />
+            <Route
+              path="/dashboard"
+              element={<DashboardPage attentionPanel={<AttentionPanel />} />}
+            />
+            <Route
+              path="/proposals"
+              element={<ProposalsInboxPage sectionTabs={<RequestsTabs />} />}
+            />
             <Route path="/proposals/:proposalId" element={<ProposalDetailPage />} />
-            <Route path="/activities/new" element={<ActivityFormPage backPath="/admin/activities" />} />
+            <Route
+              path="/activities/new"
+              element={<ActivityFormPage backPath="/admin/activities" />}
+            />
             <Route path="/admin/registrations" element={<RegistrationsTablePage />} />
-            <Route path="/activities/:activityId/registrations" element={<RegistrationsTablePage />} />
-            <Route path="/activities/:activityId/edit" element={<ActivityFormPage backPath="/admin/activities" />} />
-            <Route path="/admin/activities" element={<ActivitiesListPage sectionTabs={<ActivitiesTabs />} />} />
+            <Route
+              path="/activities/:activityId/registrations"
+              element={<RegistrationsTablePage />}
+            />
+            <Route
+              path="/activities/:activityId/edit"
+              element={<ActivityFormPage backPath="/admin/activities" />}
+            />
+            <Route
+              path="/admin/activities"
+              element={<ActivitiesListPage sectionTabs={<ActivitiesTabs />} />}
+            />
             {/* La cola de revisión: lo que las entidades han propuesto y espera
                 decisión. Es una cola, no un inventario: sin filtro de estado y
                 en orden ascendente, lo que más lleva esperando primero. */}
             <Route
               path={PENDING_REVIEW_PATH}
-              element={(
+              element={
                 <ActivitiesListPage
                   fetchData={getPendingActivities}
                   title="Solicitudes"
@@ -116,7 +193,7 @@ export default function AppRouter() {
                   showReviewActions={true}
                   emptyDescription="Ninguna entidad tiene propuestas esperando decisión."
                 />
-              )}
+              }
             />
             <Route path="/admin/account-status" element={<AdminAccountStatusPage />} />
             <Route
@@ -143,19 +220,35 @@ export default function AppRouter() {
           <Route element={<RoleRoute roles={['PARTNER']} />}>
             <Route path="/org/dashboard" element={<OrgDashboardPage />} />
             <Route path="/org/activities" element={<OrgActivitiesPage />} />
-            <Route path="/org/activities/new" element={<ActivityFormPage backPath="/org/activities" />} />
-            <Route path="/org/activities/:activityId/edit" element={<ActivityFormPage backPath="/org/activities" />} />
+            <Route
+              path="/org/activities/new"
+              element={<ActivityFormPage backPath="/org/activities" />}
+            />
+            <Route
+              path="/org/activities/:activityId/edit"
+              element={<ActivityFormPage backPath="/org/activities" />}
+            />
             <Route path="/org/reports" element={<OrgImpactPage />} />
             {/* `/org/proposals` (la propuesta de cuatro campos que la Fundación
                 completa) salió del backoffice de la entidad: con cuenta, la
                 entidad propone la actividad entera en `/org/activities` y ese
                 camino queda para el formulario público de la landing. */}
             <Route path="/org/proposals" element={<Navigate to="/org/activities" replace />} />
-            <Route path="/org/proposals/new" element={<Navigate to="/org/activities/new" replace />} />
+            <Route
+              path="/org/proposals/new"
+              element={<Navigate to="/org/activities/new" replace />}
+            />
           </Route>
         </Route>
       </Route>
-      <Route path="*" element={<PublicLayout><NotFoundPage /></PublicLayout>} />
+      <Route
+        path="*"
+        element={
+          <PublicLayout>
+            <NotFoundPage />
+          </PublicLayout>
+        }
+      />
     </Routes>
   );
 }

@@ -13,7 +13,9 @@
   flex: 0 0 auto;
   height: $control-height;
   justify-content: center;
-  transition: background-color $transition-fast, border-color $transition-fast;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast;
   width: $control-height;
 
   &:hover {
@@ -22,4 +24,6 @@
   }
 }
 
-.theme-toggle svg { color: $color-muted; }
+.theme-toggle svg {
+  color: $color-muted;
+}

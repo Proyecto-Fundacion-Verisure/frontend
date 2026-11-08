@@ -60,7 +60,9 @@ describe('activity API contract', () => {
     approveActivity(31);
     returnActivity(32, 'Completa la descripción.');
 
-    expect(client.get).toHaveBeenCalledWith('/admin/activities/pending', { params: { page: 0, size: 10 } });
+    expect(client.get).toHaveBeenCalledWith('/admin/activities/pending', {
+      params: { page: 0, size: 10 },
+    });
     expect(client.patch).toHaveBeenNthCalledWith(1, '/admin/activities/31/approve');
     expect(client.patch).toHaveBeenNthCalledWith(2, '/admin/activities/32/return', {
       note: 'Completa la descripción.',

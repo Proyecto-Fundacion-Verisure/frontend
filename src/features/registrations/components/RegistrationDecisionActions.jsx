@@ -52,7 +52,11 @@ export default function RegistrationDecisionActions({
           Rechazar
         </Button>
       </div>
-      {errorMessage && <p className="registration-actions__error" role="alert">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="registration-actions__error" role="alert">
+          {errorMessage}
+        </p>
+      )}
       <ConfirmModal
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}

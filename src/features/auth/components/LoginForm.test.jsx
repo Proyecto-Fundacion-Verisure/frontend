@@ -56,11 +56,13 @@ describe('LoginForm', () => {
   });
 
   it('traduce el código de una cuenta pendiente de aprobación', async () => {
-    login.mockRejectedValue(new ApiError({
-      message: 'ACCOUNT_PENDING_APPROVAL',
-      status: 403,
-      code: 'ACCOUNT_PENDING_APPROVAL',
-    }));
+    login.mockRejectedValue(
+      new ApiError({
+        message: 'ACCOUNT_PENDING_APPROVAL',
+        status: 403,
+        code: 'ACCOUNT_PENDING_APPROVAL',
+      }),
+    );
     const user = userEvent.setup();
     renderLogin();
 

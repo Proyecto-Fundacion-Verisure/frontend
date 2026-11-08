@@ -35,11 +35,7 @@ export default function AdminAccountStatusPage() {
 
       {hasRows && (
         <>
-          <Table
-            caption="Cuentas por aprobar"
-            columns={columns}
-            data={pending.organizations}
-          />
+          <Table caption="Cuentas por aprobar" columns={columns} data={pending.organizations} />
           <Pagination
             page={pending.page}
             totalPages={pending.totalPages}

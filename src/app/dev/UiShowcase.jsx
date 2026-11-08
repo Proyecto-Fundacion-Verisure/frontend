@@ -15,7 +15,11 @@ import ThemeToggle from '../../shared/ui/ThemeToggle/ThemeToggle';
 const columns = [
   { key: 'name', label: 'Actividad' },
   { key: 'places', label: 'Plazas' },
-  { key: 'status', label: 'Estado', render: (row) => <Badge variant="success">{row.status}</Badge> },
+  {
+    key: 'status',
+    label: 'Estado',
+    render: (row) => <Badge variant="success">{row.status}</Badge>,
+  },
 ];
 
 const data = [{ id: 1, name: 'Acompañamiento educativo', places: '8 de 12', status: 'Abierta' }];
@@ -57,12 +61,18 @@ export default function UiShowcase() {
         <div className="ui-showcase__form">
           <Input label="Nombre de la actividad" placeholder="Ej. Taller educativo" required />
           <Select label="Modalidad" defaultValue="" required>
-            <option value="" disabled>Selecciona una opción</option>
+            <option value="" disabled>
+              Selecciona una opción
+            </option>
             <option>Presencial</option>
             <option>Online</option>
           </Select>
           <Textarea label="Descripción" hint="Resume el objetivo de la actividad." />
-          <Input label="Correo" defaultValue="correo incorrecto" error="Introduce un correo válido." />
+          <Input
+            label="Correo"
+            defaultValue="correo incorrecto"
+            error="Introduce un correo válido."
+          />
           <Input label="Campo deshabilitado" value="No editable" disabled readOnly />
         </div>
       </section>
@@ -93,12 +103,14 @@ export default function UiShowcase() {
           onClose={() => setIsModalOpen(false)}
           title="Confirmar acción"
           description="Comprueba los datos antes de continuar."
-          footer={(
+          footer={
             <>
-              <Button variant="ghost" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
+              <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
+                Cancelar
+              </Button>
               <Button onClick={() => setIsModalOpen(false)}>Confirmar</Button>
             </>
-          )}
+          }
         >
           Esta acción se aplicará inmediatamente.
         </Modal>

@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { formatDate, formatDateRange, formatDateTime, isPastLocalDate, parseLocalDate } from './dates';
+import {
+  formatDate,
+  formatDateRange,
+  formatDateTime,
+  isPastLocalDate,
+  parseLocalDate,
+} from './dates';
 
 afterEach(() => {
   vi.useRealTimers();
@@ -64,8 +70,9 @@ describe('formatDate', () => {
   });
 
   it('admite otro formato, como el mes entero del certificado', () => {
-    expect(formatDate('2026-09-15', { day: 'numeric', month: 'long', year: 'numeric' }))
-      .toBe('15 de septiembre de 2026');
+    expect(formatDate('2026-09-15', { day: 'numeric', month: 'long', year: 'numeric' })).toBe(
+      '15 de septiembre de 2026',
+    );
   });
 
   it('devuelve un guion cuando no hay fecha', () => {

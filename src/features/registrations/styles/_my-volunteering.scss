@@ -40,7 +40,7 @@
   color: $color-muted;
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
-  padding: .125rem space('2');
+  padding: 0.125rem space('2');
 }
 
 .my-volunteering__card {
@@ -55,9 +55,13 @@
   padding: space('4') space('5');
   row-gap: space('1');
 
-  &:last-child { border-bottom: 0; }
+  &:last-child {
+    border-bottom: 0;
+  }
 
-  > * { grid-column: 1; }
+  > * {
+    grid-column: 1;
+  }
 }
 
 .my-volunteering__card-header {

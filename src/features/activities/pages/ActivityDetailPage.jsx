@@ -123,17 +123,22 @@ export default function ActivityDetailPage() {
   // decidió `B2-03`. El backend ya no manda `imageUrl`.
   const lineInfo = getLineByValue(activity.line);
   const lineLabel = lineInfo?.label ?? activity.line;
-  const dateRange = activity.startDate || activity.endDate
-    ? formatDateRange(activity.startDate, activity.endDate)
-    : null;
+  const dateRange =
+    activity.startDate || activity.endDate
+      ? formatDateRange(activity.startDate, activity.endDate)
+      : null;
   const displayLocation = activity.location || activity.address || activity.city || null;
-  const isFull = activity.status === 'FULL' || activity.status === 'COMPLETA' || (total > 0 && occupied >= total);
+  const isFull =
+    activity.status === 'FULL' ||
+    activity.status === 'COMPLETA' ||
+    (total > 0 && occupied >= total);
   const lifecycleLabel = LIFECYCLE_BADGES[activity.status] ?? null;
   const spotsLabel = total > 0 ? formatSpots(occupied, total) : null;
   // Con la actividad en curso o terminada, o el plazo vencido, «Plazas
   // disponibles» junto a «Plazo cerrado» se contradice: las plazas sobran pero
   // ya no se pueden pedir.
-  const registrationClosed = Boolean(lifecycleLabel) || isPastLocalDate(activity.registrationDeadline);
+  const registrationClosed =
+    Boolean(lifecycleLabel) || isPastLocalDate(activity.registrationDeadline);
   const isOpen = !isFull && !registrationClosed && isOpenForRegistration(activity.status);
   const favoritedByMe = favoritesCtx
     ? favoritesCtx.getFavorite(activity.id, activity.favoritedByMe)
@@ -157,7 +162,9 @@ export default function ActivityDetailPage() {
             {activity.title}
           </h1>
 
-          <Card className={`activity-detail__card${lineInfo ? '' : ' activity-detail__card--no-image'}`}>
+          <Card
+            className={`activity-detail__card${lineInfo ? '' : ' activity-detail__card--no-image'}`}
+          >
             {canParticipate && (
               <HeartButton
                 className="activity-detail__favorite"
@@ -168,94 +175,135 @@ export default function ActivityDetailPage() {
               />
             )}
             {lineInfo && (
-              <img src={lineInfo.image} alt={lineInfo.description} className="activity-detail__image" />
+              <img
+                src={lineInfo.image}
+                alt={lineInfo.description}
+                className="activity-detail__image"
+              />
             )}
             <div className="activity-detail__body">
-            <div className="activity-detail__badges">
-              {lineLabel && <Badge variant="info">{lineLabel}</Badge>}
-              {activity.mode && <Badge variant="neutral">{activity.mode}</Badge>}
-              {isOpen && (
-                <Badge variant="success"><span className="badge__dot" aria-hidden="true" />Inscripción abierta</Badge>
+              <div className="activity-detail__badges">
+                {lineLabel && <Badge variant="info">{lineLabel}</Badge>}
+                {activity.mode && <Badge variant="neutral">{activity.mode}</Badge>}
+                {isOpen && (
+                  <Badge variant="success">
+                    <span className="badge__dot" aria-hidden="true" />
+                    Inscripción abierta
+                  </Badge>
+                )}
+                {lifecycleLabel && (
+                  <Badge variant={activity.status === 'IN_PROGRESS' ? 'info' : 'neutral'}>
+                    {lifecycleLabel}
+                  </Badge>
+                )}
+                {isFull && <Badge variant="warning">Completa</Badge>}
+                {isEnrolled && <Badge variant="success">Ya estás apuntado</Badge>}
+                {displayLocation && (
+                  <Badge variant="neutral">
+                    <MapPin aria-hidden="true" size={12} />
+                    <span aria-label={`Ubicación: ${displayLocation}`}>{displayLocation}</span>
+                  </Badge>
+                )}
+              </div>
+              <p className="activity-detail__description">{activity.description}</p>
+              {activity.partnerName && (
+                <p className="activity-detail__meta">
+                  <strong>Entidad:</strong> {activity.partnerName}
+                </p>
               )}
-              {lifecycleLabel && <Badge variant={activity.status === 'IN_PROGRESS' ? 'info' : 'neutral'}>{lifecycleLabel}</Badge>}
-              {isFull && <Badge variant="warning">Completa</Badge>}
-              {isEnrolled && <Badge variant="success">Ya estás apuntado</Badge>}
-              {displayLocation && (
-                <Badge variant="neutral">
-                  <MapPin aria-hidden="true" size={12} />
-                  <span aria-label={`Ubicación: ${displayLocation}`}>{displayLocation}</span>
-                </Badge>
+              {dateRange && (
+                <p className="activity-detail__meta">
+                  <strong>Fechas:</strong> {dateRange}
+                </p>
               )}
-            </div>
-            <p className="activity-detail__description">{activity.description}</p>
-            {activity.partnerName && (
-              <p className="activity-detail__meta">
-                <strong>Entidad:</strong> {activity.partnerName}
-              </p>
-            )}
-            {dateRange && (
-              <p className="activity-detail__meta">
-                <strong>Fechas:</strong> {dateRange}
-              </p>
-            )}
-            {activity.hours ? (
-              <p className="activity-detail__meta">
-                <strong>Dedicación:</strong> {activity.hours} h
-              </p>
-            ) : null}
-            {activity.registrationDeadline && (
-              <p className="activity-detail__meta">
-                <strong>Plazo de inscripción:</strong> hasta el {formatDate(activity.registrationDeadline)}
-              </p>
-            )}
-            {!canParticipate && total > 0 && (
-              <ProgressBar value={occupied} max={total} label="Plazas ocupadas" showValue={false} valueLabel={`${occupied} de ${total}`} />
-            )}
-            {!canParticipate && spotsLabel && <p className="activity-detail__meta">{spotsLabel}</p>}
+              {activity.hours ? (
+                <p className="activity-detail__meta">
+                  <strong>Dedicación:</strong> {activity.hours} h
+                </p>
+              ) : null}
+              {activity.registrationDeadline && (
+                <p className="activity-detail__meta">
+                  <strong>Plazo de inscripción:</strong> hasta el{' '}
+                  {formatDate(activity.registrationDeadline)}
+                </p>
+              )}
+              {!canParticipate && total > 0 && (
+                <ProgressBar
+                  value={occupied}
+                  max={total}
+                  label="Plazas ocupadas"
+                  showValue={false}
+                  valueLabel={`${occupied} de ${total}`}
+                />
+              )}
+              {!canParticipate && spotsLabel && (
+                <p className="activity-detail__meta">{spotsLabel}</p>
+              )}
             </div>
           </Card>
         </div>
 
-        {canParticipate && <aside className="activity-detail__side" aria-label="Panel de inscripción">
-          <Card className="activity-detail__panel">
-            <h2 className="activity-detail__panel-title">Inscripción</h2>
-            {total > 0 && (
-              <ProgressBar value={occupied} max={total} label="Plazas ocupadas" showValue={false} valueLabel={`${occupied} de ${total}`} />
-            )}
-            {spotsLabel && <p className="activity-detail__panel-meta">{spotsLabel}</p>}
-            {isFull && !isEnrolled && <p className="activity-detail__panel-meta">Actividad completa — puedes solicitar entrar en lista de espera.</p>}
-            {isEnrolled && (
-              <p className="activity-detail__panel-meta">
-                Ya estás apuntado
-                {ENROLLED_STATUS_NOTES[currentRegistration?.status] ?? ''}
-                .
-              </p>
-            )}
-            {isEnrolled && currentRegistration?.queuePosition != null && (
-              <p className="activity-detail__panel-meta">Posición en la lista de espera: {currentRegistration.queuePosition}</p>
-            )}
-            {isEnrolled && currentRegistration?.status === 'WAITLISTED' && (
-              <p className="activity-detail__panel-meta" data-testid="accepted-status">
-                {currentRegistration.accepted ? 'Aceptada' : 'Pendiente de revisión'}
-              </p>
-            )}
-            {!isEnrolled && !isFull && !registrationClosed && <p className="activity-detail__panel-meta">Plazas disponibles.</p>}
-            {/* El plazo también aquí: es lo que decide si el botón de abajo sigue
+        {canParticipate && (
+          <aside className="activity-detail__side" aria-label="Panel de inscripción">
+            <Card className="activity-detail__panel">
+              <h2 className="activity-detail__panel-title">Inscripción</h2>
+              {total > 0 && (
+                <ProgressBar
+                  value={occupied}
+                  max={total}
+                  label="Plazas ocupadas"
+                  showValue={false}
+                  valueLabel={`${occupied} de ${total}`}
+                />
+              )}
+              {spotsLabel && <p className="activity-detail__panel-meta">{spotsLabel}</p>}
+              {isFull && !isEnrolled && (
+                <p className="activity-detail__panel-meta">
+                  Actividad completa — puedes solicitar entrar en lista de espera.
+                </p>
+              )}
+              {isEnrolled && (
+                <p className="activity-detail__panel-meta">
+                  Ya estás apuntado
+                  {ENROLLED_STATUS_NOTES[currentRegistration?.status] ?? ''}.
+                </p>
+              )}
+              {isEnrolled && currentRegistration?.queuePosition != null && (
+                <p className="activity-detail__panel-meta">
+                  Posición en la lista de espera: {currentRegistration.queuePosition}
+                </p>
+              )}
+              {isEnrolled && currentRegistration?.status === 'WAITLISTED' && (
+                <p className="activity-detail__panel-meta" data-testid="accepted-status">
+                  {currentRegistration.accepted ? 'Aceptada' : 'Pendiente de revisión'}
+                </p>
+              )}
+              {!isEnrolled && !isFull && !registrationClosed && (
+                <p className="activity-detail__panel-meta">Plazas disponibles.</p>
+              )}
+              {/* El plazo también aquí: es lo que decide si el botón de abajo sigue
                 vivo, y sin la fecha «Plazo cerrado» parece un error. */}
-            {activity.registrationDeadline && (
-              <p className="activity-detail__panel-meta">
-                Plazo de inscripción: hasta el {formatDate(activity.registrationDeadline)}
-              </p>
-            )}
-            <RegisterButton
-              className="activity-detail__register"
-              activity={activity}
-              enrolledLabel={isEnrolled ? ENROLLED_BUTTON_LABELS[currentRegistration?.status] ?? 'Ya estás inscrito' : undefined}
-              closedLabel={lifecycleLabel ? `Actividad ${lifecycleLabel.toLowerCase()}` : undefined}
-              onSuccess={(data) => setLocalRegistration(data)}
-            />
-          </Card>
-        </aside>}
+              {activity.registrationDeadline && (
+                <p className="activity-detail__panel-meta">
+                  Plazo de inscripción: hasta el {formatDate(activity.registrationDeadline)}
+                </p>
+              )}
+              <RegisterButton
+                className="activity-detail__register"
+                activity={activity}
+                enrolledLabel={
+                  isEnrolled
+                    ? (ENROLLED_BUTTON_LABELS[currentRegistration?.status] ?? 'Ya estás inscrito')
+                    : undefined
+                }
+                closedLabel={
+                  lifecycleLabel ? `Actividad ${lifecycleLabel.toLowerCase()}` : undefined
+                }
+                onSuccess={(data) => setLocalRegistration(data)}
+              />
+            </Card>
+          </aside>
+        )}
       </div>
     </section>
   );

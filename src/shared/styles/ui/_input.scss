@@ -13,7 +13,9 @@
   }
 
   &__required,
-  &__error { color: $color-danger; }
+  &__error {
+    color: $color-danger;
+  }
 
   &__control {
     @include focus-ring;
@@ -24,12 +26,21 @@
     color: $color-heading;
     min-height: $control-height;
     padding: space('2') space('3');
-    transition: border-color $transition-fast, box-shadow $transition-fast;
+    transition:
+      border-color $transition-fast,
+      box-shadow $transition-fast;
     width: 100%;
 
-    &::placeholder { color: $color-muted; opacity: 1; }
-    &:hover:not(:disabled) { border-color: $color-muted; }
-    &:disabled { background: $color-background; }
+    &::placeholder {
+      color: $color-muted;
+      opacity: 1;
+    }
+    &:hover:not(:disabled) {
+      border-color: $color-muted;
+    }
+    &:disabled {
+      background: $color-background;
+    }
 
     &[type='file'] {
       color: $color-muted;
@@ -52,16 +63,30 @@
 
   &__select {
     appearance: none;
-    background-image: linear-gradient(45deg, transparent 50%, $color-heading 50%), linear-gradient(135deg, $color-heading 50%, transparent 50%);
-    background-position: calc(100% - 1rem) 50%, calc(100% - .7rem) 50%;
+    background-image:
+      linear-gradient(45deg, transparent 50%, $color-heading 50%),
+      linear-gradient(135deg, $color-heading 50%, transparent 50%);
+    background-position:
+      calc(100% - 1rem) 50%,
+      calc(100% - 0.7rem) 50%;
     background-repeat: no-repeat;
-    background-size: .35rem .35rem, .35rem .35rem;
+    background-size:
+      0.35rem 0.35rem,
+      0.35rem 0.35rem;
     padding-right: space('8');
   }
 
-  &__textarea { min-height: 7rem; resize: vertical; }
-  &__hint, &__error { font-size: $font-size-sm; }
-  &__hint { color: $color-muted; }
+  &__textarea {
+    min-height: 7rem;
+    resize: vertical;
+  }
+  &__hint,
+  &__error {
+    font-size: $font-size-sm;
+  }
+  &__hint {
+    color: $color-muted;
+  }
 
   &--error .field__control {
     border-color: $color-danger;

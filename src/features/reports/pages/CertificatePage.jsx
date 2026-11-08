@@ -40,7 +40,10 @@ export default function CertificatePage() {
 
   if (loading) {
     return (
-      <section className="certificate-page certificate-page--state" aria-label="Cargando certificado">
+      <section
+        className="certificate-page certificate-page--state"
+        aria-label="Cargando certificado"
+      >
         <Spinner label="Cargando certificado…" />
       </section>
     );
@@ -60,7 +63,9 @@ export default function CertificatePage() {
         <p role="alert">{error.message || 'Inténtalo de nuevo.'}</p>
         <div className="certificate-page__actions">
           {!isNotOwner && !isNotValidated && <Button onClick={loadCertificate}>Reintentar</Button>}
-          <Link className="button button--secondary button--medium" to="/my-volunteering">Volver a mis actividades</Link>
+          <Link className="button button--secondary button--medium" to="/my-volunteering">
+            Volver a mis actividades
+          </Link>
         </div>
       </section>
     );
@@ -73,7 +78,9 @@ export default function CertificatePage() {
   return (
     <section className="certificate-page" aria-labelledby="certificate-title">
       <div className="certificate-page__actions">
-        <Link className="button button--secondary button--medium" to="/my-volunteering">← Volver</Link>
+        <Link className="button button--secondary button--medium" to="/my-volunteering">
+          ← Volver
+        </Link>
         <Button onClick={() => window.print()}>Imprimir o guardar como PDF</Button>
       </div>
 
@@ -87,9 +94,9 @@ export default function CertificatePage() {
           <h1 id="certificate-title">Certificado de voluntariado</h1>
           <p className="certificate__name">{fullName}</p>
           <p className="certificate__statement">
-            ha participado en la actividad <strong>{certificate.activityTitle}</strong>,
-            organizada junto a <strong>{partnerName}</strong> dentro de la línea de acción
-            {' '}<strong>{LINE_LABELS[line] ?? certificate.line}</strong>.
+            ha participado en la actividad <strong>{certificate.activityTitle}</strong>, organizada
+            junto a <strong>{partnerName}</strong> dentro de la línea de acción{' '}
+            <strong>{LINE_LABELS[line] ?? certificate.line}</strong>.
           </p>
 
           <dl className="certificate__details">
@@ -98,8 +105,8 @@ export default function CertificatePage() {
               <dd>{formatDateRange(certificate.startDate, certificate.endDate, CERT_FORMAT)}</dd>
             </div>
             <div className="certificate__hours">
-            <dt>Horas realizadas</dt>
-            <dd>{certificate.actualHours ?? certificate.hours ?? '—'}</dd>
+              <dt>Horas realizadas</dt>
+              <dd>{certificate.actualHours ?? certificate.hours ?? '—'}</dd>
             </div>
             <div>
               <dt>Fecha de expedición</dt>
@@ -110,7 +117,9 @@ export default function CertificatePage() {
 
         <footer className="certificate__footer">
           <span>Fundación Verisure</span>
-          <span>Referencia: <strong>{certificate.reference}</strong></span>
+          <span>
+            Referencia: <strong>{certificate.reference}</strong>
+          </span>
         </footer>
       </article>
     </section>

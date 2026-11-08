@@ -1,7 +1,16 @@
 import { forwardRef, useId } from 'react';
 
 const Input = forwardRef(function Input(
-  { id, label, hint, error, className = '', required = false, 'aria-describedby': describedBy, ...props },
+  {
+    id,
+    label,
+    hint,
+    error,
+    className = '',
+    required = false,
+    'aria-describedby': describedBy,
+    ...props
+  },
   ref,
 ) {
   const generatedId = useId();
@@ -14,7 +23,13 @@ const Input = forwardRef(function Input(
     <div className={`field${error ? ' field--error' : ''}`}>
       {label && (
         <label className="field__label" htmlFor={inputId}>
-          {label}{required && <span className="field__required" aria-hidden="true"> *</span>}
+          {label}
+          {required && (
+            <span className="field__required" aria-hidden="true">
+              {' '}
+              *
+            </span>
+          )}
         </label>
       )}
       <input
@@ -26,8 +41,16 @@ const Input = forwardRef(function Input(
         aria-describedby={descriptionIds}
         {...props}
       />
-      {hint && <span className="field__hint" id={hintId}>{hint}</span>}
-      {error && <span className="field__error" id={errorId} role="alert">{error}</span>}
+      {hint && (
+        <span className="field__hint" id={hintId}>
+          {hint}
+        </span>
+      )}
+      {error && (
+        <span className="field__error" id={errorId} role="alert">
+          {error}
+        </span>
+      )}
     </div>
   );
 });

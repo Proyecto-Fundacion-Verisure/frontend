@@ -23,7 +23,10 @@ async function fillValidForm(user) {
   await user.type(screen.getByLabelText(/persona de contacto/i), 'Ana Pérez');
   await user.type(screen.getByLabelText(/correo electrónico/i), 'ana@fundacion.org');
   await user.type(screen.getByLabelText(/teléfono/i), '600000000');
-  await user.type(screen.getByLabelText(/descripción de la necesidad/i), 'Necesitamos apoyo voluntario.');
+  await user.type(
+    screen.getByLabelText(/descripción de la necesidad/i),
+    'Necesitamos apoyo voluntario.',
+  );
   await user.click(screen.getByRole('checkbox', { name: /he leído y acepto/i }));
 }
 
@@ -62,7 +65,10 @@ describe('ProposalForm', () => {
     await user.type(screen.getByLabelText(/persona de contacto/i), 'Ana Pérez');
     await user.type(screen.getByLabelText(/correo electrónico/i), 'ana@fundacion.org');
     await user.type(screen.getByLabelText(/teléfono/i), '600000000');
-    await user.type(screen.getByLabelText(/descripción de la necesidad/i), 'Necesitamos apoyo voluntario.');
+    await user.type(
+      screen.getByLabelText(/descripción de la necesidad/i),
+      'Necesitamos apoyo voluntario.',
+    );
     await user.click(screen.getByRole('checkbox', { name: /he leído y acepto/i }));
     await user.click(screen.getByRole('button', { name: /^enviar$/i }));
 
@@ -160,7 +166,11 @@ describe('ProposalForm', () => {
   it('bloquea el doble envío y muestra estado de carga', async () => {
     const user = userEvent.setup();
     let resolve;
-    createProposal.mockReturnValue(new Promise((r) => { resolve = r; }));
+    createProposal.mockReturnValue(
+      new Promise((r) => {
+        resolve = r;
+      }),
+    );
     renderForm();
 
     await fillValidForm(user);
@@ -201,17 +211,23 @@ describe('ProposalForm', () => {
     // El foco directo mueve el del elemento anterior y dispara sus `onBlur`, que
     // actualizan estado: va dentro de `act` para no dejar avisos ni carreras.
     const submit = screen.getByRole('button', { name: /^enviar$/i });
-    await act(async () => { submit.focus(); });
+    await act(async () => {
+      submit.focus();
+    });
     expect(submit).toHaveFocus();
 
     // cada campo puede recibir foco por teclado
     const orgInput = screen.getByLabelText(/nombre de la organización/i);
-    await act(async () => { orgInput.focus(); });
+    await act(async () => {
+      orgInput.focus();
+    });
     expect(orgInput).toHaveFocus();
 
     // marcar consentimiento con teclado (Space)
     const consent = screen.getByRole('checkbox', { name: /he leído y acepto/i });
-    await act(async () => { consent.focus(); });
+    await act(async () => {
+      consent.focus();
+    });
     await user.keyboard(' ');
     expect(consent).toBeChecked();
   });

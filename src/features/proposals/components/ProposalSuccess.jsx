@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { Button } from "../../../shared/ui";
+import { useEffect, useRef } from 'react';
+import { Button } from '../../../shared/ui';
 
 export default function ProposalSuccess({ onReset }) {
   const headingRef = useRef(null);
@@ -20,12 +20,10 @@ export default function ProposalSuccess({ onReset }) {
         Gracias por contarnos qué necesitáis.
       </h1>
       <p>
-        Hemos recibido vuestra propuesta. El equipo de la Fundación Verisure
-        la revisará y os contactará por correo.
+        Hemos recibido vuestra propuesta. El equipo de la Fundación Verisure la revisará y os
+        contactará por correo.
       </p>
-      <Button onClick={onReset}>
-        Enviar otra propuesta
-      </Button>
+      <Button onClick={onReset}>Enviar otra propuesta</Button>
     </section>
   );
 }

@@ -103,18 +103,15 @@ export function getProposalFieldError(name, values) {
 export function getServerFieldErrors(error) {
   if (!error?.fieldErrors || Array.isArray(error.fieldErrors)) return null;
 
-  const fieldErrors = Object.entries(error.fieldErrors).reduce(
-    (result, [field, message]) => {
-      const fieldMessage = Array.isArray(message) ? message[0] : message;
-      const isKnownField = Object.prototype.hasOwnProperty.call(PROPOSAL_INITIAL_VALUES, field);
+  const fieldErrors = Object.entries(error.fieldErrors).reduce((result, [field, message]) => {
+    const fieldMessage = Array.isArray(message) ? message[0] : message;
+    const isKnownField = Object.prototype.hasOwnProperty.call(PROPOSAL_INITIAL_VALUES, field);
 
-      if (isKnownField && typeof fieldMessage === 'string') {
-        result[field] = fieldMessage;
-      }
-      return result;
-    },
-    {},
-  );
+    if (isKnownField && typeof fieldMessage === 'string') {
+      result[field] = fieldMessage;
+    }
+    return result;
+  }, {});
 
   return Object.keys(fieldErrors).length ? fieldErrors : null;
 }

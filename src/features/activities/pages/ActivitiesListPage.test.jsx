@@ -2,7 +2,12 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { approveActivity, getAdminActivities, getPendingActivities, returnActivity } from '../api/activitiesApi';
+import {
+  approveActivity,
+  getAdminActivities,
+  getPendingActivities,
+  returnActivity,
+} from '../api/activitiesApi';
 import ActivitiesListPage from './ActivitiesListPage';
 
 vi.mock('../api/activitiesApi', () => ({
@@ -13,8 +18,13 @@ vi.mock('../api/activitiesApi', () => ({
 }));
 
 const PENDING = {
-  id: 30, title: 'Voluntariado ambiental', partnerName: 'Cruz Roja Valencia',
-  status: 'PENDING_APPROVAL', startDate: '2026-11-05', spots: 8, favoriteCount: 0,
+  id: 30,
+  title: 'Voluntariado ambiental',
+  partnerName: 'Cruz Roja Valencia',
+  status: 'PENDING_APPROVAL',
+  startDate: '2026-11-05',
+  spots: 8,
+  favoriteCount: 0,
 };
 
 const ACTIVITIES = [
@@ -40,9 +50,33 @@ const ACTIVITIES = [
 
 // Filas de `ActivitySummary` en los estados que el backend no deja cancelar.
 const NOT_CANCELLABLE = [
-  { id: 20, title: 'Ya terminada', partnerName: 'X', status: 'FINISHED', startDate: '2026-03-02', spots: 5, favoriteCount: 0 },
-  { id: 21, title: 'Ya cancelada', partnerName: 'X', status: 'CANCELLED', startDate: '2026-02-09', spots: 5, favoriteCount: 0 },
-  { id: 22, title: 'En revisión', partnerName: 'X', status: 'PENDING_APPROVAL', startDate: '2026-12-01', spots: 5, favoriteCount: 0 },
+  {
+    id: 20,
+    title: 'Ya terminada',
+    partnerName: 'X',
+    status: 'FINISHED',
+    startDate: '2026-03-02',
+    spots: 5,
+    favoriteCount: 0,
+  },
+  {
+    id: 21,
+    title: 'Ya cancelada',
+    partnerName: 'X',
+    status: 'CANCELLED',
+    startDate: '2026-02-09',
+    spots: 5,
+    favoriteCount: 0,
+  },
+  {
+    id: 22,
+    title: 'En revisión',
+    partnerName: 'X',
+    status: 'PENDING_APPROVAL',
+    startDate: '2026-12-01',
+    spots: 5,
+    favoriteCount: 0,
+  },
 ];
 
 function pageResponse(content = ACTIVITIES, overrides = {}) {
@@ -119,7 +153,10 @@ describe('ActivitiesListPage', () => {
     renderPage();
 
     const row = (await screen.findByText('Voluntariado ambiental')).closest('tr');
-    expect(within(row).getByRole('link', { name: /revisar/i })).toHaveAttribute('href', '/admin/activities/pending');
+    expect(within(row).getByRole('link', { name: /revisar/i })).toHaveAttribute(
+      'href',
+      '/admin/activities/pending',
+    );
     expect(within(row).queryByRole('button', { name: /aprobar/i })).not.toBeInTheDocument();
     expect(within(row).queryByRole('button', { name: /devolver/i })).not.toBeInTheDocument();
     expect(within(row).queryByRole('button', { name: /cancelar/i })).not.toBeInTheDocument();
@@ -167,18 +204,22 @@ describe('ActivitiesListPage', () => {
     await screen.findByText('Mentoría digital');
 
     await user.selectOptions(screen.getByLabelText(/filtrar por estado/i), 'DRAFT');
-    await waitFor(() => expect(getAdminActivities).toHaveBeenLastCalledWith({
-      page: 0,
-      size: 10,
-      status: 'DRAFT',
-    }));
+    await waitFor(() =>
+      expect(getAdminActivities).toHaveBeenLastCalledWith({
+        page: 0,
+        size: 10,
+        status: 'DRAFT',
+      }),
+    );
   });
 
   it('uses Page metadata to paginate', async () => {
-    getAdminActivities.mockResolvedValue(pageResponse(ACTIVITIES, {
-      totalElements: 12,
-      totalPages: 2,
-    }));
+    getAdminActivities.mockResolvedValue(
+      pageResponse(ACTIVITIES, {
+        totalElements: 12,
+        totalPages: 2,
+      }),
+    );
     const user = userEvent.setup();
     renderPage();
 

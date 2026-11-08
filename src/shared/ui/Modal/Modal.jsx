@@ -114,12 +114,26 @@ export default function Modal({
         {...props}
       >
         <div className="modal__header">
-          {title && <h2 className="modal__title" id={titleId}>{title}</h2>}
-          <button className="modal__close" onClick={onClose} type="button" aria-label={closeLabel} disabled={closeDisabled}>
+          {title && (
+            <h2 className="modal__title" id={titleId}>
+              {title}
+            </h2>
+          )}
+          <button
+            className="modal__close"
+            onClick={onClose}
+            type="button"
+            aria-label={closeLabel}
+            disabled={closeDisabled}
+          >
             ×
           </button>
         </div>
-        {description && <p className="modal__description" id={descriptionId}>{description}</p>}
+        {description && (
+          <p className="modal__description" id={descriptionId}>
+            {description}
+          </p>
+        )}
         <div className="modal__content">{children}</div>
         {footer && <div className="modal__footer">{footer}</div>}
       </section>

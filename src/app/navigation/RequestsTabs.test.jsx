@@ -24,7 +24,13 @@ describe('RequestsTabs', () => {
   it('groups both origins under requests', () => {
     renderWithCounts(<RequestsTabs />, '/proposals');
 
-    expect(screen.getByRole('link', { name: 'Formulario público 3' })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('link', { name: 'Actividades de entidades 1' })).toHaveAttribute('href', '/admin/activities/pending');
+    expect(screen.getByRole('link', { name: 'Formulario público 3' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    expect(screen.getByRole('link', { name: 'Actividades de entidades 1' })).toHaveAttribute(
+      'href',
+      '/admin/activities/pending',
+    );
   });
 });

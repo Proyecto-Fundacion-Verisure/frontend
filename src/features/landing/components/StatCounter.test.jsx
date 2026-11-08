@@ -28,10 +28,13 @@ describe('StatCounter', () => {
   it('anima el contador cuando entra en la pantalla', () => {
     setReducedMotion(false);
     const frames = [];
-    vi.stubGlobal('requestAnimationFrame', vi.fn((callback) => {
-      frames.push(callback);
-      return frames.length;
-    }));
+    vi.stubGlobal(
+      'requestAnimationFrame',
+      vi.fn((callback) => {
+        frames.push(callback);
+        return frames.length;
+      }),
+    );
     vi.stubGlobal('cancelAnimationFrame', vi.fn());
 
     render(<StatCounter value="2.655" label="horas de voluntariado" />);

@@ -13,8 +13,8 @@ const PublicFooter = () => {
           <p className="public-footer__legal-text">
             Responsable del tratamiento: Verisure España S.A.U.
             <br />
-            Los datos de esta propuesta se conservan mientras esté activa y hasta un año
-            después de descartarla.
+            Los datos de esta propuesta se conservan mientras esté activa y hasta un año después de
+            descartarla.
           </p>
         </div>
 

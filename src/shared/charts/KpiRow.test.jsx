@@ -5,17 +5,24 @@ import { formatDashboardNumber, formatDashboardVariation } from '../lib/formatNu
 
 describe('KpiRow', () => {
   it('muestra exactamente los agregados recibidos con formato consistente', () => {
-    render(<KpiRow metrics={{
-      reportedHours: 12500.5,
-      activeVolunteers: 598,
-      finishedActivities: 60,
-      activePartners: 24,
-    }} variations={{
-      reportedHours: 12.5,
-      activeVolunteers: -2,
-    }} />);
+    render(
+      <KpiRow
+        metrics={{
+          reportedHours: 12500.5,
+          activeVolunteers: 598,
+          finishedActivities: 60,
+          activePartners: 24,
+        }}
+        variations={{
+          reportedHours: 12.5,
+          activeVolunteers: -2,
+        }}
+      />,
+    );
 
-    expect(screen.getByRole('list', { name: 'Indicadores principales de impacto' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('list', { name: 'Indicadores principales de impacto' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('12.500,5 h')).toBeInTheDocument();
     expect(screen.getByText('598')).toBeInTheDocument();
     expect(screen.getByText('24')).toBeInTheDocument();

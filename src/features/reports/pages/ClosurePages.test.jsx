@@ -63,13 +63,18 @@ describe('employee closure page', () => {
     await user.click(screen.getByLabelText(/autorizo el tratamiento/i));
     await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
 
-    await waitFor(() => expect(submitClosure).toHaveBeenCalledWith({
-      registrationId: 103,
-      actualHours: 6,
-      rating: 5,
-      comment: 'Todo bien.',
-      evidenceConsent: true,
-    }, evidence));
+    await waitFor(() =>
+      expect(submitClosure).toHaveBeenCalledWith(
+        {
+          registrationId: 103,
+          actualHours: 6,
+          rating: 5,
+          comment: 'Todo bien.',
+          evidenceConsent: true,
+        },
+        evidence,
+      ),
+    );
     expect(await screen.findByRole('heading', { name: /detalle del cierre/i })).toBeInTheDocument();
     expect(screen.getByTestId('closure-created-notice')).toHaveTextContent(/cierre enviado/i);
   });
@@ -169,7 +174,9 @@ describe('employee closure page', () => {
   });
 
   it('rejects an oversized evidence file on the client before sending (413)', async () => {
-    const tooBig = new File([new ArrayBuffer(11 * 1024 * 1024)], 'big.pdf', { type: 'application/pdf' });
+    const tooBig = new File([new ArrayBuffer(11 * 1024 * 1024)], 'big.pdf', {
+      type: 'application/pdf',
+    });
     const user = userEvent.setup();
 
     render(
@@ -243,19 +250,27 @@ describe('employee closure page', () => {
       </MemoryRouter>,
     );
 
-    await user.upload(screen.getByLabelText(/evidencia \(opcional\)/i), new File(['proof'], 'proof.pdf', { type: 'application/pdf' }));
+    await user.upload(
+      screen.getByLabelText(/evidencia \(opcional\)/i),
+      new File(['proof'], 'proof.pdf', { type: 'application/pdf' }),
+    );
     await user.click(screen.getByTestId('closure-remove-evidence'));
 
     await user.type(screen.getByLabelText(/horas realizadas/i), '6');
     await user.selectOptions(screen.getByRole('combobox', { name: /valoración/i }), '5');
     await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
 
-    await waitFor(() => expect(submitClosure).toHaveBeenCalledWith({
-      registrationId: 103,
-      actualHours: 6,
-      rating: 5,
-      evidenceConsent: false,
-    }, null));
+    await waitFor(() =>
+      expect(submitClosure).toHaveBeenCalledWith(
+        {
+          registrationId: 103,
+          actualHours: 6,
+          rating: 5,
+          evidenceConsent: false,
+        },
+        null,
+      ),
+    );
     expect(screen.queryByTestId('closure-file-preview')).not.toBeInTheDocument();
   });
 
@@ -270,7 +285,10 @@ describe('employee closure page', () => {
       </MemoryRouter>,
     );
 
-    await user.upload(screen.getByLabelText(/evidencia \(opcional\)/i), new File(['proof'], 'proof.pdf', { type: 'application/pdf' }));
+    await user.upload(
+      screen.getByLabelText(/evidencia \(opcional\)/i),
+      new File(['proof'], 'proof.pdf', { type: 'application/pdf' }),
+    );
     await user.type(screen.getByLabelText(/horas realizadas/i), '6');
     await user.selectOptions(screen.getByRole('combobox', { name: /valoración/i }), '5');
     await user.click(screen.getByRole('button', { name: /enviar cierre/i }));
@@ -312,7 +330,9 @@ describe('employee closure page', () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByRole('heading', { name: /no hemos encontrado este cierre/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /no hemos encontrado este cierre/i }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent(/no se ha encontrado/i);
     expect(screen.getByRole('link', { name: /volver a mis voluntariados/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /reintentar/i })).not.toBeInTheDocument();
@@ -329,7 +349,9 @@ describe('employee closure page', () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByRole('heading', { name: /no tienes permiso para consultar este cierre/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /no tienes permiso para consultar este cierre/i }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent(/no tienes permiso/i);
     expect(screen.getByRole('link', { name: /volver a mis voluntariados/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /reintentar/i })).not.toBeInTheDocument();
@@ -337,7 +359,11 @@ describe('employee closure page', () => {
 
   it('shows the title of the activity being closed, taken from the registrations already loaded', () => {
     const registrations = [
-      { registrationId: 103, activity: { id: 4, title: 'Jornada ambiental' }, status: 'PENDING_CLOSURE' },
+      {
+        registrationId: 103,
+        activity: { id: 4, title: 'Jornada ambiental' },
+        status: 'PENDING_CLOSURE',
+      },
     ];
 
     render(
@@ -392,7 +418,9 @@ describe('administrative activity closure pages', () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByRole('heading', { name: /cierre de la actividad/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /cierre de la actividad/i }),
+    ).toBeInTheDocument();
     expect(getActivityClosure).toHaveBeenCalledTimes(1);
     expect(getActivityClosure).toHaveBeenCalledWith('41');
 
@@ -413,7 +441,9 @@ describe('administrative activity closure pages', () => {
         </Routes>
       </MemoryRouter>,
     );
-    expect(await screen.findByRole('heading', { name: /cierre de la actividad/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /cierre de la actividad/i }),
+    ).toBeInTheDocument();
     expect(getActivityClosure).toHaveBeenCalledTimes(2);
   });
 
@@ -437,7 +467,9 @@ describe('administrative activity closure pages', () => {
     await screen.findByRole('heading', { name: /cierre de la actividad/i });
     expect(screen.getByLabelText(/valoración de la colaboración/i)).toHaveValue(4);
     expect(screen.getByLabelText(/notas de cierre/i)).toHaveValue('Buen resultado.');
-    expect(screen.getByLabelText(/lecciones aprendidas/i)).toHaveValue('Repetir el formato el próximo año.');
+    expect(screen.getByLabelText(/lecciones aprendidas/i)).toHaveValue(
+      'Repetir el formato el próximo año.',
+    );
     expect(screen.getByRole('button', { name: /guardar borrador/i })).toBeEnabled();
   });
 
@@ -495,7 +527,9 @@ describe('administrative activity closure pages', () => {
     await user.type(screen.getByLabelText(/valoración de la colaboración/i), '5');
     await user.click(screen.getByRole('button', { name: /finalizar cierre/i }));
 
-    expect(await screen.findByRole('dialog', { name: /finalizar cierre de actividad/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('dialog', { name: /finalizar cierre de actividad/i }),
+    ).toBeInTheDocument();
     expect(saveActivityClosure).not.toHaveBeenCalled();
     expect(finalizeActivityClosure).not.toHaveBeenCalled();
 
@@ -506,13 +540,17 @@ describe('administrative activity closure pages', () => {
     await user.click(screen.getByRole('button', { name: /finalizar cierre/i }));
     await user.click(await screen.findByRole('button', { name: /^confirmar cierre$/i }));
 
-    await waitFor(() => expect(saveActivityClosure).toHaveBeenCalledWith('41', {
-      collaborationRating: 5,
-      closingNotes: undefined,
-      lessonsLearned: undefined,
-    }));
+    await waitFor(() =>
+      expect(saveActivityClosure).toHaveBeenCalledWith('41', {
+        collaborationRating: 5,
+        closingNotes: undefined,
+        lessonsLearned: undefined,
+      }),
+    );
     expect(finalizeActivityClosure).toHaveBeenCalledWith('41');
-    expect(await screen.findByTestId('activity-closure-status')).toHaveTextContent('Actividad cerrada.');
+    expect(await screen.findByTestId('activity-closure-status')).toHaveTextContent(
+      'Actividad cerrada.',
+    );
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /guardar borrador/i })).not.toBeInTheDocument();
   });
@@ -528,9 +566,15 @@ describe('administrative activity closure pages', () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByRole('heading', { name: /no hemos encontrado esta actividad para cerrar/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', {
+        name: /no hemos encontrado esta actividad para cerrar/i,
+      }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent(/no se ha encontrado/i);
-    expect(screen.getByRole('link', { name: /volver a actividades por cerrar/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /volver a actividades por cerrar/i }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /reintentar/i })).not.toBeInTheDocument();
   });
 
@@ -545,9 +589,13 @@ describe('administrative activity closure pages', () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByRole('heading', { name: /no tienes permiso para cerrar esta actividad/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /no tienes permiso para cerrar esta actividad/i }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent(/no tienes permiso/i);
-    expect(screen.getByRole('link', { name: /volver a actividades por cerrar/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /volver a actividades por cerrar/i }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /reintentar/i })).not.toBeInTheDocument();
   });
 });

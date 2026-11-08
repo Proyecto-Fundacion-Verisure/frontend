@@ -3,7 +3,15 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getPublishedActivities } from '../api/activitiesApi';
 import { getMyRegistrations, useRegistrationsOptional } from '../../registrations';
 import { useFavoritesOptional } from '../../favorites';
-import { Button, EmptyState, Input, PageHeader, Pagination, Select, Spinner } from '../../../shared/ui';
+import {
+  Button,
+  EmptyState,
+  Input,
+  PageHeader,
+  Pagination,
+  Select,
+  Spinner,
+} from '../../../shared/ui';
 import ActivityCard from '../components/ActivityCard';
 
 const LIMIT = 12;
@@ -28,11 +36,10 @@ const ALLOWED_MODES = new Set(MODE_OPTIONS.map((o) => o.value).filter(Boolean));
 // Hoy en formato local `YYYY-MM-DD`, como `MyVolunteeringPage`: `toISOString`
 // va en UTC y al oeste de Greenwich por la noche devolvería mañana.
 const todayIso = () => new Date().toLocaleDateString('sv');
-const normalizeDate = (value) => (
+const normalizeDate = (value) =>
   /^\d{4}-\d{2}-\d{2}$/.test(value ?? '') && !Number.isNaN(new Date(`${value}T00:00:00`).getTime())
     ? value
-    : ''
-);
+    : '';
 
 export default function CatalogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -192,7 +199,11 @@ export default function CatalogPage() {
             </option>
           ))}
         </Select>
-        <Select label="Modalidad" value={mode} onChange={(e) => updateParams({ mode: e.target.value })}>
+        <Select
+          label="Modalidad"
+          value={mode}
+          onChange={(e) => updateParams({ mode: e.target.value })}
+        >
           {MODE_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
@@ -230,9 +241,11 @@ export default function CatalogPage() {
       {activities.length === 0 ? (
         <EmptyState
           title="No hay actividades"
-          description={upcomingOnly && !from
-            ? 'No hay actividades próximas con estos filtros. Desmarca «Solo próximas» para ver también las empezadas y finalizadas.'
-            : 'No se encontraron actividades con los filtros seleccionados.'}
+          description={
+            upcomingOnly && !from
+              ? 'No hay actividades próximas con estos filtros. Desmarca «Solo próximas» para ver también las empezadas y finalizadas.'
+              : 'No se encontraron actividades con los filtros seleccionados.'
+          }
         />
       ) : (
         <>
@@ -251,9 +264,9 @@ export default function CatalogPage() {
                   isFavoritePending={favoritesCtx ? favoritesCtx.isPending(activity.id) : false}
                   onToggleFavorite={
                     favoritesCtx
-                      // El fallo ya lo deshace el proveedor revirtiendo el corazón;
-                      // aquí solo hay que evitar que la promesa quede sin capturar.
-                      ? () => favoritesCtx.toggleFavorite(activity.id, favorited).catch(() => {})
+                      ? // El fallo ya lo deshace el proveedor revirtiendo el corazón;
+                        // aquí solo hay que evitar que la promesa quede sin capturar.
+                        () => favoritesCtx.toggleFavorite(activity.id, favorited).catch(() => {})
                       : undefined
                   }
                 />

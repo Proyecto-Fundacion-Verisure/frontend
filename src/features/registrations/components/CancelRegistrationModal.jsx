@@ -13,7 +13,7 @@ export default function CancelRegistrationModal({
       onClose={onClose}
       title="Cancelar inscripción"
       description="¿Seguro que quieres cancelar tu inscripción? Esta acción no se puede deshacer."
-      footer={(
+      footer={
         <>
           <Button
             variant="secondary"
@@ -33,7 +33,7 @@ export default function CancelRegistrationModal({
             Confirmar cancelación
           </Button>
         </>
-      )}
+      }
     >
       <p>Se liberará tu plaza y se actualizará la lista de espera.</p>
     </Modal>

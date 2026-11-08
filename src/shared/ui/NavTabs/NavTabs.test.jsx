@@ -30,7 +30,10 @@ describe('NavTabs', () => {
   it('marks only the exact route as the current page', () => {
     renderTabs('/admin/activities/pending-closure');
 
-    expect(screen.getByRole('link', { name: /por cerrar/i })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: /por cerrar/i })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
     expect(screen.getByRole('link', { name: 'Todas' })).not.toHaveAttribute('aria-current');
   });
 });

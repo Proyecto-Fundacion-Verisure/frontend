@@ -25,20 +25,38 @@ describe('AttentionPanel', () => {
   it('links each pending count to the table that resolves it', () => {
     renderWithCounts(<AttentionPanel />);
 
-    expect(screen.getByRole('link', { name: /1 actividad por aprobar/i })).toHaveAttribute('href', '/admin/activities/pending');
-    expect(screen.getByRole('link', { name: /3 propuestas por revisar/i })).toHaveAttribute('href', '/proposals');
-    expect(screen.getByRole('link', { name: /2 actividades por cerrar/i })).toHaveAttribute('href', '/admin/activities/pending-closure');
-    expect(screen.getByRole('link', { name: /4 cuentas por aprobar/i })).toHaveAttribute('href', '/admin/account-status');
+    expect(screen.getByRole('link', { name: /1 actividad por aprobar/i })).toHaveAttribute(
+      'href',
+      '/admin/activities/pending',
+    );
+    expect(screen.getByRole('link', { name: /3 propuestas por revisar/i })).toHaveAttribute(
+      'href',
+      '/proposals',
+    );
+    expect(screen.getByRole('link', { name: /2 actividades por cerrar/i })).toHaveAttribute(
+      'href',
+      '/admin/activities/pending-closure',
+    );
+    expect(screen.getByRole('link', { name: /4 cuentas por aprobar/i })).toHaveAttribute(
+      'href',
+      '/admin/account-status',
+    );
   });
 
   it('keeps items at zero visible but muted', () => {
     renderWithCounts(<AttentionPanel />);
 
-    expect(screen.getByRole('link', { name: /0 inscripciones por revisar/i })).toHaveClass('attention-card--empty');
+    expect(screen.getByRole('link', { name: /0 inscripciones por revisar/i })).toHaveClass(
+      'attention-card--empty',
+    );
   });
 
   it('shows zeros when mounted without the layout', () => {
-    render(<MemoryRouter><AttentionPanel /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <AttentionPanel />
+      </MemoryRouter>,
+    );
 
     expect(screen.getByRole('link', { name: /0 cuentas por aprobar/i })).toBeInTheDocument();
   });

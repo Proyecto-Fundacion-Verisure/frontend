@@ -21,14 +21,21 @@ export default function ConfirmModal({
       closeDisabled={isLoading}
       title={title}
       description={description}
-      footer={(
+      footer={
         <>
-          <Button variant="secondary" disabled={isLoading} onClick={onClose}>Volver</Button>
-          <Button variant="danger" isLoading={isLoading} loadingLabel={loadingLabel} onClick={onConfirm}>
+          <Button variant="secondary" disabled={isLoading} onClick={onClose}>
+            Volver
+          </Button>
+          <Button
+            variant="danger"
+            isLoading={isLoading}
+            loadingLabel={loadingLabel}
+            onClick={onConfirm}
+          >
             {confirmLabel}
           </Button>
         </>
-      )}
+      }
     />
   );
 }

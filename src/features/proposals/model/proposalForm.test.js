@@ -40,19 +40,25 @@ describe('proposalForm model', () => {
   });
 
   it('exige un número entero positivo de voluntarios', () => {
-    expect(getProposalFieldError('estimatedVolunteers', { ...VALID_VALUES, estimatedVolunteers: '0' }))
-      .toBe('Debe ser un número entero mayor que cero.');
-    expect(getProposalFieldError('estimatedVolunteers', { ...VALID_VALUES, estimatedVolunteers: '2.5' }))
-      .toBe('Debe ser un número entero mayor que cero.');
-    expect(getProposalFieldError('estimatedVolunteers', { ...VALID_VALUES, estimatedVolunteers: '' }))
-      .toBeUndefined();
+    expect(
+      getProposalFieldError('estimatedVolunteers', { ...VALID_VALUES, estimatedVolunteers: '0' }),
+    ).toBe('Debe ser un número entero mayor que cero.');
+    expect(
+      getProposalFieldError('estimatedVolunteers', { ...VALID_VALUES, estimatedVolunteers: '2.5' }),
+    ).toBe('Debe ser un número entero mayor que cero.');
+    expect(
+      getProposalFieldError('estimatedVolunteers', { ...VALID_VALUES, estimatedVolunteers: '' }),
+    ).toBeUndefined();
   });
 
   it('normaliza el número de voluntarios en el payload', () => {
-    expect(buildProposalPayload({ ...VALID_VALUES, estimatedVolunteers: '12' }))
-      .toMatchObject({ estimatedVolunteers: 12, consent: true });
-    expect(buildProposalPayload({ ...VALID_VALUES, estimatedVolunteers: '' }))
-      .toMatchObject({ estimatedVolunteers: null });
+    expect(buildProposalPayload({ ...VALID_VALUES, estimatedVolunteers: '12' })).toMatchObject({
+      estimatedVolunteers: 12,
+      consent: true,
+    });
+    expect(buildProposalPayload({ ...VALID_VALUES, estimatedVolunteers: '' })).toMatchObject({
+      estimatedVolunteers: null,
+    });
   });
 
   it('se queda con el primer mensaje de los campos conocidos del servidor', () => {

@@ -26,7 +26,9 @@ describe('Tabs', () => {
     const active = screen.getByRole('tab', { name: 'En cola 2' });
     expect(active).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByRole('tablist', { name: 'Estados' })).toBeInTheDocument();
-    expect(screen.getByRole('tabpanel', { name: 'En cola 2' })).toHaveTextContent('Contenido de queue');
+    expect(screen.getByRole('tabpanel', { name: 'En cola 2' })).toHaveTextContent(
+      'Contenido de queue',
+    );
     expect(active).toHaveAttribute('aria-controls', screen.getByRole('tabpanel').id);
     expect(screen.getByRole('tab', { name: 'Confirmadas 0' })).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Cerradas' })).toBeInTheDocument();

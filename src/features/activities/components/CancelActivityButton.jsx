@@ -16,14 +16,15 @@ function getRegistrations(payload) {
 }
 
 function getAffectedCount(payload) {
-  const explicitCount = payload?.affectedCount
-    ?? payload?.activeCount
-    ?? payload?.counters?.affected
-    ?? payload?.counters?.active;
+  const explicitCount =
+    payload?.affectedCount ??
+    payload?.activeCount ??
+    payload?.counters?.affected ??
+    payload?.counters?.active;
   if (Number.isFinite(Number(explicitCount))) return Number(explicitCount);
-  return getRegistrations(payload)
-    .filter((registration) => !UNAFFECTED_STATUSES.has(registration.status))
-    .length;
+  return getRegistrations(payload).filter(
+    (registration) => !UNAFFECTED_STATUSES.has(registration.status),
+  ).length;
 }
 
 export default function CancelActivityButton({ activity, onCancelled }) {
@@ -48,9 +49,8 @@ export default function CancelActivityButton({ activity, onCancelled }) {
 
   const handleOpen = () => {
     setIsOpen(true);
-    const loadedCount = activity.affectedRegistrationCount
-      ?? activity.registrationCount
-      ?? activity.registeredCount;
+    const loadedCount =
+      activity.affectedRegistrationCount ?? activity.registrationCount ?? activity.registeredCount;
     if (Number.isFinite(Number(loadedCount))) {
       setAffectedCount(Number(loadedCount));
       setCountStatus('success');
@@ -99,7 +99,7 @@ export default function CancelActivityButton({ activity, onCancelled }) {
         closeOnBackdrop={!isCancelling}
         title="Cancelar actividad"
         description={`Vas a cancelar “${activity.title}”. Esta acción no se puede deshacer.`}
-        footer={(
+        footer={
           <>
             <Button variant="secondary" disabled={isCancelling} onClick={handleClose}>
               Volver
@@ -114,7 +114,7 @@ export default function CancelActivityButton({ activity, onCancelled }) {
               Confirmar cancelación
             </Button>
           </>
-        )}
+        }
       >
         {countStatus === 'loading' && <Spinner label="Consultando inscripciones…" />}
         {countStatus === 'success' && (
@@ -124,9 +124,15 @@ export default function CancelActivityButton({ activity, onCancelled }) {
               : `La cancelación afectará a ${affectedCount} personas inscritas.`}
           </p>
         )}
-        {errorMessage && <p className="activities-list__error" role="alert">{errorMessage}</p>}
+        {errorMessage && (
+          <p className="activities-list__error" role="alert">
+            {errorMessage}
+          </p>
+        )}
         {countStatus === 'error' && (
-          <Button variant="secondary" size="small" onClick={loadCount}>Reintentar consulta</Button>
+          <Button variant="secondary" size="small" onClick={loadCount}>
+            Reintentar consulta
+          </Button>
         )}
       </Modal>
     </>

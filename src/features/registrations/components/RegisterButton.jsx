@@ -6,7 +6,15 @@ import { isPastLocalDate } from '../../../shared/lib/dates';
 import RegistrationInfoModal from './RegistrationInfoModal';
 
 // Siempre visible: bloqueado, y con el motivo en su texto, cuando no se puede usar.
-export default function RegisterButton({ activity, children = 'Solicitar inscripción', enrolledLabel, closedLabel, disabled = false, onSuccess, ...props }) {
+export default function RegisterButton({
+  activity,
+  children = 'Solicitar inscripción',
+  enrolledLabel,
+  closedLabel,
+  disabled = false,
+  onSuccess,
+  ...props
+}) {
   const activityId = activity?.id ?? activity?.activityId;
   const registrationsCtx = useRegistrationsOptional();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +26,8 @@ export default function RegisterButton({ activity, children = 'Solicitar inscrip
   // (`SpotServiceImpl`: `LocalDate.now().isAfter(deadline)`). Comparar instantes
   // en vez de días naturales cerraba la inscripción un día antes.
   const isDeadlinePassed = useMemo(() => {
-    const raw = activity?.registrationDeadline ?? activity?.deadline ?? activity?.inscriptionDeadline;
+    const raw =
+      activity?.registrationDeadline ?? activity?.deadline ?? activity?.inscriptionDeadline;
     return isPastLocalDate(raw);
   }, [activity]);
 
@@ -60,13 +69,19 @@ export default function RegisterButton({ activity, children = 'Solicitar inscrip
   }, [activityId, onSuccess, registrationsCtx]);
 
   if (enrolledLabel) {
-    return <Button {...props} disabled>{enrolledLabel}</Button>;
+    return (
+      <Button {...props} disabled>
+        {enrolledLabel}
+      </Button>
+    );
   }
 
   if (closedLabel || isDeadlinePassed) {
     return (
       <>
-        <Button {...props} disabled>{closedLabel ?? 'Plazo cerrado'}</Button>
+        <Button {...props} disabled>
+          {closedLabel ?? 'Plazo cerrado'}
+        </Button>
         <p role="note" className="register-button__closed">
           Ya no se admiten inscripciones para esta actividad.
         </p>

@@ -44,11 +44,13 @@ describe('dashboard API contract', () => {
   });
 
   it('never sends filters outside the dashboard contract', () => {
-    expect(sanitizeDashboardParams({
-      year: 2026,
-      line: 'desoledad',
-      department: 'Tecnología',
-      page: 3,
-    })).toEqual({ year: 2026, line: 'desoledad' });
+    expect(
+      sanitizeDashboardParams({
+        year: 2026,
+        line: 'desoledad',
+        department: 'Tecnología',
+        page: 3,
+      }),
+    ).toEqual({ year: 2026, line: 'desoledad' });
   });
 });

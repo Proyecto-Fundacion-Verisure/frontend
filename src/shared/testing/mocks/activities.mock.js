@@ -31,7 +31,9 @@ export function mockGetPublishedActivities(params = {}) {
 export function mockGetActivityDetail(id) {
   const activity = MOCK_ACTIVITIES_V2.find((a) => String(a.id) === String(id));
   if (!activity || !isPublicVisible(activity.status)) {
-    return Promise.reject(createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }));
+    return Promise.reject(
+      createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }),
+    );
   }
   return Promise.resolve({ data: { ...activity }, status: 200 });
 }
@@ -39,7 +41,9 @@ export function mockGetActivityDetail(id) {
 export function mockGetAdminActivity(id) {
   const activity = MOCK_ACTIVITIES_V2.find((a) => String(a.id) === String(id));
   if (!activity) {
-    return Promise.reject(createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }));
+    return Promise.reject(
+      createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }),
+    );
   }
   return Promise.resolve({ data: { ...activity }, status: 200 });
 }
@@ -50,12 +54,18 @@ export function mockCreateActivity(data) {
 
 export function mockPublishActivity(id) {
   const activity = MOCK_ACTIVITIES_V2.find((a) => String(a.id) === String(id));
-  if (!activity) return Promise.reject(createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }));
+  if (!activity)
+    return Promise.reject(
+      createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }),
+    );
   return Promise.resolve({ data: { ...activity, status: 'PUBLISHED' }, status: 200 });
 }
 
 export function mockCancelActivity(id) {
   const activity = MOCK_ACTIVITIES_V2.find((a) => String(a.id) === String(id));
-  if (!activity) return Promise.reject(createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }));
+  if (!activity)
+    return Promise.reject(
+      createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }),
+    );
   return Promise.resolve({ data: { ...activity, status: 'CANCELLED' }, status: 200 });
 }

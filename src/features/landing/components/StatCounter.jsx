@@ -17,9 +17,7 @@ export default function StatCounter({ label, value, icon: Icon }) {
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia?.(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReducedMotion || !('IntersectionObserver' in window)) {
       setDisplayValue(finalValue);

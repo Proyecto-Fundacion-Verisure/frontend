@@ -46,49 +46,49 @@ function LoginForm() {
 
   return (
     <>
-    <form className="login-form" onSubmit={handleSubmit} noValidate>
-      {formError && (
-        <div className="login-form__error" role="alert">
-          {formError}
-          {pendingLink && (
-            <>
-              {' '}
-              <Link to={pendingLink}>Ver el estado de tu cuenta</Link>
-            </>
-          )}
-        </div>
-      )}
+      <form className="login-form" onSubmit={handleSubmit} noValidate>
+        {formError && (
+          <div className="login-form__error" role="alert">
+            {formError}
+            {pendingLink && (
+              <>
+                {' '}
+                <Link to={pendingLink}>Ver el estado de tu cuenta</Link>
+              </>
+            )}
+          </div>
+        )}
 
-      <Input
-        id="email"
-        type="email"
-        label="Correo electrónico"
-        placeholder="tu@email.com"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        error={fieldErrors.email}
-      />
+        <Input
+          id="email"
+          type="email"
+          label="Correo electrónico"
+          placeholder="tu@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={fieldErrors.email}
+        />
 
-      <Input
-        id="password"
-        type="password"
-        label="Contraseña"
-        placeholder="••••••••"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        error={fieldErrors.password}
-      />
+        <Input
+          id="password"
+          type="password"
+          label="Contraseña"
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={fieldErrors.password}
+        />
 
-      <Button
-        type="submit"
-        variant="primary"
-        className="login-form__submit"
-        isLoading={isLoading}
-        loadingLabel="Entrando..."
-      >
-        Entrar al portal <span aria-hidden="true">→</span>
-      </Button>
-    </form>
+        <Button
+          type="submit"
+          variant="primary"
+          className="login-form__submit"
+          isLoading={isLoading}
+          loadingLabel="Entrando..."
+        >
+          Entrar al portal <span aria-hidden="true">→</span>
+        </Button>
+      </form>
     </>
   );
 }

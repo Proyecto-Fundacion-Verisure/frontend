@@ -58,22 +58,46 @@ function ClosureDetail({ closure, justCreated = false }) {
         </p>
       )}
       <dl>
-        {closure.activityTitle && <div><dt>Actividad</dt><dd>{closure.activityTitle}</dd></div>}
-        <div><dt>Horas realizadas</dt><dd>{closure.actualHours ?? '—'}</dd></div>
-        <div><dt>Valoración</dt><dd>{closure.rating ? `${closure.rating} de 5` : '—'}</dd></div>
-        <div><dt>Comentario</dt><dd>{closure.comment || 'Sin comentario'}</dd></div>
+        {closure.activityTitle && (
+          <div>
+            <dt>Actividad</dt>
+            <dd>{closure.activityTitle}</dd>
+          </div>
+        )}
+        <div>
+          <dt>Horas realizadas</dt>
+          <dd>{closure.actualHours ?? '—'}</dd>
+        </div>
+        <div>
+          <dt>Valoración</dt>
+          <dd>{closure.rating ? `${closure.rating} de 5` : '—'}</dd>
+        </div>
+        <div>
+          <dt>Comentario</dt>
+          <dd>{closure.comment || 'Sin comentario'}</dd>
+        </div>
         <div>
           <dt>Evidencia</dt>
           <dd>
-            {closure.evidenceUrl
-              ? <a href={closure.evidenceUrl} target="_blank" rel="noreferrer">Ver evidencia adjunta</a>
-              : 'Sin evidencia'}
+            {closure.evidenceUrl ? (
+              <a href={closure.evidenceUrl} target="_blank" rel="noreferrer">
+                Ver evidencia adjunta
+              </a>
+            ) : (
+              'Sin evidencia'
+            )}
           </dd>
         </div>
-        {closure.submittedAt && <div><dt>Enviado el</dt><dd>{formatDateTime(closure.submittedAt)}</dd></div>}
+        {closure.submittedAt && (
+          <div>
+            <dt>Enviado el</dt>
+            <dd>{formatDateTime(closure.submittedAt)}</dd>
+          </div>
+        )}
       </dl>
       <p>
-        Cuando la Fundación cierre la actividad podrás descargar tu certificado desde «Mis voluntariados».
+        Cuando la Fundación cierre la actividad podrás descargar tu certificado desde «Mis
+        voluntariados».
       </p>
     </section>
   );
@@ -108,9 +132,12 @@ export default function ClosureFormPage() {
   // La vista previa usa una URL temporal (`URL.createObjectURL`). Esta limpieza
   // la libera al retirar el archivo y al desmontar el componente: sin ella cada
   // selección dejaría una URL colgada en memoria.
-  useEffect(() => () => {
-    if (evidenceUrl) URL.revokeObjectURL(evidenceUrl);
-  }, [evidenceUrl]);
+  useEffect(
+    () => () => {
+      if (evidenceUrl) URL.revokeObjectURL(evidenceUrl);
+    },
+    [evidenceUrl],
+  );
 
   const loadClosure = useCallback(async () => {
     if (!closureId) return;
@@ -174,16 +201,17 @@ export default function ClosureFormPage() {
       setClosure(response?.data ?? {});
       setRequestState('success');
     } catch (error) {
-      const nextErrors = error?.fieldErrors && typeof error.fieldErrors === 'object'
-        ? { ...error.fieldErrors }
-        : {};
+      const nextErrors =
+        error?.fieldErrors && typeof error.fieldErrors === 'object' ? { ...error.fieldErrors } : {};
       // Los 413 (tamaño) y 415 (tipo) del multipart no llegan asociados a un
       // campo: se pintan junto al control de evidencia, no como error global.
       if ((error?.status === 413 || error?.status === 415) && !nextErrors.evidence) {
         nextErrors.evidence = error?.message || 'No se pudo adjuntar la evidencia.';
       }
       setErrors(nextErrors);
-      setRequestError(Object.keys(nextErrors).length ? '' : (error?.message || 'No hemos podido enviar el cierre.'));
+      setRequestError(
+        Object.keys(nextErrors).length ? '' : error?.message || 'No hemos podido enviar el cierre.',
+      );
       setRequestState('idle');
     }
   };
@@ -213,7 +241,8 @@ export default function ClosureFormPage() {
     );
   }
 
-  if (requestState === 'success') return <ClosureDetail closure={closure} justCreated={!isDetail} />;
+  if (requestState === 'success')
+    return <ClosureDetail closure={closure} justCreated={!isDetail} />;
 
   return (
     <section className="report-form-page" aria-labelledby="closure-form-title">
@@ -221,9 +250,14 @@ export default function ClosureFormPage() {
       <p className="activity-form-page__eyebrow">Cierre de participación</p>
       <h1 id="closure-form-title">Cerrar tu participación</h1>
       {activityTitle && (
-        <p className="closure-form__activity" data-testid="closure-activity-title">{activityTitle}</p>
+        <p className="closure-form__activity" data-testid="closure-activity-title">
+          {activityTitle}
+        </p>
       )}
-      <p>Indica las horas realizadas y tu valoración de la experiencia. El cierre se envía una sola vez.</p>
+      <p>
+        Indica las horas realizadas y tu valoración de la experiencia. El cierre se envía una sola
+        vez.
+      </p>
 
       {errors.registrationId && <p role="alert">{errors.registrationId}</p>}
       <form onSubmit={handleSubmit} noValidate>
@@ -248,7 +282,9 @@ export default function ClosureFormPage() {
         >
           <option value="">Selecciona una valoración</option>
           {[1, 2, 3, 4, 5].map((rating) => (
-            <option key={rating} value={rating}>{rating}</option>
+            <option key={rating} value={rating}>
+              {rating}
+            </option>
           ))}
         </Select>
         <Textarea
@@ -259,7 +295,9 @@ export default function ClosureFormPage() {
           rows={4}
         />
         <div className={errors.evidence ? 'field field--error' : 'field'}>
-          <label className="field__label" htmlFor="closure-evidence">Evidencia (opcional)</label>
+          <label className="field__label" htmlFor="closure-evidence">
+            Evidencia (opcional)
+          </label>
           <input
             ref={evidenceInputRef}
             id="closure-evidence"
@@ -280,8 +318,12 @@ export default function ClosureFormPage() {
                 </span>
               )}
               <div className="closure-form__file-info">
-                <span className="closure-form__file-name" data-testid="closure-file-name">{evidence.name}</span>
-                <span className="closure-form__file-size" data-testid="closure-file-size">{formatBytes(evidence.size)}</span>
+                <span className="closure-form__file-name" data-testid="closure-file-name">
+                  {evidence.name}
+                </span>
+                <span className="closure-form__file-size" data-testid="closure-file-size">
+                  {formatBytes(evidence.size)}
+                </span>
               </div>
               <div className="closure-form__file-actions">
                 <Button
@@ -296,7 +338,11 @@ export default function ClosureFormPage() {
               </div>
             </div>
           )}
-          {errors.evidence && <span id="closure-evidence-error" className="field__error" role="alert">{errors.evidence}</span>}
+          {errors.evidence && (
+            <span id="closure-evidence-error" className="field__error" role="alert">
+              {errors.evidence}
+            </span>
+          )}
         </div>
         <label
           className={`closure-form__consent${errors.evidenceConsent ? ' closure-form__consent--error' : ''}`}

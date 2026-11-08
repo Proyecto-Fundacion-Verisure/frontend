@@ -13,9 +13,7 @@ export default function PublicLayout({ children }) {
       <main id="main" tabIndex={-1}>
         {/* Las páginas públicas que no son la landing también se cargan bajo
             demanda; la cabecera y el pie se quedan montados mientras llegan. */}
-        <Suspense fallback={<RouteFallback />}>
-          {children}
-        </Suspense>
+        <Suspense fallback={<RouteFallback />}>{children}</Suspense>
       </main>
       <PublicFooter />
     </div>

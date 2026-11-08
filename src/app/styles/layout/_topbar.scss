@@ -16,7 +16,7 @@
   padding: 0 map.get($spacing, '6');
 }
 
-.topbar__content { 
+.topbar__content {
   min-width: 0;
 
   img {
@@ -52,7 +52,7 @@
   font-weight: $font-weight-semibold;
   height: 2.25rem;
   justify-content: center;
-  letter-spacing: .02em;
+  letter-spacing: 0.02em;
   width: 2.25rem;
 }
 
@@ -100,7 +100,9 @@
   min-height: $control-height;
   min-width: $control-height;
   padding: 0 map.get($spacing, '3');
-  transition: background-color $transition-fast, border-color $transition-fast;
+  transition:
+    background-color $transition-fast,
+    border-color $transition-fast;
 
   &:hover {
     background: $color-surface-hover;
@@ -109,9 +111,15 @@
 }
 
 @media (max-width: 35.99rem) {
-  .topbar { padding-inline: map.get($spacing, '4'); }
+  .topbar {
+    padding-inline: map.get($spacing, '4');
+  }
   .topbar__user-info,
-  .topbar__logout span { display: none; }
+  .topbar__logout span {
+    display: none;
+  }
 }
 
-.topbar__logout svg { color: $color-muted; }
+.topbar__logout svg {
+  color: $color-muted;
+}

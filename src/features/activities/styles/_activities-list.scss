@@ -4,7 +4,9 @@
   @include page-container;
 }
 
-.activities-list td[data-label='Inicio'] { white-space: nowrap; }
+.activities-list td[data-label='Inicio'] {
+  white-space: nowrap;
+}
 
 .activities-list__search {
   align-items: flex-end;
@@ -13,7 +15,9 @@
   grid-template-columns: minmax(0, 1fr) auto;
 }
 
-.activities-list__activity-title { color: $color-heading; }
+.activities-list__activity-title {
+  color: $color-heading;
+}
 
 // Los dos bloques de «Mis proyectos» de la entidad.
 .activities-list__group + .activities-list__group {
@@ -59,7 +63,9 @@
   place-items: center;
 }
 
-.activities-list__error-panel { text-align: center; }
+.activities-list__error-panel {
+  text-align: center;
+}
 
 .activities-list__error {
   @include notice($color-danger, $color-danger-light);
@@ -81,7 +87,16 @@
 }
 
 @media (max-width: 38rem) {
-  .activities-list__search { grid-template-columns: 1fr; }
-  .activities-list__pagination { align-items: stretch; flex-direction: column; gap: space('3'); }
-  .activities-list__pagination > div { display: grid; grid-template-columns: 1fr 1fr; }
+  .activities-list__search {
+    grid-template-columns: 1fr;
+  }
+  .activities-list__pagination {
+    align-items: stretch;
+    flex-direction: column;
+    gap: space('3');
+  }
+  .activities-list__pagination > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
 }

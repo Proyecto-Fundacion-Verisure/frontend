@@ -7,7 +7,9 @@ export default function ActivityForm({ form, backPath }) {
 
   return (
     <section className="activity-form-page" aria-labelledby="activity-form-title">
-      <Link to={backPath} className="activity-form-page__back">&larr; Volver</Link>
+      <Link to={backPath} className="activity-form-page__back">
+        &larr; Volver
+      </Link>
       <PageHeader
         eyebrow={form.headerCopy.eyebrow}
         title={form.headerCopy.title}
@@ -19,9 +21,9 @@ export default function ActivityForm({ form, backPath }) {
           descripción, línea, plazas y entidad; el resto son marcadores. */}
       {form.isFromProposal && (
         <p className="activity-form__notice" role="status">
-          Esta actividad nace de una propuesta aceptada. La descripción, la línea y las
-          plazas vienen de la propuesta; el título, las fechas y las horas son
-          provisionales y hay que completarlos antes de publicarla.
+          Esta actividad nace de una propuesta aceptada. La descripción, la línea y las plazas
+          vienen de la propuesta; el título, las fechas y las horas son provisionales y hay que
+          completarlos antes de publicarla.
         </p>
       )}
 
@@ -36,8 +38,8 @@ export default function ActivityForm({ form, backPath }) {
           `GET /api/org/activities/{id}`, este aviso sobra. */}
       {form.showMissingDescriptionNotice && (
         <p className="activity-form__notice" role="status">
-          Al editar hay que volver a escribir la descripción: «Mis propuestas»
-          todavía no la recupera.
+          Al editar hay que volver a escribir la descripción: «Mis propuestas» todavía no la
+          recupera.
         </p>
       )}
 
@@ -52,7 +54,9 @@ export default function ActivityForm({ form, backPath }) {
           <Select label="Línea" required {...form.fieldProps('line')}>
             <option value="">Selecciona una línea</option>
             {ACTIVITY_LINE_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
             ))}
           </Select>
         </div>
@@ -69,7 +73,9 @@ export default function ActivityForm({ form, backPath }) {
           <Select label="Modalidad" required {...form.fieldProps('mode')}>
             <option value="">Selecciona una modalidad</option>
             {ACTIVITY_MODE_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
             ))}
           </Select>
           <Input
@@ -105,7 +111,9 @@ export default function ActivityForm({ form, backPath }) {
         </div>
 
         {form.errorMessage && (
-          <p className="activity-form__error" role="alert">{form.errorMessage}</p>
+          <p className="activity-form__error" role="alert">
+            {form.errorMessage}
+          </p>
         )}
 
         <div className="activity-form__footer">

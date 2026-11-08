@@ -13,18 +13,10 @@ export default function ErrorFallback({ error, resetErrorBoundary }) {
         description={error.message}
         action={
           <div className="error-fallback__actions">
-            <button
-              type="button"
-              className="button button--primary"
-              onClick={() => navigate('/')}
-            >
+            <button type="button" className="button button--primary" onClick={() => navigate('/')}>
               Volver al inicio
             </button>
-            <button
-              type="button"
-              className="button button--secondary"
-              onClick={resetErrorBoundary}
-            >
+            <button type="button" className="button button--secondary" onClick={resetErrorBoundary}>
               Reintentar
             </button>
           </div>

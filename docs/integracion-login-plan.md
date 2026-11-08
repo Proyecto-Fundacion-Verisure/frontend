@@ -10,15 +10,15 @@ Al comparar los dos lados aparecen **tres desajustes reales** que impiden que la
 
 ## Punto de partida verificado
 
-| | Backend | Frontend |
-|---|---|---|
-| Rama | `b3-05-...` (no se toca) | `dev`, limpia |
-| Puerto | `8080`, sin `context-path` | Vite en `5173`, `strictPort` |
-| Base URL | `http://localhost:8080/api/...` | `VITE_API_URL=http://localhost:8080/api` ✅ coincide |
-| CORS | `CorsConfig.java`, origen `http://localhost:5173`, cabeceras `Authorization` y `Content-Type` | manda solo `Content-Type: application/json` ✅ compatible |
-| Login | filtro `security/filter/JWTAuthentication.java` | `src/api/authApi.js` → **mockeado** ❌ |
-| Respuesta | `AuthResponse { accessToken, tokenType, expiresIn, user }` | lee `accessToken` y `user` ✅ coincide |
-| Errores | `ApiError { code, message, timestamp, path, fields }` | `normalizeApiError` lee `data.code`, `data.message`, `data.fields` ✅ coincide |
+|           | Backend                                                                                       | Frontend                                                                       |
+| --------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Rama      | `b3-05-...` (no se toca)                                                                      | `dev`, limpia                                                                  |
+| Puerto    | `8080`, sin `context-path`                                                                    | Vite en `5173`, `strictPort`                                                   |
+| Base URL  | `http://localhost:8080/api/...`                                                               | `VITE_API_URL=http://localhost:8080/api` ✅ coincide                           |
+| CORS      | `CorsConfig.java`, origen `http://localhost:5173`, cabeceras `Authorization` y `Content-Type` | manda solo `Content-Type: application/json` ✅ compatible                      |
+| Login     | filtro `security/filter/JWTAuthentication.java`                                               | `src/api/authApi.js` → **mockeado** ❌                                         |
+| Respuesta | `AuthResponse { accessToken, tokenType, expiresIn, user }`                                    | lee `accessToken` y `user` ✅ coincide                                         |
+| Errores   | `ApiError { code, message, timestamp, path, fields }`                                         | `normalizeApiError` lee `data.code`, `data.message`, `data.fields` ✅ coincide |
 
 No hace falta proxy en `vite.config.js`: las llamadas van directas y CORS ya las permite.
 
@@ -54,11 +54,10 @@ Dos cosas, en comandos separados —no encadenados con `&&`— para que rechazar
 Así que el interruptor del login se separa. En `src/api/authApi.js:4-8`:
 
 ```js
-const useDevelopmentMocks = () => (
-  import.meta.env.DEV
-  && import.meta.env.MODE !== 'test'
-  && import.meta.env.VITE_USE_AUTH_MOCKS !== 'false'
-);
+const useDevelopmentMocks = () =>
+  import.meta.env.DEV &&
+  import.meta.env.MODE !== 'test' &&
+  import.meta.env.VITE_USE_AUTH_MOCKS !== 'false';
 ```
 
 Y en `.env.development`, `VITE_USE_AUTH_MOCKS=false`. `VITE_USE_MOCKS` se queda sin definir, así que las propuestas siguen mockeadas.
@@ -88,9 +87,8 @@ El interceptor pasa a `if (isSessionExpiry(error)) clearSession({ notify: true }
 ### 3. `src/routes/RoleRoute.jsx` — tratar `status` ausente como activa
 
 ```js
-const isBlockedPartner = user.role === 'PARTNER'
-  && user.status !== undefined
-  && user.status !== 'ACTIVE';
+const isBlockedPartner =
+  user.role === 'PARTNER' && user.status !== undefined && user.status !== 'ACTIVE';
 ```
 
 Mantiene verde el test existente de `RouteGuards.test.jsx` que pasa un partner `PENDING_APPROVAL` en fixture, y deja pasar al usuario real, que no trae el campo. Un comentario de una frase en castellano explicando el porqué no deducible: el backend nunca emite token a una cuenta no activa.
@@ -103,14 +101,14 @@ Los usuarios mock `ong` y `pendiente` llevan un campo `status` que el backend no
 
 La sección «Cuentas locales disponibles con mocks» solo lista los correos falsos. Añadir junto a ella un bloque con las cuentas de los seeders del backend, que son con las que se prueba la integración. Contraseña única: `Verisure2026!` (`seeder/UserSeeder.java:49`).
 
-| Correo | Rol | Resultado esperado |
-|---|---|---|
-| `carmen.ortega@fundacionverisure.org` | ADMIN | entra en `/dashboard` |
-| `ana.gil@verisure.es` | EMPLOYEE | entra en `/activities` |
-| `marta.ribas@caritasbcn.org` | PARTNER | entra en `/org/activities` |
-| `pau.estevez@caritasbcn.org` | PARTNER | 403 `ACCOUNT_NOT_VERIFIED` |
-| `elena.vargas@aldeasinfantiles.org` | PARTNER | 403 `ACCOUNT_PENDING_APPROVAL` |
-| `rosa.delgado@manosunidas.org` | PARTNER | 403 `ACCOUNT_REJECTED` |
+| Correo                                | Rol      | Resultado esperado             |
+| ------------------------------------- | -------- | ------------------------------ |
+| `carmen.ortega@fundacionverisure.org` | ADMIN    | entra en `/dashboard`          |
+| `ana.gil@verisure.es`                 | EMPLOYEE | entra en `/activities`         |
+| `marta.ribas@caritasbcn.org`          | PARTNER  | entra en `/org/activities`     |
+| `pau.estevez@caritasbcn.org`          | PARTNER  | 403 `ACCOUNT_NOT_VERIFIED`     |
+| `elena.vargas@aldeasinfantiles.org`   | PARTNER  | 403 `ACCOUNT_PENDING_APPROVAL` |
+| `rosa.delgado@manosunidas.org`        | PARTNER  | 403 `ACCOUNT_REJECTED`         |
 
 ### 6. Tests
 

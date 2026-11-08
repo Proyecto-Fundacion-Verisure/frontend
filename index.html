@@ -10,8 +10,14 @@
       // Antes del primer render para evitar el parpadeo. Misma regla que useTheme.
       (function () {
         var stored = null;
-        try { stored = localStorage.getItem('theme'); } catch (e) {}
-        var isDark = stored === 'dark' || (stored !== 'light' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+        try {
+          stored = localStorage.getItem('theme');
+        } catch (e) {}
+        var isDark =
+          stored === 'dark' ||
+          (stored !== 'light' &&
+            window.matchMedia &&
+            matchMedia('(prefers-color-scheme: dark)').matches);
         document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
       })();
     </script>

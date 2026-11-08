@@ -37,7 +37,9 @@ export default function Tabs({ activeId, children, label, onChange, tabs = [] })
           return (
             <button
               key={tab.id}
-              ref={(element) => { tabRefs.current[tab.id] = element; }}
+              ref={(element) => {
+                tabRefs.current[tab.id] = element;
+              }}
               id={`${baseId}-tab-${tab.id}`}
               className={`tabs__tab ${isActive ? 'tabs__tab--active' : ''}`.trim()}
               type="button"

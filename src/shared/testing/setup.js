@@ -14,12 +14,20 @@ import { afterEach, vi } from 'vitest';
 function createMemoryStorage() {
   const store = new Map();
   return {
-    get length() { return store.size; },
+    get length() {
+      return store.size;
+    },
     key: (index) => Array.from(store.keys())[index] ?? null,
     getItem: (key) => (store.has(String(key)) ? store.get(String(key)) : null),
-    setItem: (key, value) => { store.set(String(key), String(value)); },
-    removeItem: (key) => { store.delete(String(key)); },
-    clear: () => { store.clear(); },
+    setItem: (key, value) => {
+      store.set(String(key), String(value));
+    },
+    removeItem: (key) => {
+      store.delete(String(key));
+    },
+    clear: () => {
+      store.clear();
+    },
   };
 }
 
@@ -40,5 +48,8 @@ afterEach(() => {
 
 // Defensive: ensure no real fetch slips through in tests
 if (!globalThis.fetch || globalThis.fetch.name !== 'mockConstructor') {
-  vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('fetch is mocked in tests — use axiosClient mocks'))));
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(() => Promise.reject(new Error('fetch is mocked in tests — use axiosClient mocks'))),
+  );
 }

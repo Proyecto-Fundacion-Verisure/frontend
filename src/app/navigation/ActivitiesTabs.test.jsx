@@ -25,7 +25,13 @@ describe('section tabs', () => {
   it('groups closures under activities with their count', () => {
     renderWithCounts(<ActivitiesTabs />, '/admin/activities/pending-closure');
 
-    expect(screen.getByRole('link', { name: 'Por cerrar 2' })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('link', { name: 'Todas' })).toHaveAttribute('href', '/admin/activities');
+    expect(screen.getByRole('link', { name: 'Por cerrar 2' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    expect(screen.getByRole('link', { name: 'Todas' })).toHaveAttribute(
+      'href',
+      '/admin/activities',
+    );
   });
 });

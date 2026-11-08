@@ -25,11 +25,10 @@ export const resendOrganizationRegistrationEmail = (email) => resendVerification
 
 // Cuentas de entidad pendientes de revisar por la administradora. `PENDING` lo
 // traduce el backend a `PENDING_VERIFICATION + PENDING_APPROVAL`.
-export const getPendingOrganizations = ({ status = 'PENDING', page = 0, size } = {}) => (
+export const getPendingOrganizations = ({ status = 'PENDING', page = 0, size } = {}) =>
   client.get('/admin/org-accounts', {
     params: size === undefined || size === null ? { status, page } : { status, page, size },
-  })
-);
+  });
 
 // Acepta la cuenta: la organización pasa a poder acceder a la plataforma.
 export const approveOrganization = (id) => client.patch(`/admin/org-accounts/${id}/approve`);
@@ -37,15 +36,16 @@ export const approveOrganization = (id) => client.patch(`/admin/org-accounts/${i
 // Rechaza la cuenta. La seguridad la da la confirmación en el modal, no un motivo.
 export const rejectOrganization = (id) => client.patch(`/admin/org-accounts/${id}/reject`);
 
-const pickParams = (params = {}, allowed) => Object.fromEntries(
-  Object.entries(params).filter(([key, value]) => (
-    allowed.includes(key) && value !== undefined && value !== null && value !== ''
-  )),
-);
+const pickParams = (params = {}, allowed) =>
+  Object.fromEntries(
+    Object.entries(params).filter(
+      ([key, value]) =>
+        allowed.includes(key) && value !== undefined && value !== null && value !== '',
+    ),
+  );
 
-export const getOrgActivities = (params = {}) => (
-  client.get('/org/activities', { params: pickParams(params, ['status', 'page', 'size']) })
-);
+export const getOrgActivities = (params = {}) =>
+  client.get('/org/activities', { params: pickParams(params, ['status', 'page', 'size']) });
 export const createOrgActivity = (data) => client.post('/org/activities', data);
 export const updateOrgActivity = (id, data) => client.put(`/org/activities/${id}`, data);
 export const submitOrgActivity = (id) => client.patch(`/org/activities/${id}/submit`);
@@ -54,9 +54,8 @@ export const submitOrgActivity = (id) => client.patch(`/org/activities/${id}/sub
 // Con la forma de `OrgProposalRow`: sin título ni imagen, tres estados (`NEW`,
 // `ACCEPTED`, `REJECTED`) y `activityId` solo en las aceptadas. No hay
 // borradores: la propuesta nace decidida.
-export const getOrgProposals = (params = {}) => (
-  client.get('/org/proposals', { params: pickParams(params, ['page']) })
-);
+export const getOrgProposals = (params = {}) =>
+  client.get('/org/proposals', { params: pickParams(params, ['page']) });
 export const createOrgProposal = (data) => client.post('/org/proposals', data);
 
 // `submitOrgProposal` vivía aquí y llamaba a `PATCH /org/proposals/{id}/submit`,
