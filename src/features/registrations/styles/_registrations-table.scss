@@ -9,8 +9,14 @@
   gap: space('3');
   justify-items: end;
 
-  > strong { color: $color-heading; white-space: nowrap; }
-  > p { color: $color-muted; margin: 0; }
+  > strong {
+    color: $color-heading;
+    white-space: nowrap;
+  }
+  > p {
+    color: $color-muted;
+    margin: 0;
+  }
 }
 
 // Contadores de toda la actividad, no de la página que se está viendo.
@@ -19,7 +25,9 @@
   gap: space('5');
   margin: 0;
 
-  div { text-align: right; }
+  div {
+    text-align: right;
+  }
 
   dt {
     color: $color-muted;
@@ -40,7 +48,11 @@
   @include back-link;
 }
 
-.registrations-page__sections { display: grid; gap: space('5'); grid-template-columns: minmax(0, 1fr); }
+.registrations-page__sections {
+  display: grid;
+  gap: space('5');
+  grid-template-columns: minmax(0, 1fr);
+}
 
 .registration-summary {
   background: $color-surface;
@@ -48,7 +60,7 @@
   border-radius: $radius-lg;
   display: grid;
   gap: space('6');
-  grid-template-columns: minmax(0, 1.4fr) minmax(16rem, .6fr);
+  grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.6fr);
   margin-bottom: space('8');
   padding: space('5');
 }
@@ -65,7 +77,10 @@
   border-radius: $radius-md;
   padding: space('4');
 
-  dt { color: $color-muted; font-size: $font-size-sm; }
+  dt {
+    color: $color-muted;
+    font-size: $font-size-sm;
+  }
   dd {
     color: $color-heading;
     font-size: $font-size-2xl;
@@ -78,9 +93,12 @@
 .registration-summary__capacity {
   align-self: center;
 
-  p { color: $color-muted; font-size: $font-size-sm; margin: space('2') 0 0; }
+  p {
+    color: $color-muted;
+    font-size: $font-size-sm;
+    margin: space('2') 0 0;
+  }
 }
-
 
 .registrations-page--state {
   display: grid;
@@ -89,7 +107,9 @@
   place-content: center;
   text-align: center;
 
-  p { color: $color-muted; }
+  p {
+    color: $color-muted;
+  }
 }
 
 .registrations-page__state-actions {
@@ -112,15 +132,26 @@
 }
 
 @media (max-width: 38rem) {
-  .registrations-page__totals { justify-items: start; }
-  .registrations-page__counts div { text-align: left; }
-  .registrations-page__state-actions { align-items: stretch; flex-direction: column; }
+  .registrations-page__totals {
+    justify-items: start;
+  }
+  .registrations-page__counts div {
+    text-align: left;
+  }
+  .registrations-page__state-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 62rem) {
-  .registration-summary { grid-template-columns: 1fr; }
+  .registration-summary {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 45rem) {
-  .registration-summary__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .registration-summary__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

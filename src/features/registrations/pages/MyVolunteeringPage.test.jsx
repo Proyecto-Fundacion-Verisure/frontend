@@ -18,7 +18,7 @@ function renderPage() {
   return render(
     <MemoryRouter>
       <MyVolunteeringPage />
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 
@@ -39,7 +39,14 @@ const STARTED_YESTERDAY = isoDaysFromToday(-1);
 const activeItems = [
   {
     registrationId: 101,
-    activity: { id: 1, title: 'Acompañamiento a mayores', partner: 'Fundación Solitaria', startDate: STARTS_IN_A_WEEK, endDate: isoDaysFromToday(14), hours: 8 },
+    activity: {
+      id: 1,
+      title: 'Acompañamiento a mayores',
+      partner: 'Fundación Solitaria',
+      startDate: STARTS_IN_A_WEEK,
+      endDate: isoDaysFromToday(14),
+      hours: 8,
+    },
     status: 'WAITLISTED',
     queuePosition: 3,
     accepted: false,
@@ -48,7 +55,14 @@ const activeItems = [
   },
   {
     registrationId: 103,
-    activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
+    activity: {
+      id: 4,
+      title: 'Jornada ambiental',
+      partner: 'Voluntarios Activos',
+      startDate: '2026-07-01',
+      endDate: '2026-07-02',
+      hours: 8,
+    },
     status: 'WAITLISTED',
     queuePosition: 1,
     accepted: true,
@@ -57,7 +71,14 @@ const activeItems = [
   },
   {
     registrationId: 105,
-    activity: { id: 5, title: 'Mentoría terminada', partner: 'Educamos Juntos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
+    activity: {
+      id: 5,
+      title: 'Mentoría terminada',
+      partner: 'Educamos Juntos',
+      startDate: '2026-07-01',
+      endDate: '2026-07-02',
+      hours: 8,
+    },
     status: 'PENDING_CLOSURE',
     accepted: true,
     closureId: null,
@@ -65,7 +86,14 @@ const activeItems = [
   },
   {
     registrationId: 106,
-    activity: { id: 6, title: 'Cierre enviado', partner: 'Fundación Cerca', startDate: '2026-07-01', endDate: '2026-07-02', hours: 4 },
+    activity: {
+      id: 6,
+      title: 'Cierre enviado',
+      partner: 'Fundación Cerca',
+      startDate: '2026-07-01',
+      endDate: '2026-07-02',
+      hours: 4,
+    },
     status: 'PENDING_CLOSURE',
     accepted: true,
     closureId: 502,
@@ -76,7 +104,14 @@ const activeItems = [
 const closedItems = [
   {
     registrationId: 104,
-    activity: { id: 4, title: 'Jornada ambiental', partner: 'Voluntarios Activos', startDate: '2026-07-01', endDate: '2026-07-02', hours: 8 },
+    activity: {
+      id: 4,
+      title: 'Jornada ambiental',
+      partner: 'Voluntarios Activos',
+      startDate: '2026-07-01',
+      endDate: '2026-07-02',
+      hours: 8,
+    },
     status: 'CLOSED',
     queuePosition: null,
     closureId: 501,
@@ -108,7 +143,9 @@ describe('MyVolunteeringPage', () => {
   });
 
   it('maneja error con reintentar', async () => {
-    getMyRegistrations.mockRejectedValueOnce(new Error('Fallo de red')).mockResolvedValueOnce({ data: [] });
+    getMyRegistrations
+      .mockRejectedValueOnce(new Error('Fallo de red'))
+      .mockResolvedValueOnce({ data: [] });
     renderPage();
     expect(await screen.findByText(/fallo de red/i)).toBeInTheDocument();
     const user = userEvent.setup();
@@ -147,7 +184,10 @@ describe('MyVolunteeringPage', () => {
     expect(enviar).toHaveTextContent('Cerrar tu participación');
     expect(enviar).toHaveAttribute('href', '/closures/new?registrationId=105');
     expect(screen.getByTestId('action-ver-106')).toHaveAttribute('href', '/closures/502');
-    expect(screen.getByTestId('action-cert-104')).toHaveAttribute('href', '/closures/501/certificate');
+    expect(screen.getByTestId('action-cert-104')).toHaveAttribute(
+      'href',
+      '/closures/501/certificate',
+    );
   });
 
   it('no reclasifica estados con reglas duplicadas', async () => {
@@ -189,7 +229,9 @@ describe('MyVolunteeringPage', () => {
     await user.click(screen.getByTestId('cancel-101'));
     expect(await screen.findByText(/¿Seguro que quieres cancelar/)).toBeInTheDocument();
     await user.click(screen.getByTestId('confirm-cancel-101'));
-    await waitFor(() => expect(screen.getByText('Posición en la lista de espera: 2')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText('Posición en la lista de espera: 2')).toBeInTheDocument(),
+    );
     expect(screen.getByTestId('accepted-101')).toHaveTextContent('Aceptada');
     expect(cancelRegistration).toHaveBeenCalledWith(101);
     expect(cancelRegistration).toHaveBeenCalledTimes(1);
@@ -212,8 +254,34 @@ describe('MyVolunteeringPage', () => {
     // El backend usa `LocalDate.now().isAfter(startDate)`: el propio día de inicio
     // todavía se puede cancelar. La pantalla comparaba con `new Date()` y se
     // adelantaba un día, ocultando el botón a quien aún estaba a tiempo.
-    const startsToday = { registrationId: 203, activity: { id: 12, title: 'Empieza hoy', partner: 'P', startDate: STARTS_TODAY, endDate: isoDaysFromToday(3), hours: 2 }, status: 'CONFIRMED', queuePosition: null, accepted: true };
-    const startedYesterday = { registrationId: 204, activity: { id: 13, title: 'Empezó ayer', partner: 'P', startDate: STARTED_YESTERDAY, endDate: isoDaysFromToday(3), hours: 2 }, status: 'CONFIRMED', queuePosition: null, accepted: true };
+    const startsToday = {
+      registrationId: 203,
+      activity: {
+        id: 12,
+        title: 'Empieza hoy',
+        partner: 'P',
+        startDate: STARTS_TODAY,
+        endDate: isoDaysFromToday(3),
+        hours: 2,
+      },
+      status: 'CONFIRMED',
+      queuePosition: null,
+      accepted: true,
+    };
+    const startedYesterday = {
+      registrationId: 204,
+      activity: {
+        id: 13,
+        title: 'Empezó ayer',
+        partner: 'P',
+        startDate: STARTED_YESTERDAY,
+        endDate: isoDaysFromToday(3),
+        hours: 2,
+      },
+      status: 'CONFIRMED',
+      queuePosition: null,
+      accepted: true,
+    };
     getMyRegistrations.mockResolvedValue({ data: [startsToday, startedYesterday] });
     renderPage();
     await screen.findByText('Empieza hoy');
@@ -222,11 +290,42 @@ describe('MyVolunteeringPage', () => {
   });
 
   it('ejecuta un solo PATCH al confirmar y oculta acción tras fecha de inicio', async () => {
-    const future = { registrationId: 201, activity: { id: 10, title: 'Futura', partner: 'P', startDate: '2099-01-01', endDate: '2099-01-02', hours: 2 }, status: 'WAITLISTED', queuePosition: 2, accepted: false };
-    const past = { registrationId: 202, activity: { id: 11, title: 'Pasada', partner: 'P', startDate: '2020-01-01', endDate: '2020-01-02', hours: 2 }, status: 'WAITLISTED', queuePosition: 2, accepted: false };
+    const future = {
+      registrationId: 201,
+      activity: {
+        id: 10,
+        title: 'Futura',
+        partner: 'P',
+        startDate: '2099-01-01',
+        endDate: '2099-01-02',
+        hours: 2,
+      },
+      status: 'WAITLISTED',
+      queuePosition: 2,
+      accepted: false,
+    };
+    const past = {
+      registrationId: 202,
+      activity: {
+        id: 11,
+        title: 'Pasada',
+        partner: 'P',
+        startDate: '2020-01-01',
+        endDate: '2020-01-02',
+        hours: 2,
+      },
+      status: 'WAITLISTED',
+      queuePosition: 2,
+      accepted: false,
+    };
     getMyRegistrations.mockResolvedValue({ data: [future, past] });
     let resolveCancel;
-    cancelRegistration.mockImplementation(() => new Promise((res) => { resolveCancel = res; }));
+    cancelRegistration.mockImplementation(
+      () =>
+        new Promise((res) => {
+          resolveCancel = res;
+        }),
+    );
     renderPage();
     await screen.findByText('Futura');
     expect(screen.getByTestId('cancel-201')).toBeInTheDocument();
@@ -248,14 +347,22 @@ describe('MyVolunteeringPage', () => {
     const user = userEvent.setup();
     // DEADLINE_PASSED es 400, no 409. El 409 del contrato es ALREADY_REGISTERED,
     // que cancelar no devuelve nunca.
-    cancelRegistration.mockRejectedValueOnce({ status: 400, code: 'DEADLINE_PASSED', message: 'Plazo cerrado' });
+    cancelRegistration.mockRejectedValueOnce({
+      status: 400,
+      code: 'DEADLINE_PASSED',
+      message: 'Plazo cerrado',
+    });
     await user.click(screen.getByTestId('cancel-101'));
     await screen.findByText(/¿Seguro que quieres cancelar/);
     await user.click(screen.getByTestId('confirm-cancel-101'));
     expect(await screen.findByText(/Plazo cerrado/)).toBeInTheDocument();
     expect(screen.getByText('Posición en la lista de espera: 3')).toBeInTheDocument();
     // NOT_OWNER 403
-    cancelRegistration.mockRejectedValueOnce({ status: 403, code: 'NOT_OWNER', message: 'No tienes permiso' });
+    cancelRegistration.mockRejectedValueOnce({
+      status: 403,
+      code: 'NOT_OWNER',
+      message: 'No tienes permiso',
+    });
     await user.click(screen.getByTestId('cancel-101'));
     await screen.findByText(/¿Seguro que quieres cancelar/);
     await user.click(screen.getByTestId('confirm-cancel-101'));

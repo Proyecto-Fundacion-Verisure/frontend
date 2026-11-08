@@ -1,9 +1,7 @@
 export default function ProposalConsentField({ checked, error, onChange, onBlur, inputRef }) {
   return (
     <>
-      <label
-        className={`proposal-form__consent${error ? ' proposal-form__consent--error' : ''}`}
-      >
+      <label className={`proposal-form__consent${error ? ' proposal-form__consent--error' : ''}`}>
         <input
           ref={inputRef}
           name="consent"
@@ -16,10 +14,9 @@ export default function ProposalConsentField({ checked, error, onChange, onBlur,
           onBlur={onBlur}
         />{' '}
         <span>
-          He leído y acepto la <strong>política de privacidad</strong>.
-          Autorizo a la Fundación Verisure a tratar estos datos con el único
-          fin de valorar esta propuesta y ponerse en contacto conmigo.{' '}
-          <b>*</b>
+          He leído y acepto la <strong>política de privacidad</strong>. Autorizo a la Fundación
+          Verisure a tratar estos datos con el único fin de valorar esta propuesta y ponerse en
+          contacto conmigo. <b>*</b>
         </span>
       </label>
       {error && (

@@ -12,14 +12,26 @@
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
   line-height: 1.25;
-  padding: space('1') .625rem;
+  padding: space('1') 0.625rem;
   white-space: nowrap;
   width: fit-content;
 
-  &--success { background: $color-success-light; color: $color-success; }
-  &--warning { background: $color-warning-light; color: $color-warning; }
-  &--danger { background: $color-danger-light; color: $color-danger; }
-  &--info { background: $color-info-light; color: $color-info; }
+  &--success {
+    background: $color-success-light;
+    color: $color-success;
+  }
+  &--warning {
+    background: $color-warning-light;
+    color: $color-warning;
+  }
+  &--danger {
+    background: $color-danger-light;
+    color: $color-danger;
+  }
+  &--info {
+    background: $color-info-light;
+    color: $color-info;
+  }
 }
 
 // Punto de estado delante del texto («Inscripción abierta»): un color más que
@@ -28,9 +40,9 @@
   background: currentColor;
   border-radius: 50%;
   display: inline-block;
-  height: .5rem;
+  height: 0.5rem;
   margin-right: space('2');
-  width: .5rem;
+  width: 0.5rem;
 }
 
 .badge svg {

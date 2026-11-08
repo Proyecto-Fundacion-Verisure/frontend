@@ -30,11 +30,12 @@ function Heart({ activityId = 1, serverValue = false }) {
   );
 }
 
-const renderHeart = (props) => render(
-  <FavoritesProvider>
-    <Heart {...props} />
-  </FavoritesProvider>,
-);
+const renderHeart = (props) =>
+  render(
+    <FavoritesProvider>
+      <Heart {...props} />
+    </FavoritesProvider>,
+  );
 
 const heart = () => screen.getByTestId('heart');
 
@@ -46,7 +47,11 @@ beforeEach(() => {
 describe('FavoritesProvider', () => {
   it('pinta el corazón antes de que conteste el servidor', async () => {
     let resolve;
-    favoriteActivity.mockReturnValue(new Promise((r) => { resolve = r; }));
+    favoriteActivity.mockReturnValue(
+      new Promise((r) => {
+        resolve = r;
+      }),
+    );
     const user = userEvent.setup();
     renderHeart();
 
@@ -106,7 +111,11 @@ describe('FavoritesProvider', () => {
 
   it('no manda dos peticiones si se pulsa dos veces seguidas', async () => {
     let resolve;
-    favoriteActivity.mockReturnValue(new Promise((r) => { resolve = r; }));
+    favoriteActivity.mockReturnValue(
+      new Promise((r) => {
+        resolve = r;
+      }),
+    );
     const user = userEvent.setup();
     renderHeart();
 

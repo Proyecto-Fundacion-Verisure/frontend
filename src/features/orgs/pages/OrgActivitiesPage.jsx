@@ -90,9 +90,11 @@ export default function OrgActivitiesPage() {
       label: 'Estado',
       render: (activity) => {
         const badge = STATUS_BADGES[activity.status];
-        return badge
-          ? <Badge variant={badge.variant}>{badge.label}</Badge>
-          : activity.status ?? '—';
+        return badge ? (
+          <Badge variant={badge.variant}>{badge.label}</Badge>
+        ) : (
+          (activity.status ?? '—')
+        );
       },
     },
     { key: 'startDate', label: 'Inicio', render: (activity) => formatDate(activity.startDate) },
@@ -104,25 +106,26 @@ export default function OrgActivitiesPage() {
     {
       key: 'actions',
       label: 'Acciones',
-      render: (activity) => activity.status === 'DRAFT' && (
-        <div className="activities-list__actions">
-          <Link
-            className="button button--secondary button--small"
-            to={`/org/activities/${activity.id}/edit`}
-            // No hay detalle en `/org`: el formulario se rellena con esta fila.
-            state={{ activity }}
-          >
-            Editar
-          </Link>
-          <SubmitForReviewButton
-            activity={activity}
-            onSubmitted={() => {
-              setNotice('La propuesta se ha enviado a la Fundación.');
-              reload();
-            }}
-          />
-        </div>
-      ),
+      render: (activity) =>
+        activity.status === 'DRAFT' && (
+          <div className="activities-list__actions">
+            <Link
+              className="button button--secondary button--small"
+              to={`/org/activities/${activity.id}/edit`}
+              // No hay detalle en `/org`: el formulario se rellena con esta fila.
+              state={{ activity }}
+            >
+              Editar
+            </Link>
+            <SubmitForReviewButton
+              activity={activity}
+              onSubmitted={() => {
+                setNotice('La propuesta se ha enviado a la Fundación.');
+                reload();
+              }}
+            />
+          </div>
+        ),
     },
   ];
 
@@ -131,18 +134,24 @@ export default function OrgActivitiesPage() {
       <PageHeader
         title="Mis propuestas"
         titleId="activities-list-title"
-        description={activities.length === 1
-          ? '1 propuesta encontrada'
-          : `${activities.length} propuestas encontradas`}
-        actions={(
+        description={
+          activities.length === 1
+            ? '1 propuesta encontrada'
+            : `${activities.length} propuestas encontradas`
+        }
+        actions={
           <Link className="button button--primary button--medium" to="/org/activities/new">
             <Plus aria-hidden="true" size={16} />
             Nueva propuesta
           </Link>
-        )}
+        }
       />
 
-      {notice && <p className="activities-list__notice" role="status">{notice}</p>}
+      {notice && (
+        <p className="activities-list__notice" role="status">
+          {notice}
+        </p>
+      )}
 
       {requestState.status === 'loading' && (
         <div className="activities-list__loading" aria-label="Cargando propuestas">
@@ -173,9 +182,15 @@ export default function OrgActivitiesPage() {
               Pendientes de aprobación <span>({pending.length})</span>
             </h2>
             {pending.length > 0 ? (
-              <Table caption="Propuestas pendientes de aprobación" columns={columns} data={pending} />
+              <Table
+                caption="Propuestas pendientes de aprobación"
+                columns={columns}
+                data={pending}
+              />
             ) : (
-              <p className="activities-list__group-empty">No tienes propuestas pendientes de aprobación.</p>
+              <p className="activities-list__group-empty">
+                No tienes propuestas pendientes de aprobación.
+              </p>
             )}
           </section>
 
@@ -186,7 +201,9 @@ export default function OrgActivitiesPage() {
             {approved.length > 0 ? (
               <Table caption="Propuestas aprobadas" columns={columns} data={approved} />
             ) : (
-              <p className="activities-list__group-empty">Todavía no tienes propuestas aprobadas.</p>
+              <p className="activities-list__group-empty">
+                Todavía no tienes propuestas aprobadas.
+              </p>
             )}
           </section>
         </>

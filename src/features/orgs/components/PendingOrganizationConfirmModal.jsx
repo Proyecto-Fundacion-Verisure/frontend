@@ -15,7 +15,7 @@ export default function PendingOrganizationConfirmModal({
       isOpen={isOpen}
       onClose={onClose}
       title={copy.title}
-      footer={(
+      footer={
         <>
           <Button variant="secondary" onClick={onClose}>
             Volver
@@ -24,7 +24,7 @@ export default function PendingOrganizationConfirmModal({
             {copy.confirmLabel}
           </Button>
         </>
-      )}
+      }
     >
       <p>{copy.question(organizationName)}</p>
     </Modal>

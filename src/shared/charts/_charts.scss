@@ -11,8 +11,12 @@
     overflow-x: auto;
   }
 
-  &__track { fill: $color-border; }
-  &__bar { fill: $color-coral-solid; }
+  &__track {
+    fill: $color-border;
+  }
+  &__bar {
+    fill: $color-coral-solid;
+  }
 
   &__label,
   &__value {
@@ -21,13 +25,21 @@
     font-size: $font-size-sm;
   }
 
-  &__value { font-weight: $font-weight-semibold; }
-  &__empty { color: $color-muted; padding: space('8'); text-align: center; }
+  &__value {
+    font-weight: $font-weight-semibold;
+  }
+  &__empty {
+    color: $color-muted;
+    padding: space('8');
+    text-align: center;
+  }
 }
 
 .chart-table {
   min-width: 26rem;
 
   td:last-child,
-  th:last-child { text-align: right; }
+  th:last-child {
+    text-align: right;
+  }
 }

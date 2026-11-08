@@ -7,7 +7,9 @@ import Topbar from './Topbar';
 function renderTopbar(value) {
   return render(
     <AuthContext.Provider value={value}>
-      <Topbar><span>Fundación Verisure</span></Topbar>
+      <Topbar>
+        <span>Fundación Verisure</span>
+      </Topbar>
     </AuthContext.Provider>,
   );
 }

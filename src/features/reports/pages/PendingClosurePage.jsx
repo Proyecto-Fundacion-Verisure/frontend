@@ -43,7 +43,9 @@ export default function PendingClosurePage({ sectionTabs = null }) {
     return (
       <section className="pending-closures" aria-labelledby="pending-closures-title">
         <h1 id="pending-closures-title">
-          {forbidden ? 'Acceso restringido' : 'No hemos podido cargar las actividades pendientes de cierre'}
+          {forbidden
+            ? 'Acceso restringido'
+            : 'No hemos podido cargar las actividades pendientes de cierre'}
         </h1>
         <p role="alert">{state.error?.message || 'Inténtalo de nuevo.'}</p>
         {!forbidden && <Button onClick={load}>Reintentar</Button>}

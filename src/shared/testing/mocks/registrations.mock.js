@@ -26,7 +26,11 @@ export function mockCreateRegistration({ activityId }) {
   const existing = findByActivityAndUser(activityId);
   if (existing) {
     return Promise.reject(
-      createApiError({ status: 409, code: 'ALREADY_REGISTERED', message: 'Ya estás inscrito en esta actividad.' }),
+      createApiError({
+        status: 409,
+        code: 'ALREADY_REGISTERED',
+        message: 'Ya estás inscrito en esta actividad.',
+      }),
     );
   }
   const reg = {
@@ -44,7 +48,14 @@ export function mockGetMyRegistrations() {
   // Return MyRegistrationItems shape (simplified)
   const items = [...store.values()].map((r) => ({
     registrationId: r.registrationId,
-    activity: { id: r.activityId, title: `Actividad ${r.activityId}`, partner: 'Org', startDate: '2026-09-10', endDate: '2026-09-17', hours: 8 },
+    activity: {
+      id: r.activityId,
+      title: `Actividad ${r.activityId}`,
+      partner: 'Org',
+      startDate: '2026-09-10',
+      endDate: '2026-09-17',
+      hours: 8,
+    },
     status: r.status,
     accepted: r.accepted,
     queuePosition: r.queuePosition ?? null,
@@ -70,7 +81,10 @@ export function mockGetActivityRegistrations() {
 
 export function mockAcceptRegistration(registrationId) {
   const reg = store.get(Number(registrationId));
-  if (!reg) return Promise.reject(createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }));
+  if (!reg)
+    return Promise.reject(
+      createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }),
+    );
   reg.status = RegistrationStatus.CONFIRMED;
   reg.accepted = true;
   return Promise.resolve({ data: { ...reg }, status: 200 });
@@ -78,7 +92,10 @@ export function mockAcceptRegistration(registrationId) {
 
 export function mockRejectRegistration(registrationId) {
   const reg = store.get(Number(registrationId));
-  if (!reg) return Promise.reject(createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }));
+  if (!reg)
+    return Promise.reject(
+      createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }),
+    );
   // Rejection has no reason/body per contract
   reg.status = RegistrationStatus.REJECTED;
   reg.accepted = false;
@@ -87,7 +104,10 @@ export function mockRejectRegistration(registrationId) {
 
 export function mockCancelRegistration(registrationId, payload) {
   const reg = store.get(Number(registrationId));
-  if (!reg) return Promise.reject(createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }));
+  if (!reg)
+    return Promise.reject(
+      createApiError({ status: 404, message: 'No se ha encontrado el recurso solicitado.' }),
+    );
   // PATCH /registrations/{id}/cancel accepts optional {reason}
   // Validate no required reason for employee owner (contract: without reason)
   void payload;

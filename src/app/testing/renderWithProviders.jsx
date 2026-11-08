@@ -13,13 +13,10 @@ import { AuthContext } from '../../features/auth';
  * @param {object} options.authValue - override auth context value
  * @param {string} options.path - route path for Routes wrapper
  */
-export function renderWithProviders(ui, {
-  route = '/',
-  initialEntries = [route],
-  user = null,
-  authValue = null,
-  path = route,
-} = {}) {
+export function renderWithProviders(
+  ui,
+  { route = '/', initialEntries = [route], user = null, authValue = null, path = route } = {},
+) {
   const authContextValue = authValue ?? {
     user,
     isAuthenticated: Boolean(user),

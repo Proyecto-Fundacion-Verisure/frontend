@@ -10,6 +10,8 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "arch:check": "node scripts/check-architecture.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "demo:reset": "node scripts/restore-demo.js",
     "smoke": "npm run test:run && npm run build && npm run arch:check"
   },
@@ -28,6 +30,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@vitest/coverage-v8": "^4.1.12",
     "jsdom": "^26.0.0",
+    "prettier": "^3.9.10",
     "sass": "^1.108.0",
     "vite": "^6.4.5",
     "vitest": "^4.1.12"

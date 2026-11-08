@@ -40,15 +40,15 @@ frontend/
 
 ## 2. Decisiones clave
 
-| Decisión | Alternativa descartada | Motivo |
-|----------|------------------------|--------|
-| **Sass 7-1 + tokens** | CSS Modules / Tailwind | Consistencia con `abstracts/_variables.scss`, contraste AA (#E03A33 4.6:1, #4A5A6E) |
-| **Heart Lucide `Heart` con `fill`** | `♥/♡` caracteres | Escalabilidad, `aria-pressed`, `isLoading` spinner, estados relleno/vacío verificables |
-| **RegistrationsContext + FavoritesContext** | Prop drilling / Redux | Sincronía catálogo↔ficha sin recarga (H13, H15), evita `favoriteCount` global |
-| **Modal portal + focus trap + inert** | `dialog` nativo | Control total `Escape`, `backdrop`, `focus-ring` navy, `prefers-reduced-motion` |
-| **MSW descartado, `vi.mock` + fixtures** | MSW | Mocks contractuales fuera de prod (`src/test/**` excluido de build), sin red, deterministas |
-| **Mocks solo en desarrollo** | Activarlos en producción | Demo estable y llamadas reales verificables en test |
-| **`List<MyRegistrationItem>` plano** | Respuesta `{active,closed}` | Coincide con el contrato y clasifica por `status`/`activityClosed` |
+| Decisión                                    | Alternativa descartada      | Motivo                                                                                      |
+| ------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------- |
+| **Sass 7-1 + tokens**                       | CSS Modules / Tailwind      | Consistencia con `abstracts/_variables.scss`, contraste AA (#E03A33 4.6:1, #4A5A6E)         |
+| **Heart Lucide `Heart` con `fill`**         | `♥/♡` caracteres            | Escalabilidad, `aria-pressed`, `isLoading` spinner, estados relleno/vacío verificables      |
+| **RegistrationsContext + FavoritesContext** | Prop drilling / Redux       | Sincronía catálogo↔ficha sin recarga (H13, H15), evita `favoriteCount` global               |
+| **Modal portal + focus trap + inert**       | `dialog` nativo             | Control total `Escape`, `backdrop`, `focus-ring` navy, `prefers-reduced-motion`             |
+| **MSW descartado, `vi.mock` + fixtures**    | MSW                         | Mocks contractuales fuera de prod (`src/test/**` excluido de build), sin red, deterministas |
+| **Mocks solo en desarrollo**                | Activarlos en producción    | Demo estable y llamadas reales verificables en test                                         |
+| **`List<MyRegistrationItem>` plano**        | Respuesta `{active,closed}` | Coincide con el contrato y clasifica por `status`/`activityClosed`                          |
 
 ---
 
@@ -72,17 +72,17 @@ frontend/
 
 **Vitest `jsdom` + Testing Library, 45 suites / 256 tests (2026-09-08):**
 
-| Dominio | Pruebas destacadas |
-|---------|-------------------|
-| `CatalogPage` | filtros `line/mode`, paginación Spring `Page`, `Ya estás apuntado` y favoritos |
-| `ActivityDetailPage` | 404, recarga por `activityId`, sticky solo desktop, `favoritedByMe`, cola `WAITLISTED q3`, `accepted` |
-| `MyVolunteeringPage` | lista plana, `queuePosition`, `accepted`, `closureId`, certificado y cancelación |
-| `RegisterButton` | `WAITLISTED` inicial, `FULL` admite cola, `ALREADY_REGISTERED/DEADLINE_PASSED` no cambia UI, anti-doble |
-| `HeartButton` | Lucide relleno/vacío, `aria-pressed`, `isLoading` spinner, revierte 404/409, sin contador, persiste entre sesiones |
-| `ProposalsInbox/RegistrationsTable` | `aria-label` por fila, `409 PROPOSAL_ALREADY_DECIDED` |
-| `OrgRegister/AccountStatus` | `409 CIF_ALREADY_REGISTERED`, `410 VERIFICATION_EXPIRED`, `PENDING_*` |
-| `contract.fixtures` | enums actuales, DTOs de cierre, Spring `Page`, uploads y errores de dominio |
-| `smoke` | Landing → Catálogo → Ficha → Mis inscripciones → Dashboard (público/empleado/admin) |
+| Dominio                             | Pruebas destacadas                                                                                                 |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `CatalogPage`                       | filtros `line/mode`, paginación Spring `Page`, `Ya estás apuntado` y favoritos                                     |
+| `ActivityDetailPage`                | 404, recarga por `activityId`, sticky solo desktop, `favoritedByMe`, cola `WAITLISTED q3`, `accepted`              |
+| `MyVolunteeringPage`                | lista plana, `queuePosition`, `accepted`, `closureId`, certificado y cancelación                                   |
+| `RegisterButton`                    | `WAITLISTED` inicial, `FULL` admite cola, `ALREADY_REGISTERED/DEADLINE_PASSED` no cambia UI, anti-doble            |
+| `HeartButton`                       | Lucide relleno/vacío, `aria-pressed`, `isLoading` spinner, revierte 404/409, sin contador, persiste entre sesiones |
+| `ProposalsInbox/RegistrationsTable` | `aria-label` por fila, `409 PROPOSAL_ALREADY_DECIDED`                                                              |
+| `OrgRegister/AccountStatus`         | `409 CIF_ALREADY_REGISTERED`, `410 VERIFICATION_EXPIRED`, `PENDING_*`                                              |
+| `contract.fixtures`                 | enums actuales, DTOs de cierre, Spring `Page`, uploads y errores de dominio                                        |
+| `smoke`                             | Landing → Catálogo → Ficha → Mis inscripciones → Dashboard (público/empleado/admin)                                |
 
 **Cobertura:** `v8` excluye `src/test/**`; `npm run test:coverage` genera `coverage/`.
 
@@ -90,14 +90,14 @@ frontend/
 
 ## 5. Evidencias versionadas
 
-| Artefacto | Ruta | Verificación |
-|-----------|------|--------------|
-| Flujo 3 roles | `prototipo/User_Flow_Verisure_3roles_Evaluacion.pdf` + `frontend/docs/User_Flow_3roles_Evaluacion.pdf` | Reemplaza P9 (2 roles) |
-| Fuente diagrama | `prototipo/User_Flow_Verisure_3roles.drawio` (pendiente Figma) | Versionado |
-| Mockups | `verisure-mockups-v3 2/*.html` + `capturas/*` (44 PNG) | 7 vistas PARTNER nuevas |
-| Demo datos | `public/demo-data.json`, `scripts/restore-demo.js`, `docs/DEMO.md` | `npm run demo:reset` idempotente |
-| Código de roles | `src/routes/*`, `features/orgs/*`, `api/orgApi.js` | 45 suites |
-| Entorno limpio | `.env.example`, `.gitignore` (`.env.local` no versionado) | `npm ci && npm run smoke` |
+| Artefacto       | Ruta                                                                                                   | Verificación                     |
+| --------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------- |
+| Flujo 3 roles   | `prototipo/User_Flow_Verisure_3roles_Evaluacion.pdf` + `frontend/docs/User_Flow_3roles_Evaluacion.pdf` | Reemplaza P9 (2 roles)           |
+| Fuente diagrama | `prototipo/User_Flow_Verisure_3roles.drawio` (pendiente Figma)                                         | Versionado                       |
+| Mockups         | `verisure-mockups-v3 2/*.html` + `capturas/*` (44 PNG)                                                 | 7 vistas PARTNER nuevas          |
+| Demo datos      | `public/demo-data.json`, `scripts/restore-demo.js`, `docs/DEMO.md`                                     | `npm run demo:reset` idempotente |
+| Código de roles | `src/routes/*`, `features/orgs/*`, `api/orgApi.js`                                                     | 45 suites                        |
+| Entorno limpio  | `.env.example`, `.gitignore` (`.env.local` no versionado)                                              | `npm ci && npm run smoke`        |
 
 `grep -R "entidad social" verisure-mockups-v3 2/*.html` → 0 en evaluable (solo copy público `LandingPage`).
 
@@ -105,10 +105,10 @@ frontend/
 
 ## 6. Reparto real
 
-| Integrante | Responsabilidad | Entregables |
-|------------|-----------------|-------------|
-| **Elena** | Frontend MVP, catálogo/ficha, inscripciones, cierres, PARTNER, accesibilidad FE1, demo | `Activity*`, `Registrations*`, `HeartButton`, `MyVolunteeringPage`, `DEMO.md`, `MEMORIA.md` |
-| **Fabileoruf** | PO, 24 historias, backend v2 (#150 etc.), revisión docs | `project-items.json`, issues #41-#51, #74 |
-| **Equipo** | QA, presentación, segunda revisión | `GUION.md`, ensayos cronométricos |
+| Integrante     | Responsabilidad                                                                        | Entregables                                                                                 |
+| -------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| **Elena**      | Frontend MVP, catálogo/ficha, inscripciones, cierres, PARTNER, accesibilidad FE1, demo | `Activity*`, `Registrations*`, `HeartButton`, `MyVolunteeringPage`, `DEMO.md`, `MEMORIA.md` |
+| **Fabileoruf** | PO, 24 historias, backend v2 (#150 etc.), revisión docs                                | `project-items.json`, issues #41-#51, #74                                                   |
+| **Equipo**     | QA, presentación, segunda revisión                                                     | `GUION.md`, ensayos cronométricos                                                           |
 
 Todos los pasos producen `public/demo-data.json`, `docs/*.md`, `prototipo/*.pdf` y `npm run smoke` como evidencia verificable. Revisión por segunda persona requerida antes de merge a `dev`.

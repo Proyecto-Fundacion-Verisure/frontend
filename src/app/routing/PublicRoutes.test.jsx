@@ -30,8 +30,10 @@ describe('public routes', () => {
   it('el CTA del hero lleva a la sección de propuesta', () => {
     renderAt('/');
 
-    expect(screen.getByRole('link', { name: /quieres proponer un voluntariado/i }))
-      .toHaveAttribute('href', '/#propuesta');
+    expect(screen.getByRole('link', { name: /quieres proponer un voluntariado/i })).toHaveAttribute(
+      'href',
+      '/#propuesta',
+    );
   });
 
   it('el CTA "Enviar propuesta" navega a /new-proposal', async () => {
@@ -43,7 +45,9 @@ describe('public routes', () => {
 
     await user.click(cta);
 
-    expect(await screen.findByRole('heading', { name: /contadnos qué necesitáis/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /contadnos qué necesitáis/i }),
+    ).toBeInTheDocument();
   });
 
   it('muestra el encabezado y el pie de página en la landing', () => {

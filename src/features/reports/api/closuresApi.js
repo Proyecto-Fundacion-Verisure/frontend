@@ -19,6 +19,9 @@ export const getPendingActivityClosures = ({ page, size } = {}) => {
   if (size !== undefined && size !== null) params.size = size;
   return client.get('/admin/activities/pending-closure', { params });
 };
-export const getActivityClosure = (activityId) => client.get(`/admin/activities/${activityId}/closure`);
-export const saveActivityClosure = (activityId, data) => client.put(`/admin/activities/${activityId}/closure`, data);
-export const finalizeActivityClosure = (activityId) => client.patch(`/admin/activities/${activityId}/closure/finalize`);
+export const getActivityClosure = (activityId) =>
+  client.get(`/admin/activities/${activityId}/closure`);
+export const saveActivityClosure = (activityId, data) =>
+  client.put(`/admin/activities/${activityId}/closure`, data);
+export const finalizeActivityClosure = (activityId) =>
+  client.patch(`/admin/activities/${activityId}/closure/finalize`);

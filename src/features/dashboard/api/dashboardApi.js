@@ -19,10 +19,15 @@ const requestConfig = (params, config = {}, allowed = DASHBOARD_FILTERS) => ({
 export const getDashboard = (params = {}, config = {}) =>
   client.get('/dashboard', requestConfig(params, config));
 
-const fileConfig = (params, config = {}, allowed = DASHBOARD_FILTERS) => requestConfig(params, {
-  ...config,
-  responseType: 'blob',
-}, allowed);
+const fileConfig = (params, config = {}, allowed = DASHBOARD_FILTERS) =>
+  requestConfig(
+    params,
+    {
+      ...config,
+      responseType: 'blob',
+    },
+    allowed,
+  );
 
 export const exportParticipationsCsv = (params = {}, config = {}) =>
   client.get('/dashboard/participations.csv', fileConfig(params, config));

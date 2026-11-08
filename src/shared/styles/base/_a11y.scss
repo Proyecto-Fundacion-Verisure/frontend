@@ -6,7 +6,9 @@
 }
 
 // Reciben el foco por código (títulos, `main`, modales), no son controles.
-[tabindex='-1']:focus-visible { outline: none; }
+[tabindex='-1']:focus-visible {
+  outline: none;
+}
 
 .sr-only {
   clip: rect(0, 0, 0, 0);
@@ -28,14 +30,18 @@
   transform: translateY(-200%);
   z-index: 2000;
 
-  &:focus { transform: translateY(0); }
+  &:focus {
+    transform: translateY(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
-    animation-duration: .01ms !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
 }

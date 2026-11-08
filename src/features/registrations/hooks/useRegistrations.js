@@ -16,52 +16,58 @@ export default function useRegistrations(activityId, page = 0) {
   const [error, setError] = useState(null);
   const [decision, setDecision] = useState(null);
 
-  const load = useCallback(async ({ background = false } = {}) => {
-    if (background) setRefreshing(true);
-    else setLoading(true);
-    setError(null);
-    try {
-      // Los contadores son de toda la actividad y el tablero es de una página, así
-      // que van en peticiones distintas. Un fallo suyo no puede tumbar el tablero:
-      // sin cifras la pantalla se lee igual, sin filas no.
-      const [{ data }, countsResult] = await Promise.all([
-        getActivityRegistrations(activityId, { page }),
-        getRegistrationCounts(activityId).catch(() => null),
-      ]);
-      setBoard(data);
-      setCounts(countsResult?.data ?? null);
-      return data;
-    } catch (requestError) {
-      setError(requestError);
-      throw requestError;
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [activityId, page]);
+  const load = useCallback(
+    async ({ background = false } = {}) => {
+      if (background) setRefreshing(true);
+      else setLoading(true);
+      setError(null);
+      try {
+        // Los contadores son de toda la actividad y el tablero es de una página, así
+        // que van en peticiones distintas. Un fallo suyo no puede tumbar el tablero:
+        // sin cifras la pantalla se lee igual, sin filas no.
+        const [{ data }, countsResult] = await Promise.all([
+          getActivityRegistrations(activityId, { page }),
+          getRegistrationCounts(activityId).catch(() => null),
+        ]);
+        setBoard(data);
+        setCounts(countsResult?.data ?? null);
+        return data;
+      } catch (requestError) {
+        setError(requestError);
+        throw requestError;
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [activityId, page],
+  );
 
   useEffect(() => {
     load().catch(() => undefined);
   }, [load]);
 
-  const decide = useCallback(async (registrationId, type, request) => {
-    const key = String(registrationId);
-    if (pendingDecisions.current.has(key)) return null;
+  const decide = useCallback(
+    async (registrationId, type, request) => {
+      const key = String(registrationId);
+      if (pendingDecisions.current.has(key)) return null;
 
-    pendingDecisions.current.add(key);
-    setDecision({ registrationId, type, status: 'loading', error: null });
-    try {
-      const { data } = await request(registrationId);
-      setDecision({ registrationId, type, status: 'success', data, error: null });
-      await load({ background: true });
-      return data;
-    } catch (requestError) {
-      setDecision({ registrationId, type, status: 'error', error: requestError });
-      throw requestError;
-    } finally {
-      pendingDecisions.current.delete(key);
-    }
-  }, [load]);
+      pendingDecisions.current.add(key);
+      setDecision({ registrationId, type, status: 'loading', error: null });
+      try {
+        const { data } = await request(registrationId);
+        setDecision({ registrationId, type, status: 'success', data, error: null });
+        await load({ background: true });
+        return data;
+      } catch (requestError) {
+        setDecision({ registrationId, type, status: 'error', error: requestError });
+        throw requestError;
+      } finally {
+        pendingDecisions.current.delete(key);
+      }
+    },
+    [load],
+  );
 
   const acceptRegistration = useCallback(
     (registrationId) => decide(registrationId, 'accept', acceptRegistrationRequest),
@@ -74,11 +80,8 @@ export default function useRegistrations(activityId, page = 0) {
   );
 
   const cancelRegistration = useCallback(
-    (registrationId, reason) => decide(
-      registrationId,
-      'cancel',
-      (id) => cancelRegistrationRequest(id, reason),
-    ),
+    (registrationId, reason) =>
+      decide(registrationId, 'cancel', (id) => cancelRegistrationRequest(id, reason)),
     [decide],
   );
 

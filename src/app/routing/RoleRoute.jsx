@@ -8,7 +8,9 @@ export default function RoleRoute({ roles = [] }) {
   // No hay que mirar el estado de la cuenta: el backend nunca emite token a una
   // entidad que no esté `ACTIVE`, así que tener sesión ya significa activa.
 
-  return roles.includes(user.role)
-    ? <Outlet />
-    : <Navigate to={getRoleHomePath(user.role)} replace />;
+  return roles.includes(user.role) ? (
+    <Outlet />
+  ) : (
+    <Navigate to={getRoleHomePath(user.role)} replace />
+  );
 }

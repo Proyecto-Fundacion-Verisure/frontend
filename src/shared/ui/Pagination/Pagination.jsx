@@ -1,16 +1,13 @@
 import { Button } from '../';
 
-export default function Pagination({
-  page,
-  totalPages,
-  onPageChange,
-  ariaLabel = 'Paginación',
-}) {
+export default function Pagination({ page, totalPages, onPageChange, ariaLabel = 'Paginación' }) {
   const safeTotal = Math.max(totalPages, 1);
 
   return (
     <nav className="pagination" aria-label={ariaLabel}>
-      <span>Página {page} de {safeTotal}</span>
+      <span>
+        Página {page} de {safeTotal}
+      </span>
       <div>
         <Button
           size="small"

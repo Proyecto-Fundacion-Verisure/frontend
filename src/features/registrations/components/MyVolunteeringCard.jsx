@@ -41,9 +41,7 @@ export default function MyVolunteeringCard({ item, onCancel, isCancelling }) {
         <Badge variant={statusBadge.variant}>{statusBadge.label}</Badge>
       </div>
 
-      {activity.partner && (
-        <p className="my-volunteering__meta">Entidad: {activity.partner}</p>
-      )}
+      {activity.partner && <p className="my-volunteering__meta">Entidad: {activity.partner}</p>}
       <p className="my-volunteering__meta">
         {formatDate(startDate)} — {formatDate(endDate)} {hours ? `· ${hours} h` : ''}
       </p>

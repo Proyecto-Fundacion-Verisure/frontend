@@ -25,7 +25,12 @@ export default function OrgImpactPage() {
   return (
     <section aria-labelledby="org-dashboard-title">
       <h1 id="org-dashboard-title">Impacto de mi entidad</h1>
-      <form onSubmit={(event) => { event.preventDefault(); void load(); }}>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          void load();
+        }}
+      >
         <Input
           type="number"
           name="year"
@@ -36,13 +41,18 @@ export default function OrgImpactPage() {
         <Button type="submit">Actualizar</Button>
       </form>
       {state.status === 'loading' && <Spinner label="Cargando impacto…" />}
-      {state.status === 'error' && <p role="alert">{state.error?.message || 'No hemos podido cargar el impacto.'}</p>}
+      {state.status === 'error' && (
+        <p role="alert">{state.error?.message || 'No hemos podido cargar el impacto.'}</p>
+      )}
       {state.status === 'success' && dashboard && (
         <dl>
           {Object.entries(dashboard)
             .filter(([, value]) => ['string', 'number'].includes(typeof value))
             .map(([key, value]) => (
-              <div key={key}><dt>{key}</dt><dd>{value}</dd></div>
+              <div key={key}>
+                <dt>{key}</dt>
+                <dd>{value}</dd>
+              </div>
             ))}
         </dl>
       )}

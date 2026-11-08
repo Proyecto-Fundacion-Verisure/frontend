@@ -19,7 +19,9 @@ export default function ResendVerificationForm() {
         Reenviar enlace
       </Button>
       {resend.isSent && (
-        <p role="status">Si el correo está pendiente de verificar, te hemos enviado un enlace nuevo.</p>
+        <p role="status">
+          Si el correo está pendiente de verificar, te hemos enviado un enlace nuevo.
+        </p>
       )}
       {resend.hasError && (
         <p role="alert">No hemos podido reenviar el enlace. Inténtalo de nuevo.</p>

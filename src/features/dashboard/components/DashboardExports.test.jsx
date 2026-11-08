@@ -53,22 +53,28 @@ describe('DashboardExports', () => {
   it('bloquea solo el archivo en curso y anuncia su progreso', async () => {
     const user = userEvent.setup();
     let resolveRequest;
-    api.exportParticipationsCsv.mockReturnValue(new Promise((resolve) => {
-      resolveRequest = resolve;
-    }));
+    api.exportParticipationsCsv.mockReturnValue(
+      new Promise((resolve) => {
+        resolveRequest = resolve;
+      }),
+    );
     render(<DashboardExports filters={{ year: 2026 }} />);
 
     await user.click(within(findCard('Participaciones')).getByRole('button'));
 
     expect(within(findCard('Participaciones')).getByRole('button')).toBeDisabled();
-    expect(within(findCard('Participaciones')).getByRole('button')).toHaveTextContent('Descargando CSV');
+    expect(within(findCard('Participaciones')).getByRole('button')).toHaveTextContent(
+      'Descargando CSV',
+    );
     expect(within(findCard('Participaciones')).getByRole('status')).toHaveTextContent(
       'Descargando participations.csv',
     );
     expect(within(findCard('Entidades colaboradoras')).getByRole('button')).toBeEnabled();
 
     resolveRequest({ data: new Blob(['ok']) });
-    await waitFor(() => expect(screen.getByText(/participations.csv se ha descargado/)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/participations.csv se ha descargado/)).toBeInTheDocument(),
+    );
   });
 
   it('mantiene los CSV disponibles si el PDF falla y permite reintentar', async () => {
@@ -86,7 +92,9 @@ describe('DashboardExports', () => {
     expect(within(findCard('Participaciones')).getByRole('button')).toBeEnabled();
 
     await user.click(within(pdfCard).getByRole('button', { name: 'Reintentar descarga' }));
-    await waitFor(() => expect(within(pdfCard).getByRole('status')).toHaveTextContent('report.pdf se ha descargado'));
+    await waitFor(() =>
+      expect(within(pdfCard).getByRole('status')).toHaveTextContent('report.pdf se ha descargado'),
+    );
   });
 
   it('explica un 403 sin bloquear las demás exportaciones', async () => {

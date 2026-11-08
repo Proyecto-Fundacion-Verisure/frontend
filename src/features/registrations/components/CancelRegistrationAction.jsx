@@ -6,9 +6,10 @@ export default function CancelRegistrationAction({ registration, decision, onCan
   const [isOpen, setIsOpen] = useState(false);
   const [reason, setReason] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const isCancelling = String(decision?.registrationId) === String(registrationId)
-    && decision?.type === 'cancel'
-    && decision?.status === 'loading';
+  const isCancelling =
+    String(decision?.registrationId) === String(registrationId) &&
+    decision?.type === 'cancel' &&
+    decision?.status === 'loading';
 
   const close = useCallback(() => {
     if (isCancelling) return;
@@ -35,7 +36,9 @@ export default function CancelRegistrationAction({ registration, decision, onCan
         size="small"
         variant="danger"
         onClick={() => setIsOpen(true)}
-        aria-label={personName ? `Dar de baja inscripción de ${personName}` : 'Dar de baja inscripción'}
+        aria-label={
+          personName ? `Dar de baja inscripción de ${personName}` : 'Dar de baja inscripción'
+        }
       >
         Dar de baja
       </Button>
@@ -45,9 +48,11 @@ export default function CancelRegistrationAction({ registration, decision, onCan
         closeOnBackdrop={!isCancelling}
         title="Dar de baja la inscripción"
         description="La plaza se liberará y la lista de espera se actualizará automáticamente."
-        footer={(
+        footer={
           <>
-            <Button variant="secondary" disabled={isCancelling} onClick={close}>Volver</Button>
+            <Button variant="secondary" disabled={isCancelling} onClick={close}>
+              Volver
+            </Button>
             <Button
               variant="danger"
               isLoading={isCancelling}
@@ -57,7 +62,7 @@ export default function CancelRegistrationAction({ registration, decision, onCan
               Confirmar baja
             </Button>
           </>
-        )}
+        }
       >
         <Textarea
           label="Motivo (opcional)"
@@ -65,7 +70,11 @@ export default function CancelRegistrationAction({ registration, decision, onCan
           rows={3}
           onChange={(event) => setReason(event.target.value)}
         />
-        {errorMessage && <p className="registration-actions__error" role="alert">{errorMessage}</p>}
+        {errorMessage && (
+          <p className="registration-actions__error" role="alert">
+            {errorMessage}
+          </p>
+        )}
       </Modal>
     </>
   );

@@ -73,9 +73,14 @@ export default function ActivityCard({
         )}
         <div className="activity-card__status">
           {isOpen && (
-            <Badge variant="success"><span className="badge__dot" aria-hidden="true" />Inscripción abierta</Badge>
+            <Badge variant="success">
+              <span className="badge__dot" aria-hidden="true" />
+              Inscripción abierta
+            </Badge>
           )}
-          {lifecycleLabel && <Badge variant={status === 'IN_PROGRESS' ? 'info' : 'neutral'}>{lifecycleLabel}</Badge>}
+          {lifecycleLabel && (
+            <Badge variant={status === 'IN_PROGRESS' ? 'info' : 'neutral'}>{lifecycleLabel}</Badge>
+          )}
           {isFull && <Badge variant="warning">Completa</Badge>}
           {isEnrolled && <Badge variant="success">Ya estás apuntado</Badge>}
         </div>

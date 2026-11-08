@@ -68,7 +68,9 @@
     font-weight: $font-weight-medium;
     text-decoration: none;
     white-space: nowrap;
-    transition: background-color $transition-fast, border-color $transition-fast;
+    transition:
+      background-color $transition-fast,
+      border-color $transition-fast;
 
     &:hover,
     &:focus-visible {
@@ -83,7 +85,11 @@
   }
 
   @media (max-width: 38rem) {
-    &__container { padding-inline: map.get($spacing, '4'); }
-    &__brand { min-height: 2.75rem; }
+    &__container {
+      padding-inline: map.get($spacing, '4');
+    }
+    &__brand {
+      min-height: 2.75rem;
+    }
   }
 }

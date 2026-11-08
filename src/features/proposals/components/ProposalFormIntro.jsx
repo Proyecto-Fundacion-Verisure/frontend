@@ -7,9 +7,9 @@ export default function ProposalFormIntro() {
       <p className="proposal-page__eyebrow">Propuesta de colaboración</p>
       <h1 id="proposal-title">Contadnos qué necesitáis</h1>
       <p>
-        Este formulario es uno de los canales de contacto con la Fundación. Si
-        prefieres gestionar tus propias actividades,{' '}
-        <Link to="/register-organization">crea una cuenta de entidad</Link>.
+        Este formulario es uno de los canales de contacto con la Fundación. Si prefieres gestionar
+        tus propias actividades, <Link to="/register-organization">crea una cuenta de entidad</Link>
+        .
       </p>
     </div>
   );

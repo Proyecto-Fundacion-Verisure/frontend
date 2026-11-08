@@ -14,7 +14,8 @@ const EXPORTS = [
     title: 'Participaciones',
     format: 'CSV',
     filename: 'participations.csv',
-    description: 'Datos seudonimizados de participación. No incluye nombres ni correos electrónicos.',
+    description:
+      'Datos seudonimizados de participación. No incluye nombres ni correos electrónicos.',
     request: exportParticipationsCsv,
   },
   {
@@ -60,9 +61,10 @@ export default function DashboardExports({ filters = {} }) {
     } catch (error) {
       updateStatus(definition.id, {
         state: 'error',
-        message: error?.status === 403
-          ? 'No tienes permiso para descargar este archivo.'
-          : `No hemos podido generar ${definition.filename}. Puedes volver a intentarlo.`,
+        message:
+          error?.status === 403
+            ? 'No tienes permiso para descargar este archivo.'
+            : `No hemos podido generar ${definition.filename}. Puedes volver a intentarlo.`,
       });
     }
   };
@@ -92,7 +94,9 @@ export default function DashboardExports({ filters = {} }) {
               </div>
               <p>{definition.description}</p>
               {definition.optional && (
-                <p className="dashboard-export__optional">Disponible si la generación de PDF está habilitada.</p>
+                <p className="dashboard-export__optional">
+                  Disponible si la generación de PDF está habilitada.
+                </p>
               )}
               <Button
                 variant="secondary"
@@ -100,7 +104,9 @@ export default function DashboardExports({ filters = {} }) {
                 loadingLabel={`Descargando ${definition.format}…`}
                 onClick={() => handleDownload(definition)}
               >
-                {status.state === 'error' ? 'Reintentar descarga' : `Descargar ${definition.format}`}
+                {status.state === 'error'
+                  ? 'Reintentar descarga'
+                  : `Descargar ${definition.format}`}
               </Button>
               <div
                 className={`dashboard-export__status dashboard-export__status--${status.state}`}

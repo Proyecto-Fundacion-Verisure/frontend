@@ -5,7 +5,8 @@ import { dirname, extname, join, relative, resolve, sep } from 'node:path';
 const projectRoot = process.cwd();
 const sourceRoot = join(projectRoot, 'src');
 const javascriptExtensions = new Set(['.js', '.jsx']);
-const importPattern = /(?:import\s+(?:[^'"]*?\s+from\s+)?|export\s+[^'"]*?\s+from\s+|import\s*\(\s*)['"]([^'"]+)['"]/g;
+const importPattern =
+  /(?:import\s+(?:[^'"]*?\s+from\s+)?|export\s+[^'"]*?\s+from\s+|import\s*\(\s*)['"]([^'"]+)['"]/g;
 
 function walk(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -23,13 +24,15 @@ function resolveImport(sourceFile, specifier) {
     join(base, 'index.js'),
     join(base, 'index.jsx'),
   ];
-  return candidates.find((candidate) => {
-    try {
-      return statSync(candidate).isFile();
-    } catch {
-      return false;
-    }
-  }) ?? null;
+  return (
+    candidates.find((candidate) => {
+      try {
+        return statSync(candidate).isFile();
+      } catch {
+        return false;
+      }
+    }) ?? null
+  );
 }
 
 function categoryFor(file) {

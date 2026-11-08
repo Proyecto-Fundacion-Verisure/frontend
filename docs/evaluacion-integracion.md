@@ -12,24 +12,24 @@
 
 ### Funciona · 18 endpoints
 
-| Área | Endpoints | Dueña |
-|---|---|---|
-| Autenticación | `login`, `logout`, `/auth/me`, `register` | BE1 |
-| Actividades · administración | `POST /api/admin/activities`, `publish` | BE2 |
-| Estados automáticos | `POST /api/admin/activities/refresh-status` | BE3 |
-| Inscripciones | `POST /api/registrations`, `/registrations/me`, `/admin/registrations`, `/counts`, `accept`, `reject`, `cancel` | BE3 |
-| Favoritos | `POST /api/favorites`, `DELETE /api/favorites/{activityId}` | BE3 |
-| Cierre de participación | `POST /api/closures`, `GET /api/closures/{id}` | BE1 |
+| Área                         | Endpoints                                                                                                       | Dueña |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------- | ----- |
+| Autenticación                | `login`, `logout`, `/auth/me`, `register`                                                                       | BE1   |
+| Actividades · administración | `POST /api/admin/activities`, `publish`                                                                         | BE2   |
+| Estados automáticos          | `POST /api/admin/activities/refresh-status`                                                                     | BE3   |
+| Inscripciones                | `POST /api/registrations`, `/registrations/me`, `/admin/registrations`, `/counts`, `accept`, `reject`, `cancel` | BE3   |
+| Favoritos                    | `POST /api/favorites`, `DELETE /api/favorites/{activityId}`                                                     | BE3   |
+| Cierre de participación      | `POST /api/closures`, `GET /api/closures/{id}`                                                                  | BE1   |
 
 ### Responde, pero vacío · 5 endpoints
 
-| Endpoint | Qué hace hoy | Pendiente de |
-|---|---|---|
-| `GET /api/closures/{id}/certificate` | devuelve `null` · no comprueba ni propiedad ni que la actividad esté cerrada | `B1-06` |
-| `GET /api/admin/activities/pending-closure` | página vacía | `B1-04` |
-| `GET /api/admin/activities/{id}/closure` | `null` | `B1-04` |
-| `PUT /api/admin/activities/{id}/closure` | `null` | `B1-04` |
-| `PATCH /api/admin/activities/{id}/closure/finalize` | **solo llama a `closeAllForActivity`**, que es de BE3 · no cierra el `ActivityClosure` ni sella `closedAt`, y devuelve `null` | `B1-04` |
+| Endpoint                                            | Qué hace hoy                                                                                                                  | Pendiente de |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| `GET /api/closures/{id}/certificate`                | devuelve `null` · no comprueba ni propiedad ni que la actividad esté cerrada                                                  | `B1-06`      |
+| `GET /api/admin/activities/pending-closure`         | página vacía                                                                                                                  | `B1-04`      |
+| `GET /api/admin/activities/{id}/closure`            | `null`                                                                                                                        | `B1-04`      |
+| `PUT /api/admin/activities/{id}/closure`            | `null`                                                                                                                        | `B1-04`      |
+| `PATCH /api/admin/activities/{id}/closure/finalize` | **solo llama a `closeAllForActivity`**, que es de BE3 · no cierra el `ActivityClosure` ni sella `closedAt`, y devuelve `null` | `B1-04`      |
 
 Ese último explica un comportamiento que despista al probar: `finalize` responde con cuerpo vacío y deja el `activity_closure` en `DRAFT`, **pero las inscripciones sí pasan a `CLOSED` y sale el correo del certificado**, porque esa parte es la firma cruzada que aporta BE3.
 
@@ -37,15 +37,15 @@ En `POST /api/closures` hay además un `TODO B1-03 · BE2`: la evidencia se vali
 
 ### Sin empezar · 30 endpoints
 
-| Área | Dueña |
-|---|---|
-| Catálogo · `GET /api/activities`, `GET /api/activities/{id}` | BE2 · `B2-07` |
-| Actividades · listar, ver, editar, cancelar, aprobar, devolver, pendientes, imágenes | BE2 |
-| Propuestas · públicas y bandeja de administración | BE2 · `B2-07` |
-| Rol entidad · todo `/api/org/*` | BE2 |
-| Verificación de correo · `verify`, `resend-verification` | BE1 · `B1-15`, `B1-16` |
-| Cuentas de entidad · `/api/admin/org-accounts/*` | BE1 |
-| Dashboard y exportaciones · `/api/dashboard/*` | BE1 |
+| Área                                                                                 | Dueña                  |
+| ------------------------------------------------------------------------------------ | ---------------------- |
+| Catálogo · `GET /api/activities`, `GET /api/activities/{id}`                         | BE2 · `B2-07`          |
+| Actividades · listar, ver, editar, cancelar, aprobar, devolver, pendientes, imágenes | BE2                    |
+| Propuestas · públicas y bandeja de administración                                    | BE2 · `B2-07`          |
+| Rol entidad · todo `/api/org/*`                                                      | BE2                    |
+| Verificación de correo · `verify`, `resend-verification`                             | BE1 · `B1-15`, `B1-16` |
+| Cuentas de entidad · `/api/admin/org-accounts/*`                                     | BE1                    |
+| Dashboard y exportaciones · `/api/dashboard/*`                                       | BE1                    |
 
 ---
 
@@ -55,27 +55,27 @@ Se confunden con facilidad porque en el frontend viven en la misma carpeta y en 
 
 **Cierre de participación · lo rellena el empleado · `B1-03`**
 
-| Endpoint | Pantalla |
-|---|---|
-| `POST /api/closures` | `ClosureFormPage` |
-| `GET /api/closures/{id}` | `ClosureFormPage` |
+| Endpoint                             | Pantalla          |
+| ------------------------------------ | ----------------- |
+| `POST /api/closures`                 | `ClosureFormPage` |
+| `GET /api/closures/{id}`             | `ClosureFormPage` |
 | `GET /api/closures/{id}/certificate` | `CertificatePage` |
 
 **Cierre de actividad · lo rellena la Fundación · `B1-04`**
 
-| Endpoint | Pantalla |
-|---|---|
-| `GET /api/admin/activities/pending-closure` | `ReportsQueuePage` |
-| `GET` y `PUT /api/admin/activities/{id}/closure` | `ActivityClosurePage` |
+| Endpoint                                            | Pantalla              |
+| --------------------------------------------------- | --------------------- |
+| `GET /api/admin/activities/pending-closure`         | `ReportsQueuePage`    |
+| `GET` y `PUT /api/admin/activities/{id}/closure`    | `ActivityClosurePage` |
 | `PATCH /api/admin/activities/{id}/closure/finalize` | `ActivityClosurePage` |
 
 **Y están encadenados a propósito.** El certificado exige las dos cosas: que el empleado haya rellenado su cierre —sin él no existe `closureId`, así que no hay ni URL que pedir— y que la Fundación haya cerrado la actividad. Es lo que incentiva a completar los cierres, que son los que alimentan los dos dashboards. En «Mis voluntariados» esa doble condición ya está pintada tal cual manda el contrato:
 
-| `closureId` | `activityClosed` | Botón |
-|---|---|---|
-| `null` | `false` | «Cerrar tu participación» |
-| tiene valor | `false` | «Ver mi cierre» |
-| tiene valor | `true` | «Descargar certificado» |
+| `closureId` | `activityClosed` | Botón                     |
+| ----------- | ---------------- | ------------------------- |
+| `null`      | `false`          | «Cerrar tu participación» |
+| tiene valor | `false`          | «Ver mi cierre»           |
+| tiene valor | `true`           | «Descargar certificado»   |
 
 Lo que falta es que el backend **imponga** esa regla: hoy `getCertificate` devuelve `null` sin comprobar nada.
 
@@ -85,14 +85,14 @@ Lo que falta es que el backend **imponga** esa regla: hoy `getCertificate` devue
 
 En el frontend el login ya autentica de verdad. El interruptor de mocks vive en `src/api/mocks.js` y se apaga por configuración módulo a módulo: `VITE_USE_MOCKS=false` tumba todos, y `VITE_USE_<MODULO>_MOCKS` manda sobre esa global. Además, los módulos de la lista `INTEGRATED` —hoy `AUTH` y `REGISTRATION`— van al backend real aunque la global esté encendida, para que reescribir un `.env` no pueda remockear lo ya integrado.
 
-| Pantalla | Endpoints | ¿Hoy? |
-|---|---|---|
-| **«Mis voluntariados»** · `MyVolunteeringPage` | `/registrations/me` · `cancel` | **sí** |
-| **Tablero de inscripciones** · `RegistrationsTablePage` | `/admin/registrations` · `/counts` · `accept` · `reject` · `cancel` | **sí** · el filtro `activityId` es opcional |
-| Cierre de participación · `ClosureFormPage` | `POST /api/closures` | parcial · la evidencia no se guarda |
-| Certificado · `CertificatePage` | `/closures/{id}/certificate` | **no** · `B1-06` |
-| Cola de cierres y cierre de actividad · `ReportsQueuePage`, `ActivityClosurePage` | `/admin/activities/*/closure*` | **no** · `B1-04` |
-| Catálogo, ficha, propuestas, dashboard, rol entidad | — | **no** |
+| Pantalla                                                                          | Endpoints                                                           | ¿Hoy?                                       |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------- |
+| **«Mis voluntariados»** · `MyVolunteeringPage`                                    | `/registrations/me` · `cancel`                                      | **sí**                                      |
+| **Tablero de inscripciones** · `RegistrationsTablePage`                           | `/admin/registrations` · `/counts` · `accept` · `reject` · `cancel` | **sí** · el filtro `activityId` es opcional |
+| Cierre de participación · `ClosureFormPage`                                       | `POST /api/closures`                                                | parcial · la evidencia no se guarda         |
+| Certificado · `CertificatePage`                                                   | `/closures/{id}/certificate`                                        | **no** · `B1-06`                            |
+| Cola de cierres y cierre de actividad · `ReportsQueuePage`, `ActivityClosurePage` | `/admin/activities/*/closure*`                                      | **no** · `B1-04`                            |
+| Catálogo, ficha, propuestas, dashboard, rol entidad                               | —                                                                   | **no**                                      |
 
 Con las dos primeras se cuenta de punta a punta el momento central de la demo: alguien se queda en cola, la administradora da de baja a otra persona, la plaza asciende sola y salen los correos.
 
@@ -135,11 +135,11 @@ El frontend usa `startDate < new Date()`, así que **el mismo día de inicio ya 
 
 Entrando como **`ana.gil@verisure.es`**, que en la semilla tiene tres inscripciones y cubre casi todos los casos:
 
-| Inscripción | Estado | Qué debe verse |
-|---|---|---|
-| «Acompañamiento a mayores» | `CLOSED`, con cierre | En cerradas · botón de certificado, que hoy responde vacío |
-| «Alfabetización digital» | `PENDING_CLOSURE`, sin cierre | «Cerrar tu participación» |
-| «Visitas a residencias» | `CONFIRMED` | Botón de cancelar según la fecha |
+| Inscripción                | Estado                        | Qué debe verse                                             |
+| -------------------------- | ----------------------------- | ---------------------------------------------------------- |
+| «Acompañamiento a mayores» | `CLOSED`, con cierre          | En cerradas · botón de certificado, que hoy responde vacío |
+| «Alfabetización digital»   | `PENDING_CLOSURE`, sin cierre | «Cerrar tu participación»                                  |
+| «Visitas a residencias»    | `CONFIRMED`                   | Botón de cancelar según la fecha                           |
 
 Y dos comprobaciones: cancelar una confirmada recarga la lista y manda el correo «Ha quedado una plaza libre y es tuya» a quien asciende; cancelar una ya empezada devuelve `DEADLINE_PASSED` y la pantalla lo enseña sin romperse.
 
@@ -151,15 +151,15 @@ Y dos comprobaciones: cancelar una confirmada recarga la lista y manda el correo
 
 **La tarjeta de actividad**, cuando BE2 entregue el catálogo:
 
-| Mock de frontend | Backend · contrato |
-|---|---|
-| `capacity` | `spots` |
-| `organizationName` | `partnerName` |
-| `image` | `imageUrl` |
-| `description` | no viaja en la tarjeta · sí en el detalle |
-| `registeredCount` | previsto en `B2-07` como «plazas ocupadas», pero **sin nombre en el contrato** |
-| `favoriteCount` | **no se sirve al empleado** |
-| — | faltan `startDate`, `endDate`, `hours` |
+| Mock de frontend   | Backend · contrato                                                             |
+| ------------------ | ------------------------------------------------------------------------------ |
+| `capacity`         | `spots`                                                                        |
+| `organizationName` | `partnerName`                                                                  |
+| `image`            | `imageUrl`                                                                     |
+| `description`      | no viaja en la tarjeta · sí en el detalle                                      |
+| `registeredCount`  | previsto en `B2-07` como «plazas ocupadas», pero **sin nombre en el contrato** |
+| `favoriteCount`    | **no se sirve al empleado**                                                    |
+| —                  | faltan `startDate`, `endDate`, `hours`                                         |
 
 `favoriteCount` no llega al catálogo a propósito: enseñar «3 me gusta» hace que una actividad parezca poco interesante y condiciona a quien la mira. El recuento existe solo para el dashboard y el listado de administración. En catálogo y ficha el corazón va marcado o sin marcar, con **`favoritedByMe`**.
 

@@ -37,9 +37,11 @@ describe('AcceptProposalButton', () => {
     const user = userEvent.setup();
     const onAccepted = vi.fn();
     let resolveRequest;
-    acceptProposal.mockReturnValue(new Promise((resolve) => {
-      resolveRequest = resolve;
-    }));
+    acceptProposal.mockReturnValue(
+      new Promise((resolve) => {
+        resolveRequest = resolve;
+      }),
+    );
     renderAction({ onAccepted });
 
     const button = screen.getByRole('button', { name: 'Aceptar propuesta' });
@@ -57,9 +59,7 @@ describe('AcceptProposalButton', () => {
     });
 
     expect(onAccepted).toHaveBeenCalledWith({ id: 42, status: 'DRAFT' });
-    expect(
-      screen.getByRole('heading', { name: 'Actividad en borrador 42' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Actividad en borrador 42' })).toBeInTheDocument();
   });
 
   it('explica el conflicto 409 y no intenta abrir un borrador', async () => {
@@ -72,9 +72,7 @@ describe('AcceptProposalButton', () => {
 
     await user.click(screen.getByRole('button', { name: 'Aceptar propuesta' }));
 
-    expect(
-      await screen.findByText(/ya ha sido aceptada o rechazada/i),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/ya ha sido aceptada o rechazada/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Aceptar propuesta' })).toBeDisabled();
     expect(acceptProposal).toHaveBeenCalledTimes(1);
     expect(screen.queryByText(/actividad en borrador/i)).not.toBeInTheDocument();

@@ -2,7 +2,10 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { DASHBOARD_RESPONSE, makeDashboardResponse } from '../../../shared/testing/fixtures/dashboard';
+import {
+  DASHBOARD_RESPONSE,
+  makeDashboardResponse,
+} from '../../../shared/testing/fixtures/dashboard';
 import DashboardPage from './DashboardPage';
 
 const api = vi.hoisted(() => ({
@@ -21,9 +24,16 @@ function DashboardHarness() {
   return (
     <>
       <DashboardPage />
-      <output data-testid="location">{location.pathname}{location.search}</output>
-      <button type="button" onClick={() => navigate(-1)}>Atrás en historial</button>
-      <button type="button" onClick={() => navigate(1)}>Adelante en historial</button>
+      <output data-testid="location">
+        {location.pathname}
+        {location.search}
+      </output>
+      <button type="button" onClick={() => navigate(-1)}>
+        Atrás en historial
+      </button>
+      <button type="button" onClick={() => navigate(1)}>
+        Adelante en historial
+      </button>
     </>
   );
 }
@@ -47,7 +57,9 @@ describe('DashboardPage', () => {
   it('muestra impacto, eficacia, distribución y demanda con la respuesta del contrato', async () => {
     renderDashboard(['/dashboard?year=2026&line=desoledad']);
 
-    expect(await screen.findByRole('list', { name: 'Indicadores principales de impacto' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('list', { name: 'Indicadores principales de impacto' }),
+    ).toBeInTheDocument();
     expect(api.getDashboard).toHaveBeenCalledWith(
       { year: 2026, line: 'desoledad' },
       { signal: expect.any(AbortSignal) },
@@ -58,11 +70,13 @@ describe('DashboardPage', () => {
     expect(screen.getByRole('heading', { name: 'Eficacia' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Distribución' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Demanda' })).toBeInTheDocument();
-    expect(screen.getByRole('progressbar', { name: 'Participación de la plantilla' }))
-      .toHaveAttribute('aria-valuenow', '68');
+    expect(
+      screen.getByRole('progressbar', { name: 'Participación de la plantilla' }),
+    ).toHaveAttribute('aria-valuenow', '68');
     expect(screen.getByRole('img', { name: /Participación por departamento/ })).toBeInTheDocument();
-    expect(screen.getByRole('region', { name: 'Tabla de participación por departamento' }))
-      .toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: 'Tabla de participación por departamento' }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /Participación por organización/ })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /Participación por línea/ })).toBeInTheDocument();
 
@@ -83,24 +97,29 @@ describe('DashboardPage', () => {
     await user.selectOptions(screen.getByRole('combobox', { name: 'Línea de acción' }), 'educar');
     await user.click(screen.getByRole('button', { name: 'Aplicar filtros' }));
 
-    await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/dashboard?year=2026&line=educar'));
-    await waitFor(() => expect(api.getDashboard).toHaveBeenLastCalledWith(
-      { year: 2026, line: 'educar' },
-      { signal: expect.any(AbortSignal) },
-    ));
+    await waitFor(() =>
+      expect(screen.getByTestId('location')).toHaveTextContent('/dashboard?year=2026&line=educar'),
+    );
+    await waitFor(() =>
+      expect(api.getDashboard).toHaveBeenLastCalledWith(
+        { year: 2026, line: 'educar' },
+        { signal: expect.any(AbortSignal) },
+      ),
+    );
     expect(screen.getByText('Año: 2026')).toBeInTheDocument();
     expect(screen.getByText('Línea: Educar para proteger')).toBeInTheDocument();
 
-    const participationsCard = screen.getByRole('heading', { name: 'Participaciones' }).closest('article');
+    const participationsCard = screen
+      .getByRole('heading', { name: 'Participaciones' })
+      .closest('article');
     await user.click(within(participationsCard).getByRole('button', { name: 'Descargar CSV' }));
     expect(api.exportParticipationsCsv).toHaveBeenCalledWith({ year: 2026, line: 'educar' });
 
     await user.click(screen.getByRole('button', { name: 'Limpiar filtros' }));
     await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/dashboard'));
-    await waitFor(() => expect(api.getDashboard).toHaveBeenLastCalledWith(
-      {},
-      { signal: expect.any(AbortSignal) },
-    ));
+    await waitFor(() =>
+      expect(api.getDashboard).toHaveBeenLastCalledWith({}, { signal: expect.any(AbortSignal) }),
+    );
     expect(screen.getByText(/Filtros activos:/).parentElement).toHaveTextContent('ninguno');
   });
 
@@ -142,9 +161,11 @@ describe('DashboardPage', () => {
     const user = userEvent.setup();
     let resolveInitialRequest;
     api.getDashboard
-      .mockReturnValueOnce(new Promise((resolve) => {
-        resolveInitialRequest = resolve;
-      }))
+      .mockReturnValueOnce(
+        new Promise((resolve) => {
+          resolveInitialRequest = resolve;
+        }),
+      )
       .mockResolvedValueOnce({
         data: makeDashboardResponse({ activeVolunteers: 999 }),
       });
@@ -162,14 +183,18 @@ describe('DashboardPage', () => {
   it('explica el vacío general y el vacío de cada serie', async () => {
     api.getDashboard.mockResolvedValueOnce({ data: {} });
     const { unmount } = renderDashboard();
-    expect(await screen.findByRole('heading', { name: 'Todavía no hay datos de impacto' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Todavía no hay datos de impacto' }),
+    ).toBeInTheDocument();
     unmount();
 
     api.getDashboard.mockResolvedValueOnce({
       data: makeDashboardResponse({ participationByDepartment: [], favoriteRanking: [] }),
     });
     renderDashboard();
-    expect(await screen.findByRole('heading', { name: 'Sin participación por departamento' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Sin participación por departamento' }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Todavía no hay un ranking' })).toBeInTheDocument();
   });
 
@@ -186,6 +211,8 @@ describe('DashboardPage', () => {
     renderDashboard();
     expect(await screen.findByRole('alert')).toHaveTextContent('Error temporal.');
     await user.click(screen.getByRole('button', { name: 'Reintentar' }));
-    expect(await screen.findByRole('list', { name: 'Indicadores principales de impacto' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('list', { name: 'Indicadores principales de impacto' }),
+    ).toBeInTheDocument();
   });
 });

@@ -27,16 +27,34 @@ describe('PendingClosurePage', () => {
 
     renderPage();
 
-    expect(screen.getByRole('status', { name: /cargando actividades pendientes de cierre/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('status', { name: /cargando actividades pendientes de cierre/i }),
+    ).toBeInTheDocument();
     expect(getPendingActivityClosures).toHaveBeenCalledWith({ page: 0 });
   });
 
   it('renders the queue from the real ActivityClosureRow DTO without reordering', async () => {
     const summaries = [
-      makeActivitySummary({ activityId: 41, title: 'Mentoría laboral', partnerName: 'Fundación Solitaria', startDate: '2026-07-01', endDate: '2026-07-30', hours: 12 }),
-      makeActivitySummary({ activityId: 42, title: 'Acompañamiento a mayores', partnerName: null, startDate: '2026-08-14', endDate: '2026-08-14', hours: 8 }),
+      makeActivitySummary({
+        activityId: 41,
+        title: 'Mentoría laboral',
+        partnerName: 'Fundación Solitaria',
+        startDate: '2026-07-01',
+        endDate: '2026-07-30',
+        hours: 12,
+      }),
+      makeActivitySummary({
+        activityId: 42,
+        title: 'Acompañamiento a mayores',
+        partnerName: null,
+        startDate: '2026-08-14',
+        endDate: '2026-08-14',
+        hours: 8,
+      }),
     ];
-    getPendingActivityClosures.mockResolvedValue({ data: makePage(summaries, { totalElements: 2 }) });
+    getPendingActivityClosures.mockResolvedValue({
+      data: makePage(summaries, { totalElements: 2 }),
+    });
 
     renderPage();
 
@@ -60,16 +78,22 @@ describe('PendingClosurePage', () => {
 
     renderPage();
 
-    expect(await screen.findByRole('heading', { name: /no hay actividades pendientes de cierre/i })).toBeInTheDocument();
-    expect(screen.getByText(/todas las actividades finalizadas están cerradas/i)).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /no hay actividades pendientes de cierre/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/todas las actividades finalizadas están cerradas/i),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /revisar cierre/i })).not.toBeInTheDocument();
   });
 
   it('paginates following the backend page order without reordering', async () => {
-    const pageA = Array.from({ length: 10 }, (_, index) => makeActivitySummary({
-      activityId: 100 + index,
-      title: `Actividad ${100 + index}`,
-    }));
+    const pageA = Array.from({ length: 10 }, (_, index) =>
+      makeActivitySummary({
+        activityId: 100 + index,
+        title: `Actividad ${100 + index}`,
+      }),
+    );
     const pageB = [makeActivitySummary({ activityId: 200, title: 'Actividad página dos' })];
     getPendingActivityClosures
       .mockResolvedValueOnce({ data: makePage(pageA, { totalElements: 11 }) })
@@ -89,11 +113,13 @@ describe('PendingClosurePage', () => {
   });
 
   it('renders an explicit forbidden state when the API returns 403', async () => {
-    getPendingActivityClosures.mockRejectedValue(new ApiError({
-      message: 'No tienes permiso para realizar esta acción.',
-      status: 403,
-      code: 'FORBIDDEN',
-    }));
+    getPendingActivityClosures.mockRejectedValue(
+      new ApiError({
+        message: 'No tienes permiso para realizar esta acción.',
+        status: 403,
+        code: 'FORBIDDEN',
+      }),
+    );
 
     renderPage();
 
@@ -112,7 +138,9 @@ describe('PendingClosurePage', () => {
 
     renderPage();
 
-    expect(await screen.findByRole('heading', { name: /no hemos podido cargar las actividades/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /no hemos podido cargar las actividades/i }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent(/ha ocurrido un error en el servidor/i);
 
     await user.click(screen.getByRole('button', { name: /reintentar/i }));

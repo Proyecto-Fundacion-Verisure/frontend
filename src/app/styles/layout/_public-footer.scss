@@ -32,7 +32,7 @@
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
     color: $color-on-inverse;
-    letter-spacing: .02em;
+    letter-spacing: 0.02em;
   }
 
   &__legal-text {
@@ -80,8 +80,16 @@
   }
 
   @media (max-width: 38rem) {
-    &__container { padding-inline: map.get($spacing, '4'); }
-    &__links { gap: 0; }
-    &__link { align-items: center; display: inline-flex; min-height: 2.75rem; }
+    &__container {
+      padding-inline: map.get($spacing, '4');
+    }
+    &__links {
+      gap: 0;
+    }
+    &__link {
+      align-items: center;
+      display: inline-flex;
+      min-height: 2.75rem;
+    }
   }
 }

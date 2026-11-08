@@ -188,7 +188,9 @@ describe('registration and upload mocks', () => {
   });
 
   it('limits cover images to JPG/PNG and 5 MB', async () => {
-    expect((await mockUploadCover(makeImageFile('cover.jpg', 1024, 'image/jpeg'))).status).toBe(201);
+    expect((await mockUploadCover(makeImageFile('cover.jpg', 1024, 'image/jpeg'))).status).toBe(
+      201,
+    );
     await expect(
       mockUploadCover(makeImageFile('big.jpg', MAX_IMAGE_BYTES + 1, 'image/jpeg')),
     ).rejects.toMatchObject({ status: 413 });
@@ -199,21 +201,31 @@ describe('registration and upload mocks', () => {
 
   it('limits evidence to PDF/JPG/PNG and 10 MB and requires consent', async () => {
     const request = makeCreateClosureRequest({ evidenceConsent: true });
-    expect((await mockUploadEvidence({
-      request,
-      evidence: makeEvidenceFile('evidence.pdf', 1024, 'application/pdf'),
-    })).status).toBe(201);
-    await expect(mockUploadEvidence({
-      request,
-      evidence: makeEvidenceFile('big.pdf', MAX_EVIDENCE_BYTES + 1, 'application/pdf'),
-    })).rejects.toMatchObject({ status: 413 });
-    await expect(mockUploadEvidence({
-      request,
-      evidence: makeEvidenceFile('bad.txt', 1024, 'text/plain'),
-    })).rejects.toMatchObject({ status: 415 });
-    await expect(mockUploadEvidence({
-      request: makeCreateClosureRequest({ evidenceConsent: false }),
-      evidence: makeEvidenceFile('evidence.pdf', 1024, 'application/pdf'),
-    })).rejects.toMatchObject({ status: 400, code: 'VALIDATION_ERROR' });
+    expect(
+      (
+        await mockUploadEvidence({
+          request,
+          evidence: makeEvidenceFile('evidence.pdf', 1024, 'application/pdf'),
+        })
+      ).status,
+    ).toBe(201);
+    await expect(
+      mockUploadEvidence({
+        request,
+        evidence: makeEvidenceFile('big.pdf', MAX_EVIDENCE_BYTES + 1, 'application/pdf'),
+      }),
+    ).rejects.toMatchObject({ status: 413 });
+    await expect(
+      mockUploadEvidence({
+        request,
+        evidence: makeEvidenceFile('bad.txt', 1024, 'text/plain'),
+      }),
+    ).rejects.toMatchObject({ status: 415 });
+    await expect(
+      mockUploadEvidence({
+        request: makeCreateClosureRequest({ evidenceConsent: false }),
+        evidence: makeEvidenceFile('evidence.pdf', 1024, 'application/pdf'),
+      }),
+    ).rejects.toMatchObject({ status: 400, code: 'VALIDATION_ERROR' });
   });
 });

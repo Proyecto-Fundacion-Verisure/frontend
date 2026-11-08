@@ -5,7 +5,11 @@ import { describe, expect, it } from 'vitest';
 import { AuthContext } from '../../auth';
 import NotFoundPage from './NotFoundPage';
 
-function renderNotFound({ isAuthenticated = false, user = null, initialEntry = '/no-existe' } = {}) {
+function renderNotFound({
+  isAuthenticated = false,
+  user = null,
+  initialEntry = '/no-existe',
+} = {}) {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
       <AuthContext.Provider value={{ isAuthenticated, user }}>
@@ -20,8 +24,12 @@ function renderNotFound({ isAuthenticated = false, user = null, initialEntry = '
 describe('NotFoundPage', () => {
   it('muestra mensaje y enlace a la portada para anónimo', async () => {
     renderNotFound();
-    expect(screen.getByRole('heading', { level: 1, name: /404 — página no encontrada/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 2, name: /página no encontrada/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: /404 — página no encontrada/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 2, name: /página no encontrada/i }),
+    ).toBeInTheDocument();
     expect(screen.getByText(/la ruta que has solicitado no existe/i)).toBeInTheDocument();
     const link = screen.getByRole('link', { name: /volver a la portada/i });
     expect(link).toHaveAttribute('href', '/');
@@ -30,10 +38,16 @@ describe('NotFoundPage', () => {
 
   it('enlace es role-aware para EMPLOYEE y ADMIN', () => {
     const { unmount } = renderNotFound({ isAuthenticated: true, user: { role: 'EMPLOYEE' } });
-    expect(screen.getByRole('link', { name: /volver al inicio/i })).toHaveAttribute('href', '/activities');
+    expect(screen.getByRole('link', { name: /volver al inicio/i })).toHaveAttribute(
+      'href',
+      '/activities',
+    );
     unmount();
     renderNotFound({ isAuthenticated: true, user: { role: 'ADMIN' } });
-    expect(screen.getByRole('link', { name: /volver al inicio/i })).toHaveAttribute('href', '/dashboard');
+    expect(screen.getByRole('link', { name: /volver al inicio/i })).toHaveAttribute(
+      'href',
+      '/dashboard',
+    );
   });
 
   it('es accesible y funciona con teclado', async () => {
@@ -57,6 +71,8 @@ describe('NotFoundPage', () => {
         </AuthContext.Provider>
       </MemoryRouter>,
     );
-    expect(screen.getByRole('heading', { level: 2, name: /página no encontrada/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 2, name: /página no encontrada/i }),
+    ).toBeInTheDocument();
   });
 });

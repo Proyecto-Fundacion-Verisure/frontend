@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  approveOrganization,
-  getPendingOrganizations,
-  rejectOrganization,
-} from '../api/orgApi';
+import { approveOrganization, getPendingOrganizations, rejectOrganization } from '../api/orgApi';
 import {
   EMPTY_PENDING_ORGANIZATIONS,
   getPendingCountLabel,
@@ -57,12 +53,13 @@ export default function usePendingOrganizations() {
     };
   }, [page]);
 
-  const openConfirmation = (organization, action) => setConfirmation({
-    isOpen: true,
-    organizationId: organization.id,
-    organizationName: organization.organizationName,
-    action,
-  });
+  const openConfirmation = (organization, action) =>
+    setConfirmation({
+      isOpen: true,
+      organizationId: organization.id,
+      organizationName: organization.organizationName,
+      action,
+    });
 
   const closeConfirmation = () => setConfirmation(EMPTY_CONFIRMATION);
 

@@ -2,10 +2,7 @@ import { Card } from '../../../shared/ui';
 import { formatDashboardNumber } from '../../../shared/lib/formatNumber';
 
 export default function DashboardRanking({ items = [] }) {
-  const highestCount = Math.max(
-    ...items.map(({ favoriteCount }) => Number(favoriteCount) || 0),
-    0,
-  );
+  const highestCount = Math.max(...items.map(({ favoriteCount }) => Number(favoriteCount) || 0), 0);
 
   return (
     <Card as="div" className="dashboard-ranking">
@@ -44,4 +41,3 @@ export default function DashboardRanking({ items = [] }) {
     </Card>
   );
 }
-

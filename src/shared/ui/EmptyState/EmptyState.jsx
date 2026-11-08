@@ -10,7 +10,11 @@ export default function EmptyState({
 }) {
   return (
     <section className={`empty-state ${className}`.trim()} {...props}>
-      {icon && <div className="empty-state__icon" aria-hidden="true">{icon}</div>}
+      {icon && (
+        <div className="empty-state__icon" aria-hidden="true">
+          {icon}
+        </div>
+      )}
       <Title className="empty-state__title">{title}</Title>
       {description && <p className="empty-state__description">{description}</p>}
       {children}

@@ -90,9 +90,5 @@ export default function buildRegistrationColumns({
     render: (registration) => renderActions(registration, actions),
   };
 
-  return [
-    ...(isGlobal ? [ACTIVITY_COLUMN] : []),
-    ...BASE_COLUMNS,
-    actionColumn,
-  ];
+  return [...(isGlobal ? [ACTIVITY_COLUMN] : []), ...BASE_COLUMNS, actionColumn];
 }

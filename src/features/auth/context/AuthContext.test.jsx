@@ -18,10 +18,15 @@ function SessionHarness() {
   return (
     <div>
       <span>{isAuthenticated ? user.name : 'anonymous'}</span>
-      <button type="button" onClick={() => login({ email: 'ana@example.com', password: 'secret' }).catch(() => {})}>
+      <button
+        type="button"
+        onClick={() => login({ email: 'ana@example.com', password: 'secret' }).catch(() => {})}
+      >
         Login
       </button>
-      <button type="button" onClick={logout}>Logout</button>
+      <button type="button" onClick={logout}>
+        Logout
+      </button>
     </div>
   );
 }

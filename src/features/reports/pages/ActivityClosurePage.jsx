@@ -20,15 +20,12 @@ const deviationOf = (expected, reported) => {
   return ((current - base) / base) * 100;
 };
 
-const formatDeviation = (value) => (
-  value === null ? '—' : `${value > 0 ? '+' : ''}${Math.round(value)} %`
-);
+const formatDeviation = (value) =>
+  value === null ? '—' : `${value > 0 ? '+' : ''}${Math.round(value)} %`;
 
 const deviationClass = (value) => {
   if (value === null || value === 0) return 'closure-form__deviation--neutral';
-  return value < 0
-    ? 'closure-form__deviation--negative'
-    : 'closure-form__deviation--positive';
+  return value < 0 ? 'closure-form__deviation--negative' : 'closure-form__deviation--positive';
 };
 
 export default function ActivityClosurePage() {
@@ -69,15 +66,18 @@ export default function ActivityClosurePage() {
     setValues((current) => ({ ...current, [name]: value }));
   };
 
-  const ratingError = values.collaborationRating
-    && (Number(values.collaborationRating) < 1 || Number(values.collaborationRating) > 5)
-    ? 'La valoración debe estar entre 1 y 5.'
-    : '';
+  const ratingError =
+    values.collaborationRating &&
+    (Number(values.collaborationRating) < 1 || Number(values.collaborationRating) > 5)
+      ? 'La valoración debe estar entre 1 y 5.'
+      : '';
 
   const payload = () => {
     if (ratingError) return null;
     return {
-      collaborationRating: values.collaborationRating ? Number(values.collaborationRating) : undefined,
+      collaborationRating: values.collaborationRating
+        ? Number(values.collaborationRating)
+        : undefined,
       closingNotes: values.closingNotes.trim() || undefined,
       lessonsLearned: values.lessonsLearned.trim() || undefined,
     };
@@ -147,7 +147,10 @@ export default function ActivityClosurePage() {
         </h1>
         <p role="alert">{state.error?.message || 'Inténtalo de nuevo.'}</p>
         {!isForbidden && !isNotFound && <Button onClick={load}>Reintentar</Button>}
-        <Link className="button button--secondary button--medium" to="/admin/activities/pending-closure">
+        <Link
+          className="button button--secondary button--medium"
+          to="/admin/activities/pending-closure"
+        >
           Volver a actividades por cerrar
         </Link>
       </section>
@@ -258,7 +261,11 @@ export default function ActivityClosurePage() {
         />
       </div>
 
-      {state.error && <p className="activity-form__error" role="alert">{state.error?.message || 'No se pudo completar la operación.'}</p>}
+      {state.error && (
+        <p className="activity-form__error" role="alert">
+          {state.error?.message || 'No se pudo completar la operación.'}
+        </p>
+      )}
 
       {!isClosed && (
         <div className="closure-form__actions">
@@ -270,9 +277,7 @@ export default function ActivityClosurePage() {
           >
             Guardar borrador
           </Button>
-          <Button onClick={openConfirm}>
-            Finalizar cierre
-          </Button>
+          <Button onClick={openConfirm}>Finalizar cierre</Button>
         </div>
       )}
 
@@ -282,22 +287,22 @@ export default function ActivityClosurePage() {
         closeDisabled={finalizing}
         title="Finalizar cierre de actividad"
         description="Se guardará el borrador y se cerrará la actividad de forma definitiva. Esta acción no se puede deshacer."
-        footer={(
+        footer={
           <>
             <Button variant="secondary" disabled={finalizing} onClick={closeConfirm}>
               Volver
             </Button>
-            <Button
-              isLoading={finalizing}
-              loadingLabel="Finalizando…"
-              onClick={confirmFinalize}
-            >
+            <Button isLoading={finalizing} loadingLabel="Finalizando…" onClick={confirmFinalize}>
               Confirmar cierre
             </Button>
           </>
-        )}
+        }
       >
-        {finalizeError && <p className="activity-form__error" role="alert">{finalizeError}</p>}
+        {finalizeError && (
+          <p className="activity-form__error" role="alert">
+            {finalizeError}
+          </p>
+        )}
       </Modal>
     </section>
   );

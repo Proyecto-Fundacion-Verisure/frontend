@@ -1,41 +1,150 @@
 @use '../../../shared/styles/abstracts' as *;
 
-.org-register-page { margin: 0 auto; max-width: $content-max-width; padding: space('6') space('6') space('12'); }
-.org-register-page__intro { max-width: 52rem; }
-.org-register-page__back { @include back-link; margin-bottom: space('3'); }
-.org-register-page__eyebrow { @include eyebrow; }
-.org-register-page h1 { margin: 0; }
-.org-register-page__intro > p:last-child { color: $color-muted; margin: space('1') 0 0; }
-.org-register-page__layout { align-items: start; display: grid; gap: space('8'); grid-template-columns: minmax(0, 1.25fr) minmax(18rem, .75fr); margin-top: space('6'); }
+.org-register-page {
+  margin: 0 auto;
+  max-width: $content-max-width;
+  padding: space('6') space('6') space('12');
+}
+.org-register-page__intro {
+  max-width: 52rem;
+}
+.org-register-page__back {
+  @include back-link;
+  margin-bottom: space('3');
+}
+.org-register-page__eyebrow {
+  @include eyebrow;
+}
+.org-register-page h1 {
+  margin: 0;
+}
+.org-register-page__intro > p:last-child {
+  color: $color-muted;
+  margin: space('1') 0 0;
+}
+.org-register-page__layout {
+  align-items: start;
+  display: grid;
+  gap: space('8');
+  grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+  margin-top: space('6');
+}
 
-.org-register-form { background: $color-surface; border: 1px solid $color-border; border-radius: $radius-lg; box-shadow: $shadow-sm; padding: clamp(space('5'), 4vw, space('8')); }
-.org-register-form__grid { display: grid; gap: space('5') space('4'); grid-template-columns: repeat(2, 1fr); }
-.org-register-form > * + * { margin-top: space('5'); }
-.org-register-form__consent { align-items: flex-start; background: $color-background; border: 1px solid $color-border; border-radius: $radius-md; color: $color-muted; display: flex; font-size: $font-size-sm; gap: space('3'); line-height: 1.45; margin-top: space('5'); padding: space('4'); }
-.org-register-form__consent input { flex: 0 0 auto; height: 1rem; margin-top: .15rem; width: 1rem; }
-.org-register-form__consent b { color: $color-danger; }
-.org-register-form__consent--error { border-color: $color-danger; }
-.org-register-form__error { color: $color-danger; font-size: $font-size-sm; margin: space('2') 0 0; }
-.org-register-form__footer { align-items: center; border-top: 1px solid $color-border; display: flex; gap: space('4'); justify-content: space-between; margin-top: space('5'); padding-top: space('5'); }
-.org-register-form__footer small { color: $color-muted; }
+.org-register-form {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  padding: clamp(space('5'), 4vw, space('8'));
+}
+.org-register-form__grid {
+  display: grid;
+  gap: space('5') space('4');
+  grid-template-columns: repeat(2, 1fr);
+}
+.org-register-form > * + * {
+  margin-top: space('5');
+}
+.org-register-form__consent {
+  align-items: flex-start;
+  background: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  color: $color-muted;
+  display: flex;
+  font-size: $font-size-sm;
+  gap: space('3');
+  line-height: 1.45;
+  margin-top: space('5');
+  padding: space('4');
+}
+.org-register-form__consent input {
+  flex: 0 0 auto;
+  height: 1rem;
+  margin-top: 0.15rem;
+  width: 1rem;
+}
+.org-register-form__consent b {
+  color: $color-danger;
+}
+.org-register-form__consent--error {
+  border-color: $color-danger;
+}
+.org-register-form__error {
+  color: $color-danger;
+  font-size: $font-size-sm;
+  margin: space('2') 0 0;
+}
+.org-register-form__footer {
+  align-items: center;
+  border-top: 1px solid $color-border;
+  display: flex;
+  gap: space('4');
+  justify-content: space-between;
+  margin-top: space('5');
+  padding-top: space('5');
+}
+.org-register-form__footer small {
+  color: $color-muted;
+}
 
-.org-register-aside { padding-top: space('4'); }
-.org-register-aside > p { color: $color-muted; font-size: $font-size-sm; line-height: 1.55; margin: 0 0 space('4'); }
-.org-register-aside a { color: $color-coral-dark; font-weight: $font-weight-semibold; }
-.org-register-aside__alt { background: $color-surface-hover; border-radius: $radius-md; margin-top: space('6'); padding: space('4'); }
+.org-register-aside {
+  padding-top: space('4');
+}
+.org-register-aside > p {
+  color: $color-muted;
+  font-size: $font-size-sm;
+  line-height: 1.55;
+  margin: 0 0 space('4');
+}
+.org-register-aside a {
+  color: $color-coral-dark;
+  font-weight: $font-weight-semibold;
+}
+.org-register-aside__alt {
+  background: $color-surface-hover;
+  border-radius: $radius-md;
+  margin-top: space('6');
+  padding: space('4');
+}
 
-.org-register-page--status { max-width: 42rem; text-align: center; }
-.org-register-page--status > p { color: $color-muted; margin: space('3') 0; }
-.org-register-page--status > .button { margin-top: space('6'); }
+.org-register-page--status {
+  max-width: 42rem;
+  text-align: center;
+}
+.org-register-page--status > p {
+  color: $color-muted;
+  margin: space('3') 0;
+}
+.org-register-page--status > .button {
+  margin-top: space('6');
+}
 
 @media (max-width: 55rem) {
-  .org-register-page__layout { grid-template-columns: 1fr; }
-  .org-register-aside { padding-top: 0; }
+  .org-register-page__layout {
+    grid-template-columns: 1fr;
+  }
+  .org-register-aside {
+    padding-top: 0;
+  }
 }
 @media (max-width: 38rem) {
-  .org-register-page { padding-inline: space('4'); }
-  .org-register-form__grid { grid-template-columns: 1fr; }
-  .org-register-form__footer { align-items: stretch; flex-direction: column; }
-  .org-register-form__footer .button { width: 100%; }
-  .org-register-aside a { align-items: center; display: inline-flex; min-height: 2.75rem; }
+  .org-register-page {
+    padding-inline: space('4');
+  }
+  .org-register-form__grid {
+    grid-template-columns: 1fr;
+  }
+  .org-register-form__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .org-register-form__footer .button {
+    width: 100%;
+  }
+  .org-register-aside a {
+    align-items: center;
+    display: inline-flex;
+    min-height: 2.75rem;
+  }
 }

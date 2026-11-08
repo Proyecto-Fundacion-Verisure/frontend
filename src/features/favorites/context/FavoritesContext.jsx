@@ -3,9 +3,8 @@ import { favoriteActivity, unfavoriteActivity } from '../api/favoritesApi';
 
 export const FavoritesContext = createContext(null);
 
-const isAlreadyInDesiredState = (err, wanted) => (
-  wanted ? err?.status === 409 : err?.status === 404
-);
+const isAlreadyInDesiredState = (err, wanted) =>
+  wanted ? err?.status === 409 : err?.status === 404;
 
 export function FavoritesProvider({ children }) {
   const [overrides, setOverrides] = useState({});
@@ -35,13 +34,10 @@ export function FavoritesProvider({ children }) {
       if (key in overrides) return overrides[key];
       return Boolean(fallback);
     },
-    [overrides]
+    [overrides],
   );
 
-  const isPending = useCallback(
-    (activityId) => pendingIds.has(String(activityId)),
-    [pendingIds]
-  );
+  const isPending = useCallback((activityId) => pendingIds.has(String(activityId)), [pendingIds]);
 
   const toggleFavorite = useCallback(
     async (activityId, currentFavorited) => {
@@ -68,7 +64,7 @@ export function FavoritesProvider({ children }) {
         setPending(key, false);
       }
     },
-    [setPending]
+    [setPending],
   );
 
   const setFavorite = useCallback((activityId, value) => {
@@ -83,7 +79,7 @@ export function FavoritesProvider({ children }) {
       setFavorite,
       overrides,
     }),
-    [getFavorite, isPending, toggleFavorite, setFavorite, overrides]
+    [getFavorite, isPending, toggleFavorite, setFavorite, overrides],
   );
 
   return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;

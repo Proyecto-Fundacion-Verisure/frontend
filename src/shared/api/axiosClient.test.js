@@ -47,13 +47,17 @@ describe('axiosClient', () => {
   });
 
   it('normalizes validation errors so fields can display them', async () => {
-    const request = axiosClient.post('/auth/login', {}, {
-      adapter: failingAdapter(400, {
-        message: 'Hay campos incorrectos.',
-        code: 'VALIDATION_ERROR',
-        fields: { email: ['El correo no es válido.'] },
-      }),
-    });
+    const request = axiosClient.post(
+      '/auth/login',
+      {},
+      {
+        adapter: failingAdapter(400, {
+          message: 'Hay campos incorrectos.',
+          code: 'VALIDATION_ERROR',
+          fields: { email: ['El correo no es válido.'] },
+        }),
+      },
+    );
 
     await expect(request).rejects.toMatchObject({
       name: 'ApiError',
@@ -65,12 +69,16 @@ describe('axiosClient', () => {
   });
 
   it('replaces a backend domain code with its accessible Spanish message', async () => {
-    const request = axiosClient.post('/registrations', {}, {
-      adapter: failingAdapter(409, {
-        message: 'ALREADY_REGISTERED',
-        code: 'ALREADY_REGISTERED',
-      }),
-    });
+    const request = axiosClient.post(
+      '/registrations',
+      {},
+      {
+        adapter: failingAdapter(409, {
+          message: 'ALREADY_REGISTERED',
+          code: 'ALREADY_REGISTERED',
+        }),
+      },
+    );
 
     await expect(request).rejects.toMatchObject({
       message: 'Ya tienes una inscripción activa para esta actividad.',
@@ -102,9 +110,13 @@ describe('axiosClient', () => {
     const onUnauthorized = vi.fn();
     window.addEventListener(AUTH_UNAUTHORIZED_EVENT, onUnauthorized, { once: true });
 
-    const request = axiosClient.post('/auth/login', {}, {
-      adapter: failingAdapter(401, { message: 'Credenciales no válidas.' }),
-    });
+    const request = axiosClient.post(
+      '/auth/login',
+      {},
+      {
+        adapter: failingAdapter(401, { message: 'Credenciales no válidas.' }),
+      },
+    );
 
     await expect(request).rejects.toMatchObject({
       name: 'ApiError',

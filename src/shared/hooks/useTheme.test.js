@@ -68,8 +68,12 @@ describe('useTheme', () => {
   });
 
   it('keeps working when storage throws', () => {
-    vi.spyOn(localStorage, 'getItem').mockImplementation(() => { throw new Error('blocked'); });
-    vi.spyOn(localStorage, 'setItem').mockImplementation(() => { throw new Error('blocked'); });
+    vi.spyOn(localStorage, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
 
     const { result } = renderHook(() => useTheme());
     act(() => result.current.toggleTheme());

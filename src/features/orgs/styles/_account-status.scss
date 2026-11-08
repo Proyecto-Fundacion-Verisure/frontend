@@ -13,10 +13,14 @@
     min-height: 20rem;
   }
 
-  &__title { margin: 0; }
+  &__title {
+    margin: 0;
+  }
 
   // Con el `gap` de la columna suma lo mismo que en el resto de listados.
-  > .page-header { margin-bottom: space('2'); }
+  > .page-header {
+    margin-bottom: space('2');
+  }
 
   &__subtitle {
     font-size: $font-size-md;
@@ -43,7 +47,9 @@
     }
   }
 
-  &__org-name { color: $color-heading; }
+  &__org-name {
+    color: $color-heading;
+  }
 
   &__meta {
     color: $color-muted;

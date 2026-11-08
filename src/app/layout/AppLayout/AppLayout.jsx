@@ -1,12 +1,12 @@
-import { Suspense } from "react";
-import { Link, Outlet } from "react-router-dom";
-import Sidebar from "../Sidebar/Sidebar";
-import Topbar from "../Topbar/Topbar";
-import Logo from "../../../shared/assets/images/logo-fundacion-verisure.png"
-import { getRoleHomePath, useAuth } from "../../../features/auth";
-import { NAV_SECTIONS_BY_ROLE } from "../Sidebar/sidebarNavigation";
-import { SidebarCountsContext, useSidebarCounts } from "../../navigation/useSidebarCounts";
-import RouteFallback from "../../routing/RouteFallback";
+import { Suspense } from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import Sidebar from '../Sidebar/Sidebar';
+import Topbar from '../Topbar/Topbar';
+import Logo from '../../../shared/assets/images/logo-fundacion-verisure.png';
+import { getRoleHomePath, useAuth } from '../../../features/auth';
+import { NAV_SECTIONS_BY_ROLE } from '../Sidebar/sidebarNavigation';
+import { SidebarCountsContext, useSidebarCounts } from '../../navigation/useSidebarCounts';
+import RouteFallback from '../../routing/RouteFallback';
 
 export default function AppLayout() {
   const { user } = useAuth();

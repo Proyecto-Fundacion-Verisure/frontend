@@ -1,26 +1,19 @@
 import { Link, useLocation } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
-import logo from "../../../shared/assets/images/logo-fundacion-verisure.png";
-import backgroundImage from "../../../shared/assets/images/login-background.png";
+import logo from '../../../shared/assets/images/logo-fundacion-verisure.png';
+import backgroundImage from '../../../shared/assets/images/login-background.png';
 
 export default function LoginPage() {
   const location = useLocation();
   const sessionExpired = location.state?.sessionExpired;
 
   return (
-    <main
-      className="login-page"
-      style={{ backgroundImage: `url(${backgroundImage})` }}
-    >
+    <main className="login-page" style={{ backgroundImage: `url(${backgroundImage})` }}>
       <div className="login-page__overlay" />
 
       <div className="login-page__card">
         <div className="login-page__panel login-page__panel--left">
-          <img
-            src={logo}
-            alt="Fundación Verisure"
-            className="login-page__logo"
-          />
+          <img src={logo} alt="Fundación Verisure" className="login-page__logo" />
 
           <h1 className="login-page__hero-title">
             Tu impacto social
@@ -29,16 +22,14 @@ export default function LoginPage() {
           </h1>
 
           <p className="login-page__hero-text">
-            Únete a nuestra comunidad de voluntarios y ayuda a construir un
-            futuro más seguro y solidario para todos.
+            Únete a nuestra comunidad de voluntarios y ayuda a construir un futuro más seguro y
+            solidario para todos.
           </p>
         </div>
 
         <div className="login-page__panel login-page__panel--right">
           <div className="login-page__form-wrapper">
-            <h2 className="login-page__form-title">
-              Accede a tu portal de voluntariado
-            </h2>
+            <h2 className="login-page__form-title">Accede a tu portal de voluntariado</h2>
             <p className="login-page__form-subtitle">
               Inicia sesión con tus credenciales para continuar.
             </p>

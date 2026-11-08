@@ -17,12 +17,16 @@ export default function MyVolunteeringBlocks({
       <PageHeader title="Mis voluntariados" titleId="my-volunteering-title" />
 
       {cancelError && (
-        <div className="my-volunteering__error" role="alert">{cancelError}</div>
+        <div className="my-volunteering__error" role="alert">
+          {cancelError}
+        </div>
       )}
 
       <section className="my-volunteering__block" aria-labelledby="active-title">
         <div className="my-volunteering__block-header">
-          <h2 id="active-title" className="my-volunteering__block-title">Activas</h2>
+          <h2 id="active-title" className="my-volunteering__block-title">
+            Activas
+          </h2>
           <span className="my-volunteering__block-count" data-testid="active-count">
             {activeList.length}
           </span>
@@ -42,18 +46,20 @@ export default function MyVolunteeringBlocks({
           <EmptyState
             title="Sin inscripciones activas"
             description="No tienes inscripciones activas."
-            action={(
+            action={
               <Link to="/activities" className="button button--primary">
                 Explorar actividades
               </Link>
-            )}
+            }
           />
         )}
       </section>
 
       <section className="my-volunteering__block" aria-labelledby="history-title">
         <div className="my-volunteering__block-header">
-          <h2 id="history-title" className="my-volunteering__block-title">Historial</h2>
+          <h2 id="history-title" className="my-volunteering__block-title">
+            Historial
+          </h2>
           <span className="my-volunteering__block-count" data-testid="history-count">
             {historyList.length}
           </span>

@@ -24,10 +24,44 @@ vi.mock('../api/registrationsApi', () => ({
 // ejercitar unas cascadas defensivas que el backend nunca ha servido.
 const BOARD = {
   content: [
-    { registrationId: 1, userName: 'Ana Torres', department: 'Tecnología', organization: 'VERISURE_ES', yearHours: 12, status: 'WAITLISTED', accepted: false },
-    { registrationId: 2, userName: 'Luis Martín', department: 'Personas', organization: 'VERISURE_GROUP', yearHours: 8, status: 'WAITLISTED', accepted: true, queuePosition: 1 },
-    { registrationId: 3, userName: 'Marta Ruiz', department: 'Operaciones', organization: 'VERISURE_ES', yearHours: 16, status: 'CONFIRMED', accepted: true },
-    { registrationId: 4, userName: 'Sara Gil', department: 'Riesgos', organization: 'VERISURE_ES', yearHours: 0, status: 'REJECTED', accepted: false, rejectionReason: 'No mostrar' },
+    {
+      registrationId: 1,
+      userName: 'Ana Torres',
+      department: 'Tecnología',
+      organization: 'VERISURE_ES',
+      yearHours: 12,
+      status: 'WAITLISTED',
+      accepted: false,
+    },
+    {
+      registrationId: 2,
+      userName: 'Luis Martín',
+      department: 'Personas',
+      organization: 'VERISURE_GROUP',
+      yearHours: 8,
+      status: 'WAITLISTED',
+      accepted: true,
+      queuePosition: 1,
+    },
+    {
+      registrationId: 3,
+      userName: 'Marta Ruiz',
+      department: 'Operaciones',
+      organization: 'VERISURE_ES',
+      yearHours: 16,
+      status: 'CONFIRMED',
+      accepted: true,
+    },
+    {
+      registrationId: 4,
+      userName: 'Sara Gil',
+      department: 'Riesgos',
+      organization: 'VERISURE_ES',
+      yearHours: 0,
+      status: 'REJECTED',
+      accepted: false,
+      rejectionReason: 'No mostrar',
+    },
   ],
   number: 0,
   size: 10,
@@ -63,7 +97,9 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     expect(screen.getByRole('status', { name: /cargando inscripciones/i })).toBeInTheDocument();
-    expect(await screen.findByRole('heading', { name: /inscripciones/i, level: 1 })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /inscripciones/i, level: 1 }),
+    ).toBeInTheDocument();
     expect(getActivityRegistrations).toHaveBeenCalledWith('8', { page: 0 });
 
     // «En lista de espera» agrupa las sin revisar y las aceptadas en cola.
@@ -89,7 +125,9 @@ describe('RegistrationsTablePage', () => {
 
   it('shows activity-wide counts in the header, not page counts', async () => {
     getActivityRegistrations.mockResolvedValue({ data: BOARD });
-    getRegistrationCounts.mockResolvedValue({ data: { confirmed: 9, waitlisted: 7, unreviewed: 4 } });
+    getRegistrationCounts.mockResolvedValue({
+      data: { confirmed: 9, waitlisted: 7, unreviewed: 4 },
+    });
     renderPage();
 
     await screen.findByText('Ana Torres');
@@ -97,7 +135,9 @@ describe('RegistrationsTablePage', () => {
 
     // Las cifras de la cabecera son de toda la actividad y no coinciden con las
     // de las secciones, que cuentan solo esta página. Es a propósito.
-    expect(screen.getByText(/Confirmadas 9 · En lista de espera 7, de las que 4 sin revisar/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Confirmadas 9 · En lista de espera 7, de las que 4 sin revisar/i),
+    ).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: /confirmadas 1/i })).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: /en lista de espera 2/i })).toBeInTheDocument();
   });
@@ -111,7 +151,9 @@ describe('RegistrationsTablePage', () => {
     // también una pestaña, así que hay que mirar el resumen de la cabecera.
     expect(await screen.findByText('Ana Torres')).toBeInTheDocument();
     expect(document.querySelector('.registrations-page__summary')).toBeNull();
-    expect(screen.queryByRole('heading', { name: /no hemos podido cargar/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: /no hemos podido cargar/i }),
+    ).not.toBeInTheDocument();
   });
 
   it('falls back to the activity id when no title travelled with the link', async () => {
@@ -128,7 +170,9 @@ describe('RegistrationsTablePage', () => {
     });
     renderPage();
 
-    expect(await screen.findByRole('heading', { name: /todavía no hay inscripciones/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /todavía no hay inscripciones/i }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
 
@@ -140,7 +184,9 @@ describe('RegistrationsTablePage', () => {
     await screen.findByText('Ana Torres');
     await user.click(screen.getByRole('tab', { name: /canceladas 0/i }));
 
-    expect(screen.getByRole('heading', { name: /no hay inscripciones canceladas/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /no hay inscripciones canceladas/i }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
 
@@ -170,7 +216,10 @@ describe('RegistrationsTablePage', () => {
     await user.click(screen.getByRole('button', { name: /confirmar baja/i }));
 
     await waitFor(() => expect(getActivityRegistrations).toHaveBeenCalledTimes(2));
-    expect(await screen.findByRole('tab', { name: /confirmadas 1/i })).toHaveAttribute('aria-selected', 'true');
+    expect(await screen.findByRole('tab', { name: /confirmadas 1/i })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
   });
 
   it('shows an explicit forbidden state', async () => {
@@ -206,7 +255,9 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     const row = (await screen.findByText('Ana Torres')).closest('tr');
-    await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
+    await user.click(
+      within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }),
+    );
 
     expect(await screen.findByRole('tab', { name: /confirmadas 1/i })).toBeInTheDocument();
     expect(acceptRegistration).toHaveBeenCalledWith(1);
@@ -214,7 +265,12 @@ describe('RegistrationsTablePage', () => {
   });
 
   it('keeps an accepted registration in the queue when backend reports no spot', async () => {
-    const acceptedInQueue = { ...BOARD.content[0], status: 'WAITLISTED', accepted: true, queuePosition: 1 };
+    const acceptedInQueue = {
+      ...BOARD.content[0],
+      status: 'WAITLISTED',
+      accepted: true,
+      queuePosition: 1,
+    };
     getActivityRegistrations
       .mockResolvedValueOnce({ data: BOARD })
       .mockResolvedValueOnce({ data: { ...BOARD, content: [acceptedInQueue], totalElements: 1 } });
@@ -223,7 +279,9 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     const row = (await screen.findByText('Ana Torres')).closest('tr');
-    await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
+    await user.click(
+      within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }),
+    );
 
     expect(await screen.findByRole('tab', { name: /en lista de espera 1/i })).toBeInTheDocument();
     expect(screen.getByText(/aceptada · en lista de espera/i)).toBeInTheDocument();
@@ -241,11 +299,15 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     const row = (await screen.findByText('Ana Torres')).closest('tr');
-    await user.click(within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i }));
+    await user.click(
+      within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i }),
+    );
 
     // Nada se envía hasta confirmar, y la confirmación no pide motivo.
     expect(rejectRegistration).not.toHaveBeenCalled();
-    expect(screen.getByRole('dialog', { name: /rechazar inscripción/i })).toHaveTextContent('Ana Torres');
+    expect(screen.getByRole('dialog', { name: /rechazar inscripción/i })).toHaveTextContent(
+      'Ana Torres',
+    );
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /confirmar rechazo/i }));
 
@@ -260,7 +322,9 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     const row = (await screen.findByText('Ana Torres')).closest('tr');
-    const trigger = within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i });
+    const trigger = within(row).getByRole('button', {
+      name: /Rechazar inscripción de Ana Torres/i,
+    });
     await user.click(trigger);
     await user.click(screen.getByRole('button', { name: 'Volver' }));
 
@@ -276,7 +340,9 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     const row = (await screen.findByText('Ana Torres')).closest('tr');
-    await user.click(within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i }));
+    await user.click(
+      within(row).getByRole('button', { name: /Rechazar inscripción de Ana Torres/i }),
+    );
     await user.click(screen.getByRole('button', { name: /confirmar rechazo/i }));
 
     expect(await within(row).findByRole('alert')).toHaveTextContent('No se pudo rechazar.');
@@ -290,11 +356,17 @@ describe('RegistrationsTablePage', () => {
     renderPage();
 
     const row = (await screen.findByText('Ana Torres')).closest('tr');
-    await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
+    await user.click(
+      within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }),
+    );
 
     expect(await within(row).findByRole('alert')).toHaveTextContent('No se pudo aceptar.');
-    expect(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i })).toBeEnabled();
-    await user.click(within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }));
+    expect(
+      within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }),
+    ).toBeEnabled();
+    await user.click(
+      within(row).getByRole('button', { name: /Aceptar inscripción de Ana Torres/i }),
+    );
     expect(acceptRegistration).toHaveBeenCalledTimes(2);
   });
 
@@ -311,7 +383,9 @@ describe('RegistrationsTablePage', () => {
       ],
     };
     getActivityRegistrations
-      .mockResolvedValueOnce({ data: { ...BOARD, content: [confirmed, acceptedInQueue, unreviewed], totalElements: 3 } })
+      .mockResolvedValueOnce({
+        data: { ...BOARD, content: [confirmed, acceptedInQueue, unreviewed], totalElements: 3 },
+      })
       .mockResolvedValueOnce({ data: refreshedBoard });
     cancelRegistration.mockResolvedValue({ data: { ...confirmed, status: 'CANCELLED' } });
     const user = userEvent.setup();
@@ -337,9 +411,15 @@ describe('RegistrationsTablePage', () => {
     const confirmed = BOARD.content[2];
     const unreviewed = BOARD.content[0];
     getActivityRegistrations
-      .mockResolvedValueOnce({ data: { ...BOARD, content: [confirmed, unreviewed], totalElements: 2 } })
       .mockResolvedValueOnce({
-        data: { ...BOARD, content: [{ ...confirmed, status: 'CANCELLED' }, unreviewed], totalElements: 2 },
+        data: { ...BOARD, content: [confirmed, unreviewed], totalElements: 2 },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          ...BOARD,
+          content: [{ ...confirmed, status: 'CANCELLED' }, unreviewed],
+          totalElements: 2,
+        },
       });
     cancelRegistration.mockResolvedValue({ data: { ...confirmed, status: 'CANCELLED' } });
     const user = userEvent.setup();

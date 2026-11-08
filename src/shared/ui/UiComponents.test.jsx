@@ -15,8 +15,15 @@ describe('form controls', () => {
   it('associates labels, help and errors with their controls', () => {
     render(
       <>
-        <Input label="Correo" hint="Usa tu correo corporativo" error="El correo no es válido" required />
-        <Select label="Modalidad"><option>Presencial</option></Select>
+        <Input
+          label="Correo"
+          hint="Usa tu correo corporativo"
+          error="El correo no es válido"
+          required
+        />
+        <Select label="Modalidad">
+          <option>Presencial</option>
+        </Select>
         <Textarea label="Descripción" />
       </>,
     );
@@ -33,7 +40,11 @@ describe('form controls', () => {
 
 describe('feedback components', () => {
   it('disables a loading button and announces its state', () => {
-    render(<Button isLoading loadingLabel="Guardando">Guardar</Button>);
+    render(
+      <Button isLoading loadingLabel="Guardando">
+        Guardar
+      </Button>,
+    );
     const button = screen.getByRole('button', { name: 'Guardando' });
 
     expect(button).toBeDisabled();
@@ -70,7 +81,13 @@ describe('Table', () => {
   ];
 
   it('renders its caption, headers and transformed cells', () => {
-    render(<Table caption="Solicitudes" columns={columns} data={[{ id: 1, name: 'Ana', status: 'pendiente' }]} />);
+    render(
+      <Table
+        caption="Solicitudes"
+        columns={columns}
+        data={[{ id: 1, name: 'Ana', status: 'pendiente' }]}
+      />,
+    );
 
     expect(screen.getByRole('table', { name: 'Solicitudes' })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: 'Nombre' })).toBeInTheDocument();
@@ -90,7 +107,9 @@ describe('Modal', () => {
     const { rerender } = render(
       <>
         <button type="button">Abrir</button>
-        <Modal isOpen={false} onClose={onClose} title="Confirmar">Contenido</Modal>
+        <Modal isOpen={false} onClose={onClose} title="Confirmar">
+          Contenido
+        </Modal>
       </>,
     );
     const opener = screen.getByRole('button', { name: 'Abrir' });
@@ -99,7 +118,9 @@ describe('Modal', () => {
     rerender(
       <>
         <button type="button">Abrir</button>
-        <Modal isOpen onClose={onClose} title="Confirmar">Contenido</Modal>
+        <Modal isOpen onClose={onClose} title="Confirmar">
+          Contenido
+        </Modal>
       </>,
     );
     expect(screen.getByRole('dialog', { name: 'Confirmar' })).toBeInTheDocument();
@@ -111,7 +132,9 @@ describe('Modal', () => {
     rerender(
       <>
         <button type="button">Abrir</button>
-        <Modal isOpen={false} onClose={onClose} title="Confirmar">Contenido</Modal>
+        <Modal isOpen={false} onClose={onClose} title="Confirmar">
+          Contenido
+        </Modal>
       </>,
     );
     expect(opener).toHaveFocus();

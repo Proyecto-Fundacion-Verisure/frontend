@@ -1,7 +1,17 @@
 import { forwardRef, useId } from 'react';
 
 const Textarea = forwardRef(function Textarea(
-  { id, label, hint, error, className = '', required = false, rows = 4, 'aria-describedby': describedBy, ...props },
+  {
+    id,
+    label,
+    hint,
+    error,
+    className = '',
+    required = false,
+    rows = 4,
+    'aria-describedby': describedBy,
+    ...props
+  },
   ref,
 ) {
   const generatedId = useId();
@@ -14,7 +24,13 @@ const Textarea = forwardRef(function Textarea(
     <div className={`field${error ? ' field--error' : ''}`}>
       {label && (
         <label className="field__label" htmlFor={textareaId}>
-          {label}{required && <span className="field__required" aria-hidden="true"> *</span>}
+          {label}
+          {required && (
+            <span className="field__required" aria-hidden="true">
+              {' '}
+              *
+            </span>
+          )}
         </label>
       )}
       <textarea
@@ -27,8 +43,16 @@ const Textarea = forwardRef(function Textarea(
         aria-describedby={descriptionIds}
         {...props}
       />
-      {hint && <span className="field__hint" id={hintId}>{hint}</span>}
-      {error && <span className="field__error" id={errorId} role="alert">{error}</span>}
+      {hint && (
+        <span className="field__hint" id={hintId}>
+          {hint}
+        </span>
+      )}
+      {error && (
+        <span className="field__error" id={errorId} role="alert">
+          {error}
+        </span>
+      )}
     </div>
   );
 });

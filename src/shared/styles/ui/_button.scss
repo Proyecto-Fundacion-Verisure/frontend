@@ -1,4 +1,4 @@
-@use "../abstracts" as *;
+@use '../abstracts' as *;
 
 .button {
   @include focus-ring;
@@ -7,12 +7,12 @@
   display: inline-flex;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
-  gap: space("2");
+  gap: space('2');
   justify-content: center;
   line-height: 1.25;
   min-height: $control-height;
   // Los `<Link>` con `button button--primary` no llevan clase de tamaño.
-  padding: space("3") space("5");
+  padding: space('3') space('5');
   border: 0;
   border-radius: $radius-control;
   cursor: pointer;
@@ -27,16 +27,16 @@
   &__label {
     align-items: center;
     display: inline-flex;
-    gap: space("2");
+    gap: space('2');
   }
 
   // Dos tamaños: `small` en filas y tablas, `medium` en todo lo demás.
   &--small {
     min-height: 2.25rem;
-    padding: space("2") space("4");
+    padding: space('2') space('4');
   }
   &--medium {
-    padding: space("3") space("5");
+    padding: space('3') space('5');
   }
 
   // El rojo sólido se reserva para la acción principal de cada vista. El
@@ -48,7 +48,11 @@
     color: $color-on-accent;
 
     &:hover:not(:disabled) {
-      background: linear-gradient(180deg, $color-coral-solid-hover, $color-coral-gradient-end-hover);
+      background: linear-gradient(
+        180deg,
+        $color-coral-solid-hover,
+        $color-coral-gradient-end-hover
+      );
     }
   }
 
@@ -67,7 +71,9 @@
   // mida exactamente lo mismo que el primario cuando van uno al lado del otro.
   &--secondary {
     background: $color-surface;
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, $color-border-strong 55%, transparent), $shadow-sm;
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, $color-border-strong 55%, transparent),
+      $shadow-sm;
     color: $color-heading;
 
     &:hover:not(:disabled) {

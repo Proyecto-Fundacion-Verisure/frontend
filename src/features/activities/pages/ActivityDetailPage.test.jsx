@@ -41,12 +41,18 @@ beforeEach(() => {
 
 describe('ActivityDetailPage', () => {
   it('muestra 404 con mensaje y vuelta al catálogo', async () => {
-    getActivityDetail.mockRejectedValue({ status: 404, message: 'No se ha encontrado el recurso solicitado.' });
+    getActivityDetail.mockRejectedValue({
+      status: 404,
+      message: 'No se ha encontrado el recurso solicitado.',
+    });
     renderDetail('999');
 
     expect(await screen.findByText(/actividad no encontrada/i)).toBeInTheDocument();
     expect(screen.getByText(/no se ha encontrado/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /volver al catálogo/i })).toHaveAttribute('href', '/activities');
+    expect(screen.getByRole('link', { name: /volver al catálogo/i })).toHaveAttribute(
+      'href',
+      '/activities',
+    );
   });
 
   it('muestra detalle cuando existe', async () => {
@@ -65,7 +71,9 @@ describe('ActivityDetailPage', () => {
     });
     renderDetail('1');
 
-    expect(await screen.findByRole('heading', { name: /acompañamiento a mayores/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /acompañamiento a mayores/i }),
+    ).toBeInTheDocument();
     expect(screen.getByText(/visitas semanales/i)).toBeInTheDocument();
     expect(screen.getByText('Madrid')).toBeInTheDocument();
   });
@@ -83,7 +91,9 @@ describe('ActivityDetailPage', () => {
       },
     });
     renderDetail('42');
-    expect(await screen.findByRole('heading', { name: /actividad recargable/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /actividad recargable/i }),
+    ).toBeInTheDocument();
     expect(getActivityDetail).toHaveBeenCalledWith('42');
   });
 
@@ -111,7 +121,13 @@ describe('ActivityDetailPage', () => {
 
   it('muestra un solo corazón, dentro de la tarjeta', async () => {
     getActivityDetail.mockResolvedValue({
-      data: { id: 1, title: 'Acompañamiento a mayores', status: 'PUBLISHED', spots: 10, occupiedSpots: 2 },
+      data: {
+        id: 1,
+        title: 'Acompañamiento a mayores',
+        status: 'PUBLISHED',
+        spots: 10,
+        occupiedSpots: 2,
+      },
     });
     renderDetail('1');
     await screen.findByRole('heading', { name: /acompañamiento a mayores/i });
@@ -204,7 +220,14 @@ describe('ActivityDetailPage', () => {
 
   it('muestra aforo completo pero permite ver detalle', async () => {
     getActivityDetail.mockResolvedValue({
-      data: { id: 2, title: 'Taller lleno', description: 'Completo', spots: 10, occupiedSpots: 10, status: 'FULL' },
+      data: {
+        id: 2,
+        title: 'Taller lleno',
+        description: 'Completo',
+        spots: 10,
+        occupiedSpots: 10,
+        status: 'FULL',
+      },
     });
     getMyRegistrations.mockResolvedValue({ data: [] });
     renderDetail('2');
@@ -216,7 +239,14 @@ describe('ActivityDetailPage', () => {
 
   it('no muestra contador de favoritos en ningún caso', async () => {
     getActivityDetail.mockResolvedValue({
-      data: { id: 1, title: 'Actividad', description: 'Desc', favoritedByMe: true, spots: 5, occupiedSpots: 1 },
+      data: {
+        id: 1,
+        title: 'Actividad',
+        description: 'Desc',
+        favoritedByMe: true,
+        spots: 5,
+        occupiedSpots: 1,
+      },
     });
     renderDetail('1');
     await screen.findByRole('heading', { name: /actividad/i });
@@ -267,7 +297,7 @@ describe('ActivityDetailPage', () => {
   });
 
   // H12 — Modal explicativo antes de confirmar
-it('muestra modal con explicación de lista de espera antes de confirmar', async () => {
+  it('muestra modal con explicación de lista de espera antes de confirmar', async () => {
     getActivityDetail.mockResolvedValue({
       data: { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 },
     });
@@ -288,7 +318,15 @@ it('muestra modal con explicación de lista de espera antes de confirmar', async
     getActivityDetail.mockResolvedValue({
       data: { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 },
     });
-    createRegistration.mockResolvedValue({ data: { registrationId: 200, activityId: 1, status: 'WAITLISTED', accepted: false, queuePosition: 3 } });
+    createRegistration.mockResolvedValue({
+      data: {
+        registrationId: 200,
+        activityId: 1,
+        status: 'WAITLISTED',
+        accepted: false,
+        queuePosition: 3,
+      },
+    });
     renderDetail('1');
     await screen.findByRole('heading', { name: /actividad/i });
     const user = userEvent.setup();
@@ -320,7 +358,9 @@ it('muestra modal con explicación de lista de espera antes de confirmar', async
     getActivityDetail.mockResolvedValue({
       data: { id: 1, title: 'Actividad', description: 'Desc', spots: 10, occupiedSpots: 2 },
     });
-    createRegistration.mockResolvedValue({ data: { registrationId: 201, activityId: 1, status: 'WAITLISTED', accepted: false } });
+    createRegistration.mockResolvedValue({
+      data: { registrationId: 201, activityId: 1, status: 'WAITLISTED', accepted: false },
+    });
     renderDetail('1');
     await screen.findByRole('heading', { name: /actividad/i });
     const user = userEvent.setup();

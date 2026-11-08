@@ -31,5 +31,8 @@ jobs:
       - name: Verificar (tests, build y fronteras de arquitectura)
         run: npm run smoke
 
+      - name: Comprobar el formato
+        run: npm run format:check
+
       - name: Auditar dependencias
         run: npm audit --audit-level=high

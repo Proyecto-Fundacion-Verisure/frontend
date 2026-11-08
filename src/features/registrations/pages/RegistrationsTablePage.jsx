@@ -48,14 +48,14 @@ export default function RegistrationsTablePage() {
             title="Inscripciones"
             titleId="registrations-title"
             description={description}
-            actions={(
+            actions={
               <div className="registrations-page__totals">
                 <strong>{table.totalElements} inscripciones</strong>
                 {table.countsSummary && (
                   <p className="registrations-page__summary">{table.countsSummary}</p>
                 )}
               </div>
-            )}
+            }
           />
 
           {isEmpty && (

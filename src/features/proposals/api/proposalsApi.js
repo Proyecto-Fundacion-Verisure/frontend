@@ -1,14 +1,18 @@
 import client from '../../../shared/api/axiosClient';
 
-const pickAdminParams = (params = {}) => Object.fromEntries(
-  Object.entries(params).filter(([key, value]) => (
-    ['status', 'page', 'size'].includes(key) && value !== undefined && value !== null && value !== ''
-  )),
-);
+const pickAdminParams = (params = {}) =>
+  Object.fromEntries(
+    Object.entries(params).filter(
+      ([key, value]) =>
+        ['status', 'page', 'size'].includes(key) &&
+        value !== undefined &&
+        value !== null &&
+        value !== '',
+    ),
+  );
 
-export const getProposals = (params = {}) => (
-  client.get('/admin/proposals', { params: pickAdminParams(params) })
-);
+export const getProposals = (params = {}) =>
+  client.get('/admin/proposals', { params: pickAdminParams(params) });
 
 export const getProposal = (id) => client.get(`/admin/proposals/${id}`);
 

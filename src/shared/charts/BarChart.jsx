@@ -23,7 +23,11 @@ export default function BarChart({
   const items = Array.isArray(data) ? data : [];
 
   if (items.length === 0) {
-    return <p className="bar-chart__empty" role="status">{emptyMessage}</p>;
+    return (
+      <p className="bar-chart__empty" role="status">
+        {emptyMessage}
+      </p>
+    );
   }
 
   const values = items.map((item) => {

@@ -13,7 +13,9 @@
     min-width: 0;
   }
 
-  &__eyebrow { @include eyebrow; }
+  &__eyebrow {
+    @include eyebrow;
+  }
 
   &__title {
     margin: 0;
@@ -33,7 +35,9 @@
     position: relative;
 
     // El propio valor del filtro lo explica; la etiqueta queda para lectores de pantalla.
-    .field { width: 16rem; }
+    .field {
+      width: 16rem;
+    }
 
     .field__label {
       clip-path: inset(50%);
@@ -52,10 +56,16 @@
     flex-direction: column;
   }
 
-  .page-header__text { min-height: 0; }
-  .page-header__actions .field { width: 100%; }
+  .page-header__text {
+    min-height: 0;
+  }
+  .page-header__actions .field {
+    width: 100%;
+  }
 
   .page-header__actions > .button,
   .page-header__actions > .export-menu,
-  .page-header__actions > .export-menu > .button { width: 100%; }
+  .page-header__actions > .export-menu > .button {
+    width: 100%;
+  }
 }

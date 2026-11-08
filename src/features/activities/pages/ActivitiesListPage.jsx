@@ -3,7 +3,16 @@ import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { getAdminActivities } from '../api/activitiesApi';
 import { PENDING_REVIEW_PATH } from '../routes';
-import { Badge, Button, EmptyState, PageHeader, Pagination, Select, Spinner, Table } from '../../../shared/ui';
+import {
+  Badge,
+  Button,
+  EmptyState,
+  PageHeader,
+  Pagination,
+  Select,
+  Spinner,
+  Table,
+} from '../../../shared/ui';
 import CancelActivityButton from '../components/CancelActivityButton';
 import { formatDate } from '../../../shared/lib/dates';
 import PartnerActivityReviewActions from '../components/PartnerActivityReviewActions';
@@ -57,9 +66,8 @@ function getPageData(response) {
     : Array.isArray(payload)
       ? payload
       : [];
-  const totalElements = Number(
-    payload?.totalElements ?? response.headers?.['x-total-count'] ?? content.length,
-  ) || 0;
+  const totalElements =
+    Number(payload?.totalElements ?? response.headers?.['x-total-count'] ?? content.length) || 0;
   const totalPages = Number(payload?.totalPages) || Math.ceil(totalElements / PAGE_SIZE);
 
   return { content, totalElements, totalPages };
@@ -131,22 +139,26 @@ export default function ActivitiesListPage({
         <strong className="activities-list__activity-title">{activity.title}</strong>
       ),
     },
-    ...(showPartnerColumn ? [{
-      key: 'partner',
-      label: 'Entidad colaboradora',
-      render: (activity) => activity.partner?.name
-        ?? activity.partnerName
-        ?? activity.organizationName
-        ?? '—',
-    }] : []),
+    ...(showPartnerColumn
+      ? [
+          {
+            key: 'partner',
+            label: 'Entidad colaboradora',
+            render: (activity) =>
+              activity.partner?.name ?? activity.partnerName ?? activity.organizationName ?? '—',
+          },
+        ]
+      : []),
     {
       key: 'status',
       label: 'Estado',
       render: (activity) => {
         const badge = ACTIVITY_STATUS_BADGES[activity.status];
-        return badge
-          ? <Badge variant={badge.variant}>{badge.label}</Badge>
-          : activity.status ?? '—';
+        return badge ? (
+          <Badge variant={badge.variant}>{badge.label}</Badge>
+        ) : (
+          (activity.status ?? '—')
+        );
       },
     },
     {
@@ -157,38 +169,43 @@ export default function ActivitiesListPage({
     {
       key: 'capacity',
       label: 'Plazas',
-      render: (activity) => activity.spots
-        ?? activity.capacity
-        ?? activity.maxParticipants
-        ?? '—',
+      render: (activity) => activity.spots ?? activity.capacity ?? activity.maxParticipants ?? '—',
     },
-    ...(showFavoritesColumn ? [{
-      key: 'favoriteCount',
-      label: 'Favoritos',
-      render: (activity) => activity.favoriteCount ?? activity.favoritesCount ?? 0,
-    }] : []),
+    ...(showFavoritesColumn
+      ? [
+          {
+            key: 'favoriteCount',
+            label: 'Favoritos',
+            render: (activity) => activity.favoriteCount ?? activity.favoritesCount ?? 0,
+          },
+        ]
+      : []),
     {
       key: 'actions',
       label: 'Acciones',
       render: (activity) => (
         <div className="activities-list__actions">
-          {activity.status === 'PENDING_APPROVAL' && (showReviewActions ? (
-            <PartnerActivityReviewActions
-              activity={activity}
-              onReviewed={(result) => {
-                setNotice({
-                  approved: 'La propuesta se ha aprobado y ya está en el catálogo.',
-                  returned: 'La propuesta se ha devuelto a la entidad.',
-                  stale: 'Otra persona ya había revisado esta propuesta. La lista se ha actualizado.',
-                }[result] ?? '');
-                setReloadKey((current) => current + 1);
-              }}
-            />
-          ) : (
-            <Link className="button button--primary button--small" to={PENDING_REVIEW_PATH}>
-              Revisar
-            </Link>
-          ))}
+          {activity.status === 'PENDING_APPROVAL' &&
+            (showReviewActions ? (
+              <PartnerActivityReviewActions
+                activity={activity}
+                onReviewed={(result) => {
+                  setNotice(
+                    {
+                      approved: 'La propuesta se ha aprobado y ya está en el catálogo.',
+                      returned: 'La propuesta se ha devuelto a la entidad.',
+                      stale:
+                        'Otra persona ya había revisado esta propuesta. La lista se ha actualizado.',
+                    }[result] ?? '',
+                  );
+                  setReloadKey((current) => current + 1);
+                }}
+              />
+            ) : (
+              <Link className="button button--primary button--small" to={PENDING_REVIEW_PATH}>
+                Revisar
+              </Link>
+            ))}
           {activity.status === 'DRAFT' && (
             <Link
               className="button button--secondary button--small"
@@ -228,27 +245,39 @@ export default function ActivitiesListPage({
         title={title}
         titleId="activities-list-title"
         description={`${totalElements} ${totalElements === 1 ? itemLabel : itemsLabel}`}
-        actions={(showStatusFilter || showCreateButton) && (
-          <>
-            {showStatusFilter && (
-              <Select label="Filtrar por estado" value={statusFilter} onChange={handleStatusChange}>
-                {STATUS_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>{option.label}</option>
-                ))}
-              </Select>
-            )}
-            {showCreateButton && (
-              <Link className="button button--primary button--medium" to={createPath}>
-                <Plus aria-hidden="true" size={16} />
-                Nueva actividad
-              </Link>
-            )}
-          </>
-        )}
+        actions={
+          (showStatusFilter || showCreateButton) && (
+            <>
+              {showStatusFilter && (
+                <Select
+                  label="Filtrar por estado"
+                  value={statusFilter}
+                  onChange={handleStatusChange}
+                >
+                  {STATUS_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
+              )}
+              {showCreateButton && (
+                <Link className="button button--primary button--medium" to={createPath}>
+                  <Plus aria-hidden="true" size={16} />
+                  Nueva actividad
+                </Link>
+              )}
+            </>
+          )
+        }
       />
       {sectionTabs}
 
-      {notice && <p className="activities-list__notice" role="status">{notice}</p>}
+      {notice && (
+        <p className="activities-list__notice" role="status">
+          {notice}
+        </p>
+      )}
 
       {requestState.status === 'loading' && (
         <div className="activities-list__loading" aria-label={`Cargando ${itemsLabel}`}>
@@ -274,18 +303,22 @@ export default function ActivitiesListPage({
       {requestState.status === 'success' && activities.length === 0 && (
         <EmptyState
           title={`No hay ${itemsLabel}`}
-          description={emptyDescription ?? `No se encontraron ${itemsLabel} con los filtros seleccionados.`}
-          action={showStatusFilter ? (
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setStatusFilter('');
-                setPage(1);
-              }}
-            >
-              Limpiar filtros
-            </Button>
-          ) : null}
+          description={
+            emptyDescription ?? `No se encontraron ${itemsLabel} con los filtros seleccionados.`
+          }
+          action={
+            showStatusFilter ? (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setStatusFilter('');
+                  setPage(1);
+                }}
+              >
+                Limpiar filtros
+              </Button>
+            ) : null
+          }
         />
       )}
 

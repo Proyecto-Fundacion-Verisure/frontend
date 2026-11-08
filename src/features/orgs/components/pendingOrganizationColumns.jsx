@@ -21,14 +21,20 @@ function renderContact(organization) {
 }
 
 function renderRequestedAt(organization) {
-  return formatDateTime(organization.requestedAt, { day: 'numeric', month: 'long', year: 'numeric' });
+  return formatDateTime(organization.requestedAt, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 }
 
 // No se bloquea aprobar sin correo verificado; se avisa.
 function renderEmailStatus(organization) {
-  return organization.emailVerified
-    ? <Badge variant="success">Verificado</Badge>
-    : <Badge variant="warning">Sin verificar</Badge>;
+  return organization.emailVerified ? (
+    <Badge variant="success">Verificado</Badge>
+  ) : (
+    <Badge variant="warning">Sin verificar</Badge>
+  );
 }
 
 function renderActions(organization, { actionPendingId, onRequestAction }) {

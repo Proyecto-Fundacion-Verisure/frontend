@@ -19,14 +19,22 @@ describe('ActivityCard', () => {
   // El filtro del catálogo acota la fecha de inicio: sin verla en la tarjeta, los
   // resultados cambian y nada lo explica.
   it('enseña el rango de fechas y las horas', () => {
-    render(<ActivityCard activity={{ ...baseActivity, startDate: '2026-03-02', endDate: '2026-03-27', hours: 20 }} />);
+    render(
+      <ActivityCard
+        activity={{ ...baseActivity, startDate: '2026-03-02', endDate: '2026-03-27', hours: 20 }}
+      />,
+    );
 
     expect(screen.getByText(/2 mar 2026 — 27 mar 2026/)).toBeInTheDocument();
     expect(screen.getByText(/20 h/)).toBeInTheDocument();
   });
 
   it('no repite la fecha cuando empieza y acaba el mismo día', () => {
-    render(<ActivityCard activity={{ ...baseActivity, startDate: '2026-03-02', endDate: '2026-03-02' }} />);
+    render(
+      <ActivityCard
+        activity={{ ...baseActivity, startDate: '2026-03-02', endDate: '2026-03-02' }}
+      />,
+    );
 
     expect(screen.getByText(/2 mar 2026/)).toBeInTheDocument();
     expect(screen.queryByText(/—/)).not.toBeInTheDocument();
@@ -42,8 +50,10 @@ describe('ActivityCard', () => {
   it('pinta la portada de la línea de acción, que el backend ya no manda', () => {
     const { container } = render(<ActivityCard activity={baseActivity} />);
 
-    expect(container.querySelector('.activity-card__image img'))
-      .toHaveAttribute('src', '/images/lines/desoledad.svg');
+    expect(container.querySelector('.activity-card__image img')).toHaveAttribute(
+      'src',
+      '/images/lines/desoledad.svg',
+    );
   });
 
   it('deja el hueco cuando la línea no se reconoce', () => {
@@ -75,7 +85,11 @@ describe('ActivityCard', () => {
   });
 
   it('deja el corazón fuera del enlace de la tarjeta', () => {
-    render(<MemoryRouter><ActivityCard activity={baseActivity} linkTo="/activities/1" /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <ActivityCard activity={baseActivity} linkTo="/activities/1" />
+      </MemoryRouter>,
+    );
     const heart = screen.getByRole('button', { name: /quitar de favoritos/i });
     expect(heart.closest('a')).toBeNull();
     expect(heart).toHaveClass('activity-card__favorite');
@@ -83,7 +97,10 @@ describe('ActivityCard', () => {
 
   it('muestra estado no favorito', () => {
     render(<ActivityCard activity={{ ...baseActivity, favoritedByMe: false }} />);
-    expect(screen.getByRole('button', { name: /añadir a favoritos/i })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: /añadir a favoritos/i })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
   });
 
   it('muestra distintivo Completa cuando plazas llenas o estado FULL', () => {
@@ -92,13 +109,18 @@ describe('ActivityCard', () => {
 
     const { rerender } = { rerender: () => {} };
     // estado FULL también
-    const { unmount } = render(<ActivityCard activity={{ ...baseActivity, status: 'FULL' }} />) || {};
+    const { unmount } =
+      render(<ActivityCard activity={{ ...baseActivity, status: 'FULL' }} />) || {};
     // Instead of rerender complexity, just check second render contains Completa via query
     expect(screen.getAllByText('Completa').length).toBeGreaterThan(0);
   });
 
   it('avisa de que no quedan plazas libres y marca las actividades terminadas', () => {
-    render(<ActivityCard activity={{ ...baseActivity, spots: 5, occupiedSpots: 5, status: 'FINISHED' }} />);
+    render(
+      <ActivityCard
+        activity={{ ...baseActivity, spots: 5, occupiedSpots: 5, status: 'FINISHED' }}
+      />,
+    );
     expect(screen.getByText('5 de 5 plazas ocupadas · sin plazas libres')).toBeInTheDocument();
     expect(screen.getByText('Finalizada')).toBeInTheDocument();
   });

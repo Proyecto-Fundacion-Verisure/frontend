@@ -1,18 +1,18 @@
 @use 'sass:map';
 
-@use "../../../shared/styles/abstracts" as *;
+@use '../../../shared/styles/abstracts' as *;
 
 .proposal-page {
   margin: 0 auto;
   max-width: $content-max-width;
-  padding: space("6") space("6") space("12");
+  padding: space('6') space('6') space('12');
 }
 .proposal-page__intro {
   max-width: 52rem;
 }
 .proposal-page__intro > a {
   @include back-link;
-  margin-bottom: space("3");
+  margin-bottom: space('3');
 }
 .proposal-page__eyebrow {
   @include eyebrow;
@@ -22,29 +22,29 @@
 }
 .proposal-page__intro > p:last-child {
   color: $color-muted;
-  margin: space("1") 0 0;
+  margin: space('1') 0 0;
 }
 .proposal-page__layout {
   align-items: start;
   display: grid;
-  gap: space("8");
+  gap: space('8');
   grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
-  margin-top: space("6");
+  margin-top: space('6');
 }
 .proposal-form {
   background: $color-surface;
   border: 1px solid $color-border;
   border-radius: $radius-lg;
   box-shadow: $shadow-sm;
-  padding: clamp(space("5"), 4vw, space("8"));
+  padding: clamp(space('5'), 4vw, space('8'));
 }
 .proposal-form__grid {
   display: grid;
-  gap: space("5") space("4");
+  gap: space('5') space('4');
   grid-template-columns: repeat(2, 1fr);
 }
 .proposal-form > * + * {
-  margin-top: space("5");
+  margin-top: space('5');
 }
 .proposal-form__consent {
   align-items: flex-start;
@@ -54,10 +54,10 @@
   color: $color-muted;
   display: flex;
   font-size: $font-size-sm;
-  gap: space("3");
+  gap: space('3');
   line-height: 1.45;
-  margin-top: space("5");
-  padding: space("4");
+  margin-top: space('5');
+  padding: space('4');
 }
 .proposal-form__consent input {
   flex: 0 0 auto;
@@ -74,37 +74,37 @@
 .proposal-form__error {
   color: $color-danger;
   font-size: $font-size-sm;
-  margin: space("2") 0 0;
+  margin: space('2') 0 0;
 }
 .proposal-form__footer {
   align-items: center;
   border-top: 1px solid $color-border;
   display: flex;
-  gap: space("4");
+  gap: space('4');
   justify-content: space-between;
-  margin-top: space("5");
-  padding-top: space("5");
+  margin-top: space('5');
+  padding-top: space('5');
 }
 .proposal-form__footer small {
   color: $color-muted;
 }
 .proposal-form__actions {
   display: flex;
-  gap: space("4");
+  gap: space('4');
 }
 .proposal-steps {
-  padding-top: space("4");
+  padding-top: space('4');
 }
 .proposal-steps ol {
   display: grid;
-  gap: space("5");
+  gap: space('5');
   list-style: none;
-  margin: space("5") 0;
+  margin: space('5') 0;
   padding: 0;
 }
 .proposal-steps li {
   display: flex;
-  gap: space("3");
+  gap: space('3');
 }
 .proposal-steps li > span {
   align-items: center;
@@ -126,16 +126,16 @@
   color: $color-muted;
   font-size: $font-size-sm;
   line-height: 1.45;
-  margin: space("1") 0 0;
+  margin: space('1') 0 0;
 }
 .proposal-steps__note {
   background: $color-surface-hover;
   border-radius: $radius-md;
-  padding: space("4");
+  padding: space('4');
 }
 .proposal-steps__cta {
   justify-content: center;
-  margin-top: space("6");
+  margin-top: space('6');
 }
 .proposal-page--success {
   max-width: 42rem;
@@ -143,13 +143,13 @@
 }
 .proposal-page--success > p:not(.proposal-page__eyebrow) {
   color: $color-muted;
-  margin: space("3") 0 space("6");
+  margin: space('3') 0 space('6');
 }
 .proposal-accept-action {
   align-items: flex-start;
   display: flex;
   flex-direction: column;
-  gap: space("2");
+  gap: space('2');
 }
 .proposal-accept-action__error {
   color: $color-danger;
@@ -168,7 +168,7 @@
 }
 @media (max-width: 38rem) {
   .proposal-page {
-    padding-inline: space("4");
+    padding-inline: space('4');
   }
   .proposal-form__grid {
     grid-template-columns: 1fr;
@@ -187,9 +187,9 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: map.get($spacing, "3");
-  margin: map.get($spacing, "6") 0;
-  padding: map.get($spacing, "6");
+  gap: map.get($spacing, '3');
+  margin: map.get($spacing, '6') 0;
+  padding: map.get($spacing, '6');
   background-color: $color-background;
   border: 1px solid $color-border;
   border-radius: $radius-lg;

@@ -17,7 +17,10 @@ export default function MetricProgressList({ items = [], valueSuffix = '%', show
             {showHeading && (
               <div className="metric-progress-list__heading">
                 <span>{label}</span>
-                <strong>{formatDashboardNumber(item.value)}{valueSuffix}</strong>
+                <strong>
+                  {formatDashboardNumber(item.value)}
+                  {valueSuffix}
+                </strong>
               </div>
             )}
             <div

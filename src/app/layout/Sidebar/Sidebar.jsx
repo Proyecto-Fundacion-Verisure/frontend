@@ -1,4 +1,4 @@
-import { Link, matchPath, useLocation } from "react-router-dom";
+import { Link, matchPath, useLocation } from 'react-router-dom';
 
 // Solo un enlace activo: la coincidencia exacta gana y, si no la hay, el primero
 // que declare la ruta en `matches`. El prefijo de `NavLink` no sirve aquí:
@@ -8,9 +8,9 @@ function getActivePath(sections, pathname) {
   const isAt = (pattern) => Boolean(matchPath({ path: pattern, end: true }, pathname));
 
   return (
-    items.find(({ path }) => isAt(path))
-    ?? items.find(({ matches = [] }) => matches.some(isAt))
-  )?.path ?? null;
+    (items.find(({ path }) => isAt(path)) ?? items.find(({ matches = [] }) => matches.some(isAt)))
+      ?.path ?? null
+  );
 }
 
 export default function Sidebar({ sections = [], counts = {} }) {
@@ -31,13 +31,16 @@ export default function Sidebar({ sections = [], counts = {} }) {
                 <Link
                   key={path}
                   to={path}
-                  className={`sidebar__link${isActive ? " sidebar__link--active" : ""}`}
-                  aria-current={isActive ? "page" : undefined}
+                  className={`sidebar__link${isActive ? ' sidebar__link--active' : ''}`}
+                  aria-current={isActive ? 'page' : undefined}
                 >
                   {Icon && <Icon size={18} aria-hidden="true" />}
                   <span className="sidebar__label">{label}</span>
                   {badge > 0 && (
-                    <span className="sidebar__badge" aria-label={`${badge} notificaciones pendientes para ${label}`}>
+                    <span
+                      className="sidebar__badge"
+                      aria-label={`${badge} notificaciones pendientes para ${label}`}
+                    >
                       {badge}
                     </span>
                   )}

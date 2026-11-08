@@ -15,7 +15,10 @@
   min-height: $control-height;
   min-width: $control-height;
   padding: space('1');
-  transition: color $transition-fast, transform $transition-fast, background-color $transition-fast;
+  transition:
+    color $transition-fast,
+    transform $transition-fast,
+    background-color $transition-fast;
 
   &:hover:not(:disabled) {
     background: $color-coral-50;
@@ -32,7 +35,10 @@
 
   &__icon {
     display: block;
-    transition: fill $transition-fast, stroke $transition-fast, transform $transition-fast;
+    transition:
+      fill $transition-fast,
+      stroke $transition-fast,
+      transform $transition-fast;
   }
 
   &--active &__icon {

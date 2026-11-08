@@ -1,13 +1,9 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosClient, { AUTH_UNAUTHORIZED_EVENT, clearSession } from '../../../shared/api/axiosClient';
+import axiosClient, {
+  AUTH_UNAUTHORIZED_EVENT,
+  clearSession,
+} from '../../../shared/api/axiosClient';
 import { login as loginRequest, logout as logoutRequest } from '../api/authApi';
 
 export const AuthContext = createContext(null);
@@ -65,12 +61,15 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
   }, [navigate]);
 
-  const value = useMemo(() => ({
-    user,
-    login,
-    logout,
-    isAuthenticated: Boolean(user),
-  }), [login, logout, user]);
+  const value = useMemo(
+    () => ({
+      user,
+      login,
+      logout,
+      isAuthenticated: Boolean(user),
+    }),
+    [login, logout, user],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -19,13 +19,13 @@ export function hasDashboardData(data) {
   if (!data || typeof data !== 'object') return false;
 
   const metrics = data.kpis ?? data;
-  const hasMetric = KPI_DEFINITIONS.some(({ key }) => (
-    Object.prototype.hasOwnProperty.call(metrics, key) && metrics[key] !== null
-  ));
+  const hasMetric = KPI_DEFINITIONS.some(
+    ({ key }) => Object.prototype.hasOwnProperty.call(metrics, key) && metrics[key] !== null,
+  );
 
-  return hasMetric || DISTRIBUTION_KEYS.some((key) => (
-    Array.isArray(data[key]) && data[key].length > 0
-  ));
+  return (
+    hasMetric || DISTRIBUTION_KEYS.some((key) => Array.isArray(data[key]) && data[key].length > 0)
+  );
 }
 
 // La respuesta puede llegar sin `kpis` (formato antiguo) o con series ausentes:

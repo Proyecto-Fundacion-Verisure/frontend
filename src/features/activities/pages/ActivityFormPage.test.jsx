@@ -157,7 +157,9 @@ describe('ActivityFormPage', () => {
       spots: 15,
     });
     expect(publishActivity).not.toHaveBeenCalled();
-    expect(await screen.findByRole('heading', { name: /tu borrador está guardado/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /tu borrador está guardado/i }),
+    ).toBeInTheDocument();
   });
 
   it('creates partner drafts through /org, and nobody gets a cover control', async () => {
@@ -171,18 +173,24 @@ describe('ActivityFormPage', () => {
     expect(screen.queryByLabelText(/url de imagen/i)).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /guardar borrador/i }));
 
-    await waitFor(() => expect(createOrgActivity).toHaveBeenCalledWith(expect.objectContaining({
-      title: 'Taller de code',
-      line: 'educar',
-    })));
+    await waitFor(() =>
+      expect(createOrgActivity).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Taller de code',
+          line: 'educar',
+        }),
+      ),
+    );
     expect(createActivity).not.toHaveBeenCalled();
   });
 
   it('asks for confirmation, persists once and publishes with the returned id', async () => {
     let resolveCreate;
-    createActivity.mockReturnValue(new Promise((resolve) => {
-      resolveCreate = resolve;
-    }));
+    createActivity.mockReturnValue(
+      new Promise((resolve) => {
+        resolveCreate = resolve;
+      }),
+    );
     publishActivity.mockResolvedValue({ data: { id: 42, status: 'PUBLISHED' } });
     const user = userEvent.setup();
     renderForm();
@@ -201,13 +209,18 @@ describe('ActivityFormPage', () => {
 
     await waitFor(() => expect(publishActivity).toHaveBeenCalledWith(42));
     expect(createActivity).toHaveBeenCalledTimes(1);
-    expect(await screen.findByRole('heading', { name: /la actividad ya está publicada/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /la actividad ya está publicada/i }),
+    ).toBeInTheDocument();
   });
 
   it('keeps the persisted draft and does not create another one when publish is retried', async () => {
     createActivity.mockResolvedValue({ data: { id: 43, status: 'DRAFT' }, status: 201 });
     publishActivity
-      .mockRejectedValueOnce({ status: 409, message: 'La actividad no se puede publicar en su estado actual.' })
+      .mockRejectedValueOnce({
+        status: 409,
+        message: 'La actividad no se puede publicar en su estado actual.',
+      })
       .mockResolvedValueOnce({ data: { id: 43, status: 'PUBLISHED' } });
     const user = userEvent.setup();
     renderForm();
@@ -224,7 +237,9 @@ describe('ActivityFormPage', () => {
 
     await waitFor(() => expect(publishActivity).toHaveBeenCalledTimes(2));
     expect(createActivity).toHaveBeenCalledTimes(1);
-    expect(await screen.findByRole('heading', { name: /la actividad ya está publicada/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /la actividad ya está publicada/i }),
+    ).toBeInTheDocument();
   });
 
   it('shows field errors returned by ApiError and allows retrying', async () => {
@@ -249,7 +264,9 @@ describe('ActivityFormPage', () => {
     renderEditForm();
 
     expect(screen.getByRole('status', { name: /cargando actividad/i })).toBeInTheDocument();
-    expect(await screen.findByRole('heading', { name: /editar actividad de voluntariado/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /editar actividad de voluntariado/i }),
+    ).toBeInTheDocument();
     expect(getAdminActivity).toHaveBeenCalledWith('12');
     expect(screen.getByLabelText(/título/i)).toHaveValue('Mentoría digital');
     expect(screen.getByLabelText(/línea/i)).toHaveValue('educar');
@@ -272,16 +289,23 @@ describe('ActivityFormPage', () => {
     await user.type(title, 'Mentoría avanzada');
     await user.click(screen.getByRole('button', { name: /guardar cambios/i }));
 
-    await waitFor(() => expect(updateActivity).toHaveBeenCalledWith('12', expect.objectContaining({
-      title: 'Mentoría avanzada',
-      mode: 'PRESENCIAL',
-      location: 'Madrid',
-      spots: 15,
-      hours: 3,
-      startDate: '2026-10-10',
-    })));
+    await waitFor(() =>
+      expect(updateActivity).toHaveBeenCalledWith(
+        '12',
+        expect.objectContaining({
+          title: 'Mentoría avanzada',
+          mode: 'PRESENCIAL',
+          location: 'Madrid',
+          spots: 15,
+          hours: 3,
+          startDate: '2026-10-10',
+        }),
+      ),
+    );
     expect(createActivity).not.toHaveBeenCalled();
-    expect(await screen.findByRole('heading', { name: /la actividad se ha actualizado/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /la actividad se ha actualizado/i }),
+    ).toBeInTheDocument();
   });
 
   it('edits a partner draft from the list row without calling the admin detail', async () => {
@@ -303,10 +327,15 @@ describe('ActivityFormPage', () => {
     updateOrgActivity.mockResolvedValue({ data: row });
     const user = userEvent.setup();
     render(
-      <MemoryRouter initialEntries={[{ pathname: '/org/activities/901/edit', state: { activity: row } }]}>
+      <MemoryRouter
+        initialEntries={[{ pathname: '/org/activities/901/edit', state: { activity: row } }]}
+      >
         <AuthContext.Provider value={{ user: { role: 'PARTNER', status: 'ACTIVE' } }}>
           <Routes>
-            <Route path="/org/activities/:activityId/edit" element={<ActivityFormPage backPath="/org/activities" />} />
+            <Route
+              path="/org/activities/:activityId/edit"
+              element={<ActivityFormPage backPath="/org/activities" />}
+            />
           </Routes>
         </AuthContext.Provider>
       </MemoryRouter>,
@@ -322,22 +351,36 @@ describe('ActivityFormPage', () => {
     await user.type(screen.getByLabelText(/descripción/i), 'Ejercicios de memoria para mayores.');
     await user.click(screen.getByRole('button', { name: /guardar cambios/i }));
 
-    await waitFor(() => expect(updateOrgActivity).toHaveBeenCalledWith('901', expect.objectContaining({
-      description: 'Ejercicios de memoria para mayores.',
-      spots: 6,
-    })));
+    await waitFor(() =>
+      expect(updateOrgActivity).toHaveBeenCalledWith(
+        '901',
+        expect.objectContaining({
+          description: 'Ejercicios de memoria para mayores.',
+          spots: 6,
+        }),
+      ),
+    );
     expect(updateActivity).not.toHaveBeenCalled();
   });
 
   it('looks the partner draft up in the list when entered by URL', async () => {
     getOrgActivities.mockResolvedValue({
-      data: { content: [{ id: 7, title: 'Otra' }, { id: 901, title: 'Por URL', status: 'DRAFT' }], totalPages: 1 },
+      data: {
+        content: [
+          { id: 7, title: 'Otra' },
+          { id: 901, title: 'Por URL', status: 'DRAFT' },
+        ],
+        totalPages: 1,
+      },
     });
     render(
       <MemoryRouter initialEntries={['/org/activities/901/edit']}>
         <AuthContext.Provider value={{ user: { role: 'PARTNER', status: 'ACTIVE' } }}>
           <Routes>
-            <Route path="/org/activities/:activityId/edit" element={<ActivityFormPage backPath="/org/activities" />} />
+            <Route
+              path="/org/activities/:activityId/edit"
+              element={<ActivityFormPage backPath="/org/activities" />}
+            />
           </Routes>
         </AuthContext.Provider>
       </MemoryRouter>,

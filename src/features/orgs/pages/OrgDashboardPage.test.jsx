@@ -3,7 +3,10 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getOrgDashboard } from '../api/orgApi';
-import { makeOrgDashboardResponse, makeEmptyOrgDashboardResponse } from '../../../shared/testing/fixtures/orgDashboard';
+import {
+  makeOrgDashboardResponse,
+  makeEmptyOrgDashboardResponse,
+} from '../../../shared/testing/fixtures/orgDashboard';
 import OrgDashboardPage from './OrgDashboardPage';
 
 vi.mock('../api/orgApi', () => ({
@@ -27,7 +30,9 @@ describe('OrgDashboardPage', () => {
 
     await waitFor(() => expect(getOrgDashboard).toHaveBeenCalled());
 
-    expect(await screen.findByRole('heading', { name: /panel de control de la entidad/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /panel de control de la entidad/i }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Datos ficticios para validación')).toBeInTheDocument();
 
     expect(screen.getByRole('list', { name: 'Indicadores de la entidad' })).toBeInTheDocument();
@@ -43,20 +48,28 @@ describe('OrgDashboardPage', () => {
     expect(chartScrolls.filter((el) => el.classList.contains('bar-chart__scroll')).length).toBe(2);
 
     const tableWrappers = screen.getAllByRole('region');
-    expect(tableWrappers.filter((el) => el.querySelector('table')).length).toBeGreaterThanOrEqual(2);
+    expect(tableWrappers.filter((el) => el.querySelector('table')).length).toBeGreaterThanOrEqual(
+      2,
+    );
   });
 
   it('shows an explicit empty state when all KPIs are zero', async () => {
     getOrgDashboard.mockResolvedValue({ data: makeEmptyOrgDashboardResponse() });
     renderPage();
 
-    expect(await screen.findByRole('heading', { name: /todavía no hay cierres validados/i })).toBeInTheDocument();
-    expect(screen.getByText(/el panel se completa cuando la administración valida/i)).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /todavía no hay cierres validados/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/el panel se completa cuando la administración valida/i),
+    ).toBeInTheDocument();
     expect(screen.queryByText('0 h')).not.toBeInTheDocument();
-    expect(screen.queryByRole('list', { name: 'Indicadores de la entidad' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('list', { name: 'Indicadores de la entidad' }),
+    ).not.toBeInTheDocument();
   });
 
-it('renders a forbidden state when the API returns 403', async () => {
+  it('renders a forbidden state when the API returns 403', async () => {
     const forbidden = new Error('No tienes permiso.');
     forbidden.status = 403;
     getOrgDashboard.mockRejectedValueOnce(forbidden);
@@ -66,8 +79,12 @@ it('renders a forbidden state when the API returns 403', async () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
     expect(await screen.findByRole('heading', { name: /acceso restringido/i })).toBeInTheDocument();
-    expect(screen.getByText(/no tienes permiso para consultar el panel de tu entidad/i)).toBeInTheDocument();
-    expect(screen.queryByRole('list', { name: 'Indicadores de la entidad' })).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/no tienes permiso para consultar el panel de tu entidad/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('list', { name: 'Indicadores de la entidad' }),
+    ).not.toBeInTheDocument();
   });
 
   it('shows an error with retry and succeeds on second attempt', async () => {
@@ -77,7 +94,9 @@ it('renders a forbidden state when the API returns 403', async () => {
     const user = userEvent.setup();
     renderPage();
 
-    expect(await screen.findByRole('heading', { name: /no hemos podido cargar el panel/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /no hemos podido cargar el panel/i }),
+    ).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /reintentar/i }));
     expect(await screen.findByText(/2.?450 h/)).toBeInTheDocument();
     expect(getOrgDashboard).toHaveBeenCalledTimes(2);

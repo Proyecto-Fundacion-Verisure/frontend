@@ -62,7 +62,9 @@ describe('registrationsTable model', () => {
   it('resuelve el badge de estado y cae a «sin revisar»', () => {
     expect(getSectionStatusBadge(ACCEPTED_IN_QUEUE)).toMatchObject({ variant: 'info' });
     expect(getSectionStatusBadge(CLOSED)).toMatchObject({ label: 'Cerrada', variant: 'neutral' });
-    expect(getSectionStatusBadge({ status: 'DESCONOCIDO' })).toMatchObject({ label: 'Sin revisar' });
+    expect(getSectionStatusBadge({ status: 'DESCONOCIDO' })).toMatchObject({
+      label: 'Sin revisar',
+    });
   });
 
   it('lee las filas del Page de Spring y descarta respuestas raras', () => {
@@ -93,16 +95,19 @@ describe('registrationsTable model', () => {
     expect(getSection('confirmed').title).toBe('Confirmadas');
     expect(getSection('inexistente')).toEqual(REGISTRATION_SECTIONS[0]);
     expect(getSectionCaption({ isGlobal: true, sectionTitle: 'Cerradas' })).toBe('Cerradas');
-    expect(getSectionCaption({ isGlobal: false, sectionTitle: 'Cerradas' }))
-      .toBe('Cerradas de la actividad');
+    expect(getSectionCaption({ isGlobal: false, sectionTitle: 'Cerradas' })).toBe(
+      'Cerradas de la actividad',
+    );
     expect(getEmptySectionTitle({ title: 'Canceladas' })).toBe('No hay inscripciones canceladas');
   });
 
   it('resume los contadores de la actividad', () => {
-    expect(getCountsSummary({ confirmed: 9, waitlisted: 7, unreviewed: 4 }))
-      .toBe('Confirmadas 9 · En lista de espera 7, de las que 4 sin revisar');
-    expect(getCountsSummary({ confirmed: 9, waitlisted: 7, unreviewed: 0 }))
-      .toBe('Confirmadas 9 · En lista de espera 7');
+    expect(getCountsSummary({ confirmed: 9, waitlisted: 7, unreviewed: 4 })).toBe(
+      'Confirmadas 9 · En lista de espera 7, de las que 4 sin revisar',
+    );
+    expect(getCountsSummary({ confirmed: 9, waitlisted: 7, unreviewed: 0 })).toBe(
+      'Confirmadas 9 · En lista de espera 7',
+    );
     expect(getCountsSummary(null)).toBeNull();
   });
 });

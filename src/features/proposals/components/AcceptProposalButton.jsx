@@ -5,8 +5,7 @@ import { Button } from '../../../shared/ui';
 
 const CONFLICT_MESSAGE =
   'Esta propuesta ya ha sido aceptada o rechazada. Actualiza el detalle para ver su estado.';
-const GENERIC_ERROR_MESSAGE =
-  'No hemos podido aceptar la propuesta. Inténtalo de nuevo.';
+const GENERIC_ERROR_MESSAGE = 'No hemos podido aceptar la propuesta. Inténtalo de nuevo.';
 
 export function getActivityDraftPath(activityId) {
   return `/activities/${activityId}/edit`;

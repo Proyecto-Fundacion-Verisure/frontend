@@ -29,13 +29,19 @@
     min-height: $control-height;
     padding: space('2') space('3');
     text-decoration: none;
-    transition: border-color $transition-fast, color $transition-fast;
+    transition:
+      border-color $transition-fast,
+      color $transition-fast;
     white-space: nowrap;
 
-    &:hover { color: $color-heading; }
+    &:hover {
+      color: $color-heading;
+    }
 
     // Por dentro: la lista recorta lo que sobresale cuando se desplaza en móvil.
-    &:focus-visible { outline-offset: -2px; }
+    &:focus-visible {
+      outline-offset: -2px;
+    }
 
     &--active {
       border-bottom-color: $color-coral-solid;
@@ -52,7 +58,9 @@
     padding: 0 space('2');
   }
 
-  &__panel { min-width: 0; }
+  &__panel {
+    min-width: 0;
+  }
 }
 
 // Como la navegación: en móvil se desliza con el dedo en vez de ocupar varias líneas.
@@ -63,6 +71,8 @@
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
 
-    &::-webkit-scrollbar { display: none; }
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }

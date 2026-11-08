@@ -15,11 +15,13 @@ export default function ActivityFormResult({
       <p className="activity-form-page__eyebrow">{resultCopy.eyebrow}</p>
       <h1>{resultCopy.title}</h1>
       <p>{resultCopy.description}</p>
-      {errorMessage && <p className="activity-form__error" role="alert">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="activity-form__error" role="alert">
+          {errorMessage}
+        </p>
+      )}
       <div className="activity-form-page__success-actions">
-        {resultCopy.showPublish && (
-          <Button onClick={onPublish}>{resultCopy.publishLabel}</Button>
-        )}
+        {resultCopy.showPublish && <Button onClick={onPublish}>{resultCopy.publishLabel}</Button>}
         {isEditMode ? (
           <Button variant="secondary" onClick={onContinueEditing}>
             {resultCopy.secondaryLabel}

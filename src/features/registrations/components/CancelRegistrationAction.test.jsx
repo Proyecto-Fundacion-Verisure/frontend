@@ -23,7 +23,8 @@ describe('CancelRegistrationAction', () => {
   });
 
   it('keeps the modal open and permits retry after an error', async () => {
-    const onCancel = vi.fn()
+    const onCancel = vi
+      .fn()
       .mockRejectedValueOnce({ message: 'No se pudo cancelar.' })
       .mockResolvedValueOnce({ status: 'CANCELLED' });
     const user = userEvent.setup();

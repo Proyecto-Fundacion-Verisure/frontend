@@ -7,9 +7,10 @@ import useMyVolunteering from '../hooks/useMyVolunteering';
 export default function MyVolunteeringPage() {
   const volunteering = useMyVolunteering();
 
-  const isEmpty = !volunteering.hasError
-    && volunteering.activeList.length === 0
-    && volunteering.historyList.length === 0;
+  const isEmpty =
+    !volunteering.hasError &&
+    volunteering.activeList.length === 0 &&
+    volunteering.historyList.length === 0;
   const hasContent = !volunteering.hasError && !isEmpty;
 
   return (

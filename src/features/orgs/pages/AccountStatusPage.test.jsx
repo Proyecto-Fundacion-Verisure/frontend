@@ -16,12 +16,12 @@ const orgApi = vi.hoisted(() => ({
 const authApi = vi.hoisted(() => ({ verifyEmail: vi.fn() }));
 
 vi.mock('../api/orgApi', async (importOriginal) => ({
-  ...await importOriginal(),
+  ...(await importOriginal()),
   ...orgApi,
 }));
 
 vi.mock('../../auth', async (importOriginal) => ({
-  ...await importOriginal(),
+  ...(await importOriginal()),
   verifyEmail: authApi.verifyEmail,
 }));
 
@@ -64,7 +64,11 @@ function renderAdmin() {
   );
 }
 
-function mockPendingPage({ content = ORGANIZATIONS, totalPages = 1, totalElements = content.length } = {}) {
+function mockPendingPage({
+  content = ORGANIZATIONS,
+  totalPages = 1,
+  totalElements = content.length,
+} = {}) {
   orgApi.getPendingOrganizations.mockResolvedValue({
     data: { content, totalPages, totalElements },
   });
@@ -80,7 +84,9 @@ describe('AccountStatusPage', () => {
     renderPage();
 
     expect(screen.getByRole('heading', { name: 'Estado de la cuenta' })).toBeInTheDocument();
-    expect(screen.getByText(/inicia sesión para consultar el estado de tu entidad/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/inicia sesión para consultar el estado de tu entidad/i),
+    ).toBeInTheDocument();
   });
 
   it('verifica el token y confirma el correo', async () => {
@@ -90,7 +96,10 @@ describe('AccountStatusPage', () => {
     expect(screen.getByRole('status', { name: /verificando el correo/i })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: 'Correo verificado' })).toBeInTheDocument();
     expect(authApi.verifyEmail).toHaveBeenCalledWith('abc123');
-    expect(screen.getByRole('link', { name: /ir al inicio de sesión/i })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('link', { name: /ir al inicio de sesión/i })).toHaveAttribute(
+      'href',
+      '/login',
+    );
   });
 
   it('verifica una sola vez aunque el efecto se monte dos veces', async () => {
@@ -108,10 +117,15 @@ describe('AccountStatusPage', () => {
   });
 
   it('explica un fallo de verificación sin ofrecer reenvío', async () => {
-    authApi.verifyEmail.mockRejectedValue({ code: 'INVALID_TOKEN', message: 'El token no es válido.' });
+    authApi.verifyEmail.mockRejectedValue({
+      code: 'INVALID_TOKEN',
+      message: 'El token no es válido.',
+    });
     renderPage('/account-status?token=abc123');
 
-    expect(await screen.findByRole('heading', { name: 'No hemos podido verificar el correo' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'No hemos podido verificar el correo' }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent('El token no es válido.');
     expect(screen.queryByLabelText(/correo de la entidad/i)).not.toBeInTheDocument();
   });
@@ -120,22 +134,27 @@ describe('AccountStatusPage', () => {
     authApi.verifyEmail.mockRejectedValue({ code: 'VERIFICATION_EXPIRED' });
     renderPage('/account-status?token=abc123');
 
-    expect(await screen.findByRole('heading', { name: /este enlace ya se ha usado o ha caducado/i }))
-      .toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /este enlace ya se ha usado o ha caducado/i }),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText(/correo de la entidad/i)).toBeInTheDocument();
   });
 
   it('explica que hay que verificar el correo y permite reenviar', () => {
     renderPage('/account-status?pending=verification');
 
-    expect(screen.getByRole('heading', { name: 'Verifica tu correo electrónico' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Verifica tu correo electrónico' }),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText(/correo de la entidad/i)).toBeInTheDocument();
   });
 
   it('explica que la cuenta espera aprobación', () => {
     renderPage('/account-status?pending=approval');
 
-    expect(screen.getByRole('heading', { name: 'Cuenta pendiente de aprobación' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Cuenta pendiente de aprobación' }),
+    ).toBeInTheDocument();
     expect(screen.queryByLabelText(/correo de la entidad/i)).not.toBeInTheDocument();
   });
 });
@@ -151,7 +170,9 @@ describe('ResendVerificationForm', () => {
 
     await user.click(screen.getByRole('button', { name: /reenviar enlace/i }));
 
-    expect(screen.getByText('Indica el correo con el que se registró la entidad.')).toBeInTheDocument();
+    expect(
+      screen.getByText('Indica el correo con el que se registró la entidad.'),
+    ).toBeInTheDocument();
     expect(orgApi.resendOrganizationRegistrationEmail).not.toHaveBeenCalled();
   });
 
@@ -163,9 +184,14 @@ describe('ResendVerificationForm', () => {
     await user.type(screen.getByLabelText(/correo de la entidad/i), '  marta@caritasbcn.ex  ');
     await user.click(screen.getByRole('button', { name: /reenviar enlace/i }));
 
-    await waitFor(() => expect(orgApi.resendOrganizationRegistrationEmail)
-      .toHaveBeenCalledWith('marta@caritasbcn.ex'));
-    expect(await screen.findByRole('status')).toHaveTextContent(/te hemos enviado un enlace nuevo/i);
+    await waitFor(() =>
+      expect(orgApi.resendOrganizationRegistrationEmail).toHaveBeenCalledWith(
+        'marta@caritasbcn.ex',
+      ),
+    );
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      /te hemos enviado un enlace nuevo/i,
+    );
   });
 
   it('avisa cuando el reenvío falla', async () => {
@@ -176,13 +202,17 @@ describe('ResendVerificationForm', () => {
     await user.type(screen.getByLabelText(/correo de la entidad/i), 'marta@caritasbcn.ex');
     await user.click(screen.getByRole('button', { name: /reenviar enlace/i }));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(/no hemos podido reenviar el enlace/i);
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      /no hemos podido reenviar el enlace/i,
+    );
   });
 
   it('muestra el estado de carga mientras reenvía', async () => {
     let resolveRequest;
     orgApi.resendOrganizationRegistrationEmail.mockReturnValue(
-      new Promise((resolve) => { resolveRequest = resolve; }),
+      new Promise((resolve) => {
+        resolveRequest = resolve;
+      }),
     );
     const user = userEvent.setup();
     renderWithResend();
@@ -201,7 +231,9 @@ describe('AdminAccountStatusPage', () => {
     orgApi.getPendingOrganizations.mockReturnValue(new Promise(() => {}));
     renderAdmin();
 
-    expect(screen.getByRole('status', { name: /cargando entidades pendientes/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('status', { name: /cargando entidades pendientes/i }),
+    ).toBeInTheDocument();
     expect(orgApi.getPendingOrganizations).toHaveBeenCalledWith({ status: 'PENDING', page: 0 });
   });
 
@@ -221,7 +253,9 @@ describe('AdminAccountStatusPage', () => {
     mockPendingPage({ content: [] });
     renderAdmin();
 
-    expect(await screen.findByRole('heading', { name: 'No hay cuentas pendientes' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'No hay cuentas pendientes' }),
+    ).toBeInTheDocument();
   });
 
   it('muestra el error de carga', async () => {
@@ -287,7 +321,9 @@ describe('AdminAccountStatusPage', () => {
     await user.click(within(row).getByRole('button', { name: 'Aceptar' }));
     await user.click(screen.getByRole('button', { name: 'Confirmar aceptación' }));
 
-    expect(await screen.findByText('Ha ocurrido un error al procesar la solicitud.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Ha ocurrido un error al procesar la solicitud.'),
+    ).toBeInTheDocument();
   });
 
   it('pagina las cuentas pendientes', async () => {
@@ -300,7 +336,11 @@ describe('AdminAccountStatusPage', () => {
 
     await user.click(screen.getByRole('button', { name: /siguiente/i }));
 
-    await waitFor(() => expect(orgApi.getPendingOrganizations)
-      .toHaveBeenLastCalledWith({ status: 'PENDING', page: 1 }));
+    await waitFor(() =>
+      expect(orgApi.getPendingOrganizations).toHaveBeenLastCalledWith({
+        status: 'PENDING',
+        page: 1,
+      }),
+    );
   });
 });

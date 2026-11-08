@@ -64,7 +64,10 @@ export function makeActivitySummary(overrides = {}) {
   };
 }
 
-export function makePage(content = [], { totalElements = content.length, page = 0, size = 10 } = {}) {
+export function makePage(
+  content = [],
+  { totalElements = content.length, page = 0, size = 10 } = {},
+) {
   const totalPages = totalElements === 0 ? 0 : Math.ceil(totalElements / size);
   return {
     content,

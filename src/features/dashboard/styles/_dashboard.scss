@@ -7,7 +7,9 @@
   width: 100%;
   @include page-container;
 
-  .page-header { margin-bottom: 0; }
+  .page-header {
+    margin-bottom: 0;
+  }
 
   &__header,
   .dashboard-section-heading {
@@ -44,7 +46,9 @@
     max-width: 34rem;
   }
 
-  &__eyebrow { @include eyebrow; }
+  &__eyebrow {
+    @include eyebrow;
+  }
 
   &__demo-badge {
     background: $color-info-light;
@@ -73,7 +77,9 @@
     text-align: center;
   }
 
-  &__error p { color: $color-muted; }
+  &__error p {
+    color: $color-muted;
+  }
 }
 
 .dashboard-filters {
@@ -81,7 +87,10 @@
   gap: space('5');
 
   &__heading {
-    p { color: $color-muted; margin-top: space('1'); }
+    p {
+      color: $color-muted;
+      margin-top: space('1');
+    }
   }
 
   &__controls {
@@ -105,7 +114,9 @@
     gap: space('2');
     padding-top: space('4');
 
-    strong { color: $color-heading; }
+    strong {
+      color: $color-heading;
+    }
 
     ul {
       display: flex;
@@ -136,8 +147,13 @@
     display: flex;
     gap: space('3');
 
-    h2 { color: $color-heading; }
-    p { color: $color-muted; margin-top: space('1'); }
+    h2 {
+      color: $color-heading;
+    }
+    p {
+      color: $color-muted;
+      margin-top: space('1');
+    }
   }
 
   &__number {
@@ -194,7 +210,10 @@
   margin: 0;
   padding: 0;
 
-  &__item { display: grid; gap: space('2'); }
+  &__item {
+    display: grid;
+    gap: space('2');
+  }
 
   &__heading {
     align-items: baseline;
@@ -203,14 +222,18 @@
     gap: space('3');
     justify-content: space-between;
 
-    span { color: $color-text; }
-    strong { color: $color-heading; }
+    span {
+      color: $color-text;
+    }
+    strong {
+      color: $color-heading;
+    }
   }
 
   &__track {
     background: $color-border;
     border-radius: $radius-pill;
-    height: .5rem;
+    height: 0.5rem;
     overflow: hidden;
   }
 
@@ -240,7 +263,9 @@
     margin-top: space('1');
   }
 
-  &--wide { grid-column: 1 / -1; }
+  &--wide {
+    grid-column: 1 / -1;
+  }
 
   &__content {
     display: grid;
@@ -265,7 +290,9 @@
     grid-template-columns: 2rem minmax(0, 1fr);
     padding: space('3') 0;
 
-    &:last-child { border-bottom: 0; }
+    &:last-child {
+      border-bottom: 0;
+    }
   }
 
   &__position {
@@ -282,7 +309,11 @@
     width: 2rem;
   }
 
-  &__activity { display: grid; gap: space('2'); min-width: 0; }
+  &__activity {
+    display: grid;
+    gap: space('2');
+    min-width: 0;
+  }
 
   &__heading {
     align-items: baseline;
@@ -305,7 +336,7 @@
   &__track {
     background: $color-border;
     border-radius: $radius-pill;
-    height: .5rem;
+    height: 0.5rem;
     overflow: hidden;
   }
 
@@ -325,7 +356,10 @@
   &__header {
     margin-bottom: space('5');
 
-    p { color: $color-muted; margin-top: space('2'); }
+    p {
+      color: $color-muted;
+      margin-top: space('2');
+    }
   }
 
   &__content {
@@ -361,7 +395,10 @@
     gap: space('3');
     justify-content: space-between;
 
-    svg { color: $color-muted; flex: 0 0 auto; }
+    svg {
+      color: $color-muted;
+      flex: 0 0 auto;
+    }
   }
 
   &__format {
@@ -369,7 +406,7 @@
     display: inline-block;
     font-size: $font-size-xs;
     font-weight: $font-weight-bold;
-    letter-spacing: .08em;
+    letter-spacing: 0.08em;
     margin-top: space('1');
   }
 
@@ -387,14 +424,20 @@
     padding: space('2') space('3');
   }
 
-  .button { align-self: flex-start; }
+  .button {
+    align-self: flex-start;
+  }
 
   &__status {
     font-size: $font-size-sm;
     min-height: 1.5rem;
 
-    &--success { color: $color-success; }
-    &--error { color: $color-danger; }
+    &--success {
+      color: $color-success;
+    }
+    &--error {
+      color: $color-danger;
+    }
   }
 }
 
@@ -409,7 +452,9 @@
 
   &__chevron {
     transition: transform $transition-fast;
-    &--open { transform: rotate(180deg); }
+    &--open {
+      transform: rotate(180deg);
+    }
   }
 
   &__dropdown {
@@ -442,13 +487,26 @@
     gap: space('3');
     padding: space('3');
     text-align: left;
-    transition: background-color $transition-fast, border-color $transition-fast;
+    transition:
+      background-color $transition-fast,
+      border-color $transition-fast;
     width: 100%;
 
-    &:hover { background: $color-surface-hover; border-color: $color-border; }
-    &:focus-visible { @include focus-ring; border-color: $color-heading; }
-    &:active { background: $color-surface-hover; }
-    &:disabled { cursor: not-allowed; opacity: .58; }
+    &:hover {
+      background: $color-surface-hover;
+      border-color: $color-border;
+    }
+    &:focus-visible {
+      @include focus-ring;
+      border-color: $color-heading;
+    }
+    &:active {
+      background: $color-surface-hover;
+    }
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.58;
+    }
 
     &-icon {
       color: $color-muted;
@@ -456,7 +514,13 @@
       margin-top: space('1');
     }
 
-    &-content { display: flex; flex-direction: column; gap: space('1'); flex: 1; min-width: 0; }
+    &-content {
+      display: flex;
+      flex-direction: column;
+      gap: space('1');
+      flex: 1;
+      min-width: 0;
+    }
 
     &-title {
       align-items: center;
@@ -474,7 +538,7 @@
       color: $color-muted;
       font-size: $font-size-xs;
       font-weight: $font-weight-bold;
-      letter-spacing: .06em;
+      letter-spacing: 0.06em;
       padding: space('1') space('2');
     }
 
@@ -488,14 +552,20 @@
     &-status {
       font-size: $font-size-xs;
       min-height: 1rem;
-      &--success { color: $color-success; }
-      &--error { color: $color-danger; }
+      &--success {
+        color: $color-success;
+      }
+      &--error {
+        color: $color-danger;
+      }
     }
   }
 }
 
 @include respond-to('lg') {
-  .dashboard__charts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dashboard__charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @include respond-to('xl') {
@@ -503,8 +573,12 @@
     align-items: start;
     grid-template-columns: minmax(0, 3fr) minmax(26rem, 2fr);
 
-    .bar-chart__scroll { padding-top: .375rem; }
-    .table-wrapper { align-self: start; }
+    .bar-chart__scroll {
+      padding-top: 0.375rem;
+    }
+    .table-wrapper {
+      align-self: start;
+    }
 
     .chart-table {
       min-width: 0;
@@ -520,14 +594,20 @@
         width: 1px;
       }
 
-      tbody tr { height: 2.75rem; }
-      td { padding-block: 0; }
+      tbody tr {
+        height: 2.75rem;
+      }
+      td {
+        padding-block: 0;
+      }
     }
   }
 }
 
 @media (max-width: 63.99rem) {
-  .effectiveness-grid { grid-template-columns: 1fr; }
+  .effectiveness-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 47.99rem) {
@@ -536,28 +616,56 @@
 
     &__header,
     &__intro-row,
-    .dashboard-section-heading { flex-direction: column; gap: space('2'); }
+    .dashboard-section-heading {
+      flex-direction: column;
+      gap: space('2');
+    }
 
     &__header-actions {
       flex-direction: column;
       width: 100%;
-      .button, .export-menu { width: 100%; }
-      .export-menu__dropdown { left: 0; right: auto; width: 100%; min-width: 0; }
+      .button,
+      .export-menu {
+        width: 100%;
+      }
+      .export-menu__dropdown {
+        left: 0;
+        right: auto;
+        width: 100%;
+        min-width: 0;
+      }
     }
   }
 
-  .page-header__actions .export-menu__dropdown { left: 0; min-width: 0; right: auto; width: 100%; }
-
-  .dashboard-filters {
-    &__controls { grid-template-columns: 1fr; }
-    &__actions .button { width: 100%; }
+  .page-header__actions .export-menu__dropdown {
+    left: 0;
+    min-width: 0;
+    right: auto;
+    width: 100%;
   }
 
-  .dashboard-chart-panel { padding: space('4'); }
+  .dashboard-filters {
+    &__controls {
+      grid-template-columns: 1fr;
+    }
+    &__actions .button {
+      width: 100%;
+    }
+  }
 
-  .dashboard-distribution { grid-template-columns: 1fr; }
-  .dashboard-distribution-card--wide { grid-column: auto; }
-  .dashboard-distribution-card .chart-table { min-width: 100%; }
+  .dashboard-chart-panel {
+    padding: space('4');
+  }
+
+  .dashboard-distribution {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-distribution-card--wide {
+    grid-column: auto;
+  }
+  .dashboard-distribution-card .chart-table {
+    min-width: 100%;
+  }
 
   .dashboard-ranking {
     padding: space('4');

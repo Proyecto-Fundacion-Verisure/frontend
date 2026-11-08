@@ -40,8 +40,9 @@ export function getSectionKey(registration) {
 }
 
 export function getSectionStatusBadge(registration) {
-  return REGISTRATION_STATUS_BADGES[getSectionKey(registration)]
-    ?? REGISTRATION_STATUS_BADGES.unreviewed;
+  return (
+    REGISTRATION_STATUS_BADGES[getSectionKey(registration)] ?? REGISTRATION_STATUS_BADGES.unreviewed
+  );
 }
 
 function appendRegistration(grouped, registration) {
@@ -80,8 +81,7 @@ export function getBoardTotals(board, registrations) {
 }
 
 export function getSection(sectionKey) {
-  return REGISTRATION_SECTIONS.find(({ key }) => key === sectionKey)
-    ?? REGISTRATION_SECTIONS[0];
+  return REGISTRATION_SECTIONS.find(({ key }) => key === sectionKey) ?? REGISTRATION_SECTIONS[0];
 }
 
 export function getSectionTabs(grouped) {
@@ -103,9 +103,8 @@ export function getEmptySectionTitle(section) {
 export function getCountsSummary(counts) {
   if (!counts) return null;
 
-  const unreviewedSuffix = counts.unreviewed > 0
-    ? `, de las que ${counts.unreviewed} sin revisar`
-    : '';
+  const unreviewedSuffix =
+    counts.unreviewed > 0 ? `, de las que ${counts.unreviewed} sin revisar` : '';
 
   return `Confirmadas ${counts.confirmed} · En lista de espera ${counts.waitlisted}${unreviewedSuffix}`;
 }

@@ -64,7 +64,7 @@ export function RegistrationsProvider({ children }) {
       if (found && found.status !== 'CANCELLED' && found.status !== 'CANCELADA') return found;
       return null;
     },
-    [registrations]
+    [registrations],
   );
 
   const value = useMemo(
@@ -77,7 +77,7 @@ export function RegistrationsProvider({ children }) {
       addRegistration,
       refresh,
     }),
-    [registrations, loading, error, enrolledIds, getForActivity, addRegistration, refresh]
+    [registrations, loading, error, enrolledIds, getForActivity, addRegistration, refresh],
   );
 
   return <RegistrationsContext.Provider value={value}>{children}</RegistrationsContext.Provider>;

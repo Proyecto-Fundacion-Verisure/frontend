@@ -8,8 +8,13 @@
   padding: space('5');
 
   &--interactive {
-    transition: border-color $transition-base, box-shadow $transition-base;
+    transition:
+      border-color $transition-base,
+      box-shadow $transition-base;
 
-    &:hover { border-color: $color-border-strong; box-shadow: $shadow-md; }
+    &:hover {
+      border-color: $color-border-strong;
+      box-shadow: $shadow-md;
+    }
   }
 }

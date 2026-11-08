@@ -11,20 +11,29 @@ vi.mock('../api/proposalsApi', () => ({
 }));
 
 const NEW_PROPOSAL = {
-  id: 1, partnerName: 'Fundación Solitaria', suggestedLine: 'desoledad',
-  description: 'Acompañamiento a personas mayores.', status: 'NEW',
+  id: 1,
+  partnerName: 'Fundación Solitaria',
+  suggestedLine: 'desoledad',
+  description: 'Acompañamiento a personas mayores.',
+  status: 'NEW',
   createdAt: '2026-08-20T10:00:00.000Z',
 };
 
 const ACCEPTED_PROPOSAL = {
-  id: 2, partnerName: 'Educamos Juntos', suggestedLine: 'educar',
-  description: 'Talleres de refuerzo escolar.', status: 'ACCEPTED',
+  id: 2,
+  partnerName: 'Educamos Juntos',
+  suggestedLine: 'educar',
+  description: 'Talleres de refuerzo escolar.',
+  status: 'ACCEPTED',
   createdAt: '2026-08-10T09:15:00.000Z',
 };
 
 const REJECTED_PROPOSAL = {
-  id: 3, partnerName: 'Ayuda Directa', suggestedLine: 'desoledad',
-  description: 'Donación de alimentos.', status: 'REJECTED',
+  id: 3,
+  partnerName: 'Ayuda Directa',
+  suggestedLine: 'desoledad',
+  description: 'Donación de alimentos.',
+  status: 'REJECTED',
   createdAt: '2026-08-01T16:45:00.000Z',
 };
 
@@ -91,14 +100,27 @@ describe('ProposalsInboxPage', () => {
 
   it('paints a proposal from the public form, without partner, as «Sin entidad»', async () => {
     getProposals.mockResolvedValue({
-      data: { content: [{ ...NEW_PROPOSAL, id: 9, partnerName: null, suggestedLine: null, estimatedVolunteers: 4 }], totalPages: 1 },
+      data: {
+        content: [
+          {
+            ...NEW_PROPOSAL,
+            id: 9,
+            partnerName: null,
+            suggestedLine: null,
+            estimatedVolunteers: 4,
+          },
+        ],
+        totalPages: 1,
+      },
     });
     renderPage();
 
     const row = await screen.findByText('Sin entidad');
     const tr = row.closest('tr');
     expect(within(tr).getByText('4')).toBeInTheDocument();
-    expect(within(tr).getByRole('button', { name: /rechazar propuesta de sin entidad/i })).toBeInTheDocument();
+    expect(
+      within(tr).getByRole('button', { name: /rechazar propuesta de sin entidad/i }),
+    ).toBeInTheDocument();
   });
 
   it('asks for confirmation before rejecting and reloads the list afterwards', async () => {
@@ -108,10 +130,14 @@ describe('ProposalsInboxPage', () => {
     renderPage();
 
     const tr = (await screen.findByText('Fundación Solitaria')).closest('tr');
-    await user.click(within(tr).getByRole('button', { name: /rechazar propuesta de fundación solitaria/i }));
+    await user.click(
+      within(tr).getByRole('button', { name: /rechazar propuesta de fundación solitaria/i }),
+    );
 
     expect(rejectProposal).not.toHaveBeenCalled();
-    expect(screen.getByRole('dialog', { name: /rechazar propuesta/i })).toHaveTextContent('Fundación Solitaria');
+    expect(screen.getByRole('dialog', { name: /rechazar propuesta/i })).toHaveTextContent(
+      'Fundación Solitaria',
+    );
 
     await user.click(screen.getByRole('button', { name: /confirmar rechazo/i }));
 

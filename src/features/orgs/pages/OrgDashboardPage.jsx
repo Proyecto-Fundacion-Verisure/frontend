@@ -17,7 +17,9 @@ function OrgDashboardSection({ id, number, title, description, children }) {
   return (
     <section className="dashboard-block" aria-labelledby={`${id}-title`}>
       <header className="dashboard-block__header">
-        <span className="dashboard-block__number" aria-hidden="true">{number}</span>
+        <span className="dashboard-block__number" aria-hidden="true">
+          {number}
+        </span>
         <div>
           <h2 id={`${id}-title`}>{title}</h2>
           <p>{description}</p>
@@ -41,18 +43,26 @@ export default function OrgDashboardPage() {
     } catch (error) {
       if (active && !error?.isCanceled) setRequestState({ status: 'error', data: null, error });
     }
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [retryKey]);
 
   useEffect(() => {
     const cleanup = load();
-    return () => { if (typeof cleanup === 'function') cleanup(); };
+    return () => {
+      if (typeof cleanup === 'function') cleanup();
+    };
   }, [load]);
 
   const dashboardData = requestState.data ?? {};
   const metrics = dashboardData.kpis ?? dashboardData;
-  const evolutionData = Array.isArray(dashboardData.evolutionByYear) ? dashboardData.evolutionByYear : [];
-  const lineData = Array.isArray(dashboardData.distributionByLine) ? dashboardData.distributionByLine : [];
+  const evolutionData = Array.isArray(dashboardData.evolutionByYear)
+    ? dashboardData.evolutionByYear
+    : [];
+  const lineData = Array.isArray(dashboardData.distributionByLine)
+    ? dashboardData.distributionByLine
+    : [];
 
   return (
     <div className="dashboard">
@@ -65,8 +75,8 @@ export default function OrgDashboardPage() {
         </div>
       </header>
       <p className="dashboard__intro">
-        Consulta las horas recibidas, actividades, voluntarios y personas beneficiadas
-        a partir de los cierres validados por la administración.
+        Consulta las horas recibidas, actividades, voluntarios y personas beneficiadas a partir de
+        los cierres validados por la administración.
       </p>
 
       {requestState.status === 'loading' && (
@@ -86,7 +96,9 @@ export default function OrgDashboardPage() {
       {requestState.status === 'error' && requestState.error?.status !== 403 && (
         <Card className="dashboard__error">
           <h2>No hemos podido cargar el panel</h2>
-          <p role="alert">{requestState.error?.message ?? 'Comprueba tu conexión y vuelve a intentarlo.'}</p>
+          <p role="alert">
+            {requestState.error?.message ?? 'Comprueba tu conexión y vuelve a intentarlo.'}
+          </p>
           <Button onClick={() => setRetryKey((c) => c + 1)}>Reintentar</Button>
         </Card>
       )}
@@ -123,7 +135,10 @@ export default function OrgDashboardPage() {
             title="Evolución por año"
             description="Horas recibidas en cada año con cierres validados."
           >
-            <Card as="article" className="dashboard-distribution-card dashboard-distribution-card--wide">
+            <Card
+              as="article"
+              className="dashboard-distribution-card dashboard-distribution-card--wide"
+            >
               <div className="dashboard-distribution-card__content">
                 <BarChart
                   data={evolutionData}
@@ -150,7 +165,10 @@ export default function OrgDashboardPage() {
             title="Reparto por línea de acción"
             description="Horas recibidas en cada línea de acción."
           >
-            <Card as="article" className="dashboard-distribution-card dashboard-distribution-card--wide">
+            <Card
+              as="article"
+              className="dashboard-distribution-card dashboard-distribution-card--wide"
+            >
               <div className="dashboard-distribution-card__content">
                 <BarChart
                   data={lineData}

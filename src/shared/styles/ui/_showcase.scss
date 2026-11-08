@@ -11,7 +11,7 @@
     color: $color-coral-dark;
     font-size: $font-size-sm;
     font-weight: $font-weight-bold;
-    letter-spacing: .08em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
@@ -35,6 +35,8 @@
 
   @include respond-to('md') {
     &__form,
-    &__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    &__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 }

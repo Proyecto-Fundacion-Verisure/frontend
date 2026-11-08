@@ -39,12 +39,14 @@ describe('MENSAJES', () => {
   });
 
   it('translates the English Bean Validation defaults that the backend sends untranslated', () => {
-    expect(translateFieldErrors({
-      note: ['must not be blank'],
-      email: ['must be a well-formed email address'],
-      rating: ['must be less than or equal to 5'],
-      actualHours: ['must be greater than or equal to 1'],
-    })).toEqual({
+    expect(
+      translateFieldErrors({
+        note: ['must not be blank'],
+        email: ['must be a well-formed email address'],
+        rating: ['must be less than or equal to 5'],
+        actualHours: ['must be greater than or equal to 1'],
+      }),
+    ).toEqual({
       note: 'Este campo es obligatorio.',
       email: 'Introduce un correo válido.',
       rating: 'Debe ser menor o igual que 5.',
@@ -53,14 +55,18 @@ describe('MENSAJES', () => {
   });
 
   it('translates domain codes returned as field errors', () => {
-    expect(translateFieldErrors({ cif: ['CIF_ALREADY_REGISTERED'], email: ['Correo inválido.'] })).toEqual({
+    expect(
+      translateFieldErrors({ cif: ['CIF_ALREADY_REGISTERED'], email: ['Correo inválido.'] }),
+    ).toEqual({
       cif: MENSAJES.CIF_ALREADY_REGISTERED,
       email: 'Correo inválido.',
     });
   });
 
   it('joins multiple validation messages from the ApiError fields map', () => {
-    expect(translateFieldErrors({ cif: ['debe tener 9 caracteres', 'solo admite letras y números'] })).toEqual({
+    expect(
+      translateFieldErrors({ cif: ['debe tener 9 caracteres', 'solo admite letras y números'] }),
+    ).toEqual({
       cif: 'debe tener 9 caracteres solo admite letras y números',
     });
   });

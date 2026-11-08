@@ -8,7 +8,9 @@ import {
   rejectProposal,
 } from './proposalsApi';
 
-vi.mock('../../../shared/api/axiosClient', () => ({ default: { post: vi.fn(), get: vi.fn(), patch: vi.fn() } }));
+vi.mock('../../../shared/api/axiosClient', () => ({
+  default: { post: vi.fn(), get: vi.fn(), patch: vi.fn() },
+}));
 
 const VALID_PROPOSAL = {
   organizationName: 'Fundación Ejemplo',
