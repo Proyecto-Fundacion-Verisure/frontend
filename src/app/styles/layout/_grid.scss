@@ -7,3 +7,10 @@
   .admin-layout, .employee-layout { grid-template-columns: 16rem 1fr; }
   .admin-layout .topbar, .employee-layout .topbar { grid-column: 1 / -1; }
 }
+
+.app-layout__loading {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 12rem;
+}
