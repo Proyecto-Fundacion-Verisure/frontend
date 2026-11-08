@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+
+# Una PR nueva cancela la ejecución anterior de la misma rama: no tiene sentido
+# gastar minutos verificando un commit que ya ha quedado atrás.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Tests, build y arquitectura
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` instala exactamente el lockfile: reproduce lo que hay en el
+      # repositorio y falla si `package.json` y `package-lock.json` no encajan.
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Verificar (tests, build y fronteras de arquitectura)
+        run: npm run smoke
+
+      - name: Auditar dependencias
+        run: npm audit --audit-level=high

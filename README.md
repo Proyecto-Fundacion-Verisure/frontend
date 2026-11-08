@@ -1,5 +1,7 @@
 # Frontend Verisure
 
+[![CI](https://github.com/Proyecto-Fundacion-Verisure/frontend/actions/workflows/ci.yml/badge.svg)](https://github.com/Proyecto-Fundacion-Verisure/frontend/actions/workflows/ci.yml)
+
 React application for managing Fundación Verisure's volunteer program: activity catalog, registrations, proposals, closures, partner organizations, and impact dashboard.
 
 ## Requirements
