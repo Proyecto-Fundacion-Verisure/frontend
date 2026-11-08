@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -198,19 +198,20 @@ describe('ProposalForm', () => {
     await user.tab();
     expect(document.activeElement).not.toBe(document.body);
 
-    // foco visible en el botón de envío
+    // El foco directo mueve el del elemento anterior y dispara sus `onBlur`, que
+    // actualizan estado: va dentro de `act` para no dejar avisos ni carreras.
     const submit = screen.getByRole('button', { name: /^enviar$/i });
-    submit.focus();
+    await act(async () => { submit.focus(); });
     expect(submit).toHaveFocus();
 
     // cada campo puede recibir foco por teclado
     const orgInput = screen.getByLabelText(/nombre de la organización/i);
-    orgInput.focus();
+    await act(async () => { orgInput.focus(); });
     expect(orgInput).toHaveFocus();
 
     // marcar consentimiento con teclado (Space)
     const consent = screen.getByRole('checkbox', { name: /he leído y acepto/i });
-    consent.focus();
+    await act(async () => { consent.focus(); });
     await user.keyboard(' ');
     expect(consent).toBeChecked();
   });

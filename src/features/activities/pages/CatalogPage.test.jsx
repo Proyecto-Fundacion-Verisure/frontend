@@ -59,10 +59,12 @@ beforeEach(() => {
 });
 
 describe('CatalogPage', () => {
-  it('muestra carga inicial', () => {
+  it('muestra carga inicial', async () => {
+    // La petición nunca resuelve: el catálogo se queda en su estado de carga.
     getPublishedActivities.mockReturnValue(new Promise(() => {}));
     renderCatalog();
-    expect(screen.getByLabelText(/cargando catálogo/i)).toBeInTheDocument();
+    // `findBy` deja que los efectos del montaje se asienten dentro de `act`.
+    expect(await screen.findByLabelText(/cargando catálogo/i)).toBeInTheDocument();
   });
 
   it('muestra error con reintentar', async () => {
