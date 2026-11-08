@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createProposal } from '../api/proposalsApi';
 import { getLineByValue } from '../../../shared/domain/activityLines';
 import useForm from '../../../shared/hooks/useForm';
@@ -22,6 +22,10 @@ export default function useProposalForm() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [status, setStatus] = useState('idle');
+  // El foco se pide como estado y lo mueve un efecto después del render, cuando
+  // el campo ya pinta `aria-invalid`. Antes se hacía con `requestAnimationFrame`,
+  // que competía con `userEvent` en los tests y dejaba avisos de `act(...)`.
+  const [focusRequest, setFocusRequest] = useState({ field: null, id: 0 });
   const fieldRefs = useRef({});
 
   const setFieldRef = useCallback((name, node) => {
@@ -32,12 +36,18 @@ export default function useProposalForm() {
     delete fieldRefs.current[name];
   }, []);
 
-  // El foco se mueve después del render, cuando el campo ya pinta `aria-invalid`.
+  useEffect(() => {
+    if (!focusRequest.field) return;
+    fieldRefs.current[focusRequest.field]?.focus();
+  }, [focusRequest]);
+
   const focusFirstInvalid = useCallback((fieldErrors) => {
     const firstInvalidField = PROPOSAL_FIELD_ORDER.find((name) => fieldErrors[name]);
     if (!firstInvalidField) return;
 
-    requestAnimationFrame(() => fieldRefs.current[firstInvalidField]?.focus());
+    // El `id` cambia en cada petición para que dos errores en el mismo campo
+    // vuelvan a mover el foco.
+    setFocusRequest((current) => ({ field: firstInvalidField, id: current.id + 1 }));
   }, []);
 
   const handleFieldChange = (event) => {
