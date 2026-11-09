@@ -1,3 +1,5 @@
+@use 'sass:list';
+
 @use '../styles/abstracts' as *;
 
 .bar-chart {
@@ -41,5 +43,159 @@
   td:last-child,
   th:last-child {
     text-align: right;
+  }
+}
+
+// Serie temporal: el eje X es el tiempo y la línea muestra la tendencia.
+.line-chart {
+  display: block;
+  min-width: 36rem;
+  width: 100%;
+
+  &__scroll {
+    @include focus-ring;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  &__grid {
+    stroke: $color-border;
+    stroke-dasharray: 4 6;
+  }
+
+  &__axis,
+  &__label {
+    fill: $color-muted;
+    font-family: $font-sans;
+    font-size: $font-size-sm;
+  }
+
+  &__value {
+    fill: $color-text;
+    font-family: $font-sans;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+  }
+
+  &__line {
+    fill: none;
+    stroke: $color-coral-solid;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 3;
+  }
+
+  &__area {
+    fill: color-mix(in srgb, $color-coral-solid 14%, transparent);
+  }
+
+  &__point {
+    fill: $color-coral-solid;
+    stroke: $color-surface;
+    stroke-width: 2;
+  }
+
+  &__empty {
+    color: $color-muted;
+    padding: space('8');
+    text-align: center;
+  }
+}
+
+// Parte de un todo: cada sector pesa sobre el total.
+.donut-chart {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: space('6');
+  justify-content: center;
+
+  &__figure {
+    flex: 0 0 auto;
+    height: 13rem;
+    width: 13rem;
+  }
+
+  &__track {
+    fill: none;
+    stroke: $color-border;
+  }
+
+  &__segment {
+    fill: none;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+
+  &__total {
+    fill: $color-heading;
+    font-family: $font-sans;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+  }
+
+  &__total-label {
+    fill: $color-muted;
+    font-family: $font-sans;
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+  }
+
+  &__empty {
+    color: $color-muted;
+    padding: space('8');
+    text-align: center;
+  }
+
+  &__legend {
+    display: grid;
+    gap: space('2');
+    list-style: none;
+    margin: 0;
+    min-width: 14rem;
+    padding: 0;
+  }
+
+  &__legend-item {
+    align-items: center;
+    display: grid;
+    gap: space('1') space('3');
+    grid-template-columns: auto 1fr auto;
+  }
+
+  &__swatch {
+    border-radius: 2px;
+    height: 0.75rem;
+    width: 0.75rem;
+  }
+
+  &__legend-label {
+    color: $color-text;
+    font-size: $font-size-sm;
+  }
+
+  &__legend-value {
+    color: $color-muted;
+    font-size: $font-size-sm;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+$donut-colors: (
+  $color-coral-solid,
+  $color-success,
+  $color-info,
+  $color-warning,
+  $color-danger,
+  $color-muted
+);
+
+@for $index from 1 through 6 {
+  .donut-chart__segment--#{$index} {
+    stroke: list.nth($donut-colors, $index);
+  }
+
+  .donut-chart__swatch.donut-chart__segment--#{$index} {
+    background-color: list.nth($donut-colors, $index);
   }
 }
