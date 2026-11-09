@@ -28,7 +28,6 @@ vi.mock('../../../shared/api/axiosClient', () => ({ default: client }));
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.stubEnv('VITE_USE_MOCKS', 'false');
 });
 
 describe('partner API contracts', () => {

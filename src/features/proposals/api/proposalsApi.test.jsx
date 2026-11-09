@@ -47,14 +47,12 @@ describe('createProposal', () => {
     await expect(createProposal(VALID_PROPOSAL)).rejects.toBe(error);
   });
 
-  it('never answers on its own, even in development', async () => {
-    vi.stubEnv('VITE_USE_MOCKS', 'true');
+  it('siempre llama al cliente, nunca responde por su cuenta', async () => {
     client.post.mockResolvedValue({ status: 201, data: { id: 1 } });
 
     await createProposal(VALID_PROPOSAL);
 
     expect(client.post).toHaveBeenCalledTimes(1);
-    vi.unstubAllEnvs();
   });
 });
 
