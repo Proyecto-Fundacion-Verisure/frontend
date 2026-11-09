@@ -1,6 +1,11 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
+import { toHaveNoViolations } from 'jest-axe';
 import { afterEach, vi } from 'vitest';
+
+// `toHaveNoViolations` comprueba el DOM renderizado con axe: roles, etiquetas,
+// `aria` y estructura. Complementa a `jsx-a11y`, que solo mira el código.
+expect.extend(toHaveNoViolations);
 
 // jsdom + matchers + auto-cleanup. This file is the single Vitest setup entry.
 // All API mocks live in src/test/** and are outside the production bundle (vite build excludes src/test).

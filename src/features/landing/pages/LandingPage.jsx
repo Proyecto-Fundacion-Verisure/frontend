@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Building, Clock, HandHeart, Users } from 'lucide-react';
-import colabImage from '../assets/landing-colaboration.png';
+import colabImage from '../assets/landing-collaboration.webp';
 import footerPortrait from '../../../shared/assets/images/footer-portrait.jpg';
 import StatCounter from '../components/StatCounter';
 

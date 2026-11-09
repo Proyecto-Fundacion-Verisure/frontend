@@ -34,5 +34,8 @@ jobs:
       - name: Comprobar el formato
         run: npm run format:check
 
+      - name: Cobertura mínima
+        run: npm run test:coverage
+
       - name: Auditar dependencias
         run: npm audit --audit-level=high
