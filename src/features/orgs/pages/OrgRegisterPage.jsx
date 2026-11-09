@@ -142,8 +142,8 @@ export default function OrgRegisterPage() {
         <Link to="/" className="org-register-page__back">
           &larr; Volver a la portada
         </Link>
-        <p className="org-register-page__eyebrow">Cuenta de entidad</p>
-        <h1 id="org-register-title">Registra tu entidad</h1>
+        <p className="org-register-page__eyebrow">Cuenta de organización</p>
+        <h1 id="org-register-title">Registra tu organización</h1>
         <p>
           Crea una cuenta para publicar actividades de voluntariado y gestionar las inscripciones de
           la plantilla de Verisure.
@@ -154,8 +154,8 @@ export default function OrgRegisterPage() {
         <form className="org-register-form" onSubmit={handleSubmit} noValidate>
           <div className="org-register-form__grid">
             <Input
-              label="Nombre de la entidad"
-              placeholder="Asociación, fundación o entidad"
+              label="Nombre de la organización"
+              placeholder="Asociación, fundación u organización"
               required
               {...fieldProps('organizationName')}
             />
@@ -251,7 +251,7 @@ export default function OrgRegisterPage() {
         <aside className="org-register-aside">
           <p className="org-register-page__eyebrow">¿Ya tienes cuenta?</p>
           <p>
-            Si tu entidad ya está registrada, puedes <Link to="/login">iniciar sesión</Link>{' '}
+            Si tu organización ya está registrada, puedes <Link to="/login">iniciar sesión</Link>{' '}
             directamente.
           </p>
           <p className="org-register-aside__alt">
@@ -279,8 +279,8 @@ export default function OrgRegisterPage() {
             de siempre, no de la que se acaba de escribir. */}
         <p>
           Hemos recibido tu solicitud de cuenta para el CIF{' '}
-          <strong>{values.cif.trim().toUpperCase()}</strong>. Si la entidad ya estaba registrada, tu
-          cuenta queda vinculada a ella con el nombre que ya tenía.
+          <strong>{values.cif.trim().toUpperCase()}</strong>. Si la organización ya estaba
+          registrada, tu cuenta queda vinculada a ella con el nombre que ya tenía.
         </p>
         <p>
           La Fundación la revisará y se pondrá en contacto contigo en{' '}

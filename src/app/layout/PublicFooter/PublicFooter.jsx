@@ -11,10 +11,9 @@ const PublicFooter = () => {
             <span className="public-footer__brand-name">FUNDACIÓN VERISURE</span>
           </div>
           <p className="public-footer__legal-text">
-            Responsable del tratamiento: Verisure España S.A.U.
+            Proyecto académico desarrollado con la Fundación Verisure.
             <br />
-            Los datos de esta propuesta se conservan mientras esté activa y hasta un año después de
-            descartarla.
+            Plataforma de demostración: los datos son ficticios y no se usan con fines comerciales.
           </p>
         </div>
 

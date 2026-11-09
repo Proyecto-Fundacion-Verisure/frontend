@@ -45,11 +45,8 @@ export default function LandingPage() {
               Soy empleado
             </Link>
             <Link className="button button--secondary button--medium" to="/register-organization">
-              Registra tu entidad
+              Registra tu organización
             </Link>
-            <a className="button button--ghost button--medium" href="/#propuesta">
-              ¿Quieres proponer un voluntariado?
-            </a>
           </div>
         </div>
         <div className="landing-hero__art" aria-hidden="true">
@@ -120,9 +117,11 @@ export default function LandingPage() {
                 src={colabImage}
                 alt="Personas voluntarias colaborando en una actividad comunitaria"
               />
-              <Link className="button button--primary button--medium" to="/register-organization">
-                Registra tu entidad
-              </Link>
+              <div className="landing-access__actions">
+                <Link className="button button--primary button--medium" to="/register-organization">
+                  Registra tu organización
+                </Link>
+              </div>
             </div>
             <div className="landing-access__card">
               <p className="landing__eyebrow">Iniciativas</p>
@@ -163,9 +162,11 @@ export default function LandingPage() {
                   </div>
                 </li>
               </ol>
-              <Link className="button button--primary button--medium" to="/new-proposal">
-                Enviar propuesta
-              </Link>
+              <div className="landing-access__actions">
+                <Link className="button button--primary button--medium" to="/new-proposal">
+                  ¿Quieres proponer un voluntariado?
+                </Link>
+              </div>
             </div>
           </div>
         </div>
