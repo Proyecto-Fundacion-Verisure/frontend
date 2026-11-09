@@ -116,6 +116,13 @@ There should be no accidental horizontal scroll; touch targets must be at least 
 
 The design reference is in [Figma](https://www.figma.com/design/D3nU4lVWHOTVRtTNeMyjol/Fundacion-Verisure-Voluntariado?node-id=0-1&p=f).
 
+## License and notices
+
+Code under the MIT license; see [LICENSE](LICENSE). The project is an academic exercise with
+Fundación Verisure as the client: trademarks belong to their owners and the repository is not
+affiliated with them. See [NOTICE.md](NOTICE.md) and
+[docs/image-credits.md](docs/image-credits.md) for authorship, data and image provenance.
+
 ## Authors
 
 | Name             | GitHub                                                       | Role     |
