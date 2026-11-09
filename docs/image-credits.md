@@ -1,8 +1,8 @@
 # Imágenes · procedencia, licencia y huecos a sustituir
 
-Las imágenes actuales de la landing y el login son generadas con IA y no encajan con el tono del
-proyecto. Este documento fija **qué imagen va en cada hueco**, las medidas recomendadas y las
-licencias aceptadas, para que sustituirlas no deje dudas sobre su origen.
+Las imágenes de la landing y el login vienen del sitio de la Fundación Verisure, cliente del
+proyecto, y sustituyen a las ilustraciones generadas con IA que había antes. Este documento fija
+**qué imagen va en cada hueco**, su procedencia y el peso final.
 
 ## Reglas de casa
 
@@ -30,7 +30,25 @@ licencias aceptadas, para que sustituirlas no deje dudas sobre su origen.
 | Línea · Protegidos ante el acoso | `public/images/lines/acoso.svg`                        | SVG      | SVG o 600 × 400            | Grupo de adolescentes juntos, ambiente seguro                                                                                    |
 | Línea · Medio ambiente           | `public/images/lines/medioambiente.svg`                | SVG      | SVG o 600 × 400            | Recogida de residuos, plantación, naturaleza                                                                                     |
 
-## Dónde buscar (búsquedas ya preparadas)
+## Procedencia
+
+Todas las fotografías nuevas proceden de <https://www.fundacionverisure.org/>. Se usan en un
+proyecto académico cuyo cliente es la propia Fundación; **antes de publicar la demo conviene
+confirmar por escrito el permiso de uso**. El logotipo se mantiene por la misma razón y con el
+aviso de marca de [`NOTICE.md`](../NOTICE.md).
+
+Las descargas originales y su transformación:
+
+| Archivo original                                                     | Transformación                       |
+| -------------------------------------------------------------------- | ------------------------------------ |
+| `images/pag/common/sec/proyectos/desoledad-2026-800.webp`            | 1600 × 1000, WebP calidad 80         |
+| `images/pag/home/sec/quehacemos/mujeres.jpg`                         | 740 × 686, JPG calidad 85 progresivo |
+| `images/pag/common/sec/proyectos/educar-para-proteger-2026-800.webp` | 800 × 500 original, WebP calidad 82  |
+
+> Las fotos de `quehacemos/` solo existen a 370 px de ancho en el sitio. El retrato del hero se ve
+> correcto a su tamaño, pero si la Fundación puede facilitar el original a mayor resolución, mejor.
+
+## Si algún día se cambian por banco de imágenes
 
 **Pexels** — licencia libre para uso comercial, atribución no obligatoria pero recomendable:
 
