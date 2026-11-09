@@ -154,11 +154,9 @@ describe('Registrations sync #43 - tarjeta y ficha sin recargar', () => {
       status: 409,
       code: 'ALREADY_REGISTERED',
     };
-    createRegistration
-      .mockRejectedValueOnce(err)
-      .mockResolvedValueOnce({
-        data: { registrationId: 903, activityId: 1, status: 'WAITLISTED', accepted: false },
-      });
+    createRegistration.mockRejectedValueOnce(err).mockResolvedValueOnce({
+      data: { registrationId: 903, activityId: 1, status: 'WAITLISTED', accepted: false },
+    });
     renderWithProvider();
     await screen.findByRole('heading', { name: /acompañamiento a mayores/i });
     const user = userEvent.setup();
