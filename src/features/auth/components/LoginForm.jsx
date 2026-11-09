@@ -69,11 +69,13 @@ function LoginForm() {
           error={fieldErrors.email}
         />
 
+        {/* Sin asteriscos ni puntos: un campo vacío que parece tener una
+            contraseña escrita confunde a quien va a escribir la suya. */}
         <Input
           id="password"
           type="password"
           label="Contraseña"
-          placeholder="••••••••"
+          placeholder="Tu contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           error={fieldErrors.password}
