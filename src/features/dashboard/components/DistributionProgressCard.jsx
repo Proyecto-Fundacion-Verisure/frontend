@@ -1,5 +1,5 @@
 import { Card, EmptyState } from '../../../shared/ui';
-import MetricProgressList from './MetricProgressList';
+import { DonutChart } from '../../../shared/charts';
 
 export default function DistributionProgressCard({ title, items, emptyTitle }) {
   const hasItems = items.length > 0;
@@ -8,7 +8,14 @@ export default function DistributionProgressCard({ title, items, emptyTitle }) {
     <Card as="article" className="dashboard-distribution-card">
       <h3>{title}</h3>
       {hasItems ? (
-        <MetricProgressList items={items} />
+        <DonutChart
+          data={items}
+          title={title}
+          description={`Reparto del total entre las categorías de ${title.toLowerCase()}`}
+          labelKey="label"
+          valueKey="value"
+          valueSuffix=" %"
+        />
       ) : (
         <EmptyState
           title={emptyTitle}

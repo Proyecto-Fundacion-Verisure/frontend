@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -35,17 +35,20 @@ describe('OrgDashboardPage', () => {
     ).toBeInTheDocument();
     expect(screen.queryByText('Datos ficticios para validación')).not.toBeInTheDocument();
 
-    expect(screen.getByRole('list', { name: 'Indicadores de la entidad' })).toBeInTheDocument();
-    expect(screen.getByText(/2.?450 h/)).toBeInTheDocument();
-    expect(screen.getByText('12')).toBeInTheDocument();
+    const kpis = screen.getByRole('list', { name: 'Indicadores de la entidad' });
+    expect(within(kpis).getByText(/2.?450 h/)).toBeInTheDocument();
+    expect(within(kpis).getByText('12')).toBeInTheDocument();
     expect(screen.getByText('148')).toBeInTheDocument();
     expect(screen.getByText('860')).toBeInTheDocument();
 
     expect(screen.getAllByText('Desoledad').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('Educar para proteger').length).toBeGreaterThanOrEqual(1);
 
-    const chartScrolls = screen.getAllByRole('region');
-    expect(chartScrolls.filter((el) => el.classList.contains('bar-chart__scroll')).length).toBe(2);
+    // La evolución es una serie temporal (línea) y el reparto, parte de un todo (dona).
+    expect(
+      screen.getByRole('img', { name: /Evolución de horas recibidas por año/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /Reparto por línea de acción/i })).toBeInTheDocument();
 
     const tableWrappers = screen.getAllByRole('region');
     expect(tableWrappers.filter((el) => el.querySelector('table')).length).toBeGreaterThanOrEqual(
@@ -98,7 +101,8 @@ describe('OrgDashboardPage', () => {
       await screen.findByRole('heading', { name: /no hemos podido cargar el panel/i }),
     ).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /reintentar/i }));
-    expect(await screen.findByText(/2.?450 h/)).toBeInTheDocument();
+    const kpis = await screen.findByRole('list', { name: 'Indicadores de la entidad' });
+    expect(within(kpis).getByText(/2.?450 h/)).toBeInTheDocument();
     expect(getOrgDashboard).toHaveBeenCalledTimes(2);
   });
 

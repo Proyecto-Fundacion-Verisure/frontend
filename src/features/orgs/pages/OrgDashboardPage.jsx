@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getOrgDashboard } from '../api/orgApi';
 import { Card, EmptyState, Spinner, Button } from '../../../shared/ui';
-import { BarChart, ChartTable, KpiRow } from '../../../shared/charts';
+import { ChartTable, DonutChart, KpiRow, LineChart } from '../../../shared/charts';
 import { ORG_KPI_DEFINITIONS, ORG_KPI_KEYS } from '../model/orgDashboardDefinitions';
 
 function hasOrgDashboardData(data) {
@@ -135,12 +135,12 @@ export default function OrgDashboardPage() {
               className="dashboard-distribution-card dashboard-distribution-card--wide"
             >
               <div className="dashboard-distribution-card__content">
-                <BarChart
+                <LineChart
                   data={evolutionData}
                   title="Evolución de horas recibidas por año"
                   description="Horas recibidas en cada año"
-                  labelKey="year"
-                  valueKey="receivedHours"
+                  xKey="year"
+                  yKey="receivedHours"
                 />
                 <ChartTable
                   data={evolutionData}
@@ -165,12 +165,13 @@ export default function OrgDashboardPage() {
               className="dashboard-distribution-card dashboard-distribution-card--wide"
             >
               <div className="dashboard-distribution-card__content">
-                <BarChart
+                <DonutChart
                   data={lineData}
                   title="Reparto por línea de acción"
                   description="Horas recibidas por línea de acción"
                   labelKey="label"
                   valueKey="value"
+                  valueSuffix=" h"
                 />
                 <ChartTable
                   data={lineData}
