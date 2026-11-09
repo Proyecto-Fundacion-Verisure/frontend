@@ -33,7 +33,7 @@ describe('OrgDashboardPage', () => {
     expect(
       await screen.findByRole('heading', { name: /panel de control de la entidad/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText('Datos ficticios para validación')).toBeInTheDocument();
+    expect(screen.queryByText('Datos ficticios para validación')).not.toBeInTheDocument();
 
     expect(screen.getByRole('list', { name: 'Indicadores de la entidad' })).toBeInTheDocument();
     expect(screen.getByText(/2.?450 h/)).toBeInTheDocument();

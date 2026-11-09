@@ -1,24 +1,5 @@
 import client from '../../../shared/api/axiosClient';
 import { registerPartner, resendVerification } from '../../auth';
-import { getOrgDashboardMockData } from '../mocks/orgDashboard';
-import { isMockEnabled } from '../../../shared/api/mocks';
-
-// Solo `/org/dashboard` sigue en mock: no tiene controlador en el backend. El
-// resto del módulo va siempre contra el backend real. Ver `src/shared/api/mocks.js`.
-const shouldUseDevelopmentMocks = () => isMockEnabled('ORG');
-
-function simulateRequest({ data, delay = 300, failRate = 0 } = {}) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() < failRate) {
-        reject(new Error('Simulated API error'));
-      } else {
-        resolve({ data });
-      }
-    }, delay);
-  });
-}
-
 export const createOrganization = (data) => registerPartner(data);
 
 export const resendOrganizationRegistrationEmail = (email) => resendVerification(email);
@@ -60,7 +41,5 @@ export const createOrgProposal = (data) => client.post('/org/proposals', data);
 
 // `submitOrgProposal` vivía aquí y llamaba a `PATCH /org/proposals/{id}/submit`,
 // que no existe: la propuesta nace `NEW` y no hay borradores que enviar.
-export const getOrgDashboard = (year) => {
-  if (shouldUseDevelopmentMocks()) return simulateRequest({ data: getOrgDashboardMockData() });
-  return client.get('/org/dashboard', { params: year ? { year } : {} });
-};
+export const getOrgDashboard = (year) =>
+  client.get('/org/dashboard', { params: year ? { year } : {} });
