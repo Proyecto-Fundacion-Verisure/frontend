@@ -38,10 +38,21 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.14.0",
+    "jest-axe": "^11.0.0",
     "jsdom": "^26.0.0",
     "prettier": "^3.9.10",
     "sass": "^1.108.0",
     "vite": "^6.4.5",
     "vitest": "^4.1.12"
-  }
+  },
+  "description": "Plataforma de voluntariado corporativo: catálogo, inscripciones, cierres y dashboards de impacto.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Proyecto-Fundacion-Verisure/frontend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Proyecto-Fundacion-Verisure/frontend/issues"
+  },
+  "homepage": "https://github.com/Proyecto-Fundacion-Verisure/frontend#readme"
 }

@@ -1,0 +1,27 @@
+version: 2
+updates:
+  # Actualizaciones de dependencias del frontend, agrupadas por semana para no
+  # abrir diez PRs el mismo día. Los parches van juntos; las versiones mayores,
+  # una a una, porque pueden romper.
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      patches:
+        apply-to: security-updates
+        update-types:
+          - patch
+      minor:
+        update-types:
+          - minor
+    labels:
+      - dependencies
+
+  # Las acciones del propio workflow también se actualizan solas.
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: monthly
