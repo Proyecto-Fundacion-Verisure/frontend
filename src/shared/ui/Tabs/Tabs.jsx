@@ -31,6 +31,8 @@ export default function Tabs({ activeId, children, label, onChange, tabs = [] })
 
   return (
     <div className="tabs">
+      {/* El foco lo llevan los propios botones de pestaña. */}
+      {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus */}
       <div className="tabs__list" role="tablist" aria-label={label} onKeyDown={handleKeyDown}>
         {tabs.map((tab, index) => {
           const isActive = tab.id === activeId;

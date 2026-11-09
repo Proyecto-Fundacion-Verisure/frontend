@@ -38,6 +38,8 @@ export default function BarChart({
   const chartHeight = items.length * ROW_HEIGHT + 16;
 
   return (
+    // La región es desplazable: necesita foco para poder recorrerse con el teclado.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
     <div className="bar-chart__scroll" tabIndex={0} role="region" aria-label={title}>
       <svg
         className="bar-chart"

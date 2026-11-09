@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Button, EmptyState, PageHeader } from '../../../shared/ui';
+import { EmptyState, PageHeader } from '../../../shared/ui';
 import MyVolunteeringCard from './MyVolunteeringCard';
 
 export default function MyVolunteeringBlocks({

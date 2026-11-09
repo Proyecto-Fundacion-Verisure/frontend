@@ -32,14 +32,6 @@ export default function useMyVolunteering() {
     }
   }, []);
 
-  const reloadAfterDeadline = async () => {
-    try {
-      await fetchData();
-    } catch {
-      // La recarga es best-effort: el aviso de error ya se muestra igualmente.
-    }
-  };
-
   const handleCancel = useCallback(
     async (registrationId) => {
       setCancelError(null);
@@ -52,7 +44,11 @@ export default function useMyVolunteering() {
         // actividad empezó. Recargamos para que la fila deje de ofrecer el botón,
         // que es lo que la pantalla estaba enseñando de más.
         if (requestError?.code === 'DEADLINE_PASSED') {
-          await reloadAfterDeadline();
+          try {
+            await fetchData();
+          } catch {
+            // La recarga es best-effort: el aviso de error ya se muestra igualmente.
+          }
         }
         setCancelError(requestError.message || 'No se pudo cancelar la inscripción.');
       } finally {

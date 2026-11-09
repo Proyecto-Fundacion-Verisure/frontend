@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { LandingPage } from '../../features/landing';
 import { CatalogPage } from '../../features/activities';
@@ -99,8 +99,10 @@ describe('smoke — recorrido público, empleado, administrador', () => {
   });
 
   it('demo data es coherente y sin secretos', async () => {
-    const res = await fetch('/demo-data.json').catch(() => null);
-    // si no hay servidor, verifica que el mock de actividades es determinista
+    // Sin servidor el fetch falla y `response` es null: en ese caso basta con
+    // que el mock de actividades siga disponible.
+    const response = await fetch('/demo-data.json').catch(() => null);
+    expect(response === null || response.ok).toBe(true);
     expect(getPublishedActivities).toBeDefined();
   });
 });

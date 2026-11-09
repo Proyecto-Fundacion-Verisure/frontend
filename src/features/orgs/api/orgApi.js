@@ -5,7 +5,7 @@ import { isMockEnabled } from '../../../shared/api/mocks';
 
 // Solo `/org/dashboard` sigue en mock: no tiene controlador en el backend. El
 // resto del módulo va siempre contra el backend real. Ver `src/shared/api/mocks.js`.
-const useDevelopmentMocks = () => isMockEnabled('ORG');
+const shouldUseDevelopmentMocks = () => isMockEnabled('ORG');
 
 function simulateRequest({ data, delay = 300, failRate = 0 } = {}) {
   return new Promise((resolve, reject) => {
@@ -61,6 +61,6 @@ export const createOrgProposal = (data) => client.post('/org/proposals', data);
 // `submitOrgProposal` vivía aquí y llamaba a `PATCH /org/proposals/{id}/submit`,
 // que no existe: la propuesta nace `NEW` y no hay borradores que enviar.
 export const getOrgDashboard = (year) => {
-  if (useDevelopmentMocks()) return simulateRequest({ data: getOrgDashboardMockData() });
+  if (shouldUseDevelopmentMocks()) return simulateRequest({ data: getOrgDashboardMockData() });
   return client.get('/org/dashboard', { params: year ? { year } : {} });
 };

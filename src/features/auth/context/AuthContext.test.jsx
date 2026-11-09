@@ -31,11 +31,6 @@ function SessionHarness() {
   );
 }
 
-function SessionExpiredHarness() {
-  const { isAuthenticated, user } = useContext(AuthContext);
-  return <span>{isAuthenticated ? user.name : 'anonymous'}</span>;
-}
-
 function renderAuth(initialEntry = '/private') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
