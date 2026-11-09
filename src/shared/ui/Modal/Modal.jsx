@@ -34,7 +34,12 @@ export default function Modal({
   // podía escribir una palabra seguida. Se leen desde una ref y el efecto solo
   // depende de `isOpen`.
   const latest = useRef({ onClose, closeDisabled });
-  latest.current = { onClose, closeDisabled };
+
+  // Se sincroniza en un efecto declarado antes que el principal: cuando ese
+  // efecto se ejecute, `latest` ya tiene los valores del render actual.
+  useEffect(() => {
+    latest.current = { onClose, closeDisabled };
+  });
 
   useEffect(() => {
     if (!isOpen) return undefined;

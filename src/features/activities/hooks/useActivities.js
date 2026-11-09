@@ -6,6 +6,9 @@ export default function useActivities(params) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
+  // `params` es un objeto nuevo en cada render: la dependencia real es su
+  // contenido serializado.
+  const paramsKey = JSON.stringify(params);
 
   const fetchActivities = useCallback(async () => {
     setLoading(true);
@@ -22,7 +25,8 @@ export default function useActivities(params) {
     } finally {
       setLoading(false);
     }
-  }, [JSON.stringify(params)]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ver `paramsKey`.
+  }, [paramsKey]);
 
   useEffect(() => {
     fetchActivities();

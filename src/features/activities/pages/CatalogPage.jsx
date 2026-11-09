@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { getPublishedActivities } from '../api/activitiesApi';
 import { getMyRegistrations, useRegistrationsOptional } from '../../registrations';
 import { useFavoritesOptional } from '../../favorites';

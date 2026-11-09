@@ -15,8 +15,9 @@ export function seedRegistrations(items) {
   items.forEach((r) => store.set(r.registrationId, { ...r }));
 }
 
-function findByActivityAndUser(activityId, userId = 2) {
-  // Simplified: userId ignored in frontend mocks (single employee)
+// El `userId` se conserva en la firma porque la API real filtra por persona; en
+// el mock solo hay una persona empleada.
+function findByActivityAndUser(activityId, _userId = 2) {
   return [...store.values()].find(
     (r) => String(r.activityId) === String(activityId) && r.status !== RegistrationStatus.CANCELLED,
   );

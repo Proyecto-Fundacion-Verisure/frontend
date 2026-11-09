@@ -107,11 +107,7 @@ describe('ActivityCard', () => {
     render(<ActivityCard activity={{ ...baseActivity, spots: 10, occupiedSpots: 10 }} />);
     expect(screen.getByText('Completa')).toBeInTheDocument();
 
-    const { rerender } = { rerender: () => {} };
-    // estado FULL también
-    const { unmount } =
-      render(<ActivityCard activity={{ ...baseActivity, status: 'FULL' }} />) || {};
-    // Instead of rerender complexity, just check second render contains Completa via query
+    render(<ActivityCard activity={{ ...baseActivity, status: 'FULL' }} />);
     expect(screen.getAllByText('Completa').length).toBeGreaterThan(0);
   });
 

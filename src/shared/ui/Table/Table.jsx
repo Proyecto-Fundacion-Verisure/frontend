@@ -8,6 +8,8 @@ export default function Table({
   className = '',
 }) {
   return (
+    // La región es desplazable: necesita foco para poder recorrerse con el teclado.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
     <div className="table-wrapper" role="region" aria-label={caption} tabIndex={0}>
       <table className={`table ${className}`.trim()}>
         {caption && <caption>{caption}</caption>}
