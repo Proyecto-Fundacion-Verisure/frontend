@@ -42,15 +42,15 @@ The application is available at [http://localhost:5173](http://localhost:5173). 
 
 ## Commands
 
-| Command                 | Description                                   |
-| ----------------------- | --------------------------------------------- |
-| `npm run dev`           | Starts Vite in development mode.              |
-| `npm run build`         | Generates the optimized bundle in `dist/`.    |
-| `npm test`              | Opens Vitest in interactive mode.             |
-| `npm run test:run`      | Runs all tests once.                          |
-| `npm run test:coverage` | Runs tests and generates a coverage report.   |
-| `npm run arch:check`    | Checks feature/shared/app import boundaries.  |
-| `npm run smoke`         | Runs tests, build and the architecture check. |
+| Command                 | Description                                                     |
+| ----------------------- | --------------------------------------------------------------- |
+| `npm run dev`           | Starts Vite in development mode.                                |
+| `npm run build`         | Generates the optimized bundle in `dist/`.                      |
+| `npm test`              | Opens Vitest in interactive mode.                               |
+| `npm run test:run`      | Runs all tests once.                                            |
+| `npm run test:coverage` | Runs tests and generates a coverage report.                     |
+| `npm run arch:check`    | Checks feature/shared/app import boundaries.                    |
+| `npm run smoke`         | Runs tests, build, the architecture check and the format check. |
 
 ## Architecture
 
