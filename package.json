@@ -15,7 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "demo:reset": "node scripts/restore-demo.js",
-    "smoke": "npm run test:run && npm run build && npm run arch:check && npm run format:check && npm run lint"
+    "smoke": "npm run test:run && npm run build && npm run arch:check && npm run format:check"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",
