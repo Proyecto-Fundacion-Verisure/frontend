@@ -30,6 +30,17 @@ async function submitCredentials(user) {
 beforeEach(() => vi.clearAllMocks());
 
 describe('LoginForm', () => {
+  it('no simula una contraseña escrita en el campo vacío', () => {
+    renderLogin();
+
+    const password = screen.getByLabelText('Contraseña');
+
+    expect(password).toHaveValue('');
+    // Un placeholder de asteriscos o puntos se lee como una contraseña ya
+    // escrita; el campo vacío no debe parecerlo.
+    expect(password.getAttribute('placeholder') ?? '').not.toMatch(/^[•*·\s]+$/);
+  });
+
   it('lleva al inicio del rol tras un acceso correcto', async () => {
     login.mockResolvedValue({ id: 2, name: 'Ana Gil', role: 'EMPLOYEE' });
     const user = userEvent.setup();
