@@ -5,7 +5,7 @@ import ThemeToggle from '../../../shared/ui/ThemeToggle/ThemeToggle';
 const ROLE_LABELS = {
   ADMIN: 'Administrador',
   EMPLOYEE: 'Empleado',
-  PARTNER: 'Entidad colaboradora',
+  PARTNER: 'Organización colaboradora',
 };
 
 function getInitials(name) {

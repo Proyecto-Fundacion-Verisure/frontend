@@ -39,7 +39,7 @@ describe('DashboardExports', () => {
     render(<DashboardExports filters={filters} />);
 
     await user.click(within(findCard('Participaciones')).getByRole('button'));
-    await user.click(within(findCard('Entidades colaboradoras')).getByRole('button'));
+    await user.click(within(findCard('Organizaciones colaboradoras')).getByRole('button'));
     await user.click(within(findCard('Informe visual')).getByRole('button'));
 
     expect(api.exportParticipationsCsv).toHaveBeenCalledWith(filters);
@@ -69,7 +69,7 @@ describe('DashboardExports', () => {
     expect(within(findCard('Participaciones')).getByRole('status')).toHaveTextContent(
       'Descargando participations.csv',
     );
-    expect(within(findCard('Entidades colaboradoras')).getByRole('button')).toBeEnabled();
+    expect(within(findCard('Organizaciones colaboradoras')).getByRole('button')).toBeEnabled();
 
     resolveRequest({ data: new Blob(['ok']) });
     await waitFor(() =>
@@ -102,7 +102,7 @@ describe('DashboardExports', () => {
     api.exportPartnersCsv.mockRejectedValue({ status: 403 });
     render(<DashboardExports filters={{ year: 2026 }} />);
 
-    const partnersCard = findCard('Entidades colaboradoras');
+    const partnersCard = findCard('Organizaciones colaboradoras');
     await user.click(within(partnersCard).getByRole('button'));
 
     expect(within(partnersCard).getByRole('alert')).toHaveTextContent(

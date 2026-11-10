@@ -59,7 +59,7 @@ export default function PendingClosurePage({ sectionTabs = null }) {
     { key: 'title', label: 'Actividad' },
     {
       key: 'partnerName',
-      label: 'Entidad',
+      label: 'Organización',
       render: (item) => item.partnerName ?? 'Sin entidad',
     },
     {

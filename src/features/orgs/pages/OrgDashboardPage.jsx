@@ -66,7 +66,7 @@ export default function OrgDashboardPage() {
     <div className="dashboard">
       <header className="dashboard__header">
         <div>
-          <h1>Panel de control de la entidad</h1>
+          <h1>Panel de control de la organización</h1>
         </div>
       </header>
       <p className="dashboard__intro">
@@ -76,7 +76,7 @@ export default function OrgDashboardPage() {
 
       {requestState.status === 'loading' && (
         <Card className="dashboard__loading" role="status" aria-live="polite">
-          <Spinner label="Cargando el panel de tu entidad…" />
+          <Spinner label="Cargando el panel de tu organización…" />
           <p>Cargando indicadores…</p>
         </Card>
       )}
@@ -84,7 +84,7 @@ export default function OrgDashboardPage() {
       {requestState.status === 'error' && requestState.error?.status === 403 && (
         <Card className="dashboard__error" role="alert">
           <h2>Acceso restringido</h2>
-          <p>No tienes permiso para consultar el panel de tu entidad.</p>
+          <p>No tienes permiso para consultar el panel de tu organización.</p>
         </Card>
       )}
 
@@ -120,7 +120,7 @@ export default function OrgDashboardPage() {
               variations={dashboardData.variations ?? {}}
               definitions={ORG_KPI_DEFINITIONS}
               variationLabel="respecto al año anterior"
-              listLabel="Indicadores de la entidad"
+              listLabel="Indicadores de la organización"
             />
           </OrgDashboardSection>
 

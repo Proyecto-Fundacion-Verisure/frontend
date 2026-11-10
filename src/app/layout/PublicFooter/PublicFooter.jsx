@@ -23,19 +23,24 @@ const PublicFooter = () => {
           </h2>
           <ul className="public-footer__links">
             <li>
-              <Link to="/" className="public-footer__link">
-                Política de privacidad
-              </Link>
+              <a
+                href="https://github.com/Proyecto-Fundacion-Verisure/frontend/blob/dev/NOTICE.md"
+                className="public-footer__link"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Aviso del proyecto
+              </a>
             </li>
             <li>
-              <Link to="/" className="public-footer__link">
-                Aviso legal
-              </Link>
-            </li>
-            <li>
-              <Link to="/" className="public-footer__link">
-                Política de cookies
-              </Link>
+              <a
+                href="https://github.com/Proyecto-Fundacion-Verisure/frontend/blob/dev/LICENSE"
+                className="public-footer__link"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Licencia
+              </a>
             </li>
           </ul>
         </nav>

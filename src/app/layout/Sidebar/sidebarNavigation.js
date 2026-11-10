@@ -58,7 +58,7 @@ export const NAV_SECTIONS_BY_ROLE = {
         },
         {
           path: '/admin/account-status',
-          label: 'Entidades',
+          label: 'Organizaciones',
           icon: Building2,
           badgeKey: 'pendingAccounts',
         },

@@ -127,7 +127,7 @@ describe('AccountStatusPage', () => {
       await screen.findByRole('heading', { name: 'No hemos podido verificar el correo' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('alert')).toHaveTextContent('El token no es válido.');
-    expect(screen.queryByLabelText(/correo de la entidad/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/correo de la organización/i)).not.toBeInTheDocument();
   });
 
   it('ofrece reenviar el enlace cuando el token ha caducado', async () => {
@@ -137,7 +137,7 @@ describe('AccountStatusPage', () => {
     expect(
       await screen.findByRole('heading', { name: /este enlace ya se ha usado o ha caducado/i }),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText(/correo de la entidad/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/correo de la organización/i)).toBeInTheDocument();
   });
 
   it('explica que hay que verificar el correo y permite reenviar', () => {
@@ -146,7 +146,7 @@ describe('AccountStatusPage', () => {
     expect(
       screen.getByRole('heading', { name: 'Verifica tu correo electrónico' }),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText(/correo de la entidad/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/correo de la organización/i)).toBeInTheDocument();
   });
 
   it('explica que la cuenta espera aprobación', () => {
@@ -155,7 +155,7 @@ describe('AccountStatusPage', () => {
     expect(
       screen.getByRole('heading', { name: 'Cuenta pendiente de aprobación' }),
     ).toBeInTheDocument();
-    expect(screen.queryByLabelText(/correo de la entidad/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/correo de la organización/i)).not.toBeInTheDocument();
   });
 });
 
@@ -181,7 +181,7 @@ describe('ResendVerificationForm', () => {
     const user = userEvent.setup();
     renderWithResend();
 
-    await user.type(screen.getByLabelText(/correo de la entidad/i), '  marta@caritasbcn.ex  ');
+    await user.type(screen.getByLabelText(/correo de la organización/i), '  marta@caritasbcn.ex  ');
     await user.click(screen.getByRole('button', { name: /reenviar enlace/i }));
 
     await waitFor(() =>
@@ -199,7 +199,7 @@ describe('ResendVerificationForm', () => {
     const user = userEvent.setup();
     renderWithResend();
 
-    await user.type(screen.getByLabelText(/correo de la entidad/i), 'marta@caritasbcn.ex');
+    await user.type(screen.getByLabelText(/correo de la organización/i), 'marta@caritasbcn.ex');
     await user.click(screen.getByRole('button', { name: /reenviar enlace/i }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
@@ -217,7 +217,7 @@ describe('ResendVerificationForm', () => {
     const user = userEvent.setup();
     renderWithResend();
 
-    await user.type(screen.getByLabelText(/correo de la entidad/i), 'marta@caritasbcn.ex');
+    await user.type(screen.getByLabelText(/correo de la organización/i), 'marta@caritasbcn.ex');
     await user.click(screen.getByRole('button', { name: /reenviar enlace/i }));
 
     expect(screen.getByRole('button', { name: /reenviando/i })).toBeDisabled();
@@ -232,7 +232,7 @@ describe('AdminAccountStatusPage', () => {
     renderAdmin();
 
     expect(
-      screen.getByRole('status', { name: /cargando entidades pendientes/i }),
+      screen.getByRole('status', { name: /cargando organizaciones pendientes/i }),
     ).toBeInTheDocument();
     expect(orgApi.getPendingOrganizations).toHaveBeenCalledWith({ status: 'PENDING', page: 0 });
   });
@@ -263,7 +263,9 @@ describe('AdminAccountStatusPage', () => {
     renderAdmin();
 
     expect(await screen.findByRole('heading', { name: 'Error' })).toBeInTheDocument();
-    expect(screen.getByText('No se pudieron cargar las entidades pendientes.')).toBeInTheDocument();
+    expect(
+      screen.getByText('No se pudieron cargar las organizaciones pendientes.'),
+    ).toBeInTheDocument();
   });
 
   it('acepta una entidad tras confirmar en el modal', async () => {

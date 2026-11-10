@@ -208,7 +208,7 @@ export default function ActivityDetailPage() {
               <p className="activity-detail__description">{activity.description}</p>
               {activity.partnerName && (
                 <p className="activity-detail__meta">
-                  <strong>Entidad:</strong> {activity.partnerName}
+                  <strong>Organización:</strong> {activity.partnerName}
                 </p>
               )}
               {dateRange && (

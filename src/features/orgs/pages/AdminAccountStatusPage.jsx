@@ -16,11 +16,11 @@ export default function AdminAccountStatusPage() {
 
   return (
     <section className="account-status">
-      <PageHeader title="Entidades" description={headerDescription} />
+      <PageHeader title="Organizaciones" description={headerDescription} />
 
       {pending.isLoading && (
         <div className="account-status__center">
-          <Spinner label="Cargando entidades pendientes" />
+          <Spinner label="Cargando organizaciones pendientes" />
         </div>
       )}
 

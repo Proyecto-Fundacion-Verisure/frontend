@@ -24,7 +24,7 @@ export default function OrgImpactPage() {
 
   return (
     <section aria-labelledby="org-dashboard-title">
-      <h1 id="org-dashboard-title">Impacto de mi entidad</h1>
+      <h1 id="org-dashboard-title">Impacto de mi organización</h1>
       <form
         onSubmit={(event) => {
           event.preventDefault();

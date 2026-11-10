@@ -52,7 +52,7 @@ describe('Sidebar ADMIN navigation', () => {
       'Actividades',
       'Solicitudes',
       'Inscripciones',
-      'Entidades',
+      'Organizaciones',
     ]);
     ['Análisis', 'Catálogo', 'Participación'].forEach((title) => {
       expect(screen.getByText(title)).toBeInTheDocument();
@@ -102,7 +102,7 @@ describe('Sidebar active link', () => {
     ['ADMIN', '/proposals', 'Solicitudes'],
     ['ADMIN', '/proposals/3', 'Solicitudes'],
     ['ADMIN', '/admin/activities/pending', 'Solicitudes'],
-    ['ADMIN', '/admin/account-status', 'Entidades'],
+    ['ADMIN', '/admin/account-status', 'Organizaciones'],
     ['ADMIN', '/admin/registrations', 'Inscripciones'],
     ['ADMIN', '/activities/9/registrations', 'Inscripciones'],
     ['ADMIN', '/admin/activities/pending-closure', 'Actividades'],

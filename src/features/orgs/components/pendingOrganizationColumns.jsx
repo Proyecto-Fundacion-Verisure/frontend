@@ -65,7 +65,7 @@ function renderActions(organization, { actionPendingId, onRequestAction }) {
 
 export default function buildPendingOrganizationColumns(actions) {
   return [
-    { key: 'organization', label: 'Entidad', render: renderOrganization },
+    { key: 'organization', label: 'Organización', render: renderOrganization },
     { key: 'contact', label: 'Contacto', render: renderContact },
     { key: 'requestedAt', label: 'Solicitado el', render: renderRequestedAt },
     { key: 'emailVerified', label: 'Correo', render: renderEmailStatus },

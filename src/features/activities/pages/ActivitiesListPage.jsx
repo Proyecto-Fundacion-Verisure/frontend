@@ -143,7 +143,7 @@ export default function ActivitiesListPage({
       ? [
           {
             key: 'partner',
-            label: 'Entidad colaboradora',
+            label: 'Organización colaboradora',
             render: (activity) =>
               activity.partner?.name ?? activity.partnerName ?? activity.organizationName ?? '—',
           },

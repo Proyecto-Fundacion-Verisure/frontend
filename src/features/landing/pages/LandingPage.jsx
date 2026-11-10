@@ -76,8 +76,8 @@ export default function LandingPage() {
             <p className="landing__eyebrow">Nuestras líneas</p>
             <h2 id="impact-title">Cuatro frentes, una misma red de apoyo.</h2>
             <p>
-              Cada línea agrupa sus programas, sus entidades aliadas y los indicadores de impacto
-              que la plataforma mide de principio a fin.
+              Cada línea agrupa sus programas, sus organizaciones aliadas y los indicadores de
+              impacto que la plataforma mide de principio a fin.
             </p>
           </div>
           <div className="landing-impact__grid">
@@ -100,8 +100,9 @@ export default function LandingPage() {
             <p>
               Creemos que las mejores iniciativas nacen cuando organizaciones y empresas unen sus
               capacidades para generar un <strong>impacto real.</strong>
-              Por eso, queremos colaborar con entidades sociales que compartan nuestro compromiso
-              con las personas, la comunidad y la construcción de una sociedad más solidaria.
+              Por eso, queremos colaborar con organizaciones sociales que compartan nuestro
+              compromiso con las personas, la comunidad y la construcción de una sociedad más
+              solidaria.
             </p>
           </div>
           <div className="landing-access__grid">
@@ -109,7 +110,7 @@ export default function LandingPage() {
               <p className="landing__eyebrow">Organización social</p>
               <h3>Explora, participa y mide tu impacto</h3>
               <p>
-                Queremos que las entidades sociales tengan un papel protagonista. Cuéntanos qué
+                Queremos que las organizaciones sociales tengan un papel protagonista. Cuéntanos qué
                 necesidades detectáis y qué iniciativas de voluntariado podrían marcar la
                 diferencia, y trabajaremos juntos para convertir esas ideas en actividades reales.
               </p>
@@ -129,7 +130,7 @@ export default function LandingPage() {
               <ul className="landing-access__list">
                 <li>
                   Actividades de voluntariado adaptadas a las necesidades específicas de vuestra
-                  entidad.
+                  organización.
                 </li>
                 <li>Campañas solidarias y de sensibilización.</li>
                 <li>Recogidas de alimentos, material u otros recursos.</li>

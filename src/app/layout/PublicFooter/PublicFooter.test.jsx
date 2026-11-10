@@ -25,9 +25,14 @@ describe('PublicFooter', () => {
   it('muestra los enlaces legales y el contacto', () => {
     renderFooter();
     expect(screen.getByText('FUNDACIÓN VERISURE')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /política de privacidad/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /aviso legal/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /política de cookies/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /aviso del proyecto/i })).toHaveAttribute(
+      'href',
+      'https://github.com/Proyecto-Fundacion-Verisure/frontend/blob/dev/NOTICE.md',
+    );
+    expect(screen.getByRole('link', { name: /licencia/i })).toHaveAttribute(
+      'href',
+      'https://github.com/Proyecto-Fundacion-Verisure/frontend/blob/dev/LICENSE',
+    );
   });
 
   it('muestra el correo de contacto', () => {

@@ -155,7 +155,7 @@ export default function ProposalsInboxPage({ sectionTabs = null }) {
   const columns = [
     {
       key: 'partnerName',
-      label: 'Entidad',
+      label: 'Organización',
       render: (row) => (
         <Link to={`/proposals/${row.id}`} className="proposals-inbox__link">
           {partnerLabel(row)}
