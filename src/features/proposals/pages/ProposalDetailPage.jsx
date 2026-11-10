@@ -134,7 +134,7 @@ export default function ProposalDetailPage() {
       <Card className="proposal-detail__card">
         <dl className="proposal-detail__meta">
           <div>
-            <dt>Entidad</dt>
+            <dt>Organización</dt>
             <dd>{partnerName}</dd>
           </div>
           <div>

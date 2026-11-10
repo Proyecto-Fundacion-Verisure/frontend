@@ -6,7 +6,9 @@
   align-items: center;
   display: inline-flex;
   font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+  // `semibold` y no `medium`: el blanco sobre el rojo sólido se percibe más fino
+  // que el negro sobre blanco al mismo tamaño, y el peso compensa ese efecto.
+  font-weight: $font-weight-semibold;
   gap: space('2');
   justify-content: center;
   line-height: 1.25;

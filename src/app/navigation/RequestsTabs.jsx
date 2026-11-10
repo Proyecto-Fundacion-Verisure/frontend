@@ -10,7 +10,7 @@ export default function RequestsTabs() {
       items={[
         {
           to: '/admin/activities/pending',
-          label: 'Actividades de entidades',
+          label: 'Actividades de organizaciones',
           count: counts.pendingReview,
         },
         { to: '/proposals', label: 'Formulario público', count: counts.proposals },

@@ -31,11 +31,11 @@ describe('OrgDashboardPage', () => {
     await waitFor(() => expect(getOrgDashboard).toHaveBeenCalled());
 
     expect(
-      await screen.findByRole('heading', { name: /panel de control de la entidad/i }),
+      await screen.findByRole('heading', { name: /panel de control de la organización/i }),
     ).toBeInTheDocument();
     expect(screen.queryByText('Datos ficticios para validación')).not.toBeInTheDocument();
 
-    const kpis = screen.getByRole('list', { name: 'Indicadores de la entidad' });
+    const kpis = screen.getByRole('list', { name: 'Indicadores de la organización' });
     expect(within(kpis).getByText(/2.?450 h/)).toBeInTheDocument();
     expect(within(kpis).getByText('12')).toBeInTheDocument();
     expect(screen.getByText('148')).toBeInTheDocument();
@@ -68,7 +68,7 @@ describe('OrgDashboardPage', () => {
     ).toBeInTheDocument();
     expect(screen.queryByText('0 h')).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('list', { name: 'Indicadores de la entidad' }),
+      screen.queryByRole('list', { name: 'Indicadores de la organización' }),
     ).not.toBeInTheDocument();
   });
 
@@ -83,10 +83,10 @@ describe('OrgDashboardPage', () => {
     });
     expect(await screen.findByRole('heading', { name: /acceso restringido/i })).toBeInTheDocument();
     expect(
-      screen.getByText(/no tienes permiso para consultar el panel de tu entidad/i),
+      screen.getByText(/no tienes permiso para consultar el panel de tu organización/i),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole('list', { name: 'Indicadores de la entidad' }),
+      screen.queryByRole('list', { name: 'Indicadores de la organización' }),
     ).not.toBeInTheDocument();
   });
 
@@ -101,7 +101,7 @@ describe('OrgDashboardPage', () => {
       await screen.findByRole('heading', { name: /no hemos podido cargar el panel/i }),
     ).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /reintentar/i }));
-    const kpis = await screen.findByRole('list', { name: 'Indicadores de la entidad' });
+    const kpis = await screen.findByRole('list', { name: 'Indicadores de la organización' });
     expect(within(kpis).getByText(/2.?450 h/)).toBeInTheDocument();
     expect(getOrgDashboard).toHaveBeenCalledTimes(2);
   });
@@ -110,7 +110,7 @@ describe('OrgDashboardPage', () => {
     getOrgDashboard.mockResolvedValue({ data: makeOrgDashboardResponse() });
     renderPage();
 
-    await screen.findByRole('heading', { name: /panel de control de la entidad/i });
+    await screen.findByRole('heading', { name: /panel de control de la organización/i });
     const bodyText = document.body.textContent;
     expect(bodyText).not.toMatch(/María García/i);
     expect(bodyText).not.toMatch(/Javier López/i);

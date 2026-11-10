@@ -191,7 +191,7 @@ export default function AppRouter() {
                   showRegistrationsLink={false}
                   showFavoritesColumn={false}
                   showReviewActions={true}
-                  emptyDescription="Ninguna entidad tiene propuestas esperando decisión."
+                  emptyDescription="Ninguna organización tiene propuestas esperando decisión."
                 />
               }
             />

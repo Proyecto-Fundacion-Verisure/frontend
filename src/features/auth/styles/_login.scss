@@ -14,8 +14,17 @@
   box-sizing: border-box;
 
   &__overlay {
-    position: absolute;
+    // Velo oscuro sobre la foto: `$color-overlay` ya es el token de superposición
+    // del sistema (azul noche al 50 % en claro, negro al 60 % en oscuro), así
+    // que no hay que inventar un color ni depende del tema. El desenfoque quita
+    // el detalle que distrae sin apagar del todo la escena.
+    background: $color-overlay;
     inset: 0;
+    position: absolute;
+    // Sin `backdrop-filter` (navegadores antiguos) el velo sigue haciendo su
+    // trabajo, así que el contraste no depende de esta propiedad.
+    -webkit-backdrop-filter: blur(6px) saturate(0.9);
+    backdrop-filter: blur(6px) saturate(0.9);
   }
 
   &__card {

@@ -42,7 +42,7 @@ export default function usePendingOrganizations() {
         setTotalElements(pageData.totalElements);
       })
       .catch(() => {
-        if (isActive) setError('No se pudieron cargar las entidades pendientes.');
+        if (isActive) setError('No se pudieron cargar las organizaciones pendientes.');
       })
       .finally(() => {
         if (isActive) setIsLoading(false);

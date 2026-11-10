@@ -20,10 +20,10 @@ const EXPORTS = [
   },
   {
     id: 'partners',
-    title: 'Entidades colaboradoras',
+    title: 'Organizaciones colaboradoras',
     format: 'CSV',
     filename: 'partners.csv',
-    description: 'Entidades colaboradoras, actividades realizadas y horas reportadas.',
+    description: 'Organizaciones colaboradoras, actividades realizadas y horas reportadas.',
     request: exportPartnersCsv,
   },
   {

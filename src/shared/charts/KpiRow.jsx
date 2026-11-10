@@ -6,7 +6,7 @@ export const KPI_DEFINITIONS = [
   { key: 'reportedHours', label: 'Horas de voluntariado', Icon: Clock3, suffix: ' h' },
   { key: 'activeVolunteers', label: 'Voluntarios únicos', Icon: Users },
   { key: 'finishedActivities', label: 'Actividades finalizadas', Icon: CalendarCheck2 },
-  { key: 'activePartners', label: 'Entidades colaboradoras', Icon: Building2 },
+  { key: 'activePartners', label: 'Organizaciones colaboradoras', Icon: Building2 },
 ];
 
 export default function KpiRow({

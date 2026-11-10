@@ -9,7 +9,7 @@ export default function ResendVerificationForm() {
       <Input
         id="resend-email"
         type="email"
-        label="Correo de la entidad"
+        label="Correo de la organización"
         value={resend.email}
         onChange={resend.handleEmailChange}
         error={resend.emailError}
