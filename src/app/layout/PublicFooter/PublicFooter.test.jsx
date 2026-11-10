@@ -12,9 +12,19 @@ function renderFooter() {
 }
 
 describe('PublicFooter', () => {
+  it('explica que es un proyecto académico con datos ficticios', () => {
+    renderFooter();
+
+    expect(
+      screen.getByText(/proyecto académico desarrollado con la fundación verisure/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/los datos son ficticios/i)).toBeInTheDocument();
+    expect(screen.queryByText(/responsable del tratamiento/i)).not.toBeInTheDocument();
+  });
+
   it('muestra los enlaces legales y el contacto', () => {
     renderFooter();
-    expect(screen.getByText(/fundación verisure/i)).toBeInTheDocument();
+    expect(screen.getByText('FUNDACIÓN VERISURE')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /política de privacidad/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /aviso legal/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /política de cookies/i })).toBeInTheDocument();

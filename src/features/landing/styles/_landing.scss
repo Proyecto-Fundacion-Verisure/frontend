@@ -226,6 +226,14 @@
   }
 }
 
+// Las dos tarjetas tienen alturas distintas; el CTA va al pie para que los dos
+// botones queden a la misma altura y alineados a la derecha.
+.landing-access__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: space('6');
+}
 .landing-access__list {
   color: $color-muted;
   display: grid;
