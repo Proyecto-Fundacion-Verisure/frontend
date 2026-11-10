@@ -2,6 +2,8 @@ import { Card } from '../../../shared/ui';
 import { formatDashboardNumber } from '../../../shared/lib/formatNumber';
 
 export default function DashboardRanking({ items = [] }) {
+  // El ranking se escala contra la actividad más votada, así que la barra más
+  // larga siempre es la de arriba; el resto se compara con ella.
   const highestCount = Math.max(...items.map(({ favoriteCount }) => Number(favoriteCount) || 0), 0);
 
   return (
@@ -18,12 +20,16 @@ export default function DashboardRanking({ items = [] }) {
               <div className="dashboard-ranking__activity">
                 <div className="dashboard-ranking__heading">
                   <span>{item.activityTitle}</span>
-                  <strong>{formatDashboardNumber(count)} favoritos</strong>
+                  <strong>
+                    {formatDashboardNumber(count)} {count === 1 ? 'favorito' : 'favoritos'}
+                  </strong>
                 </div>
                 <div
                   className="dashboard-ranking__track"
                   role="progressbar"
-                  aria-label={`${item.activityTitle}: ${count} favoritos`}
+                  aria-label={`${item.activityTitle}: ${count} ${
+                    count === 1 ? 'favorito' : 'favoritos'
+                  }`}
                   aria-valuemin="0"
                   aria-valuemax={highestCount}
                   aria-valuenow={count}
