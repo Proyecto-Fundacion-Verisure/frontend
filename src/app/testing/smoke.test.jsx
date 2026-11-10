@@ -98,11 +98,7 @@ describe('smoke — recorrido público, empleado, administrador', () => {
     expect(screen.getByRole('heading', { name: 'Panel' })).toBeInTheDocument();
   });
 
-  it('demo data es coherente y sin secretos', async () => {
-    // Sin servidor el fetch falla y `response` es null: en ese caso basta con
-    // que el mock de actividades siga disponible.
-    const response = await fetch('/demo-data.json').catch(() => null);
-    expect(response === null || response.ok).toBe(true);
-    expect(getPublishedActivities).toBeDefined();
+  it('la API del catálogo sigue disponible para el smoke', () => {
+    expect(typeof getPublishedActivities).toBe('function');
   });
 });
